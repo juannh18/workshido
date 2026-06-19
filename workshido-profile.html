@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — Workshido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-900: #042C53; --blue-800: #0C447C; --blue-600: #185FA5;
+    --blue-400: #378ADD; --blue-200: #85B7EB; --blue-100: #B5D4F4;
+    --blue-50: #E6F1FB; --teal-600: #0F6E56; --teal-400: #1D9E75;
+    --teal-50: #E1F5EE; --teal-100: #9FE1CB; --amber-600: #854F0B;
+    --amber-400: #BA7517; --amber-50: #FAEEDA; --green-600: #3B6D11;
+    --green-50: #EAF3DE; --gray-900: #2C2C2A; --gray-600: #5F5E5A;
+    --gray-300: #B4B2A9; --gray-100: #D3D1C7; --gray-50: #F1EFE8;
+    --white: #ffffff; --red-600: #C0392B; --red-50: #FDEDEC;
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px;
+    --font-display: 'Sora', sans-serif; --font-body: 'Inter', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); -webkit-font-smoothing: antialiased; }
+
+  nav { background: var(--blue-900); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--blue-200); }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { font-size: 13px; color: var(--blue-100); text-decoration: none; font-weight: 500; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; border: 2px solid var(--blue-200); }
+
+  .page-layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); }
+
+  /* SIDEBAR */
+  .sidebar { background: var(--white); border-right: 1px solid var(--gray-100); padding: 28px 16px; }
+  .profile-card { text-align: center; padding: 20px 12px 24px; border-bottom: 1px solid var(--gray-100); margin-bottom: 20px; }
+  .avatar-big { width: 72px; height: 72px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 24px; font-weight: 700; margin: 0 auto 12px; border: 3px solid var(--blue-100); }
+  .profile-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+  .profile-email { font-size: 12px; color: var(--gray-300); margin-bottom: 12px; }
+  .plan-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--amber-50); color: var(--amber-600); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+
+  .nav-menu { display: flex; flex-direction: column; gap: 2px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); font-size: 13px; color: var(--gray-600); cursor: pointer; text-decoration: none; font-weight: 500; transition: all 0.12s; }
+  .nav-item:hover { background: var(--gray-50); color: var(--gray-900); }
+  .nav-item.active { background: var(--blue-50); color: var(--blue-600); }
+  .nav-item svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .nav-section-label { font-size: 10px; font-weight: 600; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 12px 6px; }
+
+  /* MAIN */
+  .main { padding: 28px 32px; }
+
+  /* UPLOAD ZONE */
+  .upload-section { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; }
+  .upload-section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .upload-section p { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; }
+
+  .upload-zone { border: 2px dashed var(--gray-100); border-radius: var(--radius-lg); padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--gray-50); }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--blue-400); background: var(--blue-50); }
+  .upload-icon { font-size: 36px; margin-bottom: 12px; }
+  .upload-zone h3 { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; }
+  .upload-zone p { font-size: 13px; color: var(--gray-600); margin-bottom: 14px; }
+  .upload-zone input { display: none; }
+
+  .btn-upload { background: var(--blue-600); color: var(--white); border: none; border-radius: var(--radius-sm); padding: 9px 20px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn-upload:hover { background: var(--blue-800); }
+
+  .allowed-types { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .type-badge { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 8px; }
+  .type-badge.pdf { background: #FCEBEB; color: #C0392B; }
+  .type-badge.docx { background: var(--blue-50); color: var(--blue-600); }
+  .type-badge.png { background: var(--green-50); color: var(--green-600); }
+  .type-badge.jpg { background: var(--teal-50); color: var(--teal-600); }
+
+  /* UPLOAD ERROR */
+  .upload-error { background: var(--red-50); border: 1px solid #F5C6C2; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--red-600); display: none; margin-top: 12px; }
+
+  /* MY WORKSHEETS */
+  .my-ws-section { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .section-header h2 { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); }
+  .ws-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+  .ws-row:last-child { border-bottom: none; }
+  .ws-mini-thumb { width: 44px; height: 56px; border-radius: 4px; padding: 6px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+  .ws-mini-thumb.teal { background: var(--teal-50); }
+  .ws-mini-thumb.blue { background: var(--blue-50); }
+  .ws-mini-thumb.amber { background: var(--amber-50); }
+  .wl { height: 3px; border-radius: 2px; background: rgba(0,0,0,0.1); }
+  .wl.a { width: 60%; }
+  .wl.a.t { background: var(--teal-400); }
+  .wl.a.b { background: var(--blue-400); }
+  .wl.a.am { background: var(--amber-400); }
+  .wl.s { width: 35%; }
+  .wb { height: 12px; border-radius: 2px; background: rgba(0,0,0,0.07); }
+  .ws-info { flex: 1; }
+  .ws-title { font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 3px; }
+  .ws-meta-row { display: flex; gap: 8px; align-items: center; }
+  .ws-level { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px; }
+  .ws-level.a1 { background: var(--teal-50); color: var(--teal-600); }
+  .ws-level.a2 { background: var(--blue-50); color: var(--blue-600); }
+  .ws-level.b1 { background: var(--amber-50); color: var(--amber-600); }
+  .ws-status { font-size: 11px; color: var(--gray-300); }
+  .ws-actions { display: flex; gap: 6px; }
+  .btn-sm { font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: var(--font-body); }
+  .btn-sm.edit { background: var(--blue-50); color: var(--blue-600); }
+  .btn-sm.delete { background: var(--red-50); color: var(--red-600); }
+  .ws-stats-mini { display: flex; gap: 12px; align-items: center; }
+  .ws-stat { font-size: 11px; color: var(--gray-300); display: flex; align-items: center; gap: 3px; }
+  .ws-stat strong { color: var(--gray-900); font-weight: 600; }
+
+  /* STATS OVERVIEW */
+  .stats-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-box { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 18px 20px; }
+  .stat-box-num { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--blue-600); margin-bottom: 4px; }
+  .stat-box-label { font-size: 12px; color: var(--gray-600); }
+  .stat-box-change { font-size: 11px; color: var(--teal-400); font-weight: 600; margin-top: 4px; }
+
+  @media (max-width: 900px) {
+    .page-layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .stats-overview { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a href="workshido-index.html" class="nav-logo">work<span>shido</span></a>
+  <ul class="nav-links">
+    <li><a href="workshido-index.html">Browse</a></li>
+    <li><a href="#">My worksheets</a></li>
+    <li><a href="#">Favorites</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-avatar">JD</div>
+  </div>
+</nav>
+
+<div class="page-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="profile-card">
+      <div class="avatar-big">JD</div>
+      <div class="profile-name">Juan David</div>
+      <div class="profile-email">juandavid@email.com</div>
+      <div class="plan-badge">⭐ Premium</div>
+    </div>
+    <div class="nav-menu">
+      <div class="nav-section-label">My account</div>
+      <a href="#" class="nav-item active">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        My worksheets
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Favorites
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Downloads
+      </a>
+      <div class="nav-section-label">Settings</div>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Account settings
+      </a>
+      <a href="#" class="nav-item">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Billing & plan
+      </a>
+      <a href="#" onclick="logOut()" class="nav-item" style="margin-top:12px;color:var(--red-600)">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log out
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- STATS -->
+    <div class="stats-overview">
+      <div class="stat-box">
+        <div class="stat-box-num">3</div>
+        <div class="stat-box-label">Worksheets uploaded</div>
+        <div class="stat-box-change">↑ +1 this week</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num">6,250</div>
+        <div class="stat-box-label">Total downloads</div>
+        <div class="stat-box-change">↑ +340 this week</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num">4.9</div>
+        <div class="stat-box-label">Average rating</div>
+        <div class="stat-box-change">★★★★★</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-num">412</div>
+        <div class="stat-box-label">Favorites saved by others</div>
+        <div class="stat-box-change">↑ +28 this week</div>
+      </div>
+    </div>
+
+    <!-- UPLOAD -->
+    <div class="upload-section">
+      <h2>Upload a new worksheet</h2>
+      <p>Share your materials with 98,000+ teachers worldwide. Only high-quality, original content is accepted.</p>
+
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+        <div class="upload-icon">📄</div>
+        <h3>Drop your file here or click to browse</h3>
+        <p>We'll review it before publishing — usually within 24 hours</p>
+        <button class="btn-upload" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose file</button>
+        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.png,.jpg,.jpeg" onchange="handleFile(event)" />
+        <div class="allowed-types">
+          <span class="type-badge pdf">📕 PDF</span>
+          <span class="type-badge docx">📘 DOCX</span>
+          <span class="type-badge png">🖼️ PNG</span>
+          <span class="type-badge jpg">🖼️ JPG</span>
+        </div>
+      </div>
+      <div class="upload-error" id="uploadError"></div>
+    </div>
+
+    <!-- MY WORKSHEETS -->
+    <div class="my-ws-section">
+      <div class="section-header">
+        <h2>My worksheets</h2>
+        <span style="font-size:12px;color:var(--gray-300)">3 published</span>
+      </div>
+
+      <div class="ws-row">
+        <div class="ws-mini-thumb teal">
+          <div class="wl a t"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div>
+        </div>
+        <div class="ws-info">
+          <div class="ws-title">Daily routine — there is / there are</div>
+          <div class="ws-meta-row">
+            <span class="ws-level a1">A1</span>
+            <span class="ws-status">Published · June 2026</span>
+          </div>
+        </div>
+        <div class="ws-stats-mini">
+          <div class="ws-stat">↓ <strong>2,418</strong></div>
+          <div class="ws-stat">★ <strong>4.9</strong></div>
+        </div>
+        <div class="ws-actions">
+          <button class="btn-sm edit">Edit</button>
+          <button class="btn-sm delete">Delete</button>
+        </div>
+      </div>
+
+      <div class="ws-row">
+        <div class="ws-mini-thumb blue">
+          <div class="wl a b"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div>
+        </div>
+        <div class="ws-info">
+          <div class="ws-title">My home — prepositions of place</div>
+          <div class="ws-meta-row">
+            <span class="ws-level a2">A2</span>
+            <span class="ws-status">Published · May 2026</span>
+          </div>
+        </div>
+        <div class="ws-stats-mini">
+          <div class="ws-stat">↓ <strong>1,830</strong></div>
+          <div class="ws-stat">★ <strong>4.8</strong></div>
+        </div>
+        <div class="ws-actions">
+          <button class="btn-sm edit">Edit</button>
+          <button class="btn-sm delete">Delete</button>
+        </div>
+      </div>
+
+      <div class="ws-row">
+        <div class="ws-mini-thumb amber">
+          <div class="wl a am"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div>
+        </div>
+        <div class="ws-info">
+          <div class="ws-title">Present simple — daily habits</div>
+          <div class="ws-meta-row">
+            <span class="ws-level b1">B1</span>
+            <span class="ws-status">Published · April 2026</span>
+          </div>
+        </div>
+        <div class="ws-stats-mini">
+          <div class="ws-stat">↓ <strong>2,002</strong></div>
+          <div class="ws-stat">★ <strong>4.9</strong></div>
+        </div>
+        <div class="ws-actions">
+          <button class="btn-sm edit">Edit</button>
+          <button class="btn-sm delete">Delete</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // SECURE FILE UPLOAD VALIDATION
+  const ALLOWED_TYPES = {
+    'application/pdf': { ext: '.pdf', maxMB: 10 },
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { ext: '.docx', maxMB: 10 },
+    'application/msword': { ext: '.doc', maxMB: 10 },
+    'image/png': { ext: '.png', maxMB: 5 },
+    'image/jpeg': { ext: '.jpg/.jpeg', maxMB: 5 },
+  };
+
+  const ALLOWED_EXTENSIONS = ['.pdf', '.docx', '.doc', '.png', '.jpg', '.jpeg'];
+
+  function validateFile(file) {
+    // Check MIME type
+    if (!ALLOWED_TYPES[file.type]) {
+      return `❌ File type not allowed. Only PDF, DOCX, PNG and JPG files are accepted.`;
+    }
+    // Double-check extension (security layer)
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      return `❌ File extension not allowed. Accepted: PDF, DOCX, DOC, PNG, JPG.`;
+    }
+    // Check file size
+    const maxMB = ALLOWED_TYPES[file.type].maxMB;
+    const sizeMB = file.size / (1024 * 1024);
+    if (sizeMB > maxMB) {
+      return `❌ File too large. Maximum size for this type is ${maxMB}MB. Your file is ${sizeMB.toFixed(1)}MB.`;
+    }
+    // Check for suspicious names
+    if (/[<>:"/\\|?*]/.test(file.name)) {
+      return `❌ File name contains invalid characters.`;
+    }
+    return null; // valid
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('uploadError');
+    el.textContent = msg;
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 5000);
+  }
+
+  function handleFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const error = validateFile(file);
+    if (error) {
+      showError(error);
+      event.target.value = '';
+      return;
+    }
+    // Simulate successful upload
+    const zone = document.getElementById('uploadZone');
+    zone.innerHTML = `
+      <div style="font-size:36px;margin-bottom:12px">✅</div>
+      <h3 style="color:var(--teal-600)">${file.name}</h3>
+      <p style="color:var(--gray-600)">File ready to upload · ${(file.size/1024/1024).toFixed(2)}MB</p>
+      <button class="btn-upload" style="margin-top:10px">Submit for review</button>
+    `;
+  }
+
+  function handleDrag(e) {
+    e.preventDefault();
+    document.getElementById('uploadZone').classList.add('dragover');
+  }
+  function handleDragLeave(e) {
+    document.getElementById('uploadZone').classList.remove('dragover');
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('uploadZone').classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+    const error = validateFile(file);
+    if (error) { showError(error); return; }
+    const zone = document.getElementById('uploadZone');
+    zone.innerHTML = `
+      <div style="font-size:36px;margin-bottom:12px">✅</div>
+      <h3 style="color:var(--teal-600)">${file.name}</h3>
+      <p style="color:var(--gray-600)">File ready · ${(file.size/1024/1024).toFixed(2)}MB</p>
+      <button class="btn-upload" style="margin-top:10px">Submit for review</button>
+    `;
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
+async function logOut(){await sb2.auth.signOut();window.location.href='index.html';}
+async function loadProfile(){
+  const {data:{user}} = await sb2.auth.getUser();
+  if(!user){window.location.href='workshido-login.html';return;}
+  const name = user.user_metadata?.full_name || user.email;
+  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  const el = document.querySelector('.avatar-big');
+  const nameEl = document.querySelector('.profile-name');
+  const emailEl = document.querySelector('.profile-email');
+  const navAv = document.querySelector('.nav-avatar');
+  if(el) el.textContent = initials;
+  if(nameEl) nameEl.textContent = name;
+  if(emailEl) emailEl.textContent = user.email;
+  if(navAv) navAv.textContent = initials;
+}
+document.addEventListener('DOMContentLoaded', loadProfile);
+</script>
+</body>
+</html>

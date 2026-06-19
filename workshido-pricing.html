@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Plans — Workshido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-900: #042C53; --blue-800: #0C447C; --blue-600: #185FA5;
+    --blue-400: #378ADD; --blue-200: #85B7EB; --blue-100: #B5D4F4;
+    --blue-50: #E6F1FB; --teal-600: #0F6E56; --teal-400: #1D9E75;
+    --teal-50: #E1F5EE; --amber-600: #854F0B; --amber-400: #BA7517;
+    --amber-50: #FAEEDA; --green-600: #3B6D11; --green-50: #EAF3DE;
+    --gray-900: #2C2C2A; --gray-600: #5F5E5A; --gray-300: #B4B2A9;
+    --gray-100: #D3D1C7; --gray-50: #F1EFE8; --white: #ffffff;
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px;
+    --font-display: 'Sora', sans-serif; --font-body: 'Inter', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); -webkit-font-smoothing: antialiased; }
+
+  nav { background: var(--blue-900); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--blue-200); }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { font-size: 13px; color: var(--blue-100); text-decoration: none; font-weight: 500; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-actions { display: flex; gap: 10px; }
+  .btn-ghost { font-size: 13px; font-weight: 500; color: var(--blue-100); background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-sm); padding: 7px 16px; cursor: pointer; text-decoration: none; }
+  .btn-white { font-size: 13px; font-weight: 600; color: var(--blue-900); background: var(--white); border: none; border-radius: var(--radius-sm); padding: 7px 18px; cursor: pointer; text-decoration: none; font-family: var(--font-body); }
+
+  /* HERO */
+  .pricing-hero { background: linear-gradient(160deg, var(--blue-900) 0%, var(--blue-800) 100%); padding: 64px 32px 72px; text-align: center; }
+  .pricing-hero h1 { font-family: var(--font-display); font-size: 36px; font-weight: 700; color: var(--white); letter-spacing: -0.5px; margin-bottom: 12px; }
+  .pricing-hero h1 em { font-style: normal; color: var(--blue-200); }
+  .pricing-hero p { font-size: 16px; color: var(--blue-100); margin-bottom: 32px; }
+
+  /* BILLING TOGGLE */
+  .billing-toggle { display: inline-flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.1); border-radius: 40px; padding: 6px 8px; }
+  .toggle-label { font-size: 13px; font-weight: 500; color: var(--blue-100); padding: 6px 16px; border-radius: 30px; cursor: pointer; transition: all 0.2s; }
+  .toggle-label.active { background: var(--white); color: var(--blue-900); }
+  .save-badge { background: var(--teal-400); color: var(--white); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-left: 4px; }
+
+  /* PLANS */
+  .plans-section { max-width: 1100px; margin: -40px auto 0; padding: 0 32px 80px; }
+  .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  .plan-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-xl); padding: 32px 28px; position: relative; transition: box-shadow 0.2s; }
+  .plan-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+  .plan-card.featured { border: 2px solid var(--blue-400); box-shadow: 0 8px 32px rgba(24,95,165,0.15); }
+
+  .featured-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--blue-600); color: var(--white); font-size: 11px; font-weight: 700; padding: 4px 16px; border-radius: 20px; white-space: nowrap; letter-spacing: 0.3px; }
+
+  .plan-icon { font-size: 28px; margin-bottom: 14px; }
+  .plan-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .plan-desc { font-size: 13px; color: var(--gray-600); margin-bottom: 24px; line-height: 1.5; }
+
+  .plan-price { margin-bottom: 6px; }
+  .price-amount { font-family: var(--font-display); font-size: 40px; font-weight: 700; color: var(--gray-900); letter-spacing: -1px; }
+  .price-amount.free-text { font-size: 36px; color: var(--teal-600); }
+  .price-period { font-size: 13px; color: var(--gray-300); margin-left: 4px; }
+  .price-annual { font-size: 12px; color: var(--gray-300); margin-bottom: 24px; }
+  .price-annual strong { color: var(--teal-400); }
+
+  .plan-divider { border: none; border-top: 1px solid var(--gray-100); margin: 20px 0; }
+
+  .features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .feature { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--gray-600); }
+  .feature-check { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; font-size: 10px; }
+  .feature-check.yes { background: var(--teal-50); color: var(--teal-600); }
+  .feature-check.no { background: var(--gray-50); color: var(--gray-300); }
+  .feature strong { color: var(--gray-900); font-weight: 600; }
+
+  .btn-plan { width: 100%; border-radius: var(--radius-md); padding: 13px; font-family: var(--font-display); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; border: none; }
+  .btn-plan.outline { background: transparent; border: 1.5px solid var(--gray-100); color: var(--gray-900); }
+  .btn-plan.outline:hover { border-color: var(--blue-200); color: var(--blue-600); }
+  .btn-plan.primary { background: var(--blue-600); color: var(--white); }
+  .btn-plan.primary:hover { background: var(--blue-800); }
+  .btn-plan.dark { background: var(--blue-900); color: var(--white); }
+  .btn-plan.dark:hover { background: var(--blue-800); }
+
+  /* FAQ */
+  .faq-section { max-width: 720px; margin: 0 auto; padding: 0 32px 80px; }
+  .faq-title { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--gray-900); text-align: center; margin-bottom: 32px; }
+  .faq-item { border-bottom: 1px solid var(--gray-100); }
+  .faq-question { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; font-size: 14px; font-weight: 600; color: var(--gray-900); cursor: pointer; gap: 16px; }
+  .faq-chevron { flex-shrink: 0; transition: transform 0.2s; color: var(--gray-300); }
+  .faq-chevron.open { transform: rotate(180deg); }
+  .faq-answer { font-size: 14px; color: var(--gray-600); line-height: 1.7; padding-bottom: 16px; display: none; }
+  .faq-answer.open { display: block; }
+
+  /* GUARANTEE */
+  .guarantee { background: var(--teal-50); border: 1px solid var(--teal-100, #9FE1CB); border-radius: var(--radius-lg); padding: 28px 32px; max-width: 600px; margin: 0 auto 80px; text-align: center; }
+  .guarantee-icon { font-size: 36px; margin-bottom: 10px; }
+  .guarantee h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--teal-600); margin-bottom: 8px; }
+  .guarantee p { font-size: 13px; color: var(--teal-600); line-height: 1.6; }
+
+  @media (max-width: 768px) {
+    .plans-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">work<span>shido</span></a>
+  <ul class="nav-links">
+    <li><a href="workshido-index.html">Browse</a></li>
+    <li><a href="#">Grammar</a></li>
+    <li><a href="#">Vocabulary</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions">
+    <a href="workshido-login.html" class="btn-ghost">Log in</a>
+    <a href="workshido-signup.html" class="btn-white">Sign up free</a>
+  </div>
+</nav>
+
+<div class="pricing-hero">
+  <h1>Simple, <em>honest</em> pricing</h1>
+  <p>Start free. Upgrade when you're ready. Cancel anytime.</p>
+  <div class="billing-toggle">
+    <span class="toggle-label active" id="monthlyBtn" onclick="setBilling('monthly')">Monthly</span>
+    <span class="toggle-label" id="yearlyBtn" onclick="setBilling('yearly')">Yearly <span class="save-badge">SAVE 33%</span></span>
+  </div>
+</div>
+
+<div class="plans-section">
+  <div class="plans-grid">
+
+    <!-- FREE -->
+    <div class="plan-card">
+      <div class="plan-icon">📋</div>
+      <div class="plan-name">Free</div>
+      <div class="plan-desc">Perfect for getting started. Download and teach right away.</div>
+      <div class="plan-price"><span class="price-amount free-text">$0</span></div>
+      <div class="price-annual">Forever free · No credit card</div>
+      <hr class="plan-divider">
+      <div class="features">
+        <div class="feature"><span class="feature-check yes">✓</span><div>Up to <strong>5 downloads/day</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>Access to <strong>A1–B1 levels</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>PDF format</strong> only</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>Community <strong>reviews & ratings</strong></div></div>
+        <div class="feature"><span class="feature-check no">✗</span><div style="color:var(--gray-300)">Answer keys</div></div>
+        <div class="feature"><span class="feature-check no">✗</span><div style="color:var(--gray-300)">Editable DOCX files</div></div>
+        <div class="feature"><span class="feature-check no">✗</span><div style="color:var(--gray-300)">B2 & C1 levels</div></div>
+      </div>
+      <button class="btn-plan outline" onclick="window.location.href='workshido-signup.html'">Get started free</button>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="plan-card featured">
+      <div class="featured-badge">⭐ Most popular</div>
+      <div class="plan-icon">🚀</div>
+      <div class="plan-name">Premium</div>
+      <div class="plan-desc">For teachers who want unlimited access and editable materials.</div>
+      <div class="plan-price">
+        <span class="price-amount" id="premiumPrice">$4.99</span>
+        <span class="price-period">/month</span>
+      </div>
+      <div class="price-annual" id="premiumNote">Billed monthly · Cancel anytime</div>
+      <hr class="plan-divider">
+      <div class="features">
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>Unlimited</strong> downloads</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>All levels</strong> A1 to C1</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>PDF <strong>+ editable DOCX</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>Answer keys</strong> included</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>No ads</strong> experience</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>Save & organize</strong> collections</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>Priority <strong>email support</strong></div></div>
+      </div>
+      <button class="btn-plan primary" onclick="window.location.href='workshido-signup.html'">Start 7-day free trial</button>
+    </div>
+
+    <!-- SCHOOL -->
+    <div class="plan-card">
+      <div class="plan-icon">🏫</div>
+      <div class="plan-name">School</div>
+      <div class="plan-desc">For academies, language schools and departments with multiple teachers.</div>
+      <div class="plan-price">
+        <span class="price-amount" id="schoolPrice">$19.99</span>
+        <span class="price-period">/month</span>
+      </div>
+      <div class="price-annual" id="schoolNote">Up to 10 teachers · Billed monthly</div>
+      <hr class="plan-divider">
+      <div class="features">
+        <div class="feature"><span class="feature-check yes">✓</span><div>Everything in <strong>Premium</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>Up to <strong>10 teacher accounts</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>Shared collections</strong> across team</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>Usage reports</strong> for admin</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>Custom branding</strong> on worksheets</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>Dedicated <strong>account manager</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>Invoice billing</strong> available</div></div>
+      </div>
+      <button class="btn-plan dark" onclick="window.location.href='workshido-signup.html'">Contact us</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- GUARANTEE -->
+<div class="guarantee" style="padding: 0 32px; margin-bottom: 60px;">
+  <div class="guarantee" style="margin: 0 auto;">
+    <div class="guarantee-icon">🛡️</div>
+    <h3>7-day money-back guarantee</h3>
+    <p>Try Premium risk-free. If you're not completely happy in the first 7 days, we'll refund you — no questions asked.</p>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-title">Frequently asked questions</div>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">
+      Can I cancel my subscription at any time?
+      <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="faq-answer">Yes, absolutely. You can cancel anytime from your account settings. You'll keep access until the end of your billing period, and we won't charge you again.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">
+      What's the difference between PDF and DOCX?
+      <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="faq-answer">PDF files are print-ready and look exactly as designed — perfect for printing and distributing. DOCX files (Premium only) are editable in Microsoft Word or Google Docs, so you can customize vocabulary, add your school name, or adapt exercises for your class.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">
+      Do free worksheets require an account?
+      <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="faq-answer">No — you can download up to 5 free worksheets per day without creating an account. Creating a free account removes that limit and lets you save favorites and track your downloads.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">
+      Can I use Workshido worksheets in my classroom commercially?
+      <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="faq-answer">Yes. All worksheets on Workshido are licensed for classroom use, including paid language schools and academies. You may not resell or redistribute them outside of your own teaching context.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question" onclick="toggleFaq(this)">
+      How does the 7-day free trial work?
+      <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="faq-answer">Sign up for Premium and get full access for 7 days at no charge. You'll only be billed after the trial ends. Cancel before day 7 and you won't pay anything.</div>
+  </div>
+</div>
+
+<script>
+  function setBilling(type) {
+    const monthlyBtn = document.getElementById('monthlyBtn');
+    const yearlyBtn = document.getElementById('yearlyBtn');
+    const premiumPrice = document.getElementById('premiumPrice');
+    const premiumNote = document.getElementById('premiumNote');
+    const schoolPrice = document.getElementById('schoolPrice');
+    const schoolNote = document.getElementById('schoolNote');
+
+    if (type === 'monthly') {
+      monthlyBtn.classList.add('active');
+      yearlyBtn.classList.remove('active');
+      premiumPrice.textContent = '$4.99';
+      premiumNote.innerHTML = 'Billed monthly · Cancel anytime';
+      schoolPrice.textContent = '$19.99';
+      schoolNote.innerHTML = 'Up to 10 teachers · Billed monthly';
+    } else {
+      yearlyBtn.classList.add('active');
+      monthlyBtn.classList.remove('active');
+      premiumPrice.textContent = '$3.33';
+      premiumNote.innerHTML = '<strong style="color:var(--teal-400)">Save $20/year</strong> · Billed as $39.99/yr';
+      schoolPrice.textContent = '$13.33';
+      schoolNote.innerHTML = '<strong style="color:var(--teal-400)">Save $80/year</strong> · Billed as $159.99/yr';
+    }
+  }
+
+  function toggleFaq(el) {
+    const answer = el.nextElementSibling;
+    const chevron = el.querySelector('.faq-chevron');
+    answer.classList.toggle('open');
+    chevron.classList.toggle('open');
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
+async function checkAuth2(){
+  const {data:{user}} = await sb2.auth.getUser();
+  const nav = document.getElementById('navActions');
+  if(user && nav){
+    const name = user.user_metadata?.full_name || user.email;
+    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    nav.innerHTML = '<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;">'+initials+'</div>'+name.split(' ')[0]+'</a><button onclick="logOut2()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>';
+  }
+}
+async function logOut2(){await sb2.auth.signOut();window.location.reload();}
+document.addEventListener('DOMContentLoaded',checkAuth2);
+</script>
+</body>
+</html>

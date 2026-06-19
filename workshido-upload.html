@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Worksheet — Workshido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-900: #042C53;
+    --blue-800: #0C447C;
+    --blue-600: #185FA5;
+    --blue-400: #378ADD;
+    --blue-200: #85B7EB;
+    --blue-100: #B5D4F4;
+    --blue-50:  #E6F1FB;
+    --teal-600: #0F6E56;
+    --teal-400: #1D9E75;
+    --teal-50:  #E1F5EE;
+    --amber-50: #FAEEDA;
+    --amber-600: #854F0B;
+    --green-50: #EAF3DE;
+    --green-600: #3B6D11;
+    --coral-50: #FAECE7;
+    --coral-600: #993C1D;
+    --gray-900: #2C2C2A;
+    --gray-600: #5F5E5A;
+    --gray-300: #B4B2A9;
+    --gray-100: #D3D1C7;
+    --gray-50:  #F1EFE8;
+    --white: #ffffff;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --font-display: 'Sora', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--gray-50);
+    color: var(--gray-900);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--blue-900);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-logo {
+    font-family: var(--font-display); font-size: 20px; font-weight: 700;
+    color: var(--white); text-decoration: none; letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--blue-200); }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { font-size: 13px; color: var(--blue-100); text-decoration: none; font-weight: 500; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-ghost {
+    font-family: var(--font-body); font-size: 13px; font-weight: 500;
+    color: var(--blue-100); background: transparent;
+    border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-sm);
+    padding: 7px 16px; cursor: pointer; transition: all 0.15s; text-decoration: none;
+  }
+  .btn-ghost:hover { border-color: var(--blue-200); color: var(--white); }
+
+  /* PAGE HEADER */
+  .page-header {
+    background: linear-gradient(160deg, var(--blue-900) 0%, var(--blue-800) 100%);
+    padding: 48px 32px 40px;
+    text-align: center;
+  }
+  .page-header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 700;
+    color: var(--white); letter-spacing: -0.5px; margin-bottom: 8px;
+  }
+  .page-header p { font-size: 15px; color: var(--blue-100); max-width: 480px; margin: 0 auto; }
+
+  /* AUTH GATE */
+  #authGate {
+    max-width: 480px; margin: 80px auto; text-align: center;
+    background: var(--white); border-radius: var(--radius-lg);
+    padding: 48px 40px; box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+  #authGate .gate-icon { font-size: 48px; margin-bottom: 16px; }
+  #authGate h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--gray-900); }
+  #authGate p { font-size: 14px; color: var(--gray-600); margin-bottom: 28px; line-height: 1.6; }
+  #authGate .gate-btns { display: flex; gap: 12px; justify-content: center; }
+  .btn-primary-lg {
+    background: var(--blue-600); color: var(--white); border: none;
+    border-radius: var(--radius-sm); padding: 11px 24px;
+    font-family: var(--font-body); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s; text-decoration: none; display: inline-block;
+  }
+  .btn-primary-lg:hover { background: var(--blue-800); }
+  .btn-outline-lg {
+    background: transparent; color: var(--blue-600);
+    border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm);
+    padding: 11px 24px; font-family: var(--font-body); font-size: 14px;
+    font-weight: 600; cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-block;
+  }
+  .btn-outline-lg:hover { background: var(--blue-50); }
+
+  /* UPLOAD LAYOUT */
+  .upload-wrap {
+    max-width: 860px; margin: 40px auto 60px;
+    display: grid; grid-template-columns: 1fr 320px; gap: 24px;
+    padding: 0 24px;
+  }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--white); border-radius: var(--radius-lg);
+    padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--gray-100);
+  }
+  .form-card h2 {
+    font-family: var(--font-display); font-size: 18px; font-weight: 700;
+    color: var(--gray-900); margin-bottom: 24px;
+    padding-bottom: 16px; border-bottom: 1px solid var(--gray-100);
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--gray-900); margin-bottom: 6px;
+  }
+  .form-group label span { color: var(--blue-400); margin-left: 2px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: 14px; color: var(--gray-900);
+    background: var(--white); transition: border-color 0.15s; outline: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--blue-400);
+  }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+  .form-group select { cursor: pointer; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* TOGGLE FREE/PREMIUM */
+  .toggle-group { display: flex; gap: 10px; }
+  .toggle-btn {
+    flex: 1; padding: 9px 12px; border-radius: var(--radius-sm);
+    font-family: var(--font-body); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; border: 1.5px solid var(--gray-100);
+    background: var(--white); color: var(--gray-600);
+  }
+  .toggle-btn.active-free { background: var(--teal-50); border-color: var(--teal-400); color: var(--teal-600); }
+  .toggle-btn.active-premium { background: var(--amber-50); border-color: var(--amber-600); color: var(--amber-600); }
+
+  /* DROP ZONE */
+  .drop-zone {
+    border: 2px dashed var(--gray-300); border-radius: var(--radius-md);
+    padding: 36px 24px; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: var(--gray-50); position: relative;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--blue-400); background: var(--blue-50);
+  }
+  .drop-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .drop-icon { font-size: 36px; margin-bottom: 10px; }
+  .drop-zone h3 { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; }
+  .drop-zone p { font-size: 12px; color: var(--gray-600); }
+  .drop-zone .file-types {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px;
+  }
+  .file-type-badge {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: 4px; padding: 3px 8px; font-size: 11px;
+    font-weight: 600; color: var(--gray-600);
+  }
+
+  /* FILE PREVIEW */
+  .file-preview {
+    display: none; align-items: center; gap: 12px;
+    background: var(--blue-50); border: 1.5px solid var(--blue-200);
+    border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px;
+  }
+  .file-preview.show { display: flex; }
+  .file-preview-icon { font-size: 24px; }
+  .file-preview-info { flex: 1; }
+  .file-preview-name { font-size: 13px; font-weight: 600; color: var(--gray-900); }
+  .file-preview-size { font-size: 11px; color: var(--gray-600); margin-top: 2px; }
+  .file-remove {
+    background: none; border: none; cursor: pointer;
+    color: var(--gray-300); font-size: 18px; padding: 0 4px;
+    transition: color 0.15s; line-height: 1;
+  }
+  .file-remove:hover { color: #E24B4A; }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%; padding: 14px; background: var(--blue-600); color: var(--white);
+    border: none; border-radius: var(--radius-sm); font-family: var(--font-body);
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .submit-btn:hover:not(:disabled) { background: var(--blue-800); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* PROGRESS BAR */
+  .progress-wrap { display: none; margin-top: 16px; }
+  .progress-wrap.show { display: block; }
+  .progress-label { font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+  .progress-bar { height: 6px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; background: var(--blue-400); border-radius: 99px;
+    width: 0%; transition: width 0.3s;
+  }
+
+  /* SUCCESS */
+  .success-msg {
+    display: none; background: var(--teal-50); border: 1.5px solid var(--teal-400);
+    border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 16px;
+    font-size: 14px; color: var(--teal-600); font-weight: 500;
+  }
+  .success-msg.show { display: flex; gap: 10px; align-items: center; }
+
+  /* ERROR */
+  .error-msg {
+    display: none; background: var(--coral-50); border: 1.5px solid #F09595;
+    border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 16px;
+    font-size: 14px; color: var(--coral-600);
+  }
+  .error-msg.show { display: flex; gap: 10px; align-items: center; }
+
+  /* SIDEBAR */
+  .sidebar-tips { display: flex; flex-direction: column; gap: 16px; }
+
+  .tip-card {
+    background: var(--white); border-radius: var(--radius-lg);
+    padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--gray-100);
+  }
+  .tip-card h3 {
+    font-family: var(--font-display); font-size: 14px; font-weight: 700;
+    color: var(--gray-900); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tip-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .tip-card ul li {
+    font-size: 13px; color: var(--gray-600); display: flex;
+    align-items: flex-start; gap: 8px; line-height: 1.5;
+  }
+  .tip-card ul li::before { content: '✓'; color: var(--teal-400); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  .level-guide { display: flex; flex-direction: column; gap: 6px; }
+  .level-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--gray-600);
+  }
+  .level-badge {
+    font-size: 11px; font-weight: 700; padding: 2px 8px;
+    border-radius: 4px; min-width: 28px; text-align: center; flex-shrink: 0;
+  }
+  .level-badge.a1 { background: var(--teal-50); color: var(--teal-600); }
+  .level-badge.a2 { background: var(--blue-50); color: var(--blue-600); }
+  .level-badge.b1 { background: var(--amber-50); color: var(--amber-600); }
+  .level-badge.b2 { background: #EEEDFE; color: #534AB7; }
+  .level-badge.c1 { background: var(--coral-50); color: var(--coral-600); }
+
+  /* UPLOADS COUNTER */
+  .uploads-left {
+    background: var(--blue-50); border: 1px solid var(--blue-100);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; color: var(--blue-600); display: flex;
+    align-items: center; gap: 8px;
+  }
+
+  @media (max-width: 720px) {
+    .upload-wrap { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .sidebar-tips { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
+  <ul class="nav-links">
+    <li><a href="workshido-index.html">Browse</a></li>
+    <li><a href="workshido-upload.html" style="color:var(--white);">Upload</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <div class="nav-actions" id="navActions">
+    <a href="workshido-login.html" class="btn-ghost">Log in</a>
+    <a href="workshido-signup.html" class="btn-primary" style="font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--blue-900);background:var(--white);border:none;border-radius:var(--radius-sm);padding:7px 18px;cursor:pointer;text-decoration:none;">Sign up free</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>Upload a Worksheet</h1>
+  <p>Share your resources with thousands of English teachers worldwide. Fast, free, and easy.</p>
+</div>
+
+<!-- AUTH GATE (shown if not logged in) -->
+<div id="authGate" style="display:none;">
+  <div class="gate-icon">🔒</div>
+  <h2>Sign in to upload</h2>
+  <p>You need a free Workshido account to share worksheets with the community. It only takes 30 seconds.</p>
+  <div class="gate-btns">
+    <a href="workshido-signup.html" class="btn-primary-lg">Create free account</a>
+    <a href="workshido-login.html" class="btn-outline-lg">Log in</a>
+  </div>
+</div>
+
+<!-- UPLOAD FORM (shown if logged in) -->
+<div class="upload-wrap" id="uploadWrap" style="display:none;">
+
+  <!-- FORM -->
+  <div class="form-card">
+    <h2>📄 Worksheet details</h2>
+
+    <div class="form-group">
+      <label>Title <span>*</span></label>
+      <input type="text" id="wsTitle" placeholder="e.g. Verb To Be — Complete Guide" maxlength="80">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Level <span>*</span></label>
+        <select id="wsLevel">
+          <option value="">Select level...</option>
+          <option value="A1">A1 — Beginner</option>
+          <option value="A2">A2 — Elementary</option>
+          <option value="B1">B1 — Intermediate</option>
+          <option value="B2">B2 — Upper Intermediate</option>
+          <option value="C1">C1 — Advanced</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Category <span>*</span></label>
+        <select id="wsCategory">
+          <option value="">Select category...</option>
+          <option value="Grammar">Grammar</option>
+          <option value="Vocabulary">Vocabulary</option>
+          <option value="Reading">Reading</option>
+          <option value="Writing">Writing</option>
+          <option value="Speaking">Speaking</option>
+          <option value="Listening">Listening</option>
+          <option value="Mixed">Mixed skills</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Tags <span style="color:var(--gray-300);font-weight:400;">(optional)</span></label>
+      <input type="text" id="wsTags" placeholder="e.g. present simple, verbs, beginners (separate with commas)">
+    </div>
+
+    <div class="form-group">
+      <label>Description <span style="color:var(--gray-300);font-weight:400;">(optional)</span></label>
+      <textarea id="wsDesc" placeholder="Briefly describe what students will practice with this worksheet..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Access type <span>*</span></label>
+      <div class="toggle-group">
+        <button class="toggle-btn active-free" id="btnFree" onclick="setAccess(true)">✓ Free</button>
+        <button class="toggle-btn" id="btnPremium" onclick="setAccess(false)">⭐ Premium</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:0;">
+      <label>File <span>*</span></label>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="wsFile" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.pptx" onchange="handleFileSelect(this)">
+        <div class="drop-icon">📂</div>
+        <h3>Drop your file here or click to browse</h3>
+        <p>Max file size: 10 MB</p>
+        <div class="file-types">
+          <span class="file-type-badge">PDF</span>
+          <span class="file-type-badge">DOCX</span>
+          <span class="file-type-badge">DOC</span>
+          <span class="file-type-badge">PNG</span>
+          <span class="file-type-badge">JPG</span>
+          <span class="file-type-badge">PPTX</span>
+        </div>
+      </div>
+      <div class="file-preview" id="filePreview">
+        <div class="file-preview-icon" id="fileIcon">📄</div>
+        <div class="file-preview-info">
+          <div class="file-preview-name" id="fileName">—</div>
+          <div class="file-preview-size" id="fileSize">—</div>
+        </div>
+        <button class="file-remove" onclick="removeFile()" title="Remove file">✕</button>
+      </div>
+    </div>
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-label" id="progressLabel">Uploading...</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="success-msg" id="successMsg">
+      <span>✅</span>
+      <span>Worksheet uploaded successfully! <a href="workshido-index.html" style="color:var(--teal-600);font-weight:600;">View in catalog →</a></span>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      <span>⚠️</span>
+      <span id="errorText">Something went wrong. Please try again.</span>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="uploadWorksheet()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Upload worksheet
+    </button>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar-tips">
+
+    <div class="tip-card">
+      <h3>📋 Tips for a great worksheet</h3>
+      <ul>
+        <li>Use a clear, descriptive title</li>
+        <li>Choose the right level for your content</li>
+        <li>Include an answer key when possible</li>
+        <li>Keep the layout clean and print-ready</li>
+        <li>Add tags to help teachers find it</li>
+      </ul>
+    </div>
+
+    <div class="tip-card">
+      <h3>🎯 Level guide</h3>
+      <div class="level-guide">
+        <div class="level-row"><span class="level-badge a1">A1</span> Basic words, simple sentences</div>
+        <div class="level-row"><span class="level-badge a2">A2</span> Everyday topics, simple grammar</div>
+        <div class="level-row"><span class="level-badge b1">B1</span> Familiar topics, moderate grammar</div>
+        <div class="level-row"><span class="level-badge b2">B2</span> Complex texts, advanced grammar</div>
+        <div class="level-row"><span class="level-badge c1">C1</span> Academic language, nuanced writing</div>
+      </div>
+    </div>
+
+    <div class="tip-card">
+      <h3>📁 Accepted formats</h3>
+      <ul>
+        <li>PDF — best for print-ready files</li>
+        <li>DOCX / DOC — editable Word documents</li>
+        <li>PPTX — slide-based activities</li>
+        <li>PNG / JPG — image worksheets</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="workshido-auth.js"></script>
+<script>
+const sbUp = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co', 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
+
+let currentUser = null;
+let selectedFile = null;
+let isFree = true;
+
+// ── Auth check ──────────────────────────────────────────
+async function initPage() {
+  const { data: { user } } = await sbUp.auth.getUser();
+  currentUser = user;
+
+  if (!user) {
+    document.getElementById('authGate').style.display = 'block';
+    document.getElementById('uploadWrap').style.display = 'none';
+  } else {
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('uploadWrap').style.display = 'grid';
+    updateNav(user);
+  }
+}
+
+function updateNav(user) {
+  const name = user.user_metadata?.full_name || user.email;
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  document.getElementById('navActions').innerHTML = `
+    <a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;">
+      <div style="width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;">${initials}</div>
+      ${name.split(' ')[0]}
+    </a>
+    <button onclick="logOutUp()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>
+  `;
+}
+
+async function logOutUp() {
+  await sbUp.auth.signOut();
+  window.location.href = 'workshido-index.html';
+}
+
+// ── Access toggle ────────────────────────────────────────
+function setAccess(free) {
+  isFree = free;
+  document.getElementById('btnFree').className = free ? 'toggle-btn active-free' : 'toggle-btn';
+  document.getElementById('btnPremium').className = !free ? 'toggle-btn active-premium' : 'toggle-btn';
+}
+
+// ── File handling ────────────────────────────────────────
+const ICONS = { pdf: '📕', doc: '📘', docx: '📘', png: '🖼️', jpg: '🖼️', jpeg: '🖼️', pptx: '📊' };
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  if (file.size > MAX_SIZE) {
+    showError('File is too large. Maximum size is 10 MB.');
+    input.value = '';
+    return;
+  }
+
+  selectedFile = file;
+  const ext = file.name.split('.').pop().toLowerCase();
+  document.getElementById('fileIcon').textContent = ICONS[ext] || '📄';
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = formatSize(file.size);
+  document.getElementById('filePreview').classList.add('show');
+  hideMessages();
+}
+
+function removeFile() {
+  selectedFile = null;
+  document.getElementById('wsFile').value = '';
+  document.getElementById('filePreview').classList.remove('show');
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+// ── Drag and drop ────────────────────────────────────────
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const input = document.getElementById('wsFile');
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+    handleFileSelect(input);
+  }
+});
+
+// ── Upload ───────────────────────────────────────────────
+const THUMBNAIL_SERVICE = 'https://workshido-thumbnail-service.onrender.com';
+
+async function generateThumbnailViaService(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${THUMBNAIL_SERVICE}/generate-thumbnail`, {
+    method: 'POST',
+    body: formData
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Thumbnail service error ${res.status}: ${text}`);
+  }
+
+  const data = await res.json();
+  if (!data.thumbnailUrl) throw new Error('No thumbnailUrl in service response');
+  return data.thumbnailUrl;
+}
+
+async function uploadWorksheet() {
+  hideMessages();
+
+  const title = document.getElementById('wsTitle').value.trim();
+  const level = document.getElementById('wsLevel').value;
+  const category = document.getElementById('wsCategory').value;
+  const tags = document.getElementById('wsTags').value.trim();
+  const description = document.getElementById('wsDesc').value.trim();
+
+  if (!title) return showError('Please add a title for your worksheet.');
+  if (!level) return showError('Please select a level.');
+  if (!category) return showError('Please select a category.');
+  if (!selectedFile) return showError('Please select a file to upload.');
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span style="opacity:0.7">Uploading...</span>';
+
+  showProgress('Uploading file...');
+
+  try {
+    const ext = selectedFile.name.split('.').pop().toLowerCase();
+
+    // 1. Upload file to Supabase Storage
+    const filePath = `${level.toLowerCase()}/${Date.now()}-${selectedFile.name.replace(/\s+/g, '-')}`;
+    const { data: storageData, error: storageError } = await sbUp.storage
+      .from('worksheets')
+      .upload(filePath, selectedFile, { cacheControl: '3600', upsert: false });
+    if (storageError) throw new Error('Storage error: ' + storageError.message);
+
+    const { data: urlData } = sbUp.storage.from('worksheets').getPublicUrl(filePath);
+    const fileUrl = urlData.publicUrl;
+
+    setProgress(40, 'Generating thumbnail...');
+
+    // 2. Generate thumbnail via Render microservice
+    let thumbnailUrl = null;
+    try {
+      setProgress(50, 'Converting file to thumbnail...');
+      thumbnailUrl = await generateThumbnailViaService(selectedFile);
+      console.log('✅ Thumbnail listo:', thumbnailUrl);
+    } catch(e) {
+      console.warn('⚠️ Thumbnail service failed:', e.message);
+    }
+
+    setProgress(80, 'Saving details...');
+
+    // 3. Insert record in worksheets table
+    const { error: dbError } = await sbUp.from('worksheets').insert({
+      title,
+      level,
+      category,
+      tags: tags || null,
+      description: description || null,
+      file_url: fileUrl,
+      thumbnail_url: thumbnailUrl,
+      file_type: ext.toUpperCase(),
+      is_free: isFree,
+      downloads: 0,
+      uploaded_by: currentUser.id,
+      uploader_name: currentUser.user_metadata?.full_name || currentUser.email,
+    });
+
+    if (dbError) throw new Error('Database error: ' + dbError.message);
+
+    setProgress(100, 'Done!');
+    setTimeout(() => {
+      hideProgress();
+      showSuccess();
+      resetForm();
+    }, 600);
+
+  } catch (err) {
+    console.error(err);
+    showError(err.message || 'Upload failed. Please try again.');
+    hideProgress();
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload worksheet`;
+  }
+}
+
+function resetForm() {
+  document.getElementById('wsTitle').value = '';
+  document.getElementById('wsLevel').value = '';
+  document.getElementById('wsCategory').value = '';
+  document.getElementById('wsTags').value = '';
+  document.getElementById('wsDesc').value = '';
+  removeFile();
+  setAccess(true);
+}
+
+// ── UI helpers ───────────────────────────────────────────
+function showProgress(label) {
+  document.getElementById('progressWrap').classList.add('show');
+  document.getElementById('progressLabel').textContent = label;
+  document.getElementById('progressFill').style.width = '20%';
+}
+function setProgress(pct, label) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  if (label) document.getElementById('progressLabel').textContent = label;
+}
+function hideProgress() { document.getElementById('progressWrap').classList.remove('show'); }
+function showSuccess() { document.getElementById('successMsg').classList.add('show'); }
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  document.getElementById('errorText').textContent = msg;
+  el.classList.add('show');
+}
+function hideMessages() {
+  document.getElementById('successMsg').classList.remove('show');
+  document.getElementById('errorMsg').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

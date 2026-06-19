@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log in — Workshido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-900: #042C53; --blue-800: #0C447C; --blue-600: #185FA5;
+    --blue-400: #378ADD; --blue-200: #85B7EB; --blue-100: #B5D4F4;
+    --blue-50: #E6F1FB; --teal-600: #0F6E56; --teal-400: #1D9E75;
+    --teal-50: #E1F5EE; --amber-400: #BA7517; --amber-50: #FAEEDA;
+    --green-50: #EAF3DE; --green-600: #3B6D11;
+    --gray-900: #2C2C2A; --gray-600: #5F5E5A; --gray-300: #B4B2A9;
+    --gray-100: #D3D1C7; --gray-50: #F1EFE8; --white: #ffffff;
+    --red-600: #C0392B; --red-50: #FDEDEC;
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px;
+    --font-display: 'Sora', sans-serif; --font-body: 'Inter', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { background: var(--blue-900); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; }
+  .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--blue-200); }
+  .nav-signup { font-size: 13px; color: var(--blue-100); text-decoration: none; }
+  .nav-signup strong { color: var(--white); }
+  .page { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 60px); }
+  .left-panel { background: linear-gradient(160deg, var(--blue-900) 0%, var(--blue-800) 100%); padding: 60px 52px; display: flex; flex-direction: column; justify-content: center; }
+  .left-panel h2 { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 14px; }
+  .left-panel h2 em { font-style: normal; color: var(--blue-200); }
+  .left-panel p { font-size: 15px; color: var(--blue-100); line-height: 1.7; margin-bottom: 40px; }
+  .ws-showcase { display: flex; flex-direction: column; gap: 10px; }
+  .ws-card-mini { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 12px 14px; }
+  .ws-thumb-mini { width: 36px; height: 46px; border-radius: 3px; padding: 5px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+  .ws-thumb-mini.teal { background: var(--teal-50); } .ws-thumb-mini.blue { background: var(--blue-50); } .ws-thumb-mini.amber { background: var(--amber-50); }
+  .wl { height: 3px; border-radius: 2px; background: rgba(0,0,0,0.1); } .wl.s { width: 35%; }
+  .wl.t { background: var(--teal-400); width: 55%; } .wl.b { background: var(--blue-400); width: 55%; } .wl.a { background: var(--amber-400); width: 55%; }
+  .wb { height: 10px; border-radius: 2px; background: rgba(0,0,0,0.07); }
+  .ws-card-mini-info { flex: 1; }
+  .ws-card-mini-title { font-size: 12px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+  .ws-card-mini-meta { font-size: 11px; color: var(--blue-100); }
+  .ws-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px; background: var(--teal-50); color: var(--teal-600); }
+  .right-panel { background: var(--white); padding: 60px 52px; display: flex; flex-direction: column; justify-content: center; }
+  .form-header { margin-bottom: 28px; }
+  .form-header h1 { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .form-header p { font-size: 14px; color: var(--gray-600); }
+  .btn-google { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-md); background: var(--white); font-family: var(--font-body); font-size: 14px; font-weight: 500; color: var(--gray-900); cursor: pointer; transition: all 0.15s; margin-bottom: 20px; }
+  .btn-google:hover { border-color: var(--gray-300); background: var(--gray-50); }
+  .divider-text { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; font-size: 12px; color: var(--gray-300); }
+  .divider-text::before, .divider-text::after { content: ''; flex: 1; height: 1px; background: var(--gray-100); }
+  .login-form { display: flex; flex-direction: column; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-row { display: flex; align-items: center; justify-content: space-between; }
+  .field label { font-size: 13px; font-weight: 500; color: var(--gray-900); }
+  .field a { font-size: 12px; color: var(--blue-600); text-decoration: none; }
+  .field input { padding: 11px 14px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; color: var(--gray-900); outline: none; transition: border-color 0.15s, box-shadow 0.15s; width: 100%; }
+  .field input::placeholder { color: var(--gray-300); }
+  .field input:focus { border-color: var(--blue-400); box-shadow: 0 0 0 3px var(--blue-50); }
+  .password-wrap { position: relative; }
+  .password-wrap input { padding-right: 44px; }
+  .toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--gray-300); }
+  .toggle-pw svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .error-banner { background: var(--red-50); border: 1px solid #F5C6C2; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--red-600); display: none; }
+  .remember { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--gray-600); }
+  .remember input { accent-color: var(--blue-600); }
+  .btn-login { width: 100%; background: var(--blue-600); color: var(--white); border: none; border-radius: var(--radius-md); padding: 14px; font-family: var(--font-display); font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn-login:hover { background: var(--blue-800); }
+  .btn-login:disabled { background: var(--gray-100); color: var(--gray-300); cursor: not-allowed; }
+  .signup-link { text-align: center; font-size: 13px; color: var(--gray-600); }
+  .signup-link a { color: var(--blue-600); text-decoration: none; font-weight: 500; }
+  @media (max-width: 768px) { .page { grid-template-columns: 1fr; } .left-panel { display: none; } .right-panel { padding: 40px 24px; } }
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">work<span>shido</span></a>
+  <a href="workshido-signup.html" class="nav-signup">Don't have an account? <strong>Sign up free</strong></a>
+</nav>
+<div class="page">
+  <div class="left-panel">
+    <h2>Welcome back.<br>Your worksheets<br>are <em>waiting</em>.</h2>
+    <p>Log in to access your saved worksheets, favorites, and download history.</p>
+    <div class="ws-showcase">
+      <div class="ws-card-mini">
+        <div class="ws-thumb-mini teal"><div class="wl t"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div></div>
+        <div class="ws-card-mini-info"><div class="ws-card-mini-title">Daily routine — there is / there are</div><div class="ws-card-mini-meta">A1 · Grammar · Saved</div></div>
+        <span class="ws-badge">Saved</span>
+      </div>
+      <div class="ws-card-mini">
+        <div class="ws-thumb-mini blue"><div class="wl b"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div></div>
+        <div class="ws-card-mini-info"><div class="ws-card-mini-title">Prepositions of place — in, on, under</div><div class="ws-card-mini-meta">A2 · Grammar · Downloaded</div></div>
+        <span class="ws-badge">Downloaded</span>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="form-header">
+      <h1>Log in to Workshido</h1>
+      <p>Good to see you again. Let's get teaching.</p>
+    </div>
+    <button class="btn-google" onclick="handleGoogle()">
+      <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+    <div class="divider-text">or log in with email</div>
+    <form class="login-form" id="loginForm" novalidate>
+      <div id="errorBanner" class="error-banner"></div>
+      <div class="field"><label>Email address</label><input type="email" id="email" placeholder="sarah@school.com" /></div>
+      <div class="field">
+        <div class="field-row"><label>Password</label><a href="#">Forgot password?</a></div>
+        <div class="password-wrap">
+          <input type="password" id="password" placeholder="Your password" />
+          <button type="button" class="toggle-pw" onclick="document.getElementById('password').type = document.getElementById('password').type === 'password' ? 'text' : 'password'">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <label class="remember"><input type="checkbox" checked /> Remember me</label>
+      <button type="submit" class="btn-login" id="loginBtn">Log in</button>
+      <div class="signup-link">Don't have an account? <a href="workshido-signup.html">Sign up free</a></div>
+    </form>
+  </div>
+</div>
+<script>
+const SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function handleGoogle() {
+  await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/workshido-index.html' }
+  });
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBanner');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if (!email || !password) return showError('Please enter your email and password.');
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    showError('Incorrect email or password. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Log in';
+  } else {
+    window.location.href = 'index.html';
+  }
+});
+</script>
+</body>
+</html>
