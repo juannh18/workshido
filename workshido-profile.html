@@ -7,9 +7,6 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Profile — Workshido</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -220,12 +217,11 @@
       <h2>Upload a new worksheet</h2>
       <p>Share your materials with 98,000+ teachers worldwide. Only high-quality, original content is accepted.</p>
 
-      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+      <div class="upload-zone" id="uploadZone" onclick="window.location.href='workshido-upload.html'" style="cursor:pointer;">
         <div class="upload-icon">📄</div>
-        <h3>Drop your file here or click to browse</h3>
-        <p>We'll review it before publishing — usually within 24 hours</p>
-        <button class="btn-upload" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose file</button>
-        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.png,.jpg,.jpeg" onchange="handleFile(event)" />
+        <h3>Click to upload a worksheet</h3>
+        <p>PDF, DOCX, PNG or JPG · Max 10 MB</p>
+        <a href="workshido-upload.html" class="btn-upload" onclick="event.stopPropagation()">Go to upload page</a>
         <div class="allowed-types">
           <span class="type-badge pdf">📕 PDF</span>
           <span class="type-badge docx">📘 DOCX</span>
@@ -233,7 +229,6 @@
           <span class="type-badge jpg">🖼️ JPG</span>
         </div>
       </div>
-      <div class="upload-error" id="uploadError"></div>
     </div>
 
     <!-- MY WORKSHEETS -->
@@ -310,94 +305,10 @@
   </main>
 </div>
 
-<script>
-  // SECURE FILE UPLOAD VALIDATION
-  const ALLOWED_TYPES = {
-    'application/pdf': { ext: '.pdf', maxMB: 10 },
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': { ext: '.docx', maxMB: 10 },
-    'application/msword': { ext: '.doc', maxMB: 10 },
-    'image/png': { ext: '.png', maxMB: 5 },
-    'image/jpeg': { ext: '.jpg/.jpeg', maxMB: 5 },
-  };
-
-  const ALLOWED_EXTENSIONS = ['.pdf', '.docx', '.doc', '.png', '.jpg', '.jpeg'];
-
-  function validateFile(file) {
-    // Check MIME type
-    if (!ALLOWED_TYPES[file.type]) {
-      return `❌ File type not allowed. Only PDF, DOCX, PNG and JPG files are accepted.`;
-    }
-    // Double-check extension (security layer)
-    const ext = '.' + file.name.split('.').pop().toLowerCase();
-    if (!ALLOWED_EXTENSIONS.includes(ext)) {
-      return `❌ File extension not allowed. Accepted: PDF, DOCX, DOC, PNG, JPG.`;
-    }
-    // Check file size
-    const maxMB = ALLOWED_TYPES[file.type].maxMB;
-    const sizeMB = file.size / (1024 * 1024);
-    if (sizeMB > maxMB) {
-      return `❌ File too large. Maximum size for this type is ${maxMB}MB. Your file is ${sizeMB.toFixed(1)}MB.`;
-    }
-    // Check for suspicious names
-    if (/[<>:"/\\|?*]/.test(file.name)) {
-      return `❌ File name contains invalid characters.`;
-    }
-    return null; // valid
-  }
-
-  function showError(msg) {
-    const el = document.getElementById('uploadError');
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 5000);
-  }
-
-  function handleFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const error = validateFile(file);
-    if (error) {
-      showError(error);
-      event.target.value = '';
-      return;
-    }
-    // Simulate successful upload
-    const zone = document.getElementById('uploadZone');
-    zone.innerHTML = `
-      <div style="font-size:36px;margin-bottom:12px">✅</div>
-      <h3 style="color:var(--teal-600)">${file.name}</h3>
-      <p style="color:var(--gray-600)">File ready to upload · ${(file.size/1024/1024).toFixed(2)}MB</p>
-      <button class="btn-upload" style="margin-top:10px">Submit for review</button>
-    `;
-  }
-
-  function handleDrag(e) {
-    e.preventDefault();
-    document.getElementById('uploadZone').classList.add('dragover');
-  }
-  function handleDragLeave(e) {
-    document.getElementById('uploadZone').classList.remove('dragover');
-  }
-  function handleDrop(e) {
-    e.preventDefault();
-    document.getElementById('uploadZone').classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-    const error = validateFile(file);
-    if (error) { showError(error); return; }
-    const zone = document.getElementById('uploadZone');
-    zone.innerHTML = `
-      <div style="font-size:36px;margin-bottom:12px">✅</div>
-      <h3 style="color:var(--teal-600)">${file.name}</h3>
-      <p style="color:var(--gray-600)">File ready · ${(file.size/1024/1024).toFixed(2)}MB</p>
-      <button class="btn-upload" style="margin-top:10px">Submit for review</button>
-    `;
-  }
-</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
-async function logOut(){await sb2.auth.signOut();window.location.href='index.html';}
+async function logOut(){await sb2.auth.signOut();window.location.href='workshido-index.html';}
 async function loadProfile(){
   const {data:{user}} = await sb2.auth.getUser();
   if(!user){window.location.href='workshido-login.html';return;}

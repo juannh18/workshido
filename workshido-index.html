@@ -858,19 +858,19 @@
     </div>
     <div class="footer-col">
       <h4>Browse</h4>
-      <a href="#">Grammar</a>
-      <a href="#">Vocabulary</a>
-      <a href="#">Reading</a>
-      <a href="#">Listening</a>
-      <a href="#">Writing</a>
+      <a href="workshido-index.html?cat=Grammar">Grammar</a>
+      <a href="workshido-index.html?cat=Vocabulary">Vocabulary</a>
+      <a href="workshido-index.html?cat=Reading">Reading</a>
+      <a href="workshido-index.html?cat=Listening">Listening</a>
+      <a href="workshido-index.html?cat=Writing">Writing</a>
     </div>
     <div class="footer-col">
       <h4>Levels</h4>
-      <a href="#">A1 Beginner</a>
-      <a href="#">A2 Elementary</a>
-      <a href="#">B1 Intermediate</a>
-      <a href="#">B2 Upper-inter</a>
-      <a href="#">C1 Advanced</a>
+      <a href="workshido-index.html?level=A1">A1 Beginner</a>
+      <a href="workshido-index.html?level=A2">A2 Elementary</a>
+      <a href="workshido-index.html?level=B1">B1 Intermediate</a>
+      <a href="workshido-index.html?level=B2">B2 Upper-inter</a>
+      <a href="workshido-index.html?level=C1">C1 Advanced</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
@@ -1065,11 +1065,57 @@ document.querySelector('.search-box input').addEventListener('keydown', e => {
 
 document.getElementById('sortSelect').addEventListener('change', filterAndRender);
 
+// ── Sidebar items ─────────────────────────────────
+document.querySelectorAll('.sidebar-item[data-topic]').forEach(item => {
+  item.addEventListener('click', e => {
+    e.preventDefault();
+    const topic = item.dataset.topic;
+    activeTopic = topic;
+    activeCategory = 'all';
+    activeLevel = 'all';
+    // Update active state in sidebar
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    item.classList.add('active');
+    // Update content title
+    const title = document.getElementById('contentTitle');
+    if (title) title.textContent = item.textContent.trim();
+    // Reset chips
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.querySelector('.chip')?.classList.add('active');
+    filterAndRender();
+    document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth2();
   loadWorksheets().then(() => {
-    const cat = new URLSearchParams(window.location.search).get('cat');
+    const params = new URLSearchParams(window.location.search);
+    const cat   = params.get('cat');
+    const level = params.get('level');
+    const topic = params.get('topic');
+    const q     = params.get('q');
     if (cat) setCategory(cat);
+    if (level) {
+      activeLevel = level;
+      const title = document.getElementById('contentTitle');
+      if (title) title.textContent = level + ' worksheets';
+      filterAndRender();
+    }
+    if (topic) {
+      activeTopic = topic;
+      const title = document.getElementById('contentTitle');
+      if (title) title.textContent = topic.charAt(0).toUpperCase() + topic.slice(1);
+      filterAndRender();
+    }
+    if (q) {
+      searchQuery = q;
+      const input = document.querySelector('.search-box input');
+      if (input) input.value = q;
+      const title = document.getElementById('contentTitle');
+      if (title) title.textContent = 'Search: ' + q;
+      filterAndRender();
+    }
   });
 });
 </script>
