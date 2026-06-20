@@ -64,7 +64,7 @@ async function checkAuth() {
       <a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--blue-100);font-size:13px;">
         <div style="width:32px;height:32px;border-radius:50%;background:var(--blue-50);color:var(--blue-600);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid var(--blue-200);">${initials}</div>
         ${name.split(' ')[0]}
-      </div>
+      </a>
       <button onclick="logOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:var(--blue-100);font-size:13px;cursor:pointer;">Log out</button>
     `;
   }

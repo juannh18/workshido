@@ -2,9 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Workshido — Free English Worksheets for Teachers</title>
 <meta name="description" content="Download free printable English worksheets for every level. Grammar, vocabulary, reading and more. Trusted by 98,000+ teachers worldwide.">
+<link rel="canonical" href="https://workshido.com/workshido-index.html">
+<meta property="og:site_name" content="Workshido">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Browse Worksheets — Workshido">
+<meta property="og:description" content="Thousands of free, print-ready English worksheets for every level and topic.">
+<meta property="og:image" content="https://workshido.com/favicon-192.png">
+<meta property="og:url" content="https://workshido.com/workshido-index.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Browse Worksheets — Workshido">
+<meta name="twitter:description" content="Thousands of free, print-ready English worksheets for every level and topic.">
+<meta name="twitter:image" content="https://workshido.com/favicon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
@@ -807,13 +826,12 @@
   <main class="content">
     <div class="content-header">
       <div>
-        <span class="content-title">Present simple</span>
-        <span class="content-count">142 worksheets</span>
+        <span class="content-title" id="contentTitle">All worksheets</span>
+        <span class="content-count" id="contentCount"></span>
       </div>
-      <select class="sort-select">
-        <option>Most downloaded</option>
-        <option>Newest first</option>
-        <option>Highest rated</option>
+      <select class="sort-select" id="sortSelect">
+        <option value="downloads">Most downloaded</option>
+        <option value="newest">Newest first</option>
       </select>
     </div>
 
@@ -857,10 +875,10 @@
     <div class="footer-col">
       <h4>Company</h4>
       <a href="#">About</a>
-      <a href="#">For teachers</a>
-      <a href="#">Premium</a>
+      <a href="workshido-forteachers.html">For teachers</a>
+      <a href="workshido-pricing.html">Premium</a>
       <a href="#">Contact</a>
-      <a href="#">Privacy</a>
+      <a href="workshido-privacy.html">Privacy</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -869,42 +887,6 @@
   </div>
 </footer>
 
-<script>
-  // Chip filter interaction
-  document.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-    });
-  });
-
-  // Sidebar item interaction
-  document.querySelectorAll('.sidebar-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
-      const topic = item.dataset.topic;
-      if (!topic) return;
-      // Si clic en el mismo activo → deseleccionar
-      if (activeTopic === topic) {
-        activeTopic = 'all';
-        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-      } else {
-        activeTopic = topic;
-        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-      }
-      filterAndRender();
-      document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-
-  // Search on Enter
-  document.querySelector('.search-box input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-      document.querySelector('.search-box button').click();
-    }
-  });
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -938,10 +920,10 @@ function buildCard(ws) {
   const lvlCls = LEVEL_CLASS[ws.level]  || 'a1';
   const accent = ACCENT[ws.level]        || 'accent-teal';
   const badge  = ws.is_free ? '<span class="badge-type free">Free</span>' : '<span class="badge-type premium">Premium</span>';
-  const btn    = ws.is_free ? `<button class="btn-download" onclick="downloadWS('${ws.file_url}','${ws.id}')">↓ Download</button>` : `<button class="btn-download locked">🔒 Unlock</button>`;
+  const btn    = ws.is_free ? `<button class="btn-download" onclick="downloadWS('${ws.file_url}','${ws.id}',${ws.downloads||0})">↓ Download</button>` : `<button class="btn-download locked">🔒 Unlock</button>`;
   const tags   = (ws.tags || ws.category || '').split(',').slice(0,2).map(t=>`<span class="tag">${t.trim()}</span>`).join('');
   const thumb = ws.thumbnail_url
-    ? `<img src="${ws.thumbnail_url}" alt="${ws.title}">`
+    ? `<img src="${ws.thumbnail_url}" alt="${ws.title}" loading="lazy">`
     : `<div class="ws-preview"><div class="wl ${accent}"></div><div class="wl"></div><div class="wl short"></div><div class="wb"></div><div class="wb"></div><div class="wl short"></div></div>`;
   const overlay = !ws.thumbnail_url ? `<div class="card-thumb-overlay"><span class="overlay-logo">Work<span>shido</span></span><span class="overlay-level ${lvlCls}">${ws.level}</span></div>` : '';
   return `<div class="ws-card">
@@ -958,20 +940,24 @@ function buildCard(ws) {
   </div>`;
 }
 
-async function downloadWS(url, id) {
+async function downloadWS(url, id, currentDl) {
   window.open(url, '_blank');
-  await sb2.from('worksheets').update({ downloads: sb2.rpc('increment') }).eq('id', id);
+  await sb2.from('worksheets').update({ downloads: (currentDl || 0) + 1 }).eq('id', id);
 }
 
 function renderCards(data) {
   const grid  = document.getElementById('cardGrid');
   const label = document.getElementById('catalogLabel');
+  const count = document.getElementById('contentCount');
   if (!data || data.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">No worksheets found.</div>';
     label.textContent = 'No worksheets found';
+    if (count) count.textContent = '';
     return;
   }
-  label.textContent = `${data.length} worksheet${data.length !== 1 ? 's' : ''} available`;
+  const txt = `${data.length} worksheet${data.length !== 1 ? 's' : ''}`;
+  label.textContent = txt + ' available';
+  if (count) count.textContent = txt;
   grid.innerHTML = data.map(buildCard).join('');
 }
 
@@ -998,34 +984,38 @@ function filterAndRender() {
       (w.category || '').toLowerCase().includes(q)
     );
   }
+  const sort = document.getElementById('sortSelect')?.value || 'downloads';
+  if (sort === 'newest') {
+    filtered = [...filtered].sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+  } else {
+    filtered = [...filtered].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+  }
   renderCards(filtered);
 }
 
 function setCategory(cat) {
   activeCategory = cat;
-  // Actualizar chips activos
+  const title = document.getElementById('contentTitle');
+  if (title) title.textContent = cat === 'all' ? 'All worksheets' : (Array.isArray(cat) ? 'Skills' : cat);
   document.querySelectorAll('.chip').forEach(c => {
     const txt = c.textContent.trim();
     if (cat === 'all') {
       c.classList.toggle('active', txt === 'All levels' && activeLevel === 'all');
     } else {
-      c.classList.toggle('active', txt.toLowerCase() === cat.toLowerCase());
+      c.classList.toggle('active', txt.toLowerCase() === (Array.isArray(cat) ? 'skills' : cat.toLowerCase()));
     }
   });
-  // Scroll al catálogo
   document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
   filterAndRender();
 }
 
 async function loadWorksheets() {
-  const { data, error } = await sb2.from('worksheets').select('*');
+  const { data, error } = await sb2.from('worksheets').select('*').order('downloads', { ascending: false }).limit(100);
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;
   }
   allWorksheets = data || [];
-  // Debug: verificar thumbnail_url de cada worksheet
-  console.log('Worksheets cargados:', allWorksheets.map(w => ({title: w.title, thumb: w.thumbnail_url})));
   filterAndRender();
 }
 
@@ -1073,9 +1063,14 @@ document.querySelector('.search-box input').addEventListener('keydown', e => {
   }
 });
 
+document.getElementById('sortSelect').addEventListener('change', filterAndRender);
+
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth2();
-  loadWorksheets();
+  loadWorksheets().then(() => {
+    const cat = new URLSearchParams(window.location.search).get('cat');
+    if (cat) setCategory(cat);
+  });
 });
 </script>
 </body>

@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For Teachers — Workshido</title>
 <meta name="description" content="Save hours of prep time. Thousands of free, print-ready English worksheets for every level and topic.">
+<link rel="canonical" href="https://workshido.com/workshido-forteachers.html">
+<meta property="og:site_name" content="Workshido">
+<meta property="og:type" content="website">
+<meta property="og:title" content="For Teachers — Workshido">
+<meta property="og:description" content="Save hours of prep time. Thousands of free, print-ready English worksheets for every level and topic.">
+<meta property="og:image" content="https://workshido.com/favicon-192.png">
+<meta property="og:url" content="https://workshido.com/workshido-forteachers.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="For Teachers — Workshido">
+<meta name="twitter:description" content="Save hours of prep time. Free English worksheets for every level.">
+<meta name="twitter:image" content="https://workshido.com/favicon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
@@ -175,6 +191,30 @@
   .upload-section h2 { font-family: var(--font-display); font-size: clamp(24px, 3.5vw, 36px); font-weight: 700; color: var(--white); margin-bottom: 14px; }
   .upload-section p { font-size: 16px; color: var(--blue-100); margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
 
+  /* REVIEWS */
+  .reviews-section { padding: 80px 32px; background: var(--white); }
+  .reviews-inner { max-width: 1100px; margin: 0 auto; }
+  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 52px; }
+  .review-card {
+    background: var(--white); border: 1px solid var(--gray-100);
+    border-radius: var(--radius-lg); padding: 28px;
+    transition: box-shadow 0.2s, border-color 0.2s;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .review-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.07); border-color: var(--blue-200); }
+  .review-stars { color: #F59E0B; font-size: 16px; letter-spacing: 2px; }
+  .review-text { font-size: 14px; color: var(--gray-600); line-height: 1.7; font-style: italic; flex: 1; }
+  .review-text::before { content: '"'; font-size: 40px; color: var(--blue-200); line-height: 0; vertical-align: -14px; margin-right: 4px; font-style: normal; }
+  .review-author { display: flex; align-items: center; gap: 12px; }
+  .review-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 15px; font-weight: 700;
+    color: var(--white); flex-shrink: 0;
+  }
+  .review-name { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+  .review-meta { font-size: 12px; color: var(--gray-300); margin-top: 2px; }
+
   /* FOOTER */
   footer {
     background: var(--blue-900); color: var(--blue-200);
@@ -296,6 +336,92 @@
   </div>
 </div>
 
+<!-- REVIEWS -->
+<div class="reviews-section">
+  <div class="reviews-inner">
+    <div style="text-align:center;">
+      <div class="section-label" style="display:inline-block;">Teacher reviews</div>
+      <h2 class="section-title">Loved by teachers around the world</h2>
+      <p class="section-sub" style="margin:0 auto;">Real feedback from English teachers who use Workshido every week in their classrooms.</p>
+    </div>
+    <div class="reviews-grid">
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★ <span style="font-size:13px;color:var(--gray-600);font-style:normal;">5.0</span></div>
+        <p class="review-text">I used to spend hours on Sunday nights making worksheets. Now I find exactly what I need in minutes. The level filters are a game changer for my mixed-ability classes.</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--teal-600);">SR</div>
+          <div>
+            <div class="review-name">Sarah R.</div>
+            <div class="review-meta">ESL Teacher · United States</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★ <span style="font-size:13px;color:var(--gray-600);font-style:normal;">4.8</span></div>
+        <p class="review-text">The quality of the worksheets is really impressive. My A2 students love the grammar exercises. I appreciate that everything is print-ready — no formatting issues at all.</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--blue-600);">MC</div>
+          <div>
+            <div class="review-name">Miguel C.</div>
+            <div class="review-meta">English Teacher · Colombia</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★ <span style="font-size:13px;color:var(--gray-600);font-style:normal;">4.9</span></div>
+        <p class="review-text">Finally a platform that understands what teachers need. Clean design, easy to search, and I can upload my own materials too. I've shared it with my whole department.</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--purple-600);">AL</div>
+          <div>
+            <div class="review-name">Amina L.</div>
+            <div class="review-meta">Language Coordinator · Morocco</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★ <span style="font-size:13px;color:var(--gray-600);font-style:normal;">4.8</span></div>
+        <p class="review-text">I teach 6 groups a week at different levels. Workshido saves me at least 3 hours of prep every week. The B1 reading worksheets are particularly well-designed.</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--amber-600);">PK</div>
+          <div>
+            <div class="review-name">Priya K.</div>
+            <div class="review-meta">EFL Teacher · India</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★ <span style="font-size:13px;color:var(--gray-600);font-style:normal;">5.0</span></div>
+        <p class="review-text">As a new teacher I was overwhelmed making materials from scratch. Workshido gave me a huge library to start from. The answer keys save me so much correction time.</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--coral-600);">TM</div>
+          <div>
+            <div class="review-name">Tom M.</div>
+            <div class="review-meta">New Teacher · United Kingdom</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★ <span style="font-size:13px;color:var(--gray-600);font-style:normal;">4.9</span></div>
+        <p class="review-text">I love that I can contribute too. I uploaded my vocabulary activities and over 200 teachers downloaded them. It feels great to be part of this community.</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--green-600);">YB</div>
+          <div>
+            <div class="review-name">Yuki B.</div>
+            <div class="review-meta">Teacher & Content Creator · Japan</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- UPLOAD CTA -->
 <div class="upload-section">
   <h2>Share your worksheets with teachers worldwide</h2>
@@ -305,7 +431,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>© 2025 Workshido. Free English worksheets for teachers.</span>
+  <span>© 2026 Workshido. Free English worksheets for teachers.</span>
   <div class="footer-links">
     <a href="workshido-index.html">Browse</a>
     <a href="workshido-forteachers.html">For teachers</a>

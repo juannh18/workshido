@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset password — Workshido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-900: #042C53; --blue-800: #0C447C; --blue-600: #185FA5;
+    --blue-200: #85B7EB; --blue-100: #B5D4F4; --teal-400: #1D9E75; --teal-50: #E1F5EE;
+    --gray-900: #2C2C2A; --gray-600: #5F5E5A; --gray-100: #D3D1C7; --gray-50: #F1EFE8;
+    --red-600: #C0392B; --red-50: #FDEDEC; --white: #ffffff;
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px;
+    --font-display: 'Sora', sans-serif; --font-body: 'Inter', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); min-height: 100vh; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  nav { background: var(--blue-900); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; }
+  .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--blue-200); }
+  .wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+  .card { background: var(--white); border-radius: var(--radius-lg); padding: 48px 40px; max-width: 420px; width: 100%; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+  .card-icon { font-size: 40px; margin-bottom: 16px; }
+  h1 { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
+  .sub { font-size: 14px; color: var(--gray-600); margin-bottom: 28px; line-height: 1.6; }
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .field input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; outline: none; transition: border-color 0.15s; }
+  .field input:focus { border-color: var(--blue-600); }
+  .btn-submit { width: 100%; padding: 13px; background: var(--blue-600); color: var(--white); border: none; border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn-submit:hover:not(:disabled) { background: var(--blue-800); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+  .msg { display: none; border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; margin-bottom: 16px; }
+  .msg.success { display: block; background: var(--teal-50); color: #0F6E56; }
+  .msg.error { display: block; background: var(--red-50); color: var(--red-600); }
+  .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--blue-600); text-decoration: none; }
+  .back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="workshido-index.html" class="nav-logo">work<span>shido</span></a>
+</nav>
+<div class="wrap">
+  <div class="card">
+    <div class="card-icon">🔑</div>
+    <h1>Reset your password</h1>
+    <p class="sub">Enter your email address and we'll send you a link to reset your password.</p>
+    <div id="msg" class="msg"></div>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="sarah@school.com" />
+    </div>
+    <button class="btn-submit" id="submitBtn" onclick="sendReset()">Send reset link</button>
+    <a href="workshido-login.html" class="back-link">← Back to login</a>
+  </div>
+</div>
+<script>
+const sb = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
+
+async function sendReset() {
+  const email = document.getElementById('email').value.trim();
+  const btn = document.getElementById('submitBtn');
+  const msg = document.getElementById('msg');
+  msg.className = 'msg';
+  msg.style.display = 'none';
+
+  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    msg.textContent = 'Please enter a valid email address.';
+    msg.className = 'msg error';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/workshido-index.html'
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Send reset link';
+
+  if (error) {
+    msg.textContent = 'Something went wrong. Please try again.';
+    msg.className = 'msg error';
+  } else {
+    msg.textContent = 'Check your email — we sent a reset link!';
+    msg.className = 'msg success';
+    document.getElementById('email').value = '';
+  }
+}
+
+document.getElementById('email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendReset();
+});
+</script>
+</body>
+</html>

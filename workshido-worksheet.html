@@ -2,11 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Workshido</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://workshido.com/workshido-worksheet.html">
+<meta name="description" content="Free English worksheet — download and print for class.">
+<meta property="og:site_name" content="Workshido">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Workshido">
+<meta property="og:description" content="Free English worksheet — download and print for class.">
+<meta property="og:image" content="https://workshido.com/favicon-192.png">
+<meta property="og:url" content="https://workshido.com/workshido-worksheet.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Workshido">
+<meta name="twitter:image" content="https://workshido.com/favicon-192.png">
+<script type="application/ld+json" id="schemaLD"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -128,6 +145,7 @@
 <script>
 const sb = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 const LEVEL_CLASS = { A1:'a1', A2:'a2', B1:'b1', B2:'b2', C1:'c1' };
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
@@ -147,14 +165,22 @@ async function loadWorksheet() {
   const { data, error } = await sb.from('worksheets').select('*').eq('id', id).single();
   if (error || !data) { renderError('Worksheet not found.'); return; }
 
-  document.title = `${data.title} — Workshido`;
+  document.title = `${esc(data.title)} — Workshido`;
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${data.title} — Workshido`);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', data.description || `${data.level} ${data.category} worksheet. Free download.`);
+  if (data.thumbnail_url) document.querySelector('meta[property="og:image"]')?.setAttribute('content', data.thumbnail_url);
+  const wsUrl = `https://workshido.com/workshido-worksheet.html?id=${data.id}`;
+  document.querySelector('link[rel="canonical"]')?.setAttribute('href', wsUrl);
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content', wsUrl);
+  const schema = document.getElementById('schemaLD');
+  if (schema) schema.textContent = JSON.stringify({ "@context":"https://schema.org","@type":"LearningResource","name":data.title,"description":data.description||"","educationalLevel":data.level,"learningResourceType":"Worksheet","inLanguage":"en","isAccessibleForFree":data.is_free,"provider":{"@type":"Organization","name":"Workshido","url":"https://workshido.com"} });
   document.getElementById('bcCategory').textContent = data.category || 'Worksheet';
   document.getElementById('bcTitle').textContent = data.title;
 
   const lvlCls = LEVEL_CLASS[data.level] || 'a1';
-  const tags = (data.tags || '').split(',').filter(t => t.trim()).map(t => `<span class="tag">${t.trim()}</span>`).join('');
+  const tags = (data.tags || '').split(',').filter(t => t.trim()).map(t => `<span class="tag">${esc(t.trim())}</span>`).join('');
   const freeBadge = data.is_free ? '<span class="badge-free">Free</span>' : '<span class="badge-premium">⭐ Premium</span>';
-  const desc = data.description ? `<p class="ws-desc">${data.description}</p>` : '';
+  const desc = data.description ? `<p class="ws-desc">${esc(data.description)}</p>` : '';
   const ext = (data.file_url || '').split('.').pop().split('?')[0].toUpperCase();
 
   const preview = data.thumbnail_url
@@ -175,7 +201,7 @@ async function loadWorksheet() {
     <div class="preview-box">${preview}</div>
     <div class="detail-sidebar">
       <div class="detail-card">
-        <div class="ws-title">${data.title}</div>
+        <div class="ws-title">${esc(data.title)}</div>
         <div class="ws-badges">
           <span class="badge-level ${lvlCls}">${data.level}</span>
           ${data.category ? `<span class="badge-cat">${data.category}</span>` : ''}
@@ -189,6 +215,7 @@ async function loadWorksheet() {
           <div class="ws-meta-row"><span class="ws-meta-label">Downloads</span><span class="ws-meta-value" id="dlCount">${data.downloads || 0}</span></div>
         </div>
         ${downloadBtn}
+        ${data.is_free ? `<button class="btn-print" onclick="window.open('${data.file_url}','_blank')" style="width:100%;padding:10px;margin-top:8px;background:transparent;border:1.5px solid var(--blue-200);border-radius:6px;font-family:inherit;font-size:13px;font-weight:600;color:var(--blue-600);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='var(--blue-50)'" onmouseout="this.style.background='transparent'">🖨️ Print / Open PDF</button>` : ''}
       </div>
     </div>`;
 }

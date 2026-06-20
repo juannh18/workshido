@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upload Worksheet — Workshido</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -209,6 +214,7 @@
     border: none; border-radius: var(--radius-sm); font-family: var(--font-body);
     font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s;
     margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    position: relative; z-index: 10;
   }
   .submit-btn:hover:not(:disabled) { background: var(--blue-800); }
   .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -293,11 +299,14 @@
 
 <!-- NAV -->
 <nav>
-  <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
+  <a href="workshido-index.html" class="nav-logo">work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="workshido-index.html">Browse</a></li>
-    <li><a href="workshido-upload.html" style="color:var(--white);">Upload</a></li>
-    <li><a href="#">Pricing</a></li>
+    <li><a href="workshido-index.html?cat=Grammar">Grammar</a></li>
+    <li><a href="workshido-index.html?cat=Skills">Skills</a></li>
+    <li><a href="workshido-forteachers.html">For teachers</a></li>
+    <li><a href="workshido-upload.html" style="color:var(--white);">⬆ Upload</a></li>
+    <li><a href="workshido-pricing.html">Pricing</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
     <a href="workshido-login.html" class="btn-ghost">Log in</a>
@@ -465,13 +474,15 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="workshido-auth.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 <script>
 const sbUp = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co', 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 
 let currentUser = null;
 let selectedFile = null;
 let isFree = true;
+let isUploading = false;
 
 // ── Auth check ──────────────────────────────────────────
 async function initPage() {
@@ -533,6 +544,11 @@ function handleFileSelect(input) {
   document.getElementById('fileSize').textContent = formatSize(file.size);
   document.getElementById('filePreview').classList.add('show');
   hideMessages();
+
+  // Pre-warm Render service as soon as a DOCX/PPTX is selected
+  if (['docx', 'doc', 'pptx'].includes(ext)) {
+    fetch(`${THUMBNAIL_SERVICE}/health`, { method: 'GET' }).catch(() => {});
+  }
 }
 
 function removeFile() {
@@ -567,26 +583,145 @@ dropZone.addEventListener('drop', e => {
 // ── Upload ───────────────────────────────────────────────
 const THUMBNAIL_SERVICE = 'https://workshido-thumbnail-service.onrender.com';
 
-async function generateThumbnailViaService(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const res = await fetch(`${THUMBNAIL_SERVICE}/generate-thumbnail`, {
-    method: 'POST',
-    body: formData
+// Render PDF page 1 → WebP blob using PDF.js (no server needed)
+async function pdfToThumbnailBlob(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const page = await pdf.getPage(1);
+  const viewport = page.getViewport({ scale: 1.8 });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(b => b ? resolve(b) : reject(new Error('Canvas empty')), 'image/webp', 0.88);
   });
+}
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Thumbnail service error ${res.status}: ${text}`);
+// Upload a blob to Supabase storage and return its public URL
+async function uploadBlobAsThumb(blob, originalName) {
+  const path = `thumbnails/${Date.now()}-${originalName.replace(/\s+/g,'-').replace(/\.[^.]+$/, '')}.webp`;
+  const { error } = await sbUp.storage.from('worksheets').upload(path, blob, {
+    contentType: 'image/webp', cacheControl: '3600', upsert: false
+  });
+  if (error) throw new Error('Thumb upload: ' + error.message);
+  return sbUp.storage.from('worksheets').getPublicUrl(path).data.publicUrl;
+}
+
+// Generate a professional placeholder thumbnail for DOCX/PPTX using Canvas
+async function generateDocxThumbnail(filename, title, level, typeLabel) {
+  const W = 612, H = 792;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // White background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Top header bar
+  const headerH = 90;
+  ctx.fillStyle = '#1a4fa0';
+  ctx.fillRect(0, 0, W, headerH);
+
+  // Workshido brand in header
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 28px Arial';
+  ctx.fillText('Work', 36, 55);
+  ctx.fillStyle = '#7ec8f0';
+  ctx.fillText('shido', 36 + ctx.measureText('Work').width, 55);
+
+  // Level badge in header top-right
+  if (level) {
+    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+    roundRect(ctx, W - 100, 22, 68, 34, 8);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(level, W - 66, 45);
+    ctx.textAlign = 'left';
   }
 
-  const data = await res.json();
-  if (!data.thumbnailUrl) throw new Error('No thumbnailUrl in service response');
-  return data.thumbnailUrl;
+  // File type icon area
+  const iconY = headerH + 50;
+  ctx.fillStyle = '#e8f0fb';
+  roundRect(ctx, W/2 - 55, iconY, 110, 110, 14);
+  ctx.fill();
+
+  // File type icon lines (document look)
+  ctx.fillStyle = '#1a4fa0';
+  ctx.font = 'bold 38px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(typeLabel === 'PPTX' ? '📊' : '📝', W/2, iconY + 72);
+  ctx.textAlign = 'left';
+
+  // Type label
+  ctx.fillStyle = '#1a4fa0';
+  ctx.font = 'bold 18px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(typeLabel, W/2, iconY + 130);
+  ctx.textAlign = 'left';
+
+  // Title
+  const titleY = iconY + 170;
+  ctx.fillStyle = '#1a1a2e';
+  ctx.font = 'bold 26px Arial';
+  const words = title.split(' ');
+  let line = '', lines = [], maxW = W - 80;
+  for (const word of words) {
+    const test = line + (line ? ' ' : '') + word;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = word; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  lines.slice(0, 3).forEach((l, i) => {
+    ctx.textAlign = 'center';
+    ctx.fillText(l, W/2, titleY + i * 36);
+  });
+
+  // Decorative lines (mock content)
+  const linesY = titleY + lines.slice(0,3).length * 36 + 40;
+  ctx.strokeStyle = '#d1daf0';
+  ctx.lineWidth = 2;
+  [0, 28, 56, 84, 112, 140].forEach(offset => {
+    const lw = offset % 56 === 0 ? W - 100 : W - 160;
+    ctx.beginPath();
+    ctx.moveTo((W - lw) / 2, linesY + offset);
+    ctx.lineTo((W + lw) / 2, linesY + offset);
+    ctx.stroke();
+  });
+
+  // Footer
+  ctx.fillStyle = '#f0f4ff';
+  ctx.fillRect(0, H - 48, W, 48);
+  ctx.fillStyle = '#6b7fb5';
+  ctx.font = '16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('workshido.com', W/2, H - 18);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(b => b ? resolve(b) : reject(new Error('Canvas empty')), 'image/webp', 0.88);
+  });
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }
 
 async function uploadWorksheet() {
+  if (isUploading) return;
+  isUploading = true;
   hideMessages();
 
   const title = document.getElementById('wsTitle').value.trim();
@@ -595,10 +730,11 @@ async function uploadWorksheet() {
   const tags = document.getElementById('wsTags').value.trim();
   const description = document.getElementById('wsDesc').value.trim();
 
-  if (!title) return showError('Please add a title for your worksheet.');
-  if (!level) return showError('Please select a level.');
-  if (!category) return showError('Please select a category.');
-  if (!selectedFile) return showError('Please select a file to upload.');
+  const fail = (msg) => { isUploading = false; showError(msg); };
+  if (!title)        return fail('Please add a title for your worksheet.');
+  if (!level)        return fail('Please select a level.');
+  if (!category)     return fail('Please select a category.');
+  if (!selectedFile) return fail('Please select a file to upload.');
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -621,14 +757,49 @@ async function uploadWorksheet() {
 
     setProgress(40, 'Generating thumbnail...');
 
-    // 2. Generate thumbnail via Render microservice
+    // 2. Generate thumbnail
     let thumbnailUrl = null;
-    try {
-      setProgress(50, 'Converting file to thumbnail...');
-      thumbnailUrl = await generateThumbnailViaService(selectedFile);
-      console.log('✅ Thumbnail listo:', thumbnailUrl);
-    } catch(e) {
-      console.warn('⚠️ Thumbnail service failed:', e.message);
+    const imageExts = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
+    if (imageExts.includes(ext)) {
+      // Images: use the file URL directly — instant
+      thumbnailUrl = fileUrl;
+      setProgress(50, 'Thumbnail ready!');
+    } else if (ext === 'pdf') {
+      // PDFs: render page 1 client-side with PDF.js — no server needed
+      try {
+        setProgress(44, 'Rendering PDF preview...');
+        const blob = await pdfToThumbnailBlob(selectedFile);
+        setProgress(62, 'Uploading thumbnail...');
+        thumbnailUrl = await uploadBlobAsThumb(blob, selectedFile.name);
+        setProgress(75, 'Thumbnail ready!');
+      } catch(e) {
+        console.warn('PDF.js failed, skipping thumbnail:', e.message);
+      }
+    } else {
+      // DOCX / PPTX: use Render service (pre-warmed on file select), fallback to placeholder
+      try {
+        setProgress(50, 'Generating preview... (may take up to 60s first time)');
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000);
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        const res = await fetch(`${THUMBNAIL_SERVICE}/generate-thumbnail`, {
+          method: 'POST', body: formData, signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (res.ok) {
+          const data = await res.json();
+          thumbnailUrl = data.thumbnailUrl || null;
+        }
+        if (!thumbnailUrl) throw new Error('No URL from service');
+        setProgress(75, 'Thumbnail ready!');
+      } catch(e) {
+        console.warn('Render service failed, using placeholder:', e.message);
+        try {
+          const blob = await generateDocxThumbnail(selectedFile.name, title, level, ext.toUpperCase());
+          thumbnailUrl = await uploadBlobAsThumb(blob, selectedFile.name);
+        } catch(e2) { console.warn('Placeholder also failed:', e2.message); }
+      }
     }
 
     setProgress(80, 'Saving details...');
@@ -638,7 +809,7 @@ async function uploadWorksheet() {
       title,
       level,
       category,
-      tags: tags || null,
+      tags: tags ? `worksheet, ${tags}` : 'worksheet',
       description: description || null,
       file_url: fileUrl,
       thumbnail_url: thumbnailUrl,
@@ -663,6 +834,7 @@ async function uploadWorksheet() {
     showError(err.message || 'Upload failed. Please try again.');
     hideProgress();
   } finally {
+    isUploading = false;
     btn.disabled = false;
     btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload worksheet`;
   }
@@ -694,6 +866,7 @@ function showError(msg) {
   const el = document.getElementById('errorMsg');
   document.getElementById('errorText').textContent = msg;
   el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 function hideMessages() {
   document.getElementById('successMsg').classList.remove('show');
