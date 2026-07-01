@@ -134,8 +134,7 @@
   <a href="workshido-index.html" class="nav-logo">work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="workshido-index.html">Browse</a></li>
-    <li><a href="#">My worksheets</a></li>
-    <li><a href="#">Favorites</a></li>
+    <li><a href="#my-worksheets">My worksheets</a></li>
   </ul>
   <div class="nav-right">
     <div class="nav-avatar">JD</div>
@@ -149,7 +148,7 @@
       <div class="avatar-big">JD</div>
       <div class="profile-name">Juan David</div>
       <div class="profile-email">juandavid@email.com</div>
-      <div class="plan-badge">⭐ Premium</div>
+      <div class="plan-badge">✓ Free</div>
     </div>
     <div class="nav-menu">
       <div class="nav-section-label">My account</div>
@@ -191,24 +190,20 @@
     <!-- STATS -->
     <div class="stats-overview">
       <div class="stat-box">
-        <div class="stat-box-num">3</div>
+        <div class="stat-box-num" id="statUploaded">—</div>
         <div class="stat-box-label">Worksheets uploaded</div>
-        <div class="stat-box-change">↑ +1 this week</div>
       </div>
       <div class="stat-box">
-        <div class="stat-box-num">6,250</div>
+        <div class="stat-box-num" id="statDownloads">—</div>
         <div class="stat-box-label">Total downloads</div>
-        <div class="stat-box-change">↑ +340 this week</div>
       </div>
       <div class="stat-box">
-        <div class="stat-box-num">4.9</div>
-        <div class="stat-box-label">Average rating</div>
-        <div class="stat-box-change">★★★★★</div>
+        <div class="stat-box-num" id="statLevel">—</div>
+        <div class="stat-box-label">Most uploaded level</div>
       </div>
       <div class="stat-box">
-        <div class="stat-box-num">412</div>
-        <div class="stat-box-label">Favorites saved by others</div>
-        <div class="stat-box-change">↑ +28 this week</div>
+        <div class="stat-box-num" id="statCategory">—</div>
+        <div class="stat-box-label">Top category</div>
       </div>
     </div>
 
@@ -232,73 +227,13 @@
     </div>
 
     <!-- MY WORKSHEETS -->
-    <div class="my-ws-section">
+    <div class="my-ws-section" id="my-worksheets">
       <div class="section-header">
         <h2>My worksheets</h2>
-        <span style="font-size:12px;color:var(--gray-300)">3 published</span>
+        <span id="wsCount" style="font-size:12px;color:var(--gray-300)">Loading...</span>
       </div>
-
-      <div class="ws-row">
-        <div class="ws-mini-thumb teal">
-          <div class="wl a t"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div>
-        </div>
-        <div class="ws-info">
-          <div class="ws-title">Daily routine — there is / there are</div>
-          <div class="ws-meta-row">
-            <span class="ws-level a1">A1</span>
-            <span class="ws-status">Published · June 2026</span>
-          </div>
-        </div>
-        <div class="ws-stats-mini">
-          <div class="ws-stat">↓ <strong>2,418</strong></div>
-          <div class="ws-stat">★ <strong>4.9</strong></div>
-        </div>
-        <div class="ws-actions">
-          <button class="btn-sm edit">Edit</button>
-          <button class="btn-sm delete">Delete</button>
-        </div>
-      </div>
-
-      <div class="ws-row">
-        <div class="ws-mini-thumb blue">
-          <div class="wl a b"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div>
-        </div>
-        <div class="ws-info">
-          <div class="ws-title">My home — prepositions of place</div>
-          <div class="ws-meta-row">
-            <span class="ws-level a2">A2</span>
-            <span class="ws-status">Published · May 2026</span>
-          </div>
-        </div>
-        <div class="ws-stats-mini">
-          <div class="ws-stat">↓ <strong>1,830</strong></div>
-          <div class="ws-stat">★ <strong>4.8</strong></div>
-        </div>
-        <div class="ws-actions">
-          <button class="btn-sm edit">Edit</button>
-          <button class="btn-sm delete">Delete</button>
-        </div>
-      </div>
-
-      <div class="ws-row">
-        <div class="ws-mini-thumb amber">
-          <div class="wl a am"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div>
-        </div>
-        <div class="ws-info">
-          <div class="ws-title">Present simple — daily habits</div>
-          <div class="ws-meta-row">
-            <span class="ws-level b1">B1</span>
-            <span class="ws-status">Published · April 2026</span>
-          </div>
-        </div>
-        <div class="ws-stats-mini">
-          <div class="ws-stat">↓ <strong>2,002</strong></div>
-          <div class="ws-stat">★ <strong>4.9</strong></div>
-        </div>
-        <div class="ws-actions">
-          <button class="btn-sm edit">Edit</button>
-          <button class="btn-sm delete">Delete</button>
-        </div>
+      <div id="myWsRows">
+        <div style="padding:40px;text-align:center;color:var(--gray-300);font-size:14px;">Loading your worksheets...</div>
       </div>
     </div>
 
@@ -308,21 +243,71 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
-async function logOut(){await sb2.auth.signOut();window.location.href='workshido-index.html';}
-async function loadProfile(){
-  const {data:{user}} = await sb2.auth.getUser();
-  if(!user){window.location.href='workshido-login.html';return;}
+const LEVEL_COLOR = { A1:'teal', A2:'blue', B1:'amber', B2:'purple', C1:'coral' };
+const LEVEL_CLS   = { A1:'a1',   A2:'a2',  B1:'b1',   B2:'b2',    C1:'c1'    };
+const THUMB_ACCENT = { teal:'t', blue:'b', amber:'am', purple:'b', coral:'t' };
+
+async function logOut(){ await sb2.auth.signOut(); window.location.href='workshido-index.html'; }
+
+async function loadProfile() {
+  const { data: { user } } = await sb2.auth.getUser();
+  if (!user) { window.location.href = 'workshido-login.html'; return; }
+
   const name = user.user_metadata?.full_name || user.email;
-  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-  const el = document.querySelector('.avatar-big');
-  const nameEl = document.querySelector('.profile-name');
-  const emailEl = document.querySelector('.profile-email');
-  const navAv = document.querySelector('.nav-avatar');
-  if(el) el.textContent = initials;
-  if(nameEl) nameEl.textContent = name;
-  if(emailEl) emailEl.textContent = user.email;
-  if(navAv) navAv.textContent = initials;
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  document.querySelector('.avatar-big').textContent    = initials;
+  document.querySelector('.profile-name').textContent  = name;
+  document.querySelector('.profile-email').textContent = user.email;
+  document.querySelector('.nav-avatar').textContent    = initials;
+  document.querySelector('.plan-badge').textContent    = '✓ Free';
+
+  const { data: worksheets } = await sb2
+    .from('worksheets')
+    .select('id, title, level, category, downloads, created_at')
+    .eq('uploaded_by', user.id)
+    .order('created_at', { ascending: false });
+
+  const ws = worksheets || [];
+  const totalDl = ws.reduce((s, w) => s + (w.downloads || 0), 0);
+
+  const levelCount = {};
+  const catCount   = {};
+  ws.forEach(w => {
+    levelCount[w.level]    = (levelCount[w.level]    || 0) + 1;
+    catCount[w.category]   = (catCount[w.category]   || 0) + 1;
+  });
+  const topLevel = Object.entries(levelCount).sort((a,b) => b[1]-a[1])[0]?.[0] || '—';
+  const topCat   = Object.entries(catCount).sort((a,b)   => b[1]-a[1])[0]?.[0] || '—';
+
+  document.getElementById('statUploaded').textContent = ws.length;
+  document.getElementById('statDownloads').textContent = totalDl.toLocaleString();
+  document.getElementById('statLevel').textContent    = topLevel;
+  document.getElementById('statCategory').textContent = topCat;
+  document.getElementById('wsCount').textContent      = `${ws.length} published`;
+
+  const container = document.getElementById('myWsRows');
+  if (ws.length === 0) {
+    container.innerHTML = `<div style="padding:40px;text-align:center;color:var(--gray-300);font-size:14px;">You haven't uploaded any worksheets yet. <a href="workshido-upload.html" style="color:var(--blue-600)">Upload your first one →</a></div>`;
+    return;
+  }
+
+  container.innerHTML = ws.map(w => {
+    const color   = LEVEL_COLOR[w.level]  || 'teal';
+    const lvlCls  = LEVEL_CLS[w.level]   || 'a1';
+    const accent  = THUMB_ACCENT[color]   || 't';
+    const date    = w.created_at ? new Date(w.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—';
+    return `<div class="ws-row">
+      <div class="ws-mini-thumb ${color}"><div class="wl a ${accent}"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div></div>
+      <div class="ws-info">
+        <div class="ws-title">${w.title}</div>
+        <div class="ws-meta-row"><span class="ws-level ${lvlCls}">${w.level}</span><span class="ws-status">Published · ${date}</span></div>
+      </div>
+      <div class="ws-stats-mini"><div class="ws-stat">↓ <strong>${(w.downloads||0).toLocaleString()}</strong></div></div>
+      <div class="ws-actions"><a href="workshido-worksheet.html?id=${w.id}" class="btn-sm edit">View</a></div>
+    </div>`;
+  }).join('');
 }
+
 document.addEventListener('DOMContentLoaded', loadProfile);
 </script>
 </body>
