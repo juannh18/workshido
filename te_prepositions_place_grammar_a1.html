@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #1a3a5c; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #1a3a5c; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Prepositions of Place &bull; Grammar &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (5 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Look and Choose (circle the correct preposition)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> The book is <strong>in</strong> the box.</div>
+    <div class="ans-item"><span class="n">2.</span> The cat is <strong>under</strong> the chair.</div>
+    <div class="ans-item"><span class="n">3.</span> The ball is <strong>between</strong> the boxes.</div>
+    <div class="ans-item"><span class="n">4.</span> The plant is <strong>next to</strong> the window.</div>
+    <div class="ans-item"><span class="n">5.</span> The bag is <strong>in front of</strong> the desk.</div>
+    <div class="ans-item"><span class="n">6.</span> The lamp is <strong>on</strong> the table.</div>
+  </div>
+  <div class="note">Items 4 and 5 have no picture reference — both options can be grammatically logical. Accept a student's answer if they can justify it (e.g. "on the desk" for item 5 is also acceptable).</div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Complete the Sentences</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> The book is <strong>in</strong> the box.</div>
+    <div class="ans-item"><span class="n">2.</span> The cat is <strong>under</strong> the chair.</div>
+    <div class="ans-item"><span class="n">3.</span> The ball is <strong>between</strong> the two boxes.</div>
+    <div class="ans-item"><span class="n">4.</span> The backpack is <strong>under</strong> the table.</div>
+    <div class="ans-item"><span class="n">5.</span> The plant is <strong>on</strong> the cabinet.</div>
+    <div class="ans-item"><span class="n">6.</span> The car is <strong>in front of</strong> the box.</div>
+  </div>
+  <div class="note">This exercise has no picture, so several prepositions can be correct for items 4–5 (e.g. "next to" the table, "next to" the cabinet). Accept any answer that makes grammatical sense.</div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Look at the Picture and Write (open, suggested answers)</div>
+  <div class="sug">1. The backpack is next to the chair.</div>
+  <div class="sug">2. The soccer ball is in the box.</div>
+  <div class="sug">3. The trophy is on the bookshelf.</div>
+  <div class="sug">4. The plant is next to the window.</div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Circle the Correct Answer</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> The book is <strong>on</strong> the shelf.</div>
+    <div class="ans-item"><span class="n">2.</span> The cat is <strong>under</strong> the table.</div>
+    <div class="ans-item"><span class="n">3.</span> The lamp is <strong>next to</strong> the bed.</div>
+    <div class="ans-item"><span class="n">4.</span> The ball is <strong>in front of</strong> the chair.</div>
+    <div class="ans-item"><span class="n">5.</span> The plant is <strong>next to</strong> the books.</div>
+  </div>
+  <div class="note">Item 3: "between" is not grammatically complete on its own (it needs two objects), so "next to" is the only valid option. Items 4 and 5 have no picture — accept the other option if the student explains it logically.</div>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Write About Your Classroom (open, suggested answers)</div>
+  <div class="sug">1. The teacher's desk is in front of the board.</div>
+  <div class="sug">2. My backpack is under my chair.</div>
+  <div class="sug">3. The clock is on the wall.</div>
+  <div class="sug">4. My pencil case is next to my book.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    Exercises 1, 2 and 4 don't include a picture for every item, so more than one preposition can be logically correct. Focus on whether the student's sentence is grammatically well-formed and makes sense, not on matching a single "correct" word.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ The book is in the desk.</span><br><span class="correct">✓ The book is on the desk.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ The cat is behind under the chair.</span><br><span class="correct">✓ The cat is under the chair.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ The ball is between the box.</span><br><span class="correct">✓ The ball is between the boxes. (needs two objects)</span></div>
+    <div class="mistake-row"><span class="wrong">✗ The plant is in front the window.</span><br><span class="correct">✓ The plant is in front of the window.</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Classroom Treasure Hunt (10 min)</div>
+    Call out sentences like "Find something that is under a chair" or "Find something that is next to the door." Students point to or name the object. Then have pairs take turns giving each other similar clues using the prepositions from the Grammar Box.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Grammar</td></tr>
+      <tr><td>Focus</td><td>Prepositions of place (in, on, under, next to, between, behind, in front of)</td></tr>
+      <tr><td>Exercises</td><td>5 (+ Grammar Box and Visual Reference)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Place a real object (a pen) in, on, under and next to a book on the desk while saying each sentence aloud. Ask students to repeat.</td></tr>
+    <tr><td>10 min</td><td>Presentation</td><td>Go through the Grammar Box and Visual Reference on the worksheet together, checking pronunciation of each preposition.</td></tr>
+    <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Exercise 1 individually, then check answers in pairs, explaining their choice for items 4–5.</td></tr>
+    <tr><td>8 min</td><td>Guided Practice</td><td>Students complete Exercise 2 in pairs, comparing their prepositions and discussing alternatives.</td></tr>
+    <tr><td>8 min</td><td>Production</td><td>Students complete Exercises 3 and 4 using the room picture, then compare Exercise 3 sentences with a partner.</td></tr>
+    <tr><td>4 min</td><td>Wrap-Up</td><td>Students complete Exercise 5 about their own classroom and share one sentence with the class.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>
