@@ -632,15 +632,44 @@
     color: var(--blue-200);
   }
 
+  /* HAMBURGER */
+  .hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; }
+  .mobile-menu { display: none; position: fixed; inset: 0; z-index: 200; }
+  .mobile-menu-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+  .mobile-menu-panel { position: absolute; top: 0; left: 0; bottom: 0; width: 280px; background: var(--blue-900); padding: 20px 0; display: flex; flex-direction: column; }
+  .mobile-menu-header { display: flex; align-items: center; justify-content: space-between; padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .mobile-menu-logo { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--white); text-decoration: none; }
+  .mobile-menu-logo span { color: var(--blue-200); }
+  .mobile-menu-close { background: none; border: none; color: var(--blue-100); cursor: pointer; font-size: 22px; line-height: 1; }
+  .mobile-menu-links { display: flex; flex-direction: column; padding: 16px 0; flex: 1; }
+  .mobile-menu-links a { color: var(--blue-100); text-decoration: none; font-size: 15px; font-weight: 500; padding: 13px 24px; transition: background 0.15s; }
+  .mobile-menu-links a:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+  .mobile-menu-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 10px; }
+  .mobile-menu-footer a { display: block; text-align: center; padding: 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .mobile-menu-footer .m-login { color: var(--blue-100); border: 1px solid rgba(255,255,255,0.2); }
+  .mobile-menu-footer .m-signup { background: var(--white); color: var(--blue-900); }
+  .mobile-menu.open { display: block; }
+
   /* RESPONSIVE */
   @media (max-width: 768px) {
     .nav-links { display: none; }
+    .hamburger { display: flex; }
     .main-layout { grid-template-columns: 1fr; }
     .sidebar { display: none; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .stats-bar { flex-wrap: wrap; }
     .stat { min-width: 50%; }
   }
+  .dl-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9999; align-items: center; justify-content: center; }
+  .dl-modal-overlay.open { display: flex; }
+  .dl-modal { background: #fff; border-radius: 16px; padding: 40px 32px 32px; max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); position: relative; }
+  .dl-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: #999; line-height: 1; }
+  .dl-modal-icon { font-size: 40px; margin-bottom: 12px; }
+  .dl-modal h2 { font-size: 18px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px; }
+  .dl-modal p { font-size: 13px; color: #888; margin: 0 0 24px; }
+  .btn-google-dl { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px 16px; border-radius: 8px; border: 1.5px solid #dadce0; background: #fff; font-size: 14px; font-weight: 600; color: #1a1a1a; cursor: pointer; font-family: inherit; transition: box-shadow 0.15s; }
+  .btn-google-dl:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); background: #f8f9fa; }
 </style>
 </head>
 <body>
@@ -660,7 +689,34 @@
     <a href="workshido-login.html" class="btn-ghost">Log in</a>
     <a href="workshido-signup.html" class="btn-primary">Sign up free</a>
   </div>
+  <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-backdrop" onclick="closeMobileMenu()"></div>
+  <div class="mobile-menu-panel">
+    <div class="mobile-menu-header">
+      <a href="workshido-index.html" class="mobile-menu-logo">work<span>shido</span></a>
+      <button class="mobile-menu-close" onclick="closeMobileMenu()">✕</button>
+    </div>
+    <div class="mobile-menu-links">
+      <a href="workshido-index.html">Browse all</a>
+      <a href="workshido-index.html?cat=Grammar">Grammar</a>
+      <a href="workshido-index.html?cat=Vocabulary">Vocabulary</a>
+      <a href="workshido-index.html?cat=Reading">Reading</a>
+      <a href="workshido-index.html?cat=Writing">Writing</a>
+      <a href="workshido-forteachers.html">For teachers</a>
+      <a href="workshido-upload.html">⬆ Upload</a>
+    </div>
+    <div class="mobile-menu-footer">
+      <a href="workshido-login.html" class="m-login">Log in</a>
+      <a href="workshido-signup.html" class="m-signup">Sign up free</a>
+    </div>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -741,9 +797,9 @@
         <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         Reading
       </a>
-      <a href="workshido-index.html?cat=Listening" class="sidebar-item">
-        <svg viewBox="0 0 24 24"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-        Listening
+      <a href="workshido-index.html?topic=practice" class="sidebar-item">
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M12 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="m17 3 4 4-8 8H9v-4z"/></svg>
+        Practice Worksheets
       </a>
       <a href="workshido-index.html?cat=Writing" class="sidebar-item">
         <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -824,7 +880,7 @@
       <a href="workshido-index.html?cat=Grammar">Grammar</a>
       <a href="workshido-index.html?cat=Vocabulary">Vocabulary</a>
       <a href="workshido-index.html?cat=Reading">Reading</a>
-      <a href="workshido-index.html?cat=Listening">Listening</a>
+      <a href="workshido-index.html?topic=practice">Practice</a>
       <a href="workshido-index.html?cat=Writing">Writing</a>
     </div>
     <div class="footer-col">
@@ -837,15 +893,15 @@
     </div>
     <div class="footer-col">
       <h4>Company</h4>
-      <a href="#">About</a>
       <a href="workshido-forteachers.html">For teachers</a>
       <a href="workshido-pricing.html">Premium</a>
-      <a href="#">Contact</a>
+      <a href="mailto:hello@workshido.com">Contact</a>
       <a href="workshido-privacy.html">Privacy</a>
+      <a href="workshido-terms.html">Terms</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Workshido. All rights reserved.</span>
+    <span>© <span id="yr"></span> Workshido. All rights reserved.</span>
     <span>Made with ♥ for teachers worldwide</span>
   </div>
 </footer>
@@ -861,12 +917,15 @@
 
   // Sidebar item interaction
   document.querySelectorAll('.sidebar-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
+    item.addEventListener('click', () => {
       document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
     });
   });
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  function openMobileMenu()  { document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow = ''; }
 
   // Search on Enter
   document.querySelector('.search-box input').addEventListener('keypress', (e) => {
@@ -904,16 +963,16 @@ function buildCard(ws) {
   const lvlCls = LEVEL_CLASS[ws.level]  || 'a1';
   const accent = ACCENT[ws.level]        || 'accent-teal';
   const badge  = ws.is_free ? '<span class="badge-type free">Free</span>' : '<span class="badge-type premium">Premium</span>';
-  const btn    = ws.is_free ? `<button class="btn-download" onclick="downloadWS('${ws.file_url}','${ws.id}')">↓ Download</button>` : `<button class="btn-download locked">🔒 Unlock</button>`;
+  const btn    = ws.is_free ? `<button class="btn-download" onclick="downloadWS('${ws.id}')">↓ Download</button>` : `<button class="btn-download locked">🔒 Unlock</button>`;
   const tags   = (ws.tags || ws.category || '').split(',').slice(0,2).map(t=>`<span class="tag">${t.trim()}</span>`).join('');
   const thumb  = ws.thumbnail_url
     ? `<img src="${ws.thumbnail_url}" alt="${ws.title}">`
     : `<div class="ws-preview"><div class="wl ${accent}"></div><div class="wl"></div><div class="wl short"></div><div class="wb"></div><div class="wb"></div><div class="wl short"></div></div>`;
   return `<div class="ws-card">
-    <div class="card-thumb ${color}">${thumb}</div>
+    <a href="workshido-worksheet.html?id=${ws.id}" class="card-thumb ${color}" style="display:block;text-decoration:none;">${thumb}</a>
     <div class="card-body">
       <div class="card-meta"><span class="badge-level ${lvlCls}">${ws.level}</span>${badge}</div>
-      <div class="card-title">${ws.title}</div>
+      <a href="workshido-worksheet.html?id=${ws.id}" class="card-title" style="text-decoration:none;color:inherit;">${ws.title}</a>
       <div class="card-tags">${tags}</div>
       <div class="card-footer">
         <div class="card-rating"><span class="stars">★★★★★</span><span class="reviews">(${ws.downloads||0})</span></div>
@@ -923,8 +982,29 @@ function buildCard(ws) {
   </div>`;
 }
 
-async function downloadWS(url, id) {
+async function downloadWS(id) {
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { document.getElementById('dlModal').classList.add('open'); return; }
+  } catch(e) { document.getElementById('dlModal').classList.add('open'); return; }
+  const { data: ws } = await sb.from('worksheets').select('file_url, downloads').eq('id', id).single();
+  if (!ws?.file_url) return;
+  const url = await getSignedUrl(ws.file_url);
   window.open(url, '_blank');
+  sb.from('worksheets').update({ downloads: (ws.downloads || 0) + 1 }).eq('id', id);
+}
+
+async function getSignedUrl(fileUrl) {
+  const m = fileUrl.match(/\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/);
+  if (!m) return fileUrl;
+  const { data } = await sb.storage.from(m[1]).createSignedUrl(m[2], 60);
+  return data?.signedUrl || fileUrl;
+}
+
+function closeDlModal() { document.getElementById('dlModal').classList.remove('open'); }
+
+function googleLoginDl() {
+  window.location.href = 'workshido-login.html?redirect=' + encodeURIComponent(window.location.href);
 }
 
 function filterAndRender() {
@@ -946,7 +1026,7 @@ function filterAndRender() {
 }
 
 async function loadWorksheets() {
-  const { data, error } = await sb.from('worksheets').select('*');
+  const { data, error } = await sb.from('worksheets').select('*').order('created_at', { ascending: false, nullsFirst: false }).limit(100);
   if (error) { document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);">Could not load worksheets.</div>'; return; }
   allWorksheets = data || [];
   filterAndRender();
@@ -980,5 +1060,18 @@ document.querySelector('.search-box input').addEventListener('keydown', e => {
 
 document.addEventListener('DOMContentLoaded', () => { checkAuth(); loadWorksheets(); });
 </script>
+
+<div class="dl-modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">
+  <div class="dl-modal">
+    <button class="dl-modal-close" onclick="closeDlModal()">✕</button>
+    <div class="dl-modal-icon">📥</div>
+    <h2>Sign in to download for free</h2>
+    <p>Create your free account and access all worksheets with no limits.</p>
+    <button class="btn-google-dl" onclick="googleLoginDl()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+  </div>
+</div>
 </body>
 </html>
