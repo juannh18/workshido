@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 11px; color: #1a1a2e; background: #fff; padding: 28px 32px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+  .included-grid span { font-size: 10.5px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 6px 10px; border-radius: 5px; margin-bottom: 10px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10.5px; font-weight: 700; color: #1a3a5c; margin: 10px 0 4px; }
+  .ex-sub { font-size: 10px; font-weight: 700; color: #555; margin: 5px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 14px; margin-bottom: 6px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 6px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; margin-bottom: 3px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  table.tf { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 6px; }
+  table.tf th { background: #1a3a5c; color: #fff; padding: 4px 6px; text-align: left; }
+  table.tf td { border: 1px solid #d0d8e4; padding: 4px 6px; }
+  table.tf tr:nth-child(even) td { background: #f7f9fc; }
+  .true { color: #1e8449; font-weight: 700; text-align: center; }
+  .false { color: #c0392b; font-weight: 700; text-align: center; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 4px; font-size: 10px; line-height: 1.5; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #1a3a5c; }
+  .sug::before { content: "→ "; color: #1a3a5c; font-weight: 700; }
+  .sug { font-size: 10px; line-height: 1.6; padding: 2px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 5px 8px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 18px; padding-top: 10px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9.5px; color: #777; font-style: italic; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Going To &bull; Reading &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (6 exercises)</span>
+    <span>Teacher Extra Activity</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Pre-Reading</div>
+  <div class="ex-sub">A. Look at the picture and title (open answer)</div>
+  <div style="font-size:9.5px; color:#555; margin-bottom:5px;">Accept any reasonable prediction. Example: "The text is about a girl's vacation plans / travel plans for the summer."</div>
+
+  <div class="ex-sub">B. Who is the text about? / What is it mainly about?</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1. Who?</span> c. A traveler (Laura, talking about her summer plans)</div>
+    <div class="ans-item"><span class="n">2. What?</span> c. Future plans (she describes everything with going to)</div>
+  </div>
+
+  <div class="ex-sub">Vocabulary Preview — Match</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1. trip</span> → short journey</div>
+    <div class="ans-item"><span class="n">2. visit</span> → to go to see a person or place</div>
+    <div class="ans-item"><span class="n">3. explore</span> → to discover new places</div>
+    <div class="ans-item"><span class="n">4. beach</span> → a place near the sea</div>
+    <div class="ans-item"><span class="n">5. next</span> → the following / upcoming</div>
+    <div class="ans-item"><span class="n">6. plan</span> → an idea for the future</div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Reading Text</div>
+  <div class="note">No answer key required — students read the text "My Plans for the Summer" silently. Text is about Laura's summer: visiting grandparents near the beach → trip with Anna to the mountains → online photography course.</div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Comprehension</div>
+  <div class="ex-sub">A. Answer the questions</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> The text is about Laura.</li>
+    <li><span class="n">2.</span> Her grandparents live near the beach / in another city.</li>
+    <li><span class="n">3.</span> She is going to stay for one week.</li>
+    <li><span class="n">4.</span> She is going to travel with Anna, her best friend.</li>
+    <li><span class="n">5.</span> They are going to hike and take lots of photos.</li>
+    <li><span class="n">6.</span> She is going to take an online course in photography.</li>
+  </ul>
+
+  <div class="ex-sub">B. True or False</div>
+  <table class="tf">
+    <thead><tr><th style="width:72%">Statement</th><th>T</th><th>F</th></tr></thead>
+    <tbody>
+      <tr><td>1. Laura is going to visit her grandparents at the beach.</td><td class="true">✓</td><td></td></tr>
+      <tr><td>2. Laura is going to travel alone.</td><td></td><td class="false">✗</td></tr>
+      <tr><td>3. They are going to explore a town in the mountains.</td><td class="true">✓</td><td></td></tr>
+      <tr><td>4. Laura is going to take a cooking course.</td><td></td><td class="false">✗</td></tr>
+      <tr><td>5. Laura is excited about her summer.</td><td class="true">✓</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Vocabulary in Context</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> "take a trip" → <strong>a. a short journey</strong></li>
+    <li><span class="n">2.</span> "going to explore a beautiful town" → <strong>a. to discover new places</strong></li>
+    <li><span class="n">3.</span> "My grandparents live near the beach" → <strong>b. the sea and sand</strong></li>
+  </ul>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Inference (use information from the text)</div>
+  <div class="sug">1. Because her grandparents live near the beach and she loves the beach / the sea.</div>
+  <div class="sug">2. She likes swimming, sunbathing, eating ice cream, hiking, and taking photos.</div>
+  <div class="sug">3. She feels excited and happy — she thinks it's going to be an unforgettable summer.</div>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Reflection (open answers — about the student)</div>
+  <div class="note">Accept any grammatically correct going to response. Encourage full sentences.</div>
+  <div class="sug">What are you going to do this summer? → I am going to [visit / travel / study / rest]...</div>
+  <div class="sug">Where are you going to go? → I am going to go to [place].</div>
+  <div class="sug">Who are you going to go with? → I am going to go with [family / friends].</div>
+  <div class="sug">What are you most excited about? → I am most excited about [activity].</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    Before reading, do the Vocabulary Preview in Ex 1 as a class — it pre-teaches all the key words students need to understand the text. For Ex 3B (True/False), ask students to underline the exact sentence in the text that justifies each answer. This builds the habit of evidence-based comprehension at A1 level.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ She going to visit her grandparents.</span><br><span class="correct">✓ She is going to visit her grandparents.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Laura is going to learns photography.</span><br><span class="correct">✓ Laura is going to learn photography.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ They go to hike in the mountains.</span><br><span class="correct">✓ They are going to hike in the mountains.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ "explore" = to build a town (distractor c)</span><br><span class="correct">✓ "explore" = to discover new places</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">My Summer Plans Paragraph (10–15 min)</div>
+    Students write a short paragraph (4–6 sentences) about their own summer plans, using Laura's text as a model. They must include at least one affirmative, one negative, and one question using <em>going to</em>. Pairs then share their plans and ask one follow-up question.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Reading</td></tr>
+      <tr><td>Grammar Focus</td><td>Going To (future plans)</td></tr>
+      <tr><td>Text Type</td><td>Personal blog — "My Plans for the Summer"</td></tr>
+      <tr><td>Exercises</td><td>6 (Pre-Reading → Reflection)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

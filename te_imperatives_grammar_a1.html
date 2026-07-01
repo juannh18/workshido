@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #0f3a5c; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #eaf6f2; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #0e7c66; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #0e7c66; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #0e7c66; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.teal5 { background: #0e7c66; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #0f3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #0f3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #eaf6f2; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #f0c98a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #7a4b06; margin-bottom: 5px; }
+  .flag::before { content: "⚠ "; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #0e7c66; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #0e7c66; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Imperatives &bull; Grammar &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (7 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title teal5">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Choose the Correct Imperative</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> <strong>Close</strong> the door.</div>
+    <div class="ans-item"><span class="n">2.</span> <strong>Don't eat</strong> in class.</div>
+    <div class="ans-item"><span class="n">3.</span> <strong>Be</strong> on time.</div>
+    <div class="ans-item"><span class="n">4.</span> <strong>Please help</strong> me.</div>
+    <div class="ans-item"><span class="n">5.</span> <strong>Turn off</strong> the lights.</div>
+    <div class="ans-item"><span class="n">6.</span> <strong>Don't run</strong> here.</div>
+    <div class="ans-item"><span class="n">7.</span> <strong>Listen</strong> carefully.</div>
+    <div class="ans-item"><span class="n">8.</span> <strong>Don't forget</strong> your ID.</div>
+    <div class="ans-item"><span class="n">9.</span> <strong>Speak</strong> quietly.</div>
+    <div class="ans-item"><span class="n">10.</span> <strong>Take</strong> a break.</div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Match the Imperative with the Picture</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> Don't touch the dog. → <strong>a</strong></div>
+    <div class="ans-item"><span class="n">2.</span> Please turn off your phone. → <strong>b</strong></div>
+    <div class="ans-item"><span class="n">3.</span> Open the window. → <strong>c</strong></div>
+    <div class="ans-item"><span class="n">4.</span> Be quiet. → <strong>d</strong></div>
+    <div class="ans-item"><span class="n">5.</span> Wash your hands. → <strong>e</strong></div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Complete the Sentences</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> <strong>Open</strong> the book.</div>
+    <div class="ans-item"><span class="n">2.</span> <strong>Wash</strong> your hands before eating.</div>
+    <div class="ans-item"><span class="n">3.</span> <strong>Do</strong> your homework every day.</div>
+    <div class="ans-item"><span class="n">4.</span> <strong>Don't be</strong> late to class.</div>
+    <div class="ans-item"><span class="n">5.</span> <strong>Listen</strong> to music loudly.</div>
+    <div class="ans-item"><span class="n">6.</span> <strong>Turn off</strong> the TV before bed.</div>
+    <div class="ans-item"><span class="n">7.</span> <strong>Ask</strong> questions in class.</div>
+    <div class="ans-item"><span class="n">8.</span> <strong>Don't run</strong> in the hallway.</div>
+    <div class="ans-item"><span class="n">9.</span> <strong>Keep</strong> neat and tidy.</div>
+    <div class="ans-item"><span class="n">10.</span> <strong>Bring</strong> your lunch with you.</div>
+  </div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Put the Words in Order</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> Close the door.</li>
+    <li><span class="n">2.</span> Don't talk in class.</li>
+    <li><span class="n">3.</span> Put your toys away.</li>
+    <li><span class="n">4.</span> Please take a seat.</li>
+    <li><span class="n">5.</span> Don't be rude.</li>
+  </ul>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Rewrite the Sentences (negative imperative)</div>
+  <div class="note">Example given: Eat your vegetables. → Don't eat your vegetables.</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> Don't be late.</li>
+    <li><span class="n">2.</span> Don't use your phone in class.</li>
+    <li><span class="n">3.</span> Don't forget your homework.</li>
+    <li><span class="n">4.</span> Don't leave your trash on the floor.</li>
+    <li><span class="n">5.</span> Don't shout in the library.</li>
+  </ul>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Write Your Own Imperatives (open)</div>
+  <div class="note">Accept any correct imperative per situation. Suggested models:</div>
+  <div class="sug">1. You're at school → Listen to the teacher. 2. It's your friend's birthday → Have a great day! 3. It's raining → Take an umbrella. 4. It's time to eat → Wash your hands. 5. You care about the environment → Recycle your trash.</div>
+
+  <!-- EX 7 -->
+  <div class="ex-title">Exercise 7 – Choose the Best Imperative</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> Be quiet in the library. → <strong>a</strong></div>
+    <div class="ans-item"><span class="n">2.</span> Friend to come here. → <strong>a</strong></div>
+    <div class="ans-item"><span class="n">3.</span> Someone not to enter. → <strong>a</strong></div>
+    <div class="ans-item"><span class="n">4.</span> Someone to help you. → <strong>a</strong></div>
+    <div class="ans-item"><span class="n">5.</span> Tell someone to study. → <strong>a</strong></div>
+  </div>
+  <div class="note">Option (a) is always the correct base-form imperative; (b) wrongly adds a subject or -s, (c) is grammatically incomplete or awkward.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    Start with the Rules box and Examples on the worksheet — drill each rule chorally with a real classroom action (e.g., actually standing up for "Stand up"). For Ex 7, point out that every correct answer is option (a) so students learn to recognize the base-form pattern itself, not just memorize letters.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ Closes the door.</span><br><span class="correct">✓ Close the door.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ You be quiet.</span><br><span class="correct">✓ Be quiet. (no subject)</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Not eat in class.</span><br><span class="correct">✓ Don't eat in class.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Please helps me.</span><br><span class="correct">✓ Please help me.</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Simon Says (10 min)</div>
+    Classic TPR game: call out imperatives ("Touch your nose." / "Don't sit down.") — students only follow the command if it starts with "Simon says." Reinforces both affirmative and negative imperatives physically and playfully.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Grammar</td></tr>
+      <tr><td>Focus</td><td>Imperatives — affirmative and negative commands</td></tr>
+      <tr><td>Exercises</td><td>7 (+ Rules and Examples reference)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title teal5" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Give 3–4 real classroom commands (Stand up. Sit down. Open your book.) and have students physically respond before opening the worksheet.</td></tr>
+    <tr><td>10 min</td><td>Presentation</td><td>Go through the Rules and Examples boxes on the board. Highlight: base form, no subject, Please for politeness, Don't + verb for negatives.</td></tr>
+    <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Ex 1–2 individually, then check in pairs.</td></tr>
+    <tr><td>8 min</td><td>Guided Practice</td><td>Students complete Ex 3–4 in pairs, alternating who writes and who checks.</td></tr>
+    <tr><td>8 min</td><td>Production</td><td>Students complete Ex 5 and Ex 6, then compare Ex 6 sentences with a partner.</td></tr>
+    <tr><td>4 min</td><td>Wrap-Up</td><td>Complete Ex 7 together on the board as a quick class review, then close with one round of Simon Says.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

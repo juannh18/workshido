@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10px; color: #1a1a2e; background: #fff; padding: 24px 28px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #b5184a; margin-bottom: 12px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #fceef2; border-radius: 8px; padding: 9px 16px; margin-bottom: 12px; border-left: 4px solid #b5184a; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #b5184a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 20px; }
+  .included-grid span { font-size: 9.5px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #b5184a; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; }
+  .section-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 4px 8px; border-radius: 5px; margin-bottom: 6px; }
+  .section-title.pink { background: #b5184a; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 9.5px; font-weight: 700; color: #0f3a5c; margin: 6px 0 2px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 10px; margin-bottom: 4px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 1px 5px; font-size: 9px; line-height: 1.35; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 4px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 1px 5px; font-size: 9px; line-height: 1.35; margin-bottom: 1px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  table.tf { width: 100%; border-collapse: collapse; font-size: 9px; margin-bottom: 4px; }
+  table.tf th { background: #0f3a5c; color: #fff; padding: 2px 4px; text-align: center; }
+  table.tf td { border: 1px solid #d0d8e4; padding: 2px 4px; }
+  table.tf td.true { color: #1e8449; font-weight: 700; text-align: center; }
+  table.tf td.false { color: #c0392b; font-weight: 700; text-align: center; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; font-size: 9.5px; line-height: 1.55; color: #333; }
+  .mistake-row { margin-bottom: 2px; font-size: 9px; line-height: 1.35; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 9.5px; margin-bottom: 3px; color: #0f3a5c; }
+  .sug { font-size: 9px; line-height: 1.5; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+  .info-table tr:nth-child(odd) { background: #fceef2; }
+  .info-table td { padding: 3px 6px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 10px; padding-top: 6px; border-top: 1px solid #d0d8e4; font-size: 9px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 8.5px; color: #777; font-style: italic; margin-bottom: 2px; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9px; margin-top: 3px; }
+  .lp-table th { background: #b5184a; color: #fff; padding: 3px 5px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 3px 5px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #b5184a; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">There Is / There Are &bull; Practice &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (10 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Model Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title pink">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Choose the Correct Option</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> a) <strong>there is</strong> — a book on the table.</div>
+    <div class="ans-item"><span class="n">2.</span> b) <strong>there are</strong> — two windows.</div>
+    <div class="ans-item"><span class="n">3.</span> b) <strong>there are</strong> — some plants on the shelf.</div>
+    <div class="ans-item"><span class="n">4.</span> a) <strong>there is</strong> — a fridge in the kitchen.</div>
+    <div class="ans-item"><span class="n">5.</span> b) <strong>there are</strong> — three chairs around the table.</div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Complete the Sentences</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> <strong>There is</strong> a lamp on the desk.</div>
+    <div class="ans-item"><span class="n">2.</span> <strong>There are</strong> some cups in the cupboard.</div>
+    <div class="ans-item"><span class="n">3.</span> <strong>There is</strong> a garden behind the house.</div>
+    <div class="ans-item"><span class="n">4.</span> <strong>There are</strong> four bedrooms in the house.</div>
+    <div class="ans-item"><span class="n">5.</span> <strong>There aren't</strong> any books on the shelf.</div>
+    <div class="ans-item"><span class="n">6.</span> <strong>There is</strong> a TV in the living room.</div>
+  </div>
+  <div class="note">Item 5 uses "any," which signals the negative form — see Teacher Tip.</div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Look at the Picture (kitchen, open)</div>
+  <div class="note">Accept any 5 correct sentences describing the kitchen picture. Suggested model:</div>
+  <div class="sug">1. There is a kitchen table. 2. There are four chairs around the table. 3. There are some cabinets in the kitchen. 4. There is a fridge near the window. 5. There are some windows in the kitchen.</div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Make Negative Sentences</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> There <strong>isn't</strong> a mirror in the bathroom.</li>
+    <li><span class="n">2.</span> There <strong>aren't</strong> any pillows on the bed.</li>
+    <li><span class="n">3.</span> There <strong>isn't</strong> a plant on the desk.</li>
+    <li><span class="n">4.</span> There <strong>aren't</strong> any pictures on the wall.</li>
+    <li><span class="n">5.</span> There <strong>isn't</strong> a carpet on the floor.</li>
+  </ul>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Answer the Questions (short answers)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> Is there a table in the kitchen? — Yes, <strong>there is</strong>.</li>
+    <li><span class="n">2.</span> Are there any windows in the bedroom? — No, <strong>there aren't</strong>.</li>
+    <li><span class="n">3.</span> Is there a sofa in the living room? — Yes, <strong>there is</strong>.</li>
+    <li><span class="n">4.</span> Are there some books on the shelf? — Yes, <strong>there are</strong>.</li>
+    <li><span class="n">5.</span> Is there a shower in the bathroom? — No, <strong>there isn't</strong>.</li>
+  </ul>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Look and Write (3 pictures, open)</div>
+  <div class="note">Accept any correct sentences. Suggested models (2 sentences each):</div>
+  <ul class="ans">
+    <li><span class="n">1. Bedroom</span> — There is a bed in the bedroom. There is a plant next to the bed.</li>
+    <li><span class="n">2. Bookshelf</span> — There are many books on the shelf. There is a plant on the shelf.</li>
+    <li><span class="n">3. Bathroom</span> — There is a sink in the bathroom. There is a shower next to the sink.</li>
+  </ul>
+
+  <!-- EX 7 -->
+  <div class="ex-title">Exercise 7 – Read and Complete</div>
+  <div class="sug" style="background:#f7f9fc; border:1px solid #d0d8e4; border-radius:4px; padding:5px 7px;">
+    This is my house. In the living room, <strong>there is</strong> a big sofa and a coffee table. <strong>There are</strong> two windows and a TV on the wall. In the kitchen, <strong>there is</strong> a table and four chairs. <strong>There are</strong> some dishes in the cupboard. In my bedroom, <strong>there is</strong> a bed, a desk and a lamp. <strong>There aren't</strong> any carpets in the rooms.
+  </div>
+
+  <!-- EX 8 -->
+  <div class="ex-title">Exercise 8 – True or False (grammar check)</div>
+  <table class="tf">
+    <thead><tr><th style="text-align:left; width:78%">Sentence</th><th>T/F</th></tr></thead>
+    <tbody>
+      <tr><td>1. There is a garden in front of the house.</td><td class="true">T</td></tr>
+      <tr><td>2. There are three bedrooms in the house.</td><td class="true">T</td></tr>
+      <tr><td>3. There is a car in the garage.</td><td class="true">T</td></tr>
+      <tr><td>4. There are any TVs in the bedrooms.</td><td class="false">F</td></tr>
+      <tr><td>5. There is a bathtub in the bathroom.</td><td class="true">T</td></tr>
+    </tbody>
+  </table>
+  <div class="note">This exercise checks grammatical correctness, not a specific story. Sentences 1, 2, 3 and 5 use is/are correctly. Sentence 4 is incorrect — "any" cannot be used in an affirmative statement; it should be "There aren't any TVs in the bedrooms" or "Are there any TVs in the bedrooms?"</div>
+
+  <!-- EX 9 -->
+  <div class="ex-title">Exercise 9 – Choose and Write (word box, open)</div>
+  <div class="note">Open — students choose 5 words from the box (sofa, plant, fridge, mirror, bed, shelves, carpet, lamp, window, desk) and write correct sentences. Suggested model:</div>
+  <div class="sug">1. There is a sofa in the living room. 2. There is a plant on the desk. 3. There is a fridge in the kitchen. 4. There is a mirror in the bathroom. 5. There is a bed in the bedroom.</div>
+
+  <!-- EX 10 -->
+  <div class="ex-title">Exercise 10 – Write About Your Room (personal, 5–6 sentences)</div>
+  <div class="note">Open — accept any correct paragraph. Suggested model:</div>
+  <div class="sug">There is a bed in my room. There is a desk next to the window. There are two shelves with books. There is a lamp on the desk. There are some pictures on the wall. There is a carpet on the floor.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    This worksheet works best as a review/consolidation after the Grammar, Vocabulary, Reading and Writing worksheets. For Ex 8, clarify that "True or False" here means "Is the grammar of the sentence correct?" — not a reading comprehension check. Use sentence 4 as a live example on the board: "Why is 'any' wrong here?"
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ There is three chairs.</span><br><span class="correct">✓ There are three chairs.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ There not a mirror.</span><br><span class="correct">✓ There isn't a mirror.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ There are any TVs.</span><br><span class="correct">✓ There aren't any TVs. / Are there any TVs?</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Yes, there is a sofa. (long form)</span><br><span class="correct">✓ Yes, there is. (short answer)</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Error Auction (10 min)</div>
+    Write 8 there is/there are sentences on the board — some correct, some with errors (singular/plural mismatch, wrong use of "any"). Groups "bid" points on the sentences they believe are correct, then reveal the answers. Great review activity to close a unit on there is/there are.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Practice (Grammar)</td></tr>
+      <tr><td>Focus</td><td>There Is / There Are — all forms: aff., neg., questions</td></tr>
+      <tr><td>Exercises</td><td>10 (Choose → Write About Your Room)</td></tr>
+      <tr><td>Estimated Time</td><td>45–60 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title pink" style="margin-top:10px;">Lesson Plan (50 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:12%">Time</th><th style="width:18%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Quick oral review: teacher says a noun (e.g., "two lamps"), students respond with the full sentence ("There are two lamps.").</td></tr>
+    <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Ex 1–2 individually, then check in pairs. Class correction with focus on item 5 of Ex 2 ("any" → negative).</td></tr>
+    <tr><td>10 min</td><td>Guided Practice</td><td>Students complete Ex 3–4–5 in pairs, alternating who writes and who checks.</td></tr>
+    <tr><td>10 min</td><td>Reading & Grammar Focus</td><td>Students complete Ex 6–7 individually. As a class, complete Ex 8 together on the board, discussing why sentence 4 is incorrect.</td></tr>
+    <tr><td>12 min</td><td>Production</td><td>Students complete Ex 9 (choosing their own words) and start Ex 10 (personal paragraph about their room).</td></tr>
+    <tr><td>3 min</td><td>Wrap-Up</td><td>Volunteers share one sentence from Ex 10. Assign any unfinished exercises as homework.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

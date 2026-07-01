@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 11px; color: #1a1a2e; background: #fff; padding: 28px 32px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+  .included-grid span { font-size: 10.5px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 6px 10px; border-radius: 5px; margin-bottom: 10px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10.5px; font-weight: 700; color: #1a3a5c; margin: 10px 0 4px; }
+  ul.ans { list-style: none; margin: 0 0 6px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; margin-bottom: 3px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 14px; margin-bottom: 6px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 6px; }
+  .cat-box { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 5px 8px; font-size: 9.5px; }
+  .cat-box .cat-title { font-weight: 800; color: #1a3a5c; font-size: 10px; margin-bottom: 3px; }
+  .verb-list { display: flex; flex-wrap: wrap; gap: 3px; }
+  .verb-tag { background: #eaf0f8; border: 1px solid #b3c9e0; border-radius: 3px; padding: 2px 5px; font-size: 9px; font-weight: 600; color: #1a3a5c; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 4px; font-size: 10px; line-height: 1.5; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #1a3a5c; }
+  .sug { font-size: 10px; line-height: 1.6; padding: 2px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 5px 8px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 18px; padding-top: 10px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9.5px; color: #777; font-style: italic; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Verb To Be &bull; Vocabulary &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (5 exercises)</span>
+    <span>Teacher Extra Activity</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Match the Words with Correct Pictures (A–J)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1. student</span> → picture of a student (studying)</div>
+    <div class="ans-item"><span class="n">2. teacher</span> → picture of teacher at board</div>
+    <div class="ans-item"><span class="n">3. friend</span> → picture of two people together</div>
+    <div class="ans-item"><span class="n">4. happy</span> → picture of smiling person</div>
+    <div class="ans-item"><span class="n">5. tired</span> → picture of person looking sleepy</div>
+    <div class="ans-item"><span class="n">6. hungry</span> → picture of person with food/stomach</div>
+    <div class="ans-item"><span class="n">7. tall</span> → picture of tall person</div>
+    <div class="ans-item"><span class="n">8. short</span> → picture of short person</div>
+    <div class="ans-item"><span class="n">9. country</span> → picture of globe / map</div>
+    <div class="ans-item"><span class="n">10. nationality</span> → picture of flag / passport</div>
+  </div>
+  <div class="note">Accept any clearly correct match based on picture in the worksheet. Picture letters (A–J) depend on the worksheet layout.</div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Complete the Sentences (am / is / are)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> I <strong>am</strong> a student.</div>
+    <div class="ans-item"><span class="n">2.</span> My name <strong>is</strong> Sarah.</div>
+    <div class="ans-item"><span class="n">3.</span> He <strong>is</strong> from Brazil.</div>
+    <div class="ans-item"><span class="n">4.</span> We <strong>are</strong> friends.</div>
+    <div class="ans-item"><span class="n">5.</span> You <strong>are</strong> very tall!</div>
+    <div class="ans-item"><span class="n">6.</span> She <strong>is</strong> a teacher.</div>
+    <div class="ans-item"><span class="n">7.</span> They <strong>are</strong> tired.</div>
+    <div class="ans-item"><span class="n">8.</span> The food <strong>is</strong> delicious.</div>
+    <div class="ans-item"><span class="n">9.</span> This <strong>is</strong> my brother.</div>
+    <div class="ans-item"><span class="n">10.</span> I <strong>am</strong> happy today.</div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Choose the Correct Word (box: am · is · are · from · my · your)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> Where <strong>are</strong> you from? — I am <strong>from</strong> Canada.</div>
+    <div class="ans-item"><span class="n">2.</span> This <strong>is</strong> <strong>my</strong> friend, Tom.</div>
+    <div class="ans-item"><span class="n">3.</span> She <strong>is</strong> a very good student.</div>
+    <div class="ans-item"><span class="n">4.</span> We <strong>are</strong> happy to be here!</div>
+    <div class="ans-item"><span class="n">5.</span> What <strong>is</strong> his name? — His name <strong>is</strong> Alex.</div>
+    <div class="ans-item"><span class="n">6.</span> They <strong>are</strong> from Spain.</div>
+  </div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Vocabulary Categories (People / Feelings / Countries)</div>
+  <div class="cat-grid">
+    <div class="cat-box">
+      <div class="cat-title">People</div>
+      <div class="verb-list">
+        <span class="verb-tag">student</span>
+        <span class="verb-tag">teacher</span>
+        <span class="verb-tag">friend</span>
+      </div>
+    </div>
+    <div class="cat-box">
+      <div class="cat-title">Feelings</div>
+      <div class="verb-list">
+        <span class="verb-tag">happy</span>
+        <span class="verb-tag">tired</span>
+        <span class="verb-tag">hungry</span>
+      </div>
+    </div>
+    <div class="cat-box">
+      <div class="cat-title">Countries</div>
+      <div class="verb-list">
+        <span class="verb-tag">country</span>
+        <span class="verb-tag">nationality</span>
+      </div>
+    </div>
+  </div>
+  <div class="note">Note: "name", "age", "tall", "short" are in the vocabulary list but may belong to a 4th category (Descriptions / Other). Accept reasonable groupings.</div>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Write About Yourself (personal — suggested model)</div>
+  <div class="note">Accept any grammatically correct sentences using verb to be with personal information.</div>
+  <div class="sug">My name is [name]. I am [age] years old. I am from [country]. I am a student. I am [feeling] today.</div>
+  <div class="sug"><strong>Challenge (4 sentences):</strong> I am friendly. My teacher is helpful. My friends are funny. We are happy at school.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    For Ex 1, pre-teach the vocabulary with flashcards before matching — show each image and elicit the word chorally. For Ex 4, let students discuss in pairs whether "tall" and "short" belong in a new category — the discussion itself reinforces the vocabulary. Ex 5 (Write About Yourself) works well as a class sharing activity: each student reads one sentence while others listen and check.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ My name Sarah.</span><br><span class="correct">✓ My name is Sarah.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ I are from Brazil.</span><br><span class="correct">✓ I am from Brazil.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ They is tired.</span><br><span class="correct">✓ They are tired.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Where you from?</span><br><span class="correct">✓ Where are you from?</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Guess Who? (10 min)</div>
+    A student thinks of a famous person. The class asks yes/no questions using "Is he/she...?" — "Is he from the USA? Is she a singer? Is she happy in the picture?" First to guess correctly wins. Forces natural use of is/are in questions and short answers.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Vocabulary</td></tr>
+      <tr><td>Topics</td><td>People, feelings, countries, identity</td></tr>
+      <tr><td>Grammar</td><td>Verb To Be — am / is / are</td></tr>
+      <tr><td>Exercises</td><td>5 (Match → Write About Yourself)</td></tr>
+      <tr><td>Estimated Time</td><td>30–40 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

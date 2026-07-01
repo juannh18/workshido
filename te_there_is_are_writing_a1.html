@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a7a; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #eef1fb; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a7a; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a7a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a7a; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.blue2 { background: #1a3a7a; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #0f3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #0f3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #eef1fb; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #1a3a7a; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #1a3a7a; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">There Is / There Are &bull; Writing &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (4 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Model Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title blue2">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Sentence Builder</div>
+  <div class="note">There Is (singular):</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> There is a table in the room.</li>
+    <li><span class="n">2.</span> There is a plant on the table.</li>
+    <li><span class="n">3.</span> There is a chair next to the table.</li>
+    <li><span class="n">4.</span> There is a book on the table.</li>
+  </ul>
+  <div class="note">There Are (plural):</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> There are three stools in the kitchen.</li>
+    <li><span class="n">2.</span> There are some cups on the shelf.</li>
+    <li><span class="n">3.</span> There are two windows in the kitchen.</li>
+    <li><span class="n">4.</span> There are some plants on the shelf.</li>
+  </ul>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Guided Writing (5 pictures, open)</div>
+  <div class="note">Accept any correct sentences describing each picture. Suggested models (2 sentences each):</div>
+  <ul class="ans">
+    <li><span class="n">1. Park</span> — There are many trees in the park. There is a bench on the path.</li>
+    <li><span class="n">2. Classroom</span> — There is a whiteboard in the classroom. There are many desks.</li>
+    <li><span class="n">3. Bathroom</span> — There is a sink in the bathroom. There is a mirror above the sink.</li>
+    <li><span class="n">4. Bedroom</span> — There is a bed in the bedroom. There is a lamp next to the bed.</li>
+    <li><span class="n">5. Bookshelf</span> — There are many books on the shelf. There is a plant on the shelf.</li>
+  </ul>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Write About This Place (open, 5–6 sentences)</div>
+  <div class="note">Accept any correct description of the living/dining room picture. Suggested model:</div>
+  <div class="sug">There is a dining table with four chairs. There is a sofa in the living room. There is a TV on the stand. There are two pictures on the wall. There are two pendant lights above the table. There is a plant next to the window.</div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Free Writing (personal, 6–8 sentences)</div>
+  <div class="note">Open — accept any grammatically correct paragraph about the student's favorite room or classroom. Suggested model:</div>
+  <div class="sug">My favorite room is my bedroom. There is a big bed next to the window. There is a desk with a lamp. There are some books on the shelf. There is a mirror on the wall. There are two pictures above the bed. There is a rug on the floor. I love spending time in my room.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    For Ex 1, write the two column headers (THERE IS / THERE ARE) on the board first and elicit a few examples before students write independently — this prevents singular/plural mix-ups early. For Ex 4, give students the Useful Words box time before they start: brainstorming "next to / under / behind" together raises the quality of the final paragraph noticeably.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ There is three stools.</span><br><span class="correct">✓ There are three stools.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ There are a plant on the table.</span><br><span class="correct">✓ There is a plant on the table.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ There is books on the shelf.</span><br><span class="correct">✓ There are books on the shelf.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Have a sofa in the room.</span><br><span class="correct">✓ There is a sofa in the room.</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Describe and Draw (10–15 min)</div>
+    In pairs, Student A writes 5 "There is / There are" sentences describing an imaginary room (without showing the partner). Student B listens and draws the room based only on the sentences. Compare the drawing to what Student A imagined — great for checking clarity and accuracy of writing.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Writing</td></tr>
+      <tr><td>Grammar Focus</td><td>There Is / There Are — describing places</td></tr>
+      <tr><td>Exercises</td><td>4 (Sentence Builder → Free Writing)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title blue2" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Show the header kitchen/living-room photo. Ask students to say 3 things they can see using "There is / There are."</td></tr>
+    <tr><td>10 min</td><td>Controlled Writing</td><td>Students complete Ex 1 (Sentence Builder) individually, then read their sentences aloud in pairs to check singular/plural agreement.</td></tr>
+    <tr><td>10 min</td><td>Guided Writing</td><td>Students complete Ex 2, writing 2 sentences per picture. Monitor and correct common errors on the board as they arise.</td></tr>
+    <tr><td>10 min</td><td>Semi-Free Writing</td><td>Students write their Ex 3 description of the living/dining room individually, then swap with a partner to peer-check for is/are agreement.</td></tr>
+    <tr><td>8 min</td><td>Free Writing</td><td>Students start Ex 4, using the Useful Words box for ideas. If time is short, assign as homework.</td></tr>
+    <tr><td>2 min</td><td>Wrap-Up</td><td>Volunteers read one sentence from Ex 4 aloud. Quick class feedback on the most common mistake of the day.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

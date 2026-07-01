@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1e6b3a; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #eef6ef; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1e6b3a; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1e6b3a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1e6b3a; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.green2 { background: #1e6b3a; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #0f3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  table.tf { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-bottom: 5px; }
+  table.tf th { background: #0f3a5c; color: #fff; padding: 3px 5px; text-align: center; }
+  table.tf td { border: 1px solid #d0d8e4; padding: 3px 5px; }
+  table.tf td.true { color: #1e8449; font-weight: 700; text-align: center; }
+  table.tf td.false { color: #c0392b; font-weight: 700; text-align: center; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #0f3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #eef6ef; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #f0c98a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #7a4b06; margin-bottom: 5px; }
+  .flag::before { content: "⚠ "; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #1e6b3a; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #1e6b3a; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Imperatives &bull; Reading &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (7 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title green2">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Before You Read</div>
+  <div class="ans-item" style="margin-bottom:6px;">Picture: "Welcome to Green Park" sign → <strong>b. Park rules</strong></div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Reading: "Rules for Everyone" (Text 2)</div>
+  <div class="note">Sign text: Use the trash bins, keep the park clean / Ride your bike on the paths, be safe / Keep your dog on a leash, respect others / Be quiet, enjoy the nature / Don't pick the flowers, protect the plants.</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> What should you use in the park? — <strong>The trash bins.</strong></li>
+    <li><span class="n">2.</span> Where should you ride your bike? — <strong>On the paths.</strong></li>
+    <li><span class="n">3.</span> What should you keep your dog on? — <strong>A leash.</strong></li>
+    <li><span class="n">4.</span> What should you not do in the park? — <strong>Pick the flowers.</strong></li>
+    <li><span class="n">5.</span> Why should people be quiet? — <strong>To enjoy the nature / to respect others.</strong></li>
+  </ul>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Read for Details: "How to Take Care of Your Tablet" (Text 3)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> You should <strong>keep</strong> your tablet clean.</li>
+    <li><span class="n">2.</span> You shouldn't <strong>eat</strong> or drink near it.</li>
+    <li><span class="n">3.</span> You should use a <strong>soft cloth</strong> to clean the screen.</li>
+    <li><span class="n">4.</span> You shouldn't <strong>drop</strong> your tablet.</li>
+    <li><span class="n">5.</span> You should charge it with the <strong>original</strong> charger.</li>
+    <li><span class="n">6.</span> You should <strong>turn off</strong> the tablet when you are not using it.</li>
+  </ul>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – True or False (Text 2 + Text 3)</div>
+  <table class="tf">
+    <thead><tr><th style="text-align:left; width:78%">Statement</th><th>T/F</th></tr></thead>
+    <tbody>
+      <tr><td>1. You should use the trash bins in the park.</td><td class="true">T</td></tr>
+      <tr><td>2. You can ride your bike anywhere in the park.</td><td class="false">F</td></tr>
+      <tr><td>3. You should keep your dog on a leash.</td><td class="true">T</td></tr>
+      <tr><td>4. You should pick the flowers.</td><td class="false">F</td></tr>
+      <tr><td>5. You should eat near your tablet.</td><td class="false">F</td></tr>
+      <tr><td>6. You should turn off your tablet when not using it.</td><td class="true">T</td></tr>
+    </tbody>
+  </table>
+  <div class="note">Item 2: bikes are only allowed on the paths. Item 4: the sign says "Don't pick the flowers." Item 5: the tablet text says not to eat or drink near it.</div>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Vocabulary in Context</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> containers for garbage (text 2) → <strong>trash bins</strong></li>
+    <li><span class="n">2.</span> routes for bicycles (text 2) → <strong>paths</strong></li>
+    <li><span class="n">3.</span> not allowed to do something (text 2) → <strong>Don't (pick the flowers)</strong></li>
+    <li><span class="n">4.</span> maintain in a good condition (text 1) → <strong>keep clean / keep our park clean and safe</strong></li>
+    <li><span class="n">5.</span> device used to give power (text 3) → <strong>charger</strong></li>
+  </ul>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Read and Choose</div>
+  <div class="flag">Item 2's second situation is printed as unreadable garbled text ("Your ghold sohooes.") in the worksheet — likely an AI-image-generation glitch, not real English. It's also missing option (c) and duplicates the number "2." Recommend regenerating this part of the worksheet; meanwhile, skip or let students discuss it as a discussion point rather than a gradable item.</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> The room is very dirty. → <strong>b) Clean your room.</strong></li>
+    <li><span class="n">2.</span> Your friend is late. → <strong>b) Hurry up!</strong></li>
+    <li><span class="n">3.</span> You want someone to be quiet. → <strong>b) Be quiet.</strong></li>
+    <li><span class="n">4.</span> You need to water (the plants). → <strong>b) Use water carefully.</strong></li>
+    <li><span class="n">5.</span> You want help. → <strong>a) Help me, please.</strong></li>
+  </ul>
+
+  <!-- EX 7 -->
+  <div class="ex-title">Exercise 7 – Personal Response (open, 3 sentences)</div>
+  <div class="note">Accept any 3 reasonable classroom rules. Suggested model:</div>
+  <div class="sug">Raise your hand before speaking. Keep your desk clean. Listen to the teacher.</div>
+  <div class="note">Think! box (open discussion): Why are imperatives important in signs, rules and instructions? — Suggested answer: Because they give clear, short and direct information so people know exactly what to do quickly, which matters for safety and understanding.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    Before reading, ask students to predict the topic from the sign picture alone (Ex 1) — this builds prediction skills. For Ex 4, require students to point to the exact line in the text that proves each answer. For Ex 6, openly acknowledge the garbled item so students don't lose confidence thinking they misunderstood the language.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ You should using the trash bins.</span><br><span class="correct">✓ You should use the trash bins.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Don't dropping your tablet.</span><br><span class="correct">✓ Don't drop your tablet.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Keep your dog in a leash.</span><br><span class="correct">✓ Keep your dog on a leash.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Charge it with the original charge.</span><br><span class="correct">✓ Charge it with the original charger.</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Design a Sign (10–15 min)</div>
+    In pairs, students design their own "Rules for Everyone" sign for a place of their choice (school, bus, swimming pool) using at least 4 imperative rules, following the Text 2 format (rule + short benefit phrase).
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Reading</td></tr>
+      <tr><td>Grammar Focus</td><td>Imperatives — signs, rules and instructions</td></tr>
+      <tr><td>Text Type</td><td>3 short informational texts (sign, rules list, instructions)</td></tr>
+      <tr><td>Exercises</td><td>7 (Before You Read → Personal Response)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title green2" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Show the park sign picture and ask "What do you think this text is about?" before revealing Ex 1's options.</td></tr>
+    <tr><td>10 min</td><td>While-Reading</td><td>Students read Text 2 (park rules) and Text 3 (tablet care) silently, then answer Ex 2 and Ex 3.</td></tr>
+    <tr><td>8 min</td><td>Comprehension Check</td><td>Check Ex 2–3 as a class, asking students to point to the line that proves each answer.</td></tr>
+    <tr><td>8 min</td><td>True/False & Vocabulary</td><td>Pairs complete Ex 4 and Ex 5 together, discussing any disagreements.</td></tr>
+    <tr><td>8 min</td><td>Application</td><td>Students complete Ex 6, skipping or discussing the garbled item as a class talking point about real-world text problems.</td></tr>
+    <tr><td>6 min</td><td>Production & Wrap-Up</td><td>Students write their Ex 7 classroom rules and share one aloud. Close with the Think! discussion question.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

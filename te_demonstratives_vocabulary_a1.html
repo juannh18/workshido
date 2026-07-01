@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #14495e; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #eaf2f5; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #14495e; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #14495e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #14495e; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.teal3 { background: #14495e; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #0f3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 2px 8px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #0f3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #eaf2f5; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #f0c98a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #7a4b06; margin-bottom: 5px; }
+  .flag::before { content: "⚠ "; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #14495e; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #14495e; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Demonstratives &bull; Vocabulary &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (6 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title teal3">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Match the Words with the Pictures (1–8)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1. Apple</span> (close-up) → <strong>This</strong></div>
+    <div class="ans-item"><span class="n">2. Headphones</span> (close-up) → <strong>This</strong></div>
+    <div class="ans-item"><span class="n">3. Plant</span> (close-up) → <strong>This</strong></div>
+    <div class="ans-item"><span class="n">4. City buildings</span> (skyline, far) → <strong>Those</strong></div>
+    <div class="ans-item"><span class="n">5. Bicycles (2)</span> (close-up) → <strong>These</strong></div>
+    <div class="ans-item"><span class="n">6. Colored pencils</span> (close-up) → <strong>These</strong></div>
+    <div class="ans-item"><span class="n">7. Mountain</span> (distant landscape) → <strong>That</strong></div>
+    <div class="ans-item"><span class="n">8. Books on shelf</span> (close-up) → <strong>These</strong></div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Categorize the Words</div>
+  <div class="flag">The word box gives 12 plain nouns (book, chair, tree, pen, building, car, desk, phone, window, keys, mountain, bag) with no pictures, so "near vs. far" is inherently a matter of the student's own imagined scene — there is no single objectively correct split. Accept any reasonable placement where the student can justify it. Suggested model (3 words per column):</div>
+  <div class="ans-grid-4">
+    <div class="ans-item"><strong>This</strong>: pen, phone, keys</div>
+    <div class="ans-item"><strong>That</strong>: mountain, building, car</div>
+    <div class="ans-item"><strong>These</strong>: book, desk, window</div>
+    <div class="ans-item"><strong>Those</strong>: tree, chair, bag</div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Complete the Sentences (Choose the Correct Word)</div>
+  <div class="flag">Only item 2 has an explicit cue ("over there"). The rest default to the most natural reading; accept the alternative if justified.</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> (<strong>This</strong> / That) is my new laptop.</li>
+    <li><span class="n">2.</span> (These / <strong>Those</strong>) are my friends over there.</li>
+    <li><span class="n">3.</span> (<strong>This</strong> / That) building is very tall.</li>
+    <li><span class="n">4.</span> (<strong>These</strong> / Those) are my favorite books.</li>
+    <li><span class="n">5.</span> (<strong>This</strong> / That) is a very beautiful flower.</li>
+    <li><span class="n">6.</span> (These / <strong>Those</strong>) mountains are amazing!</li>
+    <li><span class="n">7.</span> (<strong>This</strong> / That) is not my bag.</li>
+    <li><span class="n">8.</span> (These / <strong>Those</strong>) cars are very fast.</li>
+  </ul>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Write the Demonstrative</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> (basket of apples, close) <strong>These</strong> are fresh apples.</li>
+    <li><span class="n">2.</span> (single tree, distant field) <strong>That</strong> is a big tree.</li>
+    <li><span class="n">3.</span> (shoes, close) <strong>These</strong> are my shoes.</li>
+    <li><span class="n">4.</span> (beach chairs, wide shot) <strong>Those</strong> are beach chairs.</li>
+    <li><span class="n">5.</span> (phone, close) <strong>This</strong> is my phone.</li>
+    <li><span class="n">6.</span> (wind turbines, distant landscape) <strong>Those</strong> are wind turbines.</li>
+  </ul>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Odd One Out</div>
+  <div class="flag">Row 4 has an error in the original worksheet: it lists "these, those, bikes, car" — TWO non-demonstrative words instead of one. Flagged below; both are acceptable answers until the worksheet is corrected.</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> this, that, these, <strong>book</strong></li>
+    <li><span class="n">2.</span> those, these, <strong>tree</strong>, that</li>
+    <li><span class="n">3.</span> this, <strong>pen</strong>, that, those</li>
+    <li><span class="n">4.</span> these, those, <strong>bikes</strong>, <strong>car</strong> <span style="color:#c0392b;">(2 odd words — worksheet error)</span></li>
+    <li><span class="n">5.</span> that, these, those, <strong>building</strong></li>
+    <li><span class="n">6.</span> this, that, <strong>laptop</strong>, those</li>
+  </ul>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Pair Work: Ask and Answer (open)</div>
+  <div class="note">Example given: "A: What is this? B: This is a camera." Suggested answers for items 1–5:</div>
+  <div class="sug">2. A: What are those? B: Those are hot air balloons.</div>
+  <div class="sug">3. A: What are these? B: These are cacti.</div>
+  <div class="sug">4. A: What is that? B: That is a lighthouse.</div>
+  <div class="sug">5. A: What are these? B: These are chairs.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    For Ex 2, don't present it as having one "correct" answer — use it as a speaking activity where students explain their choices to a partner. For Ex 5 item 4, tell students in advance that this row has a printing error with two possible odd words, so nobody thinks they made a mistake for choosing either one. For Ex 6, model the example dialogue with a real classroom object before pairs practice with the pictures.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ Those is my friends.</span><br><span class="correct">✓ Those are my friends.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ This are fresh apples.</span><br><span class="correct">✓ These are fresh apples.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ That are wind turbines.</span><br><span class="correct">✓ Those are wind turbines.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ What is these? (mismatched number)</span><br><span class="correct">✓ What is this? / What are these?</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Vocabulary Flashcard Sort (10 min)</div>
+    Students cut out or draw 8 small pictures of objects. In pairs, they place each card "near" or "far" on the desk and say the sentence aloud ("This is a pen." / "That is a car."). Then they swap roles. Reinforces Ex 1 and Ex 4 vocabulary with a physical, kinesthetic activity.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Vocabulary</td></tr>
+      <tr><td>Topics</td><td>Everyday objects, near/far distance</td></tr>
+      <tr><td>Exercises</td><td>6 (Match → Pair Work)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title teal3" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Show the Quick Reminder chart (This/That/These/Those) and drill chorally with hand gestures pointing near and far.</td></tr>
+    <tr><td>10 min</td><td>Presentation & Matching</td><td>Students complete Ex 1 individually, then check in pairs. Discuss item 4 and 7 (far items) as a class.</td></tr>
+    <tr><td>8 min</td><td>Speaking Practice</td><td>Students complete Ex 2 in pairs, explaining their word placement out loud rather than working silently.</td></tr>
+    <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Ex 3 and Ex 4 individually, then self-check against the picture cues.</td></tr>
+    <tr><td>7 min</td><td>Review Game</td><td>Students complete Ex 5 (Odd One Out) as a quick class competition — first correct answer per row wins a point. Address the row 4 error openly.</td></tr>
+    <tr><td>5 min</td><td>Production & Wrap-Up</td><td>Pairs perform the Ex 6 dialogues aloud as an exit activity.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

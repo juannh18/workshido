@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 11px; color: #1a1a2e; background: #fff; padding: 28px 32px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+  .included-grid span { font-size: 10.5px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 6px 10px; border-radius: 5px; margin-bottom: 10px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10.5px; font-weight: 700; color: #1a3a5c; margin: 10px 0 4px; }
+  ul.ans { list-style: none; margin: 0 0 6px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; margin-bottom: 3px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 14px; margin-bottom: 6px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  table.chart { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-bottom: 8px; }
+  table.chart th { background: #1a3a5c; color: #fff; padding: 4px 5px; text-align: center; }
+  table.chart td { border: 1px solid #d0d8e4; padding: 3px 5px; }
+  table.chart td:first-child { background: #e8eef5; font-weight: 700; color: #1a3a5c; text-align: center; width: 8%; }
+  table.chart tr:nth-child(even) td:not(:first-child) { background: #f7f9fc; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 4px; font-size: 10px; line-height: 1.5; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #1a3a5c; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 5px 8px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 18px; padding-top: 10px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9.5px; color: #777; font-style: italic; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Verb To Be &bull; Grammar &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (3 exercises)</span>
+    <span>Teacher Extra Activity</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Complete the Chart (am / is / are)</div>
+  <table class="chart">
+    <thead>
+      <tr><th>Sub.</th><th>Affirmative</th><th>Negative</th><th>Question</th><th>Short Answer</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>I</td><td>I <strong>am</strong> happy. ✦</td><td>I am <strong>not</strong> happy. ✦</td><td><strong>Am</strong> I happy? ✦</td><td>Yes, I am. / No, I am not. ✦</td></tr>
+      <tr><td>He</td><td>He <strong>is</strong> a student. ✦</td><td>He <strong>is not</strong> a student. ✦</td><td><strong>Is</strong> he a student?</td><td>Yes, he <strong>is</strong>. / No, he <strong>isn't</strong>.</td></tr>
+      <tr><td>She</td><td>She <strong>is</strong> a teacher.</td><td>She <strong>is not</strong> a teacher.</td><td><strong>Is</strong> she a teacher?</td><td>Yes, she <strong>is</strong>. / No, she <strong>isn't</strong>.</td></tr>
+      <tr><td>It</td><td>It <strong>is</strong> a cat.</td><td>It <strong>is not</strong> a cat.</td><td><strong>Is</strong> it a cat?</td><td>Yes, it <strong>is</strong>. / No, it <strong>isn't</strong>.</td></tr>
+      <tr><td>We</td><td>We <strong>are</strong> friends.</td><td>We <strong>are not</strong> friends.</td><td><strong>Are</strong> we friends?</td><td>Yes, we <strong>are</strong>. / No, we <strong>aren't</strong>.</td></tr>
+      <tr><td>You</td><td>You <strong>are</strong> from Spain.</td><td>You <strong>are not</strong> from Spain.</td><td><strong>Are</strong> you from Spain?</td><td>Yes, you <strong>are</strong>. / No, you <strong>aren't</strong>.</td></tr>
+      <tr><td>They</td><td>They <strong>are</strong> happy.</td><td>They <strong>are not</strong> happy.</td><td><strong>Are</strong> they happy?</td><td>Yes, they <strong>are</strong>. / No, they <strong>aren't</strong>.</td></tr>
+    </tbody>
+  </table>
+  <div class="note">✦ = given in worksheet as example row. Contractions also accepted: isn't, aren't, I'm not.</div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Choose the Correct Option (am / is / are)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> I <strong>am</strong> from Canada.</div>
+    <div class="ans-item"><span class="n">2.</span> She <strong>is</strong> my sister.</div>
+    <div class="ans-item"><span class="n">3.</span> They <strong>are</strong> at school.</div>
+    <div class="ans-item"><span class="n">4.</span> It <strong>is</strong> a big house.</div>
+    <div class="ans-item"><span class="n">5.</span> We <strong>are</strong> good friends.</div>
+    <div class="ans-item"><span class="n">6.</span> You <strong>are</strong> very kind.</div>
+    <div class="ans-item"><span class="n">7.</span> He <strong>is</strong> a doctor.</div>
+    <div class="ans-item"><span class="n">8.</span> I <strong>am not</strong> tired.</div>
+    <div class="ans-item"><span class="n">9.</span> They <strong>are not</strong> from Japan.</div>
+    <div class="ans-item"><span class="n">10.</span> She <strong>is not</strong> happy today.</div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Write Sentences (correct form of verb to be)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> I am a student.</li>
+    <li><span class="n">2.</span> My mother is from Mexico.</li>
+    <li><span class="n">3.</span> My dog is small and friendly.</li>
+    <li><span class="n">4.</span> We are at home.</li>
+    <li><span class="n">5.</span> You are my best friend.</li>
+    <li><span class="n">6.</span> They are doctors.</li>
+    <li><span class="n">7.</span> It is not a chair.</li>
+    <li><span class="n">8.</span> He is 15 years old.</li>
+    <li><span class="n">9.</span> The weather is sunny today.</li>
+    <li><span class="n">10.</span> I am not busy.</li>
+  </ul>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    For Ex 1, do the chart row by row chorally — say the subject and students respond with the complete sentence. Drill contractions separately (isn't / aren't). In Ex 2, have students read the full corrected sentence aloud after circling, not just the word — this builds fluency. For Ex 3, collect one sentence per student on the board and correct collaboratively.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ She are my sister.</span><br><span class="correct">✓ She is my sister.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ I is from Canada.</span><br><span class="correct">✓ I am from Canada.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ They is at school.</span><br><span class="correct">✓ They are at school.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ He not tired. / She not happy.</span><br><span class="correct">✓ He is not tired. / She is not happy.</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">True / False Quiz (5 min)</div>
+    Read sentences aloud: "Michael Jordan is from Canada." / "Penguins are birds." / "The Amazon is a country." Students respond "True" or "False" and correct false statements using the verb to be. Quick, high-energy, zero prep.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Grammar</td></tr>
+      <tr><td>Focus</td><td>Verb To Be — am / is / are (aff., neg., questions, short answers)</td></tr>
+      <tr><td>Exercises</td><td>3 (Chart + Multiple Choice + Sentence Writing)</td></tr>
+      <tr><td>Estimated Time</td><td>30–40 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

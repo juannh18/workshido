@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #4b2e83; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0ecf9; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #4b2e83; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #4b2e83; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #4b2e83; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.purple2 { background: #4b2e83; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #0f3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px 8px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #0f3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #f0ecf9; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #f0c98a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #7a4b06; margin-bottom: 5px; }
+  .flag::before { content: "⚠ "; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #4b2e83; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #4b2e83; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Imperatives &bull; Vocabulary &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (8 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title purple2">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Match the Words to the Pictures</div>
+  <div class="flag">Items 2/3/6/7 (switch, trash bin, door handle, power button) don't show a clear before/after state, so on/off and open/close are somewhat interchangeable. Best-fit answers below — accept a reasonable alternative if justified.</div>
+  <div class="ans-grid-2">
+    <div class="ans-item">Window → <strong>1. open</strong></div>
+    <div class="ans-item">Light switch → <strong>4. turn off</strong></div>
+    <div class="ans-item">Trash bin → <strong>5. pick up</strong></div>
+    <div class="ans-item">Hand washing → <strong>7. wash</strong></div>
+    <div class="ans-item">Boy, hand to ear → <strong>8. listen</strong></div>
+    <div class="ans-item">Door handle → <strong>2. close</strong></div>
+    <div class="ans-item">Power button → <strong>3. turn on</strong></div>
+    <div class="ans-item">Books into box → <strong>6. put away</strong></div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Complete the Chart (3 imperative verbs each, open)</div>
+  <div class="note">Accept any reasonable imperative per category. Suggested models:</div>
+  <div class="sug"><strong>At home:</strong> Clean your room. Wash the dishes. Turn off the lights.</div>
+  <div class="sug"><strong>At school:</strong> Listen to the teacher. Do your homework. Raise your hand.</div>
+  <div class="sug"><strong>In the classroom:</strong> Sit down. Be quiet. Open your book.</div>
+  <div class="sug"><strong>In the kitchen:</strong> Wash your hands. Turn off the stove. Put away the dishes.</div>
+  <div class="sug"><strong>In the park:</strong> Throw away your trash. Keep your dog on a leash. Don't pick the flowers.</div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Find and Circle the Imperatives (word search)</div>
+  <div class="note">10 target words to find: sit, stand, wait, bring, go, help, quiet, move, share, stop.</div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Choose the Correct Word</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> <strong>Open</strong> the door, please.</div>
+    <div class="ans-item"><span class="n">2.</span> <strong>Do</strong> your homework before TV.</div>
+    <div class="ans-item"><span class="n">3.</span> <strong>Wash</strong> your hands before eating.</div>
+    <div class="ans-item"><span class="n">4.</span> <strong>Turn off</strong> the lights when you leave.</div>
+    <div class="ans-item"><span class="n">5.</span> <strong>Take</strong> your seat and listen.</div>
+  </div>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Put the Words in the Correct Group</div>
+  <div class="flag">The box gives 8 words for 3 columns × 3 lines (9 slots). This doesn't divide evenly, and several words (eat, drink) can be DO or DON'T depending on context. Suggested grouping — accept reasonable alternatives:</div>
+  <div class="ans-grid-3">
+    <div class="ans-item"><strong>DO:</strong> throw away, recycle, listen</div>
+    <div class="ans-item"><strong>DON'T:</strong> eat (in class), talk, run</div>
+    <div class="ans-item"><strong>BE:</strong> quiet</div>
+  </div>
+  <div class="note">"Drink" is left over — it can fit DO ("Drink water") or DON'T ("Don't drink in class") depending on the sentence; accept either placement.</div>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Unscramble the Sentences</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> Pick up your toys.</li>
+    <li><span class="n">2.</span> Don't run in the class.</li>
+    <li><span class="n">3.</span> Listen to the teacher.</li>
+    <li><span class="n">4.</span> Clean your room.</li>
+    <li><span class="n">5.</span> Turn off the TV.</li>
+  </ul>
+
+  <!-- EX 7 -->
+  <div class="ex-title">Exercise 7 – Write Imperatives for These Situations (open)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> Be quiet.</li>
+    <li><span class="n">2.</span> Open the window.</li>
+    <li><span class="n">3.</span> Help me.</li>
+    <li><span class="n">4.</span> Stop talking.</li>
+    <li><span class="n">5.</span> Bring a book.</li>
+  </ul>
+
+  <!-- EX 8 -->
+  <div class="ex-title">Exercise 8 – What's the Imperative? (5 pictures, open)</div>
+  <div class="note">Accept any correct sentence per picture. Suggested models:</div>
+  <div class="sug">1. Eat your food. 2. Be quiet. 3. Wash your hands. 4. Throw away your trash. 5. Turn off the light.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    For Ex 1, pre-teach the 8 target verbs with gestures before matching — mime each action and have students call out the word. For Ex 5, don't present it as having one fixed answer; use it as a speaking activity where students explain their reasoning to a partner, especially for "eat" and "drink."
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ Opens the door.</span><br><span class="correct">✓ Open the door.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Turning off the lights.</span><br><span class="correct">✓ Turn off the lights.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Don't runs in class.</span><br><span class="correct">✓ Don't run in class.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Picks up your toys.</span><br><span class="correct">✓ Pick up your toys.</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Charades with Imperatives (10 min)</div>
+    Write the 8 verbs from Ex 1 on cards. Students take turns miming the action while the class guesses the imperative sentence ("Turn off the light!"). Great physical reinforcement of the target vocabulary.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Vocabulary</td></tr>
+      <tr><td>Topics</td><td>Everyday actions, instructions and advice</td></tr>
+      <tr><td>Exercises</td><td>8 (Match → What's the Imperative?)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title purple2" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Mime 3–4 of the target verbs (wash, listen, open, close) and have students call out the word before opening the worksheet.</td></tr>
+    <tr><td>10 min</td><td>Presentation & Matching</td><td>Students complete Ex 1 individually, then check in pairs, discussing the ambiguous items.</td></tr>
+    <tr><td>8 min</td><td>Speaking Practice</td><td>Students complete Ex 2 in pairs, saying their imperatives aloud rather than working silently.</td></tr>
+    <tr><td>8 min</td><td>Review Game</td><td>Students complete Ex 3 (word search) individually as a quick warm-down, then Ex 4 as controlled practice.</td></tr>
+    <tr><td>9 min</td><td>Categorizing & Ordering</td><td>Pairs complete Ex 5 (discussing DO/DON'T placement) and Ex 6 together.</td></tr>
+    <tr><td>5 min</td><td>Production & Wrap-Up</td><td>Students complete Ex 7–8 and share one answer each as an exit ticket.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

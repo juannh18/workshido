@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10px; color: #1a1a2e; background: #fff; padding: 24px 28px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #b5184a; margin-bottom: 12px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #fceef2; border-radius: 8px; padding: 9px 16px; margin-bottom: 12px; border-left: 4px solid #b5184a; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #b5184a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 20px; }
+  .included-grid span { font-size: 9.5px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #b5184a; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; }
+  .section-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 4px 8px; border-radius: 5px; margin-bottom: 6px; }
+  .section-title.pink { background: #b5184a; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 9.5px; font-weight: 700; color: #0f3a5c; margin: 6px 0 2px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 10px; margin-bottom: 4px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 1px 5px; font-size: 9px; line-height: 1.35; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 4px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 1px 5px; font-size: 9px; line-height: 1.35; margin-bottom: 1px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  table.tf { width: 100%; border-collapse: collapse; font-size: 9px; margin-bottom: 4px; }
+  table.tf th { background: #0f3a5c; color: #fff; padding: 2px 4px; text-align: center; }
+  table.tf td { border: 1px solid #d0d8e4; padding: 2px 4px; }
+  table.tf td.true { color: #1e8449; font-weight: 700; text-align: center; }
+  table.tf td.false { color: #c0392b; font-weight: 700; text-align: center; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; font-size: 9.5px; line-height: 1.55; color: #333; }
+  .mistake-row { margin-bottom: 2px; font-size: 9px; line-height: 1.35; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 9.5px; margin-bottom: 3px; color: #0f3a5c; }
+  .sug { font-size: 9px; line-height: 1.5; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 9.5px; }
+  .info-table tr:nth-child(odd) { background: #fceef2; }
+  .info-table td { padding: 3px 6px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 10px; padding-top: 6px; border-top: 1px solid #d0d8e4; font-size: 9px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 8.5px; color: #777; font-style: italic; margin-bottom: 2px; }
+  .flag { background: #fdf3e7; border: 1px solid #f0c98a; border-radius: 4px; padding: 3px 6px; font-size: 8.5px; color: #7a4b06; margin-bottom: 4px; }
+  .flag::before { content: "⚠ "; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9px; margin-top: 3px; }
+  .lp-table th { background: #b5184a; color: #fff; padding: 3px 5px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 3px 5px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #b5184a; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Demonstratives &bull; Practice &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (10 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Model Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title pink">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Choose the Correct Demonstrative</div>
+  <div class="flag">Only items 1 and 4 have explicit context (over there / picture of friends in the park). Items 2, 3, 5 default to near forms; accept far forms if justified.</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> <strong>That</strong> is my sister over there.</div>
+    <div class="ans-item"><span class="n">2.</span> <strong>These</strong> are my new shoes.</div>
+    <div class="ans-item"><span class="n">3.</span> <strong>This</strong> is a very nice hotel.</div>
+    <div class="ans-item"><span class="n">4.</span> <strong>These</strong> are my friends in the park.</div>
+    <div class="ans-item"><span class="n">5.</span> <strong>These</strong> are the keys on the table.</div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Complete the Sentences</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> <strong>This</strong> tree is very old.</div>
+    <div class="ans-item"><span class="n">2.</span> <strong>These</strong> books are really interesting.</div>
+    <div class="ans-item"><span class="n">3.</span> <strong>This</strong> is my favorite coffee shop.</div>
+    <div class="ans-item"><span class="n">4.</span> <strong>These</strong> pens are from my brother.</div>
+    <div class="ans-item"><span class="n">5.</span> <strong>Those</strong> mountains are beautiful.</div>
+    <div class="ans-item"><span class="n">6.</span> <strong>This</strong> is a small restaurant.</div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Look at the Picture (open, kitchen)</div>
+  <div class="note">Accept any 5 correct sentences using this/that/these/those. Suggested model:</div>
+  <div class="sug">1. This is a plant. 2. This is a laptop. 3. This is a mug. 4. These are books. 5. This is a desk.</div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Rewrite the Sentences (near / far given)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> (near) <strong>This</strong> is my phone.</li>
+    <li><span class="n">2.</span> (far) <strong>Those</strong> are some cows.</li>
+    <li><span class="n">3.</span> (near) <strong>This</strong> is my notebook.</li>
+    <li><span class="n">4.</span> (far) <strong>That</strong> is that big building. <span style="color:#777;">(as printed in the worksheet)</span></li>
+    <li><span class="n">5.</span> (near) <strong>These</strong> are my pencils.</li>
+  </ul>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – True or False (grammar check)</div>
+  <table class="tf">
+    <thead><tr><th style="text-align:left; width:78%">Sentence</th><th>T/F</th></tr></thead>
+    <tbody>
+      <tr><td>1. This is my classroom.</td><td class="true">T</td></tr>
+      <tr><td>2. Those are my friends.</td><td class="true">T</td></tr>
+      <tr><td>3. That is a good movie.</td><td class="true">T</td></tr>
+      <tr><td>4. These are my bicycles.</td><td class="true">T</td></tr>
+      <tr><td>5. That are my parents.</td><td class="false">F</td></tr>
+    </tbody>
+  </table>
+  <div class="note">This exercise checks grammatical correctness. Sentence 5 is incorrect: "That" is singular but "are" is plural — it should be "Those are my parents."</div>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Match the Sentences</div>
+  <div class="flag">The worksheet has more singular stems (1 "This is", 3 "That is") than singular endings (only "b. a beautiful garden"), and item 5 duplicates item 2's stem ("Those are" appears twice) instead of a different one. A perfect 1:1 match isn't possible as printed. Best-effort pairing below — flag item 3 with the class as an open discussion.</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> This is → <strong>b.</strong> a beautiful garden.</li>
+    <li><span class="n">2.</span> Those are → <strong>e.</strong> the cats over there.</li>
+    <li><span class="n">3.</span> That is → <strong>a.</strong> my new glasses. <span style="color:#c0392b;">(imperfect — no clean singular option remains; worksheet design issue)</span></li>
+    <li><span class="n">4.</span> These are → <strong>d.</strong> my favorite books.</li>
+    <li><span class="n">5.</span> Those are → <strong>c.</strong> my cousins.</li>
+  </ul>
+
+  <!-- EX 7 -->
+  <div class="ex-title">Exercise 7 – Put the Words in Order</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> This is my dog.</li>
+    <li><span class="n">2.</span> Those are old houses.</li>
+    <li><span class="n">3.</span> That is my teacher.</li>
+    <li><span class="n">4.</span> These are my new shoes.</li>
+    <li><span class="n">5.</span> Those are very tall trees.</li>
+  </ul>
+
+  <!-- EX 8 -->
+  <div class="ex-title">Exercise 8 – Choose and Write</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> (<strong>This</strong> / That) is my lunch.</div>
+    <div class="ans-item"><span class="n">2.</span> (<strong>These</strong> / Those) are my markers.</div>
+    <div class="ans-item"><span class="n">3.</span> (<strong>This</strong> / That) is a beautiful day.</div>
+    <div class="ans-item"><span class="n">4.</span> (<strong>These</strong> / Those) are our seats.</div>
+    <div class="ans-item"><span class="n">5.</span> (<strong>This</strong> / That) is my homework.</div>
+  </div>
+
+  <!-- EX 9 -->
+  <div class="ex-title">Exercise 9 – Mini Dialogues</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> A: What is <strong>this</strong>? — B: <strong>This</strong> is my new camera.</li>
+    <li><span class="n">2.</span> A: What are <strong>these</strong>? — B: <strong>These</strong> are my tickets for the concert.</li>
+    <li><span class="n">3.</span> A: What is <strong>that</strong> over there? — B: <strong>That</strong> is a famous museum.</li>
+  </ul>
+
+  <!-- EX 10 -->
+  <div class="ex-title">Exercise 10 – Write About the Picture (open, 4–5 sentences)</div>
+  <div class="note">Accept any correct description of the living/dining room picture. Suggested model:</div>
+  <div class="sug">This is a sofa. This is a coffee table. That is a bookshelf in the corner. These are some pillows. That is a lamp near the window.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    This worksheet works best as a review after teaching the Grammar, Vocabulary, Reading and Writing worksheets. For Ex 5, clarify that "True or False" here means "is the grammar correct?" — not a reading comprehension check. For Ex 6, be upfront that the worksheet has a design issue (more singular stems than singular endings) and use it as a teaching moment about the importance of subject-verb-noun agreement.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ That are my parents.</span><br><span class="correct">✓ Those are my parents.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ This are my dog.</span><br><span class="correct">✓ This is my dog.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Those is old houses.</span><br><span class="correct">✓ Those are old houses.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ What is these? (mismatched number)</span><br><span class="correct">✓ What is this? / What are these?</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Error Auction (10 min)</div>
+    Write 8 this/that/these/those sentences on the board — some correct, some with number-agreement errors (like Ex 5, item 5). Groups "bid" points on the sentences they believe are correct, then reveal the answers. Great review activity to close a unit on demonstratives.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Practice (Grammar)</td></tr>
+      <tr><td>Focus</td><td>Demonstratives — this / that / these / those</td></tr>
+      <tr><td>Exercises</td><td>10 (Choose → Write About the Picture)</td></tr>
+      <tr><td>Estimated Time</td><td>45–60 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title pink" style="margin-top:10px;">Lesson Plan (50 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:12%">Time</th><th style="width:18%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Quick oral review: teacher points near/far and says a noun; students respond with the full demonstrative sentence.</td></tr>
+    <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Ex 1–2 individually, then check in pairs.</td></tr>
+    <tr><td>10 min</td><td>Guided Practice</td><td>Students complete Ex 3–4–5 in pairs. Discuss Ex 5 item 5 as a class (grammar-check format).</td></tr>
+    <tr><td>10 min</td><td>Matching & Ordering</td><td>Students attempt Ex 6 individually, then discuss the item 3 ambiguity as a class. Complete Ex 7 in pairs.</td></tr>
+    <tr><td>12 min</td><td>Production</td><td>Students complete Ex 8–9 individually, then start Ex 10 (picture description).</td></tr>
+    <tr><td>3 min</td><td>Wrap-Up</td><td>Volunteers share one sentence from Ex 10. Assign any unfinished exercises as homework.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

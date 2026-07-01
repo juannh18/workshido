@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 11px; color: #1a1a2e; background: #fff; padding: 28px 32px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+  .included-grid span { font-size: 10.5px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 6px 10px; border-radius: 5px; margin-bottom: 10px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10.5px; font-weight: 700; color: #1a3a5c; margin: 10px 0 4px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 14px; margin-bottom: 6px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 6px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 3px 7px; font-size: 10px; line-height: 1.4; margin-bottom: 3px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  table.qa { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 6px; }
+  table.qa th { background: #1a3a5c; color: #fff; padding: 4px 6px; text-align: left; }
+  table.qa td { border: 1px solid #d0d8e4; padding: 4px 6px; }
+  table.qa tr:nth-child(even) td { background: #f7f9fc; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 4px; font-size: 10px; line-height: 1.5; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #1a3a5c; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 5px 8px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 18px; padding-top: 10px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Going To &bull; Grammar &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (6 exercises)</span>
+    <span>Teacher Extra Activity</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Complete the Sentences (use am, is or are)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> I <strong>am</strong> going to visit my grandparents this weekend.</div>
+    <div class="ans-item"><span class="n">2.</span> She <strong>is</strong> going to study medicine.</div>
+    <div class="ans-item"><span class="n">3.</span> We <strong>are</strong> going to have dinner at 7 o'clock.</div>
+    <div class="ans-item"><span class="n">4.</span> They <strong>are</strong> going to travel to Japan next year.</div>
+    <div class="ans-item"><span class="n">5.</span> It <strong>is</strong> going to be sunny tomorrow.</div>
+    <div class="ans-item"><span class="n">6.</span> He <strong>is</strong> going to buy a new laptop.</div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Write Negative Sentences (use the words in parentheses)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> I <strong>am not going to</strong> watch a movie.</li>
+    <li><span class="n">2.</span> She <strong>is not going to</strong> call her friend.</li>
+    <li><span class="n">3.</span> They <strong>are not going to</strong> play basketball.</li>
+    <li><span class="n">4.</span> He <strong>is not going to</strong> visit London.</li>
+    <li><span class="n">5.</span> We <strong>are not going to</strong> have a picnic.</li>
+  </ul>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Make Questions (use the words in parentheses)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> Are you going to study English tomorrow?</li>
+    <li><span class="n">2.</span> Is he going to play the guitar?</li>
+    <li><span class="n">3.</span> Are they going to visit their aunt?</li>
+    <li><span class="n">4.</span> Is she going to cook dinner tonight?</li>
+    <li><span class="n">5.</span> Are we going to see a movie?</li>
+  </ul>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – Complete the Questions with Am, Is or Are + Short Answers</div>
+  <table class="qa">
+    <thead><tr><th>Question</th><th>Yes</th><th>No</th></tr></thead>
+    <tbody>
+      <tr><td>1. <strong>Are</strong> you going to clean your room?</td><td>Yes, I <strong>am</strong>.</td><td>No, I<strong>'m not</strong>.</td></tr>
+      <tr><td>2. <strong>Is</strong> he going to join us later?</td><td>Yes, he <strong>is</strong>.</td><td>No, he <strong>isn't</strong>.</td></tr>
+      <tr><td>3. <strong>Are</strong> they going to finish the project tomorrow?</td><td>Yes, they <strong>are</strong>.</td><td>No, they <strong>aren't</strong>.</td></tr>
+      <tr><td>4. <strong>Is</strong> she going to learn to swim?</td><td>Yes, she <strong>is</strong>.</td><td>No, she <strong>isn't</strong>.</td></tr>
+      <tr><td>5. <strong>Is</strong> it going to rain this afternoon?</td><td>Yes, it <strong>is</strong>.</td><td>No, it <strong>isn't</strong>.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Complete the Sentences (going to + verb from box)</div>
+  <div style="font-size:9.5px; color:#555; margin-bottom:4px;">Box: visit &bull; study &bull; have &bull; not watch &bull; go &bull; play &bull; buy</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> I am going to <strong>study</strong> my English test tomorrow.</li>
+    <li><span class="n">2.</span> We are going to <strong>buy</strong> a new car next month.</li>
+    <li><span class="n">3.</span> She is going to <strong>visit</strong> her friend at the airport.</li>
+    <li><span class="n">4.</span> They are going to <strong>play</strong> soccer this Saturday.</li>
+    <li><span class="n">5.</span> He <strong>is not going to watch</strong> TV tonight. He is tired.</li>
+    <li><span class="n">6.</span> It is going to <strong>have</strong> snow this winter.</li>
+    <li><span class="n">7.</span> You are going to <strong>go</strong> to the gym after school.</li>
+  </ul>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Write Sentences About Your Plans (suggested answers)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> I am going to study English this weekend.</li>
+    <li><span class="n">2.</span> I am going to visit my family next month.</li>
+    <li><span class="n">3.</span> I am not going to watch TV tonight.</li>
+    <li><span class="n">4.</span> I am going to learn something new this year.</li>
+  </ul>
+  <div style="font-size:9.5px; color:#777; font-style:italic;">Accept any grammatically correct going to sentence about the student's own plans.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    Drill Ex 1 chorally first: say the subject aloud and have students respond with the correct form of <em>be</em>. For Ex 4, emphasize that short answers use the auxiliary verb only — never repeat the full verb. Model: "Are you going to cook? Yes, I am." Then pair students to ask and answer the questions in Ex 4 before writing.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ She going to study medicine.</span><br><span class="correct">✓ She is going to study medicine.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ He is not going to visited London.</span><br><span class="correct">✓ He is not going to visit London.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Are they going to plays basketball?</span><br><span class="correct">✓ Are they going to play basketball?</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Yes, I am going to. / Yes, I going.</span><br><span class="correct">✓ Yes, I am. (short answer only)</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Going To Drill — Chain Game (5–10 min)</div>
+    Student 1 says a plan: "I am going to travel to Japan." Student 2 negates it and adds a new plan: "She is not going to travel to Japan. I am going to study English." Continue around the class. Covers affirmative, negative, and agreement of am/is/are in context.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Grammar</td></tr>
+      <tr><td>Focus</td><td>Going To — am / is / are + going to + verb</td></tr>
+      <tr><td>Exercises</td><td>6 (+ Grammar Box reference)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

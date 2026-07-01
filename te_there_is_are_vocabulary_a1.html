@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #146b6b; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #0f3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #0f3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #eaf4f4; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #146b6b; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #146b6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #146b6b; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #0f3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.teal2 { background: #146b6b; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #0f3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px 8px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #0f3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #0f3a5c; margin-right: 3px; }
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
+  .cat-box { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 4px 6px; }
+  .cat-title { font-size: 9px; font-weight: 800; color: #146b6b; text-transform: uppercase; margin-bottom: 2px; }
+  .cat-words { font-size: 9.5px; line-height: 1.5; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #0f3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #eaf4f4; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #0f3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #146b6b; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #146b6b; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">There Is / There Are &bull; Vocabulary &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (6 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title teal2">Answer Key</div>
+
+  <!-- EX 1 -->
+  <div class="ex-title">Exercise 1 – Match the Words with the Pictures (1–10)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1. sofa</span> → green sofa picture</div>
+    <div class="ans-item"><span class="n">2. table</span> → wooden table picture</div>
+    <div class="ans-item"><span class="n">3. chair</span> → green chair picture</div>
+    <div class="ans-item"><span class="n">4. bed</span> → bed picture</div>
+    <div class="ans-item"><span class="n">5. plant</span> → potted plant picture</div>
+    <div class="ans-item"><span class="n">6. lamp</span> → table lamp picture</div>
+    <div class="ans-item"><span class="n">7. fridge</span> → fridge picture</div>
+    <div class="ans-item"><span class="n">8. shelf</span> → bookshelf picture</div>
+    <div class="ans-item"><span class="n">9. mirror</span> → round mirror picture</div>
+    <div class="ans-item"><span class="n">10. rug</span> → rug picture</div>
+  </div>
+  <div class="note">Each word matches the picture directly below its number in the worksheet, in the same order shown.</div>
+
+  <!-- EX 2 -->
+  <div class="ex-title">Exercise 2 – Categorize the Words</div>
+  <div class="cat-grid">
+    <div class="cat-box"><div class="cat-title">Living Room</div><div class="cat-words">sofa, rug, picture</div></div>
+    <div class="cat-box"><div class="cat-title">Kitchen</div><div class="cat-words">fridge, table, oven</div></div>
+    <div class="cat-box"><div class="cat-title">Bedroom</div><div class="cat-words">bed, lamp, mirror</div></div>
+    <div class="cat-box"><div class="cat-title">Bathroom</div><div class="cat-words">toilet, shower, sink</div></div>
+  </div>
+  <div class="cat-box" style="margin-bottom:6px;"><div class="cat-title">Other</div><div class="cat-words">plant, chair, shelf <span style="color:#777;">(found in more than one room — accept reasonable placement)</span></div></div>
+
+  <!-- EX 3 -->
+  <div class="ex-title">Exercise 3 – Complete the Sentences (word from box)</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> There is a <strong>sofa</strong> in the living room.</li>
+    <li><span class="n">2.</span> There are two <strong>chairs</strong> at the dining <strong>table</strong>.</li>
+    <li><span class="n">3.</span> There is a green <strong>plant</strong> next to the window.</li>
+    <li><span class="n">4.</span> There is a <strong>fridge</strong> in the kitchen.</li>
+    <li><span class="n">5.</span> There is a big <strong>bed</strong> in the bedroom.</li>
+    <li><span class="n">6.</span> There is a <strong>rug</strong> on the floor.</li>
+    <li><span class="n">7.</span> There is a <strong>lamp</strong> on the table.</li>
+    <li><span class="n">8.</span> There is a <strong>mirror</strong> on the wall.</li>
+    <li><span class="n">9.</span> There is a <strong>chair</strong> near the desk.</li>
+    <li><span class="n">10.</span> There is a <strong>shelf</strong> with books in the bedroom.</li>
+  </ul>
+  <div class="note">"Chair" is used twice (items 2 and 9) — all 10 box words are used at least once.</div>
+
+  <!-- EX 4 -->
+  <div class="ex-title">Exercise 4 – How Many? (there is / there are)</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> <strong>There is</strong> a sofa.</div>
+    <div class="ans-item"><span class="n">2.</span> <strong>There are</strong> two windows.</div>
+    <div class="ans-item"><span class="n">3.</span> <strong>There are</strong> three lamps.</div>
+    <div class="ans-item"><span class="n">4.</span> <strong>There are</strong> some plants.</div>
+    <div class="ans-item"><span class="n">5.</span> <strong>There are</strong> four chairs.</div>
+    <div class="ans-item"><span class="n">6.</span> <strong>There is</strong> a shelf.</div>
+    <div class="ans-item"><span class="n">7.</span> <strong>There are</strong> two mirrors.</div>
+    <div class="ans-item"><span class="n">8.</span> <strong>There is</strong> a fridge.</div>
+  </div>
+
+  <!-- EX 5 -->
+  <div class="ex-title">Exercise 5 – Describe the Picture (kitchen, open)</div>
+  <div class="note">Accept any 6–8 correct sentences describing the kitchen picture. Suggested model:</div>
+  <div class="sug">There is a kitchen island. There are three pendant lights above it. There is a fridge next to the window. There is a wooden table with chairs. There are some plants on the shelves. There is a window above the sink. There are some pots on the stove.</div>
+
+  <!-- EX 6 -->
+  <div class="ex-title">Exercise 6 – Extra Challenge (personal, 5 sentences)</div>
+  <div class="note">Open — accept any correct there is/there are sentences about the student's own bedroom.</div>
+  <div class="sug">There is a bed in my bedroom. There is a desk next to the window. There are two lamps. There is a mirror on the wall. There are some books on the shelf.</div>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    Pre-teach the 10 words in Ex 1 with flashcards or realia before students attempt the matching. For Ex 2, let students discuss "plant," "chair," and "shelf" in pairs — these can reasonably appear in more than one room, which is a great discussion point at A1 level. For Ex 4, remind students the answer depends only on whether the noun is singular or plural, not on the object itself.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ There is two chairs.</span><br><span class="correct">✓ There are two chairs.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ There are a fridge.</span><br><span class="correct">✓ There is a fridge.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ There is some plants.</span><br><span class="correct">✓ There are some plants.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Is a sofa in the room.</span><br><span class="correct">✓ There is a sofa in the room.</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Furniture Memory Game (10 min)</div>
+    Show a picture of a furnished room for 30 seconds, then hide it. In pairs, students write as many "There is / There are" sentences as they remember about the room. The pair with the most correct sentences wins. Great recycling of Ex 1–2 vocabulary.
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Vocabulary</td></tr>
+      <tr><td>Topics</td><td>Furniture, rooms, household objects</td></tr>
+      <tr><td>Exercises</td><td>6 (Match → Extra Challenge)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title teal2" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Show the header living-room photo. Elicit any furniture words students already know in English.</td></tr>
+    <tr><td>10 min</td><td>Presentation</td><td>Pre-teach the 10 target words (Ex 1) with flashcards/realia. Students do the matching exercise, then check in pairs.</td></tr>
+    <tr><td>10 min</td><td>Practice</td><td>Students complete Ex 2 (categorize) and Ex 3 (sentence completion). Discuss the "Other" category items as a class.</td></tr>
+    <tr><td>8 min</td><td>Controlled Practice</td><td>Students complete Ex 4 individually (there is/there are with quantities), then self-check against the picture captions.</td></tr>
+    <tr><td>10 min</td><td>Production</td><td>Students write their Ex 5 description individually, then read it aloud to a partner who draws the kitchen based only on what they hear.</td></tr>
+    <tr><td>2 min</td><td>Wrap-Up</td><td>Quick round: each student says one sentence about their own bedroom (Ex 6) as an exit ticket.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>

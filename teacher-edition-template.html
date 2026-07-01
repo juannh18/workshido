@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 11px; color: #1a1a2e; background: #fff; padding: 28px 32px; }
+
+  /* HEADER */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+
+  /* WHAT'S INCLUDED */
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+  .included-grid span { font-size: 10.5px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+
+  /* TWO COLUMN LAYOUT */
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; }
+
+  /* SECTION TITLES */
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 6px 10px; border-radius: 5px; margin-bottom: 10px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+
+  /* EXERCISE TITLES */
+  .ex-title { font-size: 10.5px; font-weight: 700; color: #1a3a5c; margin: 10px 0 5px; }
+  .ex-sub { font-size: 10px; font-weight: 700; color: #555; margin: 7px 0 4px; }
+
+  /* ANSWER GRIDS */
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; margin-bottom: 6px; }
+  .ans-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px 10px; margin-bottom: 6px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 4px 8px; font-size: 10.5px; line-height: 1.4; }
+  .ans-item .num { font-weight: 700; color: #1a3a5c; }
+
+  /* TRUE/FALSE TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  th { background: #1a3a5c; color: #fff; padding: 5px 6px; text-align: center; font-weight: 700; }
+  td { border: 1px solid #d0d8e4; padding: 5px 6px; vertical-align: middle; }
+  td.center { text-align: center; }
+  td.true { color: #1e8449; font-weight: 700; text-align: center; }
+  td.false { color: #c0392b; font-weight: 700; text-align: center; }
+  tr:nth-child(even) td { background: #f7f9fc; }
+
+  /* VERB LIST */
+  .verb-list { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+  .verb-tag { background: #eaf0f8; border: 1px solid #b3c9e0; border-radius: 4px; padding: 3px 7px; font-size: 10px; font-weight: 600; color: #1a3a5c; }
+
+  /* RIGHT COLUMN BOXES */
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 10.5px; line-height: 1.6; color: #333; }
+
+  /* MISTAKES */
+  .mistake-row { margin-bottom: 5px; font-size: 10.5px; line-height: 1.5; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+
+  /* SUGGESTED ANSWERS */
+  .sug-item { padding: 3px 0; font-size: 10.5px; line-height: 1.5; }
+  .sug-item::before { content: "→ "; color: #1a3a5c; font-weight: 700; }
+
+  /* ACTIVITY */
+  .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #1a3a5c; }
+
+  /* INFO TABLE */
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 5px 8px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+
+  /* FOOTER */
+  .footer { text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Verb To Be &bull; Reading &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<!-- WHAT'S INCLUDED -->
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key</span>
+    <span>Teacher Extra Activity</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<!-- TWO COLUMN LAYOUT -->
+<div class="two-col">
+
+  <!-- LEFT: ANSWER KEY -->
+  <div>
+    <div class="section-title">Answer Key</div>
+
+    <!-- EXERCISE 1 -->
+    <div class="ex-title">Exercise 1 – Pre-Reading</div>
+    <div style="font-size:10.5px; color:#555; margin-bottom:8px; line-height:1.5;">Open answers. Accept any reasonable response based on the image. Example: <em>"He is a student / He is from Mexico."</em></div>
+
+    <!-- EXERCISE 3A -->
+    <div class="ex-title">Exercise 3A – Choose the Correct Answer</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="num">1.</span> b. 15</div>
+      <div class="ans-item"><span class="num">2.</span> b. Mexico</div>
+      <div class="ans-item"><span class="num">3.</span> c. big and modern</div>
+      <div class="ans-item"><span class="num">4.</span> a. only</div>
+      <div class="ans-item"><span class="num">5.</span> b. dog</div>
+      <div class="ans-item"><span class="num">6.</span> b. soccer</div>
+    </div>
+
+    <!-- EXERCISE 3B -->
+    <div class="ex-title">Exercise 3B – True or False</div>
+    <table>
+      <thead>
+        <tr><th style="text-align:left; width:70%">Statement</th><th>True</th><th>False</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1. Daniel is 14 years old.</td><td class="false">✗</td><td class="true">✓</td></tr>
+        <tr><td>2. He is a student.</td><td class="true">✓</td><td class="false">✗</td></tr>
+        <tr><td>3. His teachers are friendly.</td><td class="true">✓</td><td class="false">✗</td></tr>
+        <tr><td>4. He has one sister.</td><td class="false">✗</td><td class="true">✓</td></tr>
+        <tr><td>5. His dog is big.</td><td class="false">✗</td><td class="true">✓</td></tr>
+        <tr><td>6. He likes music.</td><td class="true">✓</td><td class="false">✗</td></tr>
+      </tbody>
+    </table>
+
+    <!-- EXERCISE 3C -->
+    <div class="ex-title">Exercise 3C – Complete the Information</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="num">Name:</span> Daniel</div>
+      <div class="ans-item"><span class="num">Age:</span> 15</div>
+      <div class="ans-item"><span class="num">Country:</span> Mexico</div>
+      <div class="ans-item"><span class="num">School:</span> Greenfield High School</div>
+      <div class="ans-item"><span class="num">Class:</span> 10B</div>
+      <div class="ans-item"><span class="num">Pet's name:</span> Rocky</div>
+    </div>
+    <div class="ans-item" style="margin-bottom:6px;"><span class="num">Favourite hobby:</span> soccer / music / video games (accept any)</div>
+
+    <!-- EXERCISE 4 -->
+    <div class="ex-title">Exercise 4 – Find the Verb To Be</div>
+    <div style="font-size:10px; color:#555; margin-bottom:5px;">Forms found in the text (in order of appearance):</div>
+    <div class="verb-list">
+      <span class="verb-tag">am</span><span class="verb-tag">am</span><span class="verb-tag">am</span>
+      <span class="verb-tag">is</span><span class="verb-tag">are</span><span class="verb-tag">am</span>
+      <span class="verb-tag">is</span><span class="verb-tag">am</span><span class="verb-tag">are</span>
+      <span class="verb-tag">are</span><span class="verb-tag">is</span><span class="verb-tag">is</span>
+      <span class="verb-tag">am</span><span class="verb-tag">am</span><span class="verb-tag">am</span>
+      <span class="verb-tag">am</span><span class="verb-tag">are</span><span class="verb-tag">am</span><span class="verb-tag">are</span>
+    </div>
+    <div style="font-size:10px; color:#555;">Total: <strong>am ×10 &nbsp;|&nbsp; is ×5 &nbsp;|&nbsp; are ×6</strong></div>
+
+    <!-- EXERCISE 5 -->
+    <div class="ex-title">Exercise 5 – Vocabulary in Context</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="num">1.</span> modern → c. new and up-to-date</div>
+      <div class="ans-item"><span class="num">2.</span> supportive → d. gives help and encouragement</div>
+      <div class="ans-item"><span class="num">3.</span> friendly → a. kind and easy to talk to</div>
+      <div class="ans-item"><span class="num">4.</span> fan → b. likes something very much</div>
+    </div>
+
+    <!-- EXERCISE 6 -->
+    <div class="ex-title">Exercise 6 – Critical Thinking</div>
+    <div class="ans-item" style="margin-bottom:6px; line-height:1.5;">"<em>I am happy and my friends are important to me.</em>" — This shows Daniel values relationships and is a positive, social person.</div>
+
+    <!-- EXERCISE 7 -->
+    <div class="ex-title">Exercise 7 – Reflection (Suggested Answers)</div>
+    <div class="sug-item">I am a student at [school name].</div>
+    <div class="sug-item">I am from [country].</div>
+    <div class="sug-item">My friends are very important to me.</div>
+    <div class="sug-item">I am good at [sport / subject].</div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+
+    <!-- TEACHER TIP -->
+    <div class="section-title amber">Teacher Tip</div>
+    <div class="right-box">
+      Encourage students to read the text more than once. Ask them to circle key information (names, places, hobbies) before answering the questions — this helps them locate answers faster and builds active reading habits.
+    </div>
+
+    <!-- COMMON STUDENT MISTAKES -->
+    <div class="section-title red">Common Student Mistakes</div>
+    <div class="right-box">
+      <div class="mistake-row"><span class="wrong">✗ He have a dog.</span> &nbsp; <span class="correct">✓ He has a dog.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ Daniel are 15 years old.</span> &nbsp; <span class="correct">✓ Daniel is 15 years old.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ His parents is teachers.</span> &nbsp; <span class="correct">✓ His parents are teachers.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ I not am a student.</span> &nbsp; <span class="correct">✓ I am not a student.</span></div>
+    </div>
+
+    <!-- TEACHER EXTRA ACTIVITY -->
+    <div class="section-title green">Teacher Extra Activity</div>
+    <div class="right-box">
+      <div class="activity-title">Meet My Classmate (10–15 min)</div>
+      Students write a short paragraph (4–6 sentences) about themselves using the verb <em>to be</em>, following Daniel's text as a model. They should include: name, age, country, school, a pet or hobby. Then they share with a partner and the partner introduces them to the class.
+    </div>
+
+    <!-- WORKSHEET INFORMATION -->
+    <div class="section-title gray">Worksheet Information</div>
+    <div class="right-box" style="padding: 0; overflow: hidden;">
+      <table class="info-table">
+        <tr><td>Level</td><td>A1</td></tr>
+        <tr><td>Skill</td><td>Reading</td></tr>
+        <tr><td>Grammar Focus</td><td>Verb To Be (am, is, are)</td></tr>
+        <tr><td>Text Type</td><td>Personal profile / blog post</td></tr>
+        <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">workshido.com</div>
+
+</body>
+</html>
