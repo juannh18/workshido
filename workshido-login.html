@@ -13,6 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -102,7 +103,8 @@
       </div>
     </div>
   </div>
-  <div class="right-panel">
+  <div id="gisFallbackBtn" style="position:fixed;bottom:-200px;right:0;opacity:0;pointer-events:none;"></div>
+<div class="right-panel">
     <div class="form-header">
       <h1>Log in to Workshido</h1>
       <p>Good to see you again. Let's get teaching.</p>
@@ -114,9 +116,9 @@
     <div class="divider-text">or log in with email</div>
     <form class="login-form" id="loginForm" novalidate>
       <div id="errorBanner" class="error-banner"></div>
-      <div class="field"><label>Email address</label><input type="email" id="email" placeholder="sarah@school.com" /></div>
+      <div class="field"><label for="email">Email address</label><input type="email" id="email" placeholder="sarah@school.com" /></div>
       <div class="field">
-        <div class="field-row"><label>Password</label><a href="workshido-reset.html">Forgot password?</a></div>
+        <div class="field-row"><label for="password">Password</label><a href="workshido-reset.html">Forgot password?</a></div>
         <div class="password-wrap">
           <input type="password" id="password" placeholder="Your password" />
           <button type="button" class="toggle-pw" onclick="document.getElementById('password').type = document.getElementById('password').type === 'password' ? 'text' : 'password'">
@@ -136,11 +138,37 @@ const SUPABASE_KEY = 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo';
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function handleGoogle() {
-  await sb.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.origin + '/workshido-index.html' }
+const GIS_CLIENT_ID = '402662121573-hjto2nl434h1qdgvtl21n58du49kl2bd.apps.googleusercontent.com';
+
+window.addEventListener('load', () => {
+  if (typeof google === 'undefined') return;
+  google.accounts.id.initialize({
+    client_id: GIS_CLIENT_ID,
+    callback: handleCredentialResponse,
+    auto_select: false,
+    cancel_on_tap_outside: true,
   });
+});
+
+function handleGoogle() {
+  if (typeof google === 'undefined') { showError('Google Sign-In not available. Please try again.'); return; }
+  google.accounts.id.prompt((n) => {
+    if (n.isNotDisplayed() || n.isSkippedMoment()) {
+      google.accounts.id.renderButton(document.getElementById('gisFallbackBtn'), { theme: 'outline', size: 'large', width: 300 });
+      setTimeout(() => document.querySelector('#gisFallbackBtn [role="button"]')?.click(), 100);
+    }
+  });
+}
+
+async function handleCredentialResponse(response) {
+  try {
+    const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
+    if (error) throw error;
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = params.get('redirect') || 'workshido-index.html';
+  } catch (e) {
+    showError('Google sign-in failed. Please try again.');
+  }
 }
 
 function showError(msg) {
@@ -163,7 +191,8 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     btn.disabled = false;
     btn.textContent = 'Log in';
   } else {
-    window.location.href = 'workshido-index.html';
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = params.get('redirect') || 'workshido-index.html';
   }
 });
 </script>
