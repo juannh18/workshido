@@ -22,6 +22,7 @@
 <meta property="og:url" content="https://workshido.com/workshido-worksheet.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Workshido">
+<meta name="twitter:description" content="Free English worksheet — download and print for class.">
 <meta name="twitter:image" content="https://workshido.com/favicon-192.png">
 <script type="application/ld+json" id="schemaLD"></script>
 <style>
@@ -74,20 +75,17 @@
   .detail-card { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 24px; }
 
   .ws-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--gray-900); line-height: 1.3; margin-bottom: 14px; }
-
   .ws-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
   .badge-level { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-  .badge-level.a1 { background: var(--teal-50);   color: var(--teal-600); }
-  .badge-level.a2 { background: var(--blue-50);   color: var(--blue-600); }
-  .badge-level.b1 { background: var(--amber-50);  color: var(--amber-600); }
-  .badge-level.b2 { background: var(--purple-50); color: var(--purple-600); }
-  .badge-level.c1 { background: var(--coral-50);  color: var(--coral-600); }
+  .badge-level.a1 { background: var(--teal-50); color: var(--teal-600); }
+  .badge-level.a2 { background: var(--blue-50); color: var(--blue-600); }
+  .badge-level.b1 { background: var(--amber-50); color: var(--amber-600); }
+  .badge-level.b2 { background: #EEEDFE; color: #534AB7; }
+  .badge-level.c1 { background: var(--coral-50); color: var(--coral-600); }
   .badge-cat { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: var(--gray-50); color: var(--gray-600); border: 1px solid var(--gray-100); }
   .badge-free { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--teal-50); color: var(--teal-600); }
-  .badge-premium { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--amber-50); color: var(--amber-600); }
 
   .ws-desc { font-size: 14px; color: var(--gray-600); line-height: 1.65; margin-bottom: 16px; }
-
   .ws-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
   .tag { font-size: 12px; color: var(--blue-600); background: var(--blue-50); border-radius: 20px; padding: 3px 10px; }
 
@@ -96,10 +94,56 @@
   .ws-meta-label { color: var(--gray-300); }
   .ws-meta-value { color: var(--gray-900); font-weight: 500; }
 
+  /* DOWNLOAD BUTTONS */
   .btn-download-big { width: 100%; padding: 14px; border-radius: var(--radius-md); font-family: var(--font-body); font-size: 15px; font-weight: 600; background: var(--blue-600); color: var(--white); border: none; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
   .btn-download-big:hover { background: var(--blue-800); transform: translateY(-1px); }
-  .btn-download-big.locked { background: var(--gray-100); color: var(--gray-300); cursor: not-allowed; }
-  .btn-download-big.locked:hover { transform: none; background: var(--gray-100); }
+
+  .btn-answer-key { width: 100%; padding: 12px 14px; margin-top: 10px; border-radius: var(--radius-md); font-family: var(--font-body); font-size: 14px; font-weight: 700; border: none; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #fff; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; justify-content: space-between; gap: 8px; box-shadow: 0 2px 8px rgba(217,119,6,0.30); }
+  .btn-answer-key:hover { background: linear-gradient(135deg, #FBBF24 0%, #B45309 100%); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(217,119,6,0.38); }
+  .btn-answer-key.unlocked { background: linear-gradient(135deg, #10B981 0%, #059669 100%); box-shadow: 0 2px 8px rgba(5,150,105,0.28); }
+  .btn-answer-key.unlocked:hover { background: linear-gradient(135deg, #34D399 0%, #047857 100%); box-shadow: 0 4px 14px rgba(5,150,105,0.36); }
+  .btn-answer-key .ak-left { display: flex; align-items: center; gap: 8px; }
+  .btn-answer-key .ak-sub { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.85); display: block; text-align: left; }
+  .premium-note { font-size: 11px; color: var(--gray-300); text-align: center; margin-top: 8px; line-height: 1.6; }
+  .premium-note a { color: var(--blue-600); cursor: pointer; text-decoration: none; }
+  .premium-note a:hover { text-decoration: underline; }
+
+  /* PRINT BUTTON */
+  .btn-print { width: 100%; padding: 10px; margin-top: 8px; background: transparent; border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--blue-600); cursor: pointer; transition: all 0.15s; }
+  .btn-print:hover { background: var(--blue-50); }
+
+  /* STAR RATING */
+  .star-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
+  .star-avg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; color: var(--gray-600); }
+  .stars-display { display: flex; gap: 2px; }
+  .star-char { font-size: 16px; line-height: 1; color: var(--gray-100); }
+  .star-char.filled { color: #F59E0B; }
+  .star-char.half { position: relative; color: var(--gray-100); }
+  .star-char.half::before { content: '★'; position: absolute; left: 0; width: 50%; overflow: hidden; color: #F59E0B; }
+  .star-label { font-size: 12px; color: var(--gray-300); margin-bottom: 6px; }
+  .stars-interactive { display: flex; gap: 4px; cursor: pointer; }
+  .star-i { font-size: 22px; color: var(--gray-100); transition: color 0.1s; line-height: 1; }
+  .star-i:hover, .star-i.active { color: #F59E0B; }
+  .star-done { font-size: 12px; color: var(--teal-600); margin-top: 6px; }
+
+  /* MODALS */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9999; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--white); border-radius: 16px; padding: 36px 32px 28px; max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2); position: relative; }
+  .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-300); line-height: 1; }
+  .modal-icon { font-size: 36px; margin-bottom: 12px; }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--gray-900); margin: 0 0 8px; }
+  .modal-desc { font-size: 13px; color: var(--gray-600); margin: 0 0 16px; line-height: 1.6; }
+  .modal-price { font-size: 26px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+  .modal-price span { font-size: 14px; font-weight: 400; color: var(--gray-600); }
+  .modal-price-sub { font-size: 12px; color: var(--gray-300); margin-bottom: 20px; }
+  .modal-btn { width: 100%; padding: 12px; background: var(--blue-600); color: var(--white); border: none; border-radius: var(--radius-md); font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body); margin-bottom: 10px; transition: background 0.15s; }
+  .modal-btn:hover { background: var(--blue-800); }
+  .modal-cancel { font-size: 12px; color: var(--gray-300); cursor: pointer; }
+  .modal-cancel:hover { color: var(--gray-600); }
+  .btn-google { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px 16px; border-radius: 8px; border: 1.5px solid #dadce0; background: var(--white); font-size: 14px; font-weight: 600; color: var(--gray-900); cursor: pointer; font-family: var(--font-body); transition: box-shadow 0.15s; }
+  .btn-google:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .btn-google svg { flex-shrink: 0; }
 
   .loading { grid-column: 1 / -1; text-align: center; padding: 80px 0; color: var(--gray-300); font-size: 14px; }
 
@@ -146,6 +190,10 @@
 const sb = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 const LEVEL_CLASS = { A1:'a1', A2:'a2', B1:'b1', B2:'b2', C1:'c1' };
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let _wsFileUrl = null;
+let _answerKeyUrl = null;
+let _isPremium = false;
+let _wsId = null;
 
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
@@ -162,12 +210,30 @@ async function loadWorksheet() {
   const id = new URLSearchParams(window.location.search).get('id');
   if (!id) { renderError('No worksheet ID provided.'); return; }
 
-  const { data, error } = await sb.from('worksheets').select('*').eq('id', id).single();
+  const [{ data, error }, { data: { user: currentUser } }] = await Promise.all([
+    sb.from('worksheets').select('*').eq('id', id).single(),
+    sb.auth.getUser()
+  ]);
   if (error || !data) { renderError('Worksheet not found.'); return; }
 
+  if (currentUser) {
+    const { data: prof } = await sb.from('profiles').select('is_premium').eq('id', currentUser.id).single();
+    _isPremium = prof?.is_premium || false;
+  }
+
   document.title = `${esc(data.title)} — Workshido`;
+  const wsMetaDescription = data.description || `${data.level} ${data.category} worksheet. Free download.`;
+  document.querySelector('meta[name="description"]')?.setAttribute('content', wsMetaDescription);
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${data.title} — Workshido`);
-  document.querySelector('meta[property="og:description"]')?.setAttribute('content', data.description || `${data.level} ${data.category} worksheet. Free download.`);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', wsMetaDescription);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${data.title} — Workshido`);
+  let twitterDesc = document.querySelector('meta[name="twitter:description"]');
+  if (!twitterDesc) {
+    twitterDesc = document.createElement('meta');
+    twitterDesc.setAttribute('name', 'twitter:description');
+    document.head.appendChild(twitterDesc);
+  }
+  twitterDesc.setAttribute('content', wsMetaDescription);
   if (data.thumbnail_url) document.querySelector('meta[property="og:image"]')?.setAttribute('content', data.thumbnail_url);
   const wsUrl = `https://workshido.com/workshido-worksheet.html?id=${data.id}`;
   document.querySelector('link[rel="canonical"]')?.setAttribute('href', wsUrl);
@@ -190,12 +256,64 @@ async function loadWorksheet() {
         <span>No preview available</span>
       </div>`;
 
-  const downloadBtn = data.is_free
-    ? `<button class="btn-download-big" onclick="downloadWS('${data.file_url}','${data.id}',${data.downloads||0})">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download free
-      </button>`
-    : `<button class="btn-download-big locked">🔒 Premium — unlock to download</button>`;
+  _wsFileUrl = data.file_url || null;
+  _answerKeyUrl = data.teacher_edition_url || null;
+  _wsId = data.id;
+  const _rating = data.rating || 0;
+  const _ratingsCount = data.ratings_count || 0;
+
+  const alreadyRated = localStorage.getItem('rated_' + data.id);
+
+  function starsDisplay(avg, count) {
+    const full = Math.floor(avg);
+    const half = (avg - full) >= 0.5;
+    let s = '';
+    for (let i = 1; i <= 5; i++) {
+      if (i <= full) s += '<span class="star-char filled">★</span>';
+      else if (i === full + 1 && half) s += '<span class="star-char half">★</span>';
+      else s += '<span class="star-char">★</span>';
+    }
+    const label = count > 0 ? `<span>${avg.toFixed(1)} (${count} rating${count !== 1 ? 's' : ''})</span>` : '<span>No ratings yet</span>';
+    return `<div class="stars-display">${s}</div>${label}`;
+  }
+
+  const starInteractive = alreadyRated
+    ? `<div class="star-done">✓ You rated ${alreadyRated}/5 — thanks!</div>`
+    : `<div id="starInput">
+         <div class="star-label">Rate this worksheet:</div>
+         <div class="stars-interactive" id="starRow" onmouseleave="starsOut()">
+           ${[1,2,3,4,5].map(n => `<span class="star-i" id="si${n}" onmouseover="starsHover(${n})" onclick="rateWS(${n})">★</span>`).join('')}
+         </div>
+       </div>`;
+
+  const starSection = `
+    <div class="star-section">
+      <div class="star-avg-row" id="starAvgRow">${starsDisplay(_rating, _ratingsCount)}</div>
+      ${starInteractive}
+    </div>`;
+
+  const downloadBtn = `<button class="btn-download-big" onclick="downloadWS('${data.id}',${data.downloads||0})">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download free
+    </button>`;
+
+  const answerKeyBtn = _answerKeyUrl
+    ? (_isPremium
+        ? `<button class="btn-answer-key unlocked" onclick="downloadAnswerKey()">
+            <span class="ak-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Teacher Edition <span class="ak-sub">⭐ Premium — Download</span></span>
+            </span>
+          </button>`
+        : `<button class="btn-answer-key" onclick="openPremiumModal()">
+            <span class="ak-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Teacher Edition <span class="ak-sub">⭐ Premium only</span></span>
+            </span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>`)
+    : '';
 
   document.getElementById('pageWrap').innerHTML = `
     <div class="preview-box">${preview}</div>
@@ -204,28 +322,153 @@ async function loadWorksheet() {
         <div class="ws-title">${esc(data.title)}</div>
         <div class="ws-badges">
           <span class="badge-level ${lvlCls}">${data.level}</span>
-          ${data.category ? `<span class="badge-cat">${data.category}</span>` : ''}
-          ${freeBadge}
+          ${data.category ? `<span class="badge-cat">${esc(data.category)}</span>` : ''}
+          <span class="badge-free">Free</span>
         </div>
-        ${desc}
+        ${data.description ? `<p class="ws-desc">${esc(data.description)}</p>` : ''}
         ${tags ? `<div class="ws-tags">${tags}</div>` : ''}
         <div class="ws-meta">
           <div class="ws-meta-row"><span class="ws-meta-label">Format</span><span class="ws-meta-value">${ext || '—'}</span></div>
           <div class="ws-meta-row"><span class="ws-meta-label">Level</span><span class="ws-meta-value">${data.level || '—'}</span></div>
           <div class="ws-meta-row"><span class="ws-meta-label">Downloads</span><span class="ws-meta-value" id="dlCount">${data.downloads || 0}</span></div>
         </div>
-        ${downloadBtn}
-        ${data.is_free ? `<button class="btn-print" onclick="window.open('${data.file_url}','_blank')" style="width:100%;padding:10px;margin-top:8px;background:transparent;border:1.5px solid var(--blue-200);border-radius:6px;font-family:inherit;font-size:13px;font-weight:600;color:var(--blue-600);cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='var(--blue-50)'" onmouseout="this.style.background='transparent'">🖨️ Print / Open PDF</button>` : ''}
+        <button class="btn-download-big" onclick="downloadWS('${data.id}',${data.downloads||0})">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download free
+        </button>
+        ${answerKeyBtn}
+        <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
+        ${starSection}
       </div>
     </div>`;
 }
 
-async function downloadWS(url, id, currentDl) {
+function openDlModal(action) {
+  document.getElementById('dlModalTitle').textContent =
+    action === 'print' ? 'Sign in to print for free' : 'Sign in to download for free';
+  document.getElementById('dlModal').classList.add('open');
+}
+
+async function getSignedUrl(fileUrl) {
+  const m = fileUrl.match(/\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/);
+  if (!m) return fileUrl;
+  const { data } = await sb.storage.from(m[1]).createSignedUrl(m[2], 60);
+  return data?.signedUrl || fileUrl;
+}
+
+async function downloadWS(id, currentDl) {
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { openDlModal('download'); return; }
+  } catch(e) { openDlModal('download'); return; }
+  if (!_wsFileUrl) return;
+  const url = await getSignedUrl(_wsFileUrl);
   window.open(url, '_blank');
-  const newCount = currentDl + 1;
-  const el = document.getElementById('dlCount');
-  if (el) el.textContent = newCount;
-  await sb.from('worksheets').update({ downloads: newCount }).eq('id', id);
+  try {
+    const res = await fetch('/.netlify/functions/increment-downloads', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ worksheetId: id }),
+    });
+    const { downloads } = await res.json();
+    const el = document.getElementById('dlCount');
+    if (el && downloads) el.textContent = downloads;
+  } catch(e) {}
+}
+
+function starsHover(v) {
+  for (let i = 1; i <= 5; i++)
+    document.getElementById('si' + i)?.classList.toggle('active', i <= v);
+}
+function starsOut() {
+  for (let i = 1; i <= 5; i++)
+    document.getElementById('si' + i)?.classList.remove('active');
+}
+async function rateWS(v) {
+  const input = document.getElementById('starInput');
+  if (!input) return;
+
+  // Feedback inmediato — no esperar la red
+  localStorage.setItem('rated_' + _wsId, v);
+  input.innerHTML = `<div class="star-done">✓ You rated ${v}/5 — thanks!</div>`;
+
+  // Guardar en DB en segundo plano
+  try {
+    const res = await fetch('/.netlify/functions/submit-rating', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ worksheetId: _wsId, rating: v }),
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json.rating != null) {
+        const avgRow = document.getElementById('starAvgRow');
+        if (avgRow) {
+          const r = json.rating, c = json.ratings_count;
+          const full = Math.floor(r), half = (r - full) >= 0.5;
+          let s = '';
+          for (let i = 1; i <= 5; i++) {
+            if (i <= full) s += '<span class="star-char filled">★</span>';
+            else if (i === full + 1 && half) s += '<span class="star-char half">★</span>';
+            else s += '<span class="star-char">★</span>';
+          }
+          avgRow.innerHTML = `<div class="stars-display">${s}</div><span>${r.toFixed(1)} (${c} rating${c !== 1 ? 's' : ''})</span>`;
+        }
+      }
+    }
+  } catch(e) {}
+}
+
+async function printWS() {
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { openDlModal('print'); return; }
+  } catch(e) { openDlModal('print'); return; }
+  if (!_wsFileUrl) return;
+  const url = await getSignedUrl(_wsFileUrl);
+  window.open(url, '_blank');
+}
+
+function closeDlModal() { document.getElementById('dlModal').classList.remove('open'); }
+
+async function downloadAnswerKey() {
+  if (!_answerKeyUrl) return;
+  const url = await getSignedUrl(_answerKeyUrl);
+  window.open(url, '_blank');
+}
+
+async function openPremiumModal() {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) {
+    document.getElementById('dlModalTitle').textContent = 'Sign in to access Premium';
+    document.getElementById('dlModal').classList.add('open');
+  } else {
+    document.getElementById('premiumModal').classList.add('open');
+  }
+}
+function closePremiumModal() { document.getElementById('premiumModal').classList.remove('open'); }
+
+async function startCheckout(plan) {
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) {
+    document.getElementById('premiumModal').classList.remove('open');
+    document.getElementById('dlModalTitle').textContent = 'Sign in to access Premium';
+    document.getElementById('dlModal').classList.add('open');
+    return;
+  }
+  try {
+    const res = await fetch('/.netlify/functions/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan, userId: user.id, userEmail: user.email }),
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
+  } catch (e) {
+    alert('Something went wrong. Please try again.');
+  }
+}
+
+function googleLoginDl() {
+  window.location.href = 'workshido-login.html?redirect=' + encodeURIComponent(window.location.href);
 }
 
 function renderError(msg) {
@@ -234,5 +477,36 @@ function renderError(msg) {
 
 document.addEventListener('DOMContentLoaded', () => { checkAuth(); loadWorksheet(); });
 </script>
+
+<!-- Login modal -->
+<div class="modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeDlModal()">✕</button>
+    <div class="modal-icon">📥</div>
+    <p class="modal-title" id="dlModalTitle">Sign in to download for free</p>
+    <p class="modal-desc">Create your free account and access all worksheets with no limits.</p>
+    <button class="btn-google" onclick="googleLoginDl()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+  </div>
+</div>
+
+<!-- Premium modal -->
+<div class="modal-overlay" id="premiumModal" onclick="if(event.target===this)closePremiumModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closePremiumModal()">✕</button>
+    <div class="modal-icon">⭐</div>
+    <p class="modal-title">Teacher Edition</p>
+    <p class="modal-desc">Unlock the Teacher Edition PDF for every worksheet: complete answer key, ready-to-use lesson plan, teacher tips, common student mistakes &amp; extra activity.</p>
+    <div class="modal-price">$2.99<span>/month</span></div>
+    <div class="modal-price-sub">or $24.99/year · cancel anytime</div>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button class="modal-btn" style="flex:1" onclick="startCheckout('monthly')">Monthly — $2.99</button>
+      <button class="modal-btn" style="flex:1;background:linear-gradient(135deg,#1a3a5c,#2563eb)" onclick="startCheckout('yearly')">Yearly — $24.99</button>
+    </div>
+    <div class="modal-cancel" onclick="closePremiumModal()">Cancel</div>
+  </div>
+</div>
 </body>
 </html>
