@@ -1187,12 +1187,18 @@ async function loadWorksheets() {
   filterAndRender();
 }
 
-// ── Live numbers from the catalog (worksheet count floors at 100+;
-//    beyond that it tracks the real total: 110+, 120+, ...) ──
+// ── Live numbers from the catalog. The count rounds down to marketing
+//    milestones (100+, 150+, 200+...), so it is never overstated past 100. ──
+const COUNT_MILESTONES = [100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000];
+function milestoneCount(n) {
+  let best = COUNT_MILESTONES[0];
+  for (const m of COUNT_MILESTONES) if (n >= m) best = m;
+  return best.toLocaleString('en-US') + '+';
+}
 function updateLiveStats() {
   const n = allWorksheets.length;
   if (!n) return;
-  const rounded = n > 100 ? Math.floor(n / 10) * 10 + '+' : '100+';
+  const rounded = milestoneCount(n);
   const elCount = document.getElementById('statWorksheets');
   if (elCount) elCount.textContent = rounded;
   const eyebrow = document.getElementById('heroEyebrowText');
