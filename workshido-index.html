@@ -9,17 +9,17 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Workshido — Free English Worksheets for Teachers</title>
-<meta name="description" content="Download free printable English worksheets for every level. Grammar, vocabulary, reading and more. Trusted by 98,000+ teachers worldwide.">
+<meta name="description" content="Download free printable ESL worksheets with answer keys included. Grammar, vocabulary, reading and writing PDFs organized by CEFR level. New worksheets every week.">
 <link rel="canonical" href="https://workshido.com/workshido-index.html">
 <meta property="og:site_name" content="Workshido">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Browse Worksheets — Workshido">
-<meta property="og:description" content="Thousands of free, print-ready English worksheets for every level and topic.">
+<meta property="og:description" content="Free, print-ready English worksheets with answer keys included — organized by CEFR level and topic.">
 <meta property="og:image" content="https://workshido.com/favicon-192.png">
 <meta property="og:url" content="https://workshido.com/workshido-index.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Browse Worksheets — Workshido">
-<meta name="twitter:description" content="Thousands of free, print-ready English worksheets for every level and topic.">
+<meta name="twitter:description" content="Free, print-ready English worksheets with answer keys included — organized by CEFR level and topic.">
 <meta name="twitter:image" content="https://workshido.com/favicon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -698,6 +698,16 @@
   .mobile-menu-footer .m-signup { background: var(--white); color: var(--blue-900); }
   .mobile-menu.open { display: block; }
 
+  /* WHY WORKSHIDO */
+  .why-section { background: var(--white); padding: 48px 32px 40px; border-bottom: 1px solid #e8ecf1; }
+  .why-inner { max-width: 1180px; margin: 0 auto; }
+  .why-title { text-align: center; font-size: 24px; font-weight: 800; color: var(--blue-900); margin-bottom: 28px; }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; }
+  .why-card { background: var(--blue-50); border: 1px solid #d8e6f5; border-radius: 12px; padding: 20px 22px; }
+  .why-icon { font-size: 26px; margin-bottom: 10px; }
+  .why-card-title { font-size: 15px; font-weight: 700; color: var(--blue-800); margin-bottom: 6px; }
+  .why-card p { font-size: 13px; line-height: 1.6; color: var(--gray-900); opacity: 0.8; }
+
   /* RESPONSIVE */
   @media (max-width: 768px) {
     .nav-links { display: none; }
@@ -725,7 +735,7 @@
   </ul>
   <div class="nav-actions" id="navActions">
     <a href="workshido-login.html" class="btn-ghost">Log in</a>
-    <a href="workshido-signup.html" class="btn-primary">Sign up free</a>
+    <a href="workshido-signup.html" class="btn-primary">Sign up free to download</a>
   </div>
   <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -751,7 +761,7 @@
     </div>
     <div class="mobile-menu-footer">
       <a href="workshido-login.html" class="m-login">Log in</a>
-      <a href="workshido-signup.html" class="m-signup">Sign up free</a>
+      <a href="workshido-signup.html" class="m-signup">Sign up free to download</a>
     </div>
   </div>
 </div>
@@ -760,10 +770,10 @@
 <section class="hero">
   <div class="hero-eyebrow">
     <span class="dot"></span>
-    12,400+ free worksheets · Trusted by teachers in 180+ countries
+    <span id="heroEyebrowText">Free English worksheets · Answer keys included · New resources every week</span>
   </div>
   <h1>English worksheets that make<br>teaching <em>effortless</em></h1>
-  <p class="hero-sub">Download, print, and teach. Print-ready resources for every level — made by teachers, for teachers.</p>
+  <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs with answer keys included — designed for real English classes.</p>
 
   <div class="search-wrap">
     <div class="search-box">
@@ -786,16 +796,46 @@
     <button class="chip" data-cat="Vocabulary">Vocabulary</button>
     <button class="chip" data-cat="Reading">Reading</button>
     <button class="chip" data-cat="Writing">Writing</button>
+    <button class="chip" data-cat="Speaking">Speaking</button>
   </div>
 </section>
 
 <!-- STATS -->
 <div class="stats-bar">
-  <div class="stat"><span class="stat-num">12,400+</span><span class="stat-label">Worksheets</span></div>
-  <div class="stat"><span class="stat-num">180+</span><span class="stat-label">Countries</span></div>
-  <div class="stat"><span class="stat-num">98,000+</span><span class="stat-label">Teachers</span></div>
-  <div class="stat"><span class="stat-num">4.9 ★</span><span class="stat-label">Avg rating</span></div>
+  <div class="stat"><span class="stat-num" id="statWorksheets">70+</span><span class="stat-label">Free worksheets</span></div>
+  <div class="stat"><span class="stat-num" id="statLevels">A1–B1</span><span class="stat-label">CEFR levels · growing</span></div>
+  <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free downloads</span></div>
+  <div class="stat"><span class="stat-num">✓</span><span class="stat-label">Answer keys included</span></div>
 </div>
+
+<!-- WHY WORKSHIDO -->
+<section class="why-section">
+  <div class="why-inner">
+    <h2 class="why-title">What makes Workshido worksheets different?</h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🗝️</div>
+        <div class="why-card-title">Answer keys included</div>
+        <p>Every worksheet comes with its answer key — free, no strings attached. Less correction time, more teaching time.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🖨️</div>
+        <div class="why-card-title">Print-ready design</div>
+        <p>Clean A4 PDFs designed for the classroom: clear instructions, readable fonts, and no wasted ink.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📊</div>
+        <div class="why-card-title">CEFR-levelled</div>
+        <p>Every worksheet is tagged by CEFR level and skill, so you find material that actually fits your class.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🎓</div>
+        <div class="why-card-title">Teacher Editions</div>
+        <p>Most new worksheets include a Teacher Edition: full answer key, complete lesson plan, common mistakes, and extra activities.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- MAIN LAYOUT -->
 <div class="main-layout">
@@ -1142,8 +1182,32 @@ async function loadWorksheets() {
     return;
   }
   allWorksheets = data || [];
+  updateLiveStats();
   buildSidebar();
   filterAndRender();
+}
+
+// ── Honest, live numbers from the real catalog ──
+function updateLiveStats() {
+  const n = allWorksheets.length;
+  if (!n) return;
+  const rounded = n >= 10 ? Math.floor(n / 10) * 10 + '+' : String(n);
+  const elCount = document.getElementById('statWorksheets');
+  if (elCount) elCount.textContent = rounded;
+  const eyebrow = document.getElementById('heroEyebrowText');
+  if (eyebrow) eyebrow.textContent = `${rounded} free worksheets · Answer keys included · New resources every week`;
+  // CEFR range actually covered by the catalog
+  const order = ['A1', 'A2', 'B1', 'B2', 'C1'];
+  const present = order.filter(l => allWorksheets.some(w => w.level === l));
+  const elLevels = document.getElementById('statLevels');
+  if (elLevels && present.length) {
+    elLevels.textContent = present.length > 1 ? `${present[0]}–${present[present.length - 1]}` : present[0];
+  }
+  // Hide level chips that have no worksheets yet — they reappear as the catalog grows
+  document.querySelectorAll('.chip[data-level]').forEach(chip => {
+    if (chip.dataset.level === 'all') return;
+    chip.style.display = allWorksheets.some(w => w.level === chip.dataset.level) ? '' : 'none';
+  });
 }
 
 // ── Chip filters (level and category combine, they don't reset each other) ──
