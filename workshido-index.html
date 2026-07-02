@@ -776,15 +776,16 @@
   </div>
 
   <div class="hero-chips">
-    <button class="chip active">All levels</button>
-    <button class="chip">A1 Beginner</button>
-    <button class="chip">A2 Elementary</button>
-    <button class="chip">B1 Intermediate</button>
-    <button class="chip">B2 Upper-inter</button>
-    <button class="chip">C1 Advanced</button>
-    <button class="chip">Grammar</button>
-    <button class="chip">Vocabulary</button>
-    <button class="chip">Reading</button>
+    <button class="chip active" data-level="all">All levels</button>
+    <button class="chip" data-level="A1">A1 Beginner</button>
+    <button class="chip" data-level="A2">A2 Elementary</button>
+    <button class="chip" data-level="B1">B1 Intermediate</button>
+    <button class="chip" data-level="B2">B2 Upper-inter</button>
+    <button class="chip" data-level="C1">C1 Advanced</button>
+    <button class="chip" data-cat="Grammar">Grammar</button>
+    <button class="chip" data-cat="Vocabulary">Vocabulary</button>
+    <button class="chip" data-cat="Reading">Reading</button>
+    <button class="chip" data-cat="Writing">Writing</button>
   </div>
 </section>
 
@@ -799,82 +800,10 @@
 <!-- MAIN LAYOUT -->
 <div class="main-layout">
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <!-- SIDEBAR (populated dynamically from the real catalog) -->
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar-section">
-      <div class="sidebar-title">Grammar</div>
-      <a href="#" class="sidebar-item" data-topic="present simple">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-        Present simple
-      </a>
-      <a href="#" class="sidebar-item" data-topic="past simple">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-        Past simple
-      </a>
-      <a href="#" class="sidebar-item" data-topic="present perfect">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-        Present perfect
-      </a>
-      <a href="#" class="sidebar-item" data-topic="conditionals">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-        Conditionals
-      </a>
-      <a href="#" class="sidebar-item" data-topic="modal verbs">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-        Modal verbs
-      </a>
-      <a href="#" class="sidebar-item" data-topic="future">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-        Future tenses
-      </a>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-title">Skills</div>
-      <a href="#" class="sidebar-item" data-topic="reading">
-        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Reading
-      </a>
-      <a href="#" class="sidebar-item" data-topic="practice">
-        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M12 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8"/><path d="m17 3 4 4-8 8H9v-4z"/></svg>
-        Practice Worksheets
-      </a>
-      <a href="#" class="sidebar-item" data-topic="writing">
-        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-        Writing
-      </a>
-      <a href="#" class="sidebar-item" data-topic="speaking">
-        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Speaking
-      </a>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-title">Topic</div>
-      <a href="#" class="sidebar-item" data-topic="daily routine">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        Daily routine
-      </a>
-      <a href="#" class="sidebar-item" data-topic="food">
-        <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-        Food & drink
-      </a>
-      <a href="#" class="sidebar-item" data-topic="travel">
-        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.55 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.1 6.1l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        Travel
-      </a>
-      <a href="#" class="sidebar-item" data-topic="business">
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        Business
-      </a>
-      <a href="#" class="sidebar-item" data-topic="technology">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        Technology
-      </a>
-      <a href="#" class="sidebar-item" data-topic="health">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        Health
-      </a>
+      <div class="sidebar-title">Loading topics...</div>
     </div>
   </aside>
 
@@ -977,8 +906,125 @@ const ACCENT       = { A1:'accent-teal', A2:'accent-blue', B1:'accent-amber', B2
 let allWorksheets = [];
 let activeLevel = 'all';
 let activeCategory = 'all';
-let activeTopic = 'all';
+let activeTopic = 'all';      // 'all' | array of matcher terms
+let activeTopicLabel = '';
 let searchQuery = '';
+
+// ── Sidebar definition: label + matcher terms against real tags/titles.
+//    Items with 0 matching worksheets are hidden automatically.
+const SIDEBAR_SECTIONS = [
+  { title: 'Grammar topics', items: [
+    { label: 'Verb to be',            match: ['verb to be', 'am is are'] },
+    { label: 'Present simple',        match: ['present simple', 'presentsimple'] },
+    { label: 'Present continuous',    match: ['present continuous'] },
+    { label: 'Past simple',           match: ['past simple'] },
+    { label: 'Future & going to',     match: ['going to', 'future simple', 'future plans', 'will'] },
+    { label: 'Imperatives',           match: ['imperatives', 'commands'] },
+    { label: 'Demonstratives',        match: ['demonstratives', 'this that these those'] },
+    { label: 'Articles a/an/the',     match: ['articles', 'a an the'] },
+    { label: 'Possessive adjectives', match: ['possessive adjectives', 'possessiveadjectives', 'possessives'] },
+    { label: 'There is / There are',  match: ['there is there are', 'there is/are'] },
+    { label: 'Prepositions of place', match: ['prepositions of place'] },
+    { label: 'Have got / Has got',    match: ['have got'] },
+    { label: 'Modal verbs (can)',     match: ['modal', 'can and can', "can & can"] },
+    { label: 'Some & any',            match: ['some and any', 'some any'] },
+    { label: 'Pronouns',              match: ['pronouns'] },
+  ]},
+  { title: 'Skills', items: [
+    { label: 'Reading',    cat: 'Reading' },
+    { label: 'Writing',    cat: 'Writing' },
+    { label: 'Vocabulary', cat: 'Vocabulary' },
+    { label: 'Speaking',   cat: 'Speaking' },
+    { label: 'Practice worksheets', match: ['practice'] },
+  ]},
+  { title: 'Topic', items: [
+    { label: 'Travel',        match: ['travel'] },
+    { label: 'Daily routine', match: ['daily routine'] },
+    { label: 'Food & drink',  match: ['food'] },
+  ]},
+];
+
+function wsMatchesTerms(w, terms) {
+  const hay = ((w.title || '') + ' ' + (w.tags || '') + ' ' + (w.category || '')).toLowerCase();
+  return terms.some(t => hay.includes(t.toLowerCase()));
+}
+
+function buildSidebar() {
+  const aside = document.getElementById('sidebar');
+  if (!aside) return;
+  let html = '';
+  for (const section of SIDEBAR_SECTIONS) {
+    let itemsHtml = '';
+    for (const item of section.items) {
+      const count = item.cat
+        ? allWorksheets.filter(w => (w.category || '').toLowerCase() === item.cat.toLowerCase()).length
+        : allWorksheets.filter(w => wsMatchesTerms(w, item.match)).length;
+      if (count === 0) continue;
+      const payload = item.cat ? `data-cat="${item.cat}"` : `data-match="${item.match.join('|')}"`;
+      itemsHtml += `<a href="#" class="sidebar-item" ${payload} data-label="${item.label}">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
+        ${item.label}<span class="sidebar-count">${count}</span>
+      </a>`;
+    }
+    if (itemsHtml) html += `<div class="sidebar-section"><div class="sidebar-title">${section.title}</div>${itemsHtml}</div>`;
+  }
+  aside.innerHTML = html || '<div class="sidebar-section"><div class="sidebar-title">No topics yet</div></div>';
+
+  aside.querySelectorAll('.sidebar-item').forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      const isActive = item.classList.contains('active');
+      aside.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+      if (isActive) {            // clicking the active topic clears it
+        activeTopic = 'all'; activeTopicLabel = '';
+        activeCategory = 'all';
+        syncCategoryChips();
+      } else {
+        item.classList.add('active');
+        if (item.dataset.cat) {  // skill items filter by category
+          activeCategory = item.dataset.cat;
+          activeTopic = 'all'; activeTopicLabel = item.dataset.label;
+          syncCategoryChips();
+        } else {
+          activeTopic = item.dataset.match.split('|');
+          activeTopicLabel = item.dataset.label;
+          activeCategory = 'all';   // a topic is a cross-category view
+          syncCategoryChips();
+        }
+      }
+      filterAndRender();
+      document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
+
+function syncLevelChips() {
+  document.querySelectorAll('.chip[data-level]').forEach(c =>
+    c.classList.toggle('active', c.dataset.level === activeLevel || (activeLevel === 'all' && c.dataset.level === 'all')));
+}
+function syncCategoryChips() {
+  document.querySelectorAll('.chip[data-cat]').forEach(c =>
+    c.classList.toggle('active', !Array.isArray(activeCategory) && c.dataset.cat.toLowerCase() === String(activeCategory).toLowerCase()));
+}
+
+function composeTitle() {
+  const parts = [];
+  if (activeTopicLabel) parts.push(activeTopicLabel);
+  else if (activeCategory !== 'all') parts.push(Array.isArray(activeCategory) ? 'Skills' : activeCategory);
+  if (activeLevel !== 'all') parts.push(activeLevel);
+  if (searchQuery) parts.push(`"${searchQuery}"`);
+  const title = document.getElementById('contentTitle');
+  if (title) title.textContent = parts.length ? parts.join(' · ') : 'All worksheets';
+}
+
+function clearFilters() {
+  activeLevel = 'all'; activeCategory = 'all'; activeTopic = 'all'; activeTopicLabel = ''; searchQuery = '';
+  const input = document.querySelector('.search-box input');
+  if (input) input.value = '';
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  syncLevelChips(); syncCategoryChips();
+  filterAndRender();
+}
 
 function buildCard(ws) {
   const color  = LEVEL_COLORS[ws.level] || 'teal';
@@ -1035,7 +1081,7 @@ function renderCards(data) {
   const label = document.getElementById('catalogLabel');
   const count = document.getElementById('contentCount');
   if (!data || data.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">No worksheets found.</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">No worksheets match your filters.<br><br><button onclick="clearFilters()" style="background:var(--blue-600);color:#fff;border:none;border-radius:6px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Clear all filters</button></div>';
     label.textContent = 'No worksheets found';
     if (count) count.textContent = '';
     return;
@@ -1054,19 +1100,16 @@ function filterAndRender() {
     filtered = filtered.filter(w => cats.includes((w.category || '').toLowerCase()));
   }
   if (activeTopic !== 'all') {
-    const t = activeTopic.toLowerCase();
-    filtered = filtered.filter(w =>
-      (w.title || '').toLowerCase().includes(t) ||
-      (w.tags || '').toLowerCase().includes(t) ||
-      (w.category || '').toLowerCase().includes(t)
-    );
+    const terms = Array.isArray(activeTopic) ? activeTopic : [activeTopic];
+    filtered = filtered.filter(w => wsMatchesTerms(w, terms));
   }
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     filtered = filtered.filter(w =>
-      w.title.toLowerCase().includes(q) ||
+      (w.title || '').toLowerCase().includes(q) ||
       (w.tags || '').toLowerCase().includes(q) ||
-      (w.category || '').toLowerCase().includes(q)
+      (w.category || '').toLowerCase().includes(q) ||
+      (w.description || '').toLowerCase().includes(q)
     );
   }
   const sort = document.getElementById('sortSelect')?.value || 'newest';
@@ -1079,63 +1122,50 @@ function filterAndRender() {
   } else {
     filtered = [...filtered].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
   }
+  composeTitle();
   renderCards(filtered);
 }
 
 function setCategory(cat) {
   activeCategory = cat;
-  const title = document.getElementById('contentTitle');
-  if (title) title.textContent = cat === 'all' ? 'All worksheets' : (Array.isArray(cat) ? 'Skills' : cat);
-  document.querySelectorAll('.chip').forEach(c => {
-    const txt = c.textContent.trim();
-    if (cat === 'all') {
-      c.classList.toggle('active', txt === 'All levels' && activeLevel === 'all');
-    } else {
-      c.classList.toggle('active', txt.toLowerCase() === (Array.isArray(cat) ? 'skills' : cat.toLowerCase()));
-    }
-  });
+  activeTopic = 'all'; activeTopicLabel = '';
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  syncCategoryChips();
   document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
   filterAndRender();
 }
 
 async function loadWorksheets() {
-  const { data, error } = await sb2.from('worksheets').select('*').order('created_at', { ascending: false, nullsFirst: false }).limit(100);
+  const { data, error } = await sb2.from('worksheets').select('*').order('created_at', { ascending: false, nullsFirst: false }).limit(1000);
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;
   }
   allWorksheets = data || [];
+  buildSidebar();
   filterAndRender();
 }
 
-// ── Chip filters ──────────────────────────────────
-document.querySelectorAll('.chip').forEach(chip => {
+// ── Chip filters (level and category combine, they don't reset each other) ──
+document.querySelectorAll('.chip[data-level]').forEach(chip => {
   chip.addEventListener('click', () => {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    const txt = chip.textContent.trim();
-    // Chips de nivel
-    if (txt === 'All levels')        { activeLevel = 'all'; activeCategory = 'all'; }
-    else if (txt.startsWith('A1'))   { activeLevel = 'A1';  activeCategory = 'all'; }
-    else if (txt.startsWith('A2'))   { activeLevel = 'A2';  activeCategory = 'all'; }
-    else if (txt.startsWith('B1'))   { activeLevel = 'B1';  activeCategory = 'all'; }
-    else if (txt.startsWith('B2'))   { activeLevel = 'B2';  activeCategory = 'all'; }
-    else if (txt.startsWith('C1'))   { activeLevel = 'C1';  activeCategory = 'all'; }
-    // Chips de categoría
-    else { activeLevel = 'all'; activeCategory = txt; }
+    activeLevel = (chip.dataset.level === activeLevel) ? 'all' : chip.dataset.level;
+    syncLevelChips();
+    filterAndRender();
+  });
+});
+document.querySelectorAll('.chip[data-cat]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const isSame = String(activeCategory).toLowerCase() === chip.dataset.cat.toLowerCase();
+    activeCategory = isSame ? 'all' : chip.dataset.cat;
+    activeTopic = 'all'; activeTopicLabel = '';
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    syncCategoryChips();
     filterAndRender();
   });
 });
 
-// ── Search ────────────────────────────────────────
-// TODO: La búsqueda actualmente filtra solo los 100 worksheets cargados en memoria.
-// Para que funcione correctamente hay que hacer búsqueda server-side en Supabase:
-//   const { data } = await sb2.from('worksheets')
-//     .ilike('title', `%${query}%`)      ← busca en título
-//     .or(`tags.ilike.%${query}%`)       ← o en tags
-//     .order('downloads', {ascending:false}).limit(50)
-// Reemplazar filterAndRender() con una llamada async que haga esa query cada vez
-// que el usuario escribe (con debounce de 500ms) y renderice los resultados.
+// ── Search (client-side over the full catalog, loaded up to 1000 rows) ──
 let searchTimer;
 const searchInput = document.querySelector('.search-box input');
 
@@ -1144,8 +1174,8 @@ searchInput.addEventListener('input', () => {
   searchTimer = setTimeout(() => {
     searchQuery = searchInput.value.trim();
     filterAndRender();
-    document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
-  }, 1000);
+    if (searchQuery) document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
+  }, 400);
 });
 
 document.querySelector('.search-box button').addEventListener('click', () => {
@@ -1169,28 +1199,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 function openMobileMenu()  { document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow = ''; }
 
-// ── Sidebar items ─────────────────────────────────
-document.querySelectorAll('.sidebar-item[data-topic]').forEach(item => {
-  item.addEventListener('click', e => {
-    e.preventDefault();
-    const topic = item.dataset.topic;
-    activeTopic = topic;
-    activeCategory = 'all';
-    activeLevel = 'all';
-    // Update active state in sidebar
-    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
-    item.classList.add('active');
-    // Update content title
-    const title = document.getElementById('contentTitle');
-    if (title) title.textContent = item.textContent.trim();
-    // Reset chips
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    document.querySelector('.chip')?.classList.add('active');
-    filterAndRender();
-    document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
-  });
-});
-
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth2();
   loadWorksheets().then(() => {
@@ -1199,27 +1207,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const level = params.get('level');
     const topic = params.get('topic');
     const q     = params.get('q');
-    if (cat) setCategory(cat);
-    if (level) {
-      activeLevel = level;
-      const title = document.getElementById('contentTitle');
-      if (title) title.textContent = level + ' worksheets';
-      filterAndRender();
-    }
+    if (cat) { activeCategory = cat; syncCategoryChips(); }
+    if (level) { activeLevel = level.toUpperCase(); syncLevelChips(); }
     if (topic) {
-      activeTopic = topic;
-      const title = document.getElementById('contentTitle');
-      if (title) title.textContent = topic.charAt(0).toUpperCase() + topic.slice(1);
-      filterAndRender();
+      activeTopic = [topic];
+      activeTopicLabel = topic.charAt(0).toUpperCase() + topic.slice(1);
+      // highlight the matching sidebar item if one exists
+      document.querySelectorAll('.sidebar-item[data-match]').forEach(s => {
+        if (s.dataset.match.toLowerCase().split('|').includes(topic.toLowerCase())) s.classList.add('active');
+      });
     }
     if (q) {
       searchQuery = q;
       const input = document.querySelector('.search-box input');
       if (input) input.value = q;
-      const title = document.getElementById('contentTitle');
-      if (title) title.textContent = 'Search: ' + q;
-      filterAndRender();
     }
+    if (cat || level || topic || q) filterAndRender();
   });
 });
 </script>
