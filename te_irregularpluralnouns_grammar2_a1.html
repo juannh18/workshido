@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .section-title.teal { background: #0e7c66; }
+  .section-title.purple { background: #7b2d8b; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #9a5b00; line-height: 1.45; margin: 4px 0 6px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 16px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .page2 { break-before: page; page-break-before: always; }
+  .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .page2-header .brand-mini { font-size: 15px; font-weight: 900; color: #1a3a5c; letter-spacing: 0.5px; }
+  .page2-header .brand-mini span { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 8px; letter-spacing: 0; }
+  .page2-header .ws-title-mini { font-size: 11px; font-weight: 700; color: #1a3a5c; text-align: right; }
+  .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; margin-top: 4px; }
+  .prep-grid span::before { content: "• "; color: #0e7c66; font-weight: 700; }
+  .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  .lp-table-lg th { background: #1a3a5c; color: #fff; padding: 9px 12px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .lp-table-lg td { border: 1px solid #d0d8e4; padding: 11px 12px; vertical-align: top; line-height: 1.55; }
+  .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table-lg td:first-child { font-weight: 800; color: #1a3a5c; white-space: nowrap; width: 12%; }
+  .lp-table-lg td:nth-child(2) { font-weight: 700; color: #1a3a5c; width: 20%; }
+  .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 6px; padding: 12px 14px; margin-top: 18px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 6px; overflow: hidden; margin-top: 18px; }
+  .diff-col { padding: 12px 14px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
+  .diff-col:last-child { background: #f7f9fc; }
+  .diff-col .diff-label { font-weight: 800; color: #1a3a5c; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ PAGE 1 ═══════════════════════ -->
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Irregular Plural Nouns &bull; Grammar 2 &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key</span>
+    <span>Full Lesson Plan</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Teacher Extra Activity</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+
+  <!-- LEFT: ANSWER KEY -->
+  <div>
+    <div class="section-title">Answer Key</div>
+
+    <div class="ex-title">A. Study the Table – Plural Forms</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="n">•</span> man → <strong>men</strong> (given)</div>
+      <div class="ans-item"><span class="n">•</span> foot → <strong>feet</strong></div>
+      <div class="ans-item"><span class="n">•</span> woman → <strong>women</strong></div>
+      <div class="ans-item"><span class="n">•</span> goose → <strong>geese</strong></div>
+      <div class="ans-item"><span class="n">•</span> tooth → <strong>teeth</strong></div>
+      <div class="ans-item"><span class="n">•</span> person → <strong>people</strong></div>
+      <div class="ans-item"><span class="n">•</span> mouse → <strong>mice</strong></div>
+      <div class="ans-item"><span class="n">•</span> ox → <strong>oxen</strong></div>
+      <div class="ans-item"><span class="n">•</span> child → <strong>children</strong></div>
+      <div class="ans-item"><span class="n">•</span> louse → <strong>lice</strong></div>
+    </div>
+
+    <div class="ex-title">B. Write the Plural Form</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="n">1.</span> sheep → <strong>sheep</strong></div>
+      <div class="ans-item"><span class="n">7.</span> aircraft → <strong>aircraft</strong></div>
+      <div class="ans-item"><span class="n">2.</span> fish → <strong>fish</strong></div>
+      <div class="ans-item"><span class="n">8.</span> passport → <strong>passports</strong></div>
+      <div class="ans-item"><span class="n">3.</span> deer → <strong>deer</strong></div>
+      <div class="ans-item"><span class="n">9.</span> datum → <strong>data</strong></div>
+      <div class="ans-item"><span class="n">4.</span> cactus → <strong>cacti</strong> (also: cactuses)</div>
+      <div class="ans-item"><span class="n">10.</span> crisis → <strong>crises</strong></div>
+      <div class="ans-item"><span class="n">5.</span> salmon → <strong>salmon</strong></div>
+      <div class="ans-item"><span class="n">11.</span> nucleus → <strong>nuclei</strong></div>
+      <div class="ans-item"><span class="n">6.</span> phenomenon → <strong>phenomena</strong></div>
+      <div class="ans-item"><span class="n">12.</span> appendix → <strong>appendices</strong> (also: appendixes)</div>
+    </div>
+    <div class="flag">⚠ Item 8 (<em>passport → passports</em>) is the only regular noun in the list — use it as a "spot the regular one" moment. Items 4, 6, 9–12 are Latin/Greek plurals well above A1: treat them as a dictionary-discovery task, not memorization. Accept the alternatives shown in parentheses.</div>
+
+    <div class="ex-title">C. Choose the Correct Option</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="n">1.</span> my <strong>sisters</strong></div>
+      <div class="ans-item"><span class="n">5.</span> Those <strong>geese</strong></div>
+      <div class="ans-item"><span class="n">2.</span> many <strong>people</strong></div>
+      <div class="ans-item"><span class="n">6.</span> big <strong>feet</strong></div>
+      <div class="ans-item"><span class="n">3.</span> My <strong>teeth</strong></div>
+      <div class="ans-item"><span class="n">7.</span> The <strong>children</strong></div>
+      <div class="ans-item"><span class="n">4.</span> three <strong>mice</strong></div>
+      <div class="ans-item"><span class="n">8.</span> <strong>oxen</strong></div>
+    </div>
+
+    <div class="ex-title">D. Irregular Plural Nouns in the Paragraph</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> <strong>sheep</strong> &nbsp;&nbsp; <span class="n">2.</span> <strong>oxen</strong> &nbsp;&nbsp; <span class="n">3.</span> <strong>people</strong> &nbsp;&nbsp; <span class="n">4.</span> <strong>geese</strong></li>
+    </ul>
+    <div class="flag">⚠ The box has 6 numbered blanks but the paragraph contains only 4 irregular plurals (<em>sheep, oxen, people, geese</em>). <em>Grandparents</em> and <em>stories</em> are regular and should NOT be listed. Tell students in advance that some blanks may stay empty — it turns the task into a discrimination exercise instead of a counting one.</div>
+
+    <div class="ex-title">Challenge – Suggested Answers (open)</div>
+    <ul class="ans">
+      <li>E.g. "Two mice live in our garden. My baby brother has three teeth. Many people visit this park. The children play with the geese. My feet hurt after soccer practice."</li>
+    </ul>
+    <div class="flag">Open answers — require 5 original sentences, each with a different irregular plural from this worksheet.</div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <div class="section-title amber">Teacher Tip</div>
+    <div class="right-box">
+      Group the irregulars by pattern before drilling: vowel change (<em>man/men, foot/feet, tooth/teeth, goose/geese, mouse/mice, louse/lice</em>), no change (<em>sheep, fish, deer, salmon, aircraft</em>), and special forms (<em>children, people, oxen</em>). Three small families are far easier to remember than one list of fifteen words.
+    </div>
+
+    <div class="section-title red">Common Student Mistakes</div>
+    <div class="right-box">
+      <div class="mistake-row"><span class="wrong">✗ We saw three sheeps on the farm.</span><br><span class="correct">✓ We saw three sheep on the farm.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The childrens are playing outside.</span><br><span class="correct">✓ The children are playing outside.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ My foots hurt.</span><br><span class="correct">✓ My feet hurt.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ There are many persons in the mall.</span><br><span class="correct">✓ There are many people in the mall.</span></div>
+    </div>
+
+    <div class="section-title green">Teacher Extra Activity</div>
+    <div class="right-box">
+      <div class="activity-title">Irregular Snap (10 min)</div>
+      In pairs, students make quick flashcards: singular on one card, plural on another (use the worksheet's tip!). Shuffle both sets face down. Players turn two cards at a time — if they are a matching pair (<em>mouse + mice</em>), they keep it, but only if they can say a sentence with the plural. Most pairs wins.
+    </div>
+
+    <div class="section-title gray">Worksheet Information</div>
+    <div class="right-box" style="padding: 0; overflow: hidden;">
+      <table class="info-table">
+        <tr><td>Level</td><td>A1</td></tr>
+        <tr><td>Skill</td><td>Grammar</td></tr>
+        <tr><td>Grammar Focus</td><td>Irregular plural nouns (vowel change, no change, special forms)</td></tr>
+        <tr><td>Exercises</td><td>5 (table, write plurals, choose, paragraph hunt, challenge)</td></tr>
+        <tr><td>Estimated Time</td><td>40–50 minutes</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">workshido.com</div>
+
+<!-- ═══════════════════════ PAGE 2 — LESSON PLAN ═══════════════════════ -->
+<div class="page2">
+
+  <div class="page2-header">
+    <div class="brand-mini">WORKSHIDO <span>Teacher Edition</span></div>
+    <div class="ws-title-mini">Irregular Plural Nouns &bull; Grammar 2 &bull; A1</div>
+  </div>
+
+  <div class="section-title teal">Materials &amp; Prep</div>
+  <div class="prep-box">
+    <div class="prep-grid">
+      <span>Printed worksheet copies (1 per student)</span>
+      <span>Board and markers</span>
+      <span>Blank cards or cut paper for the flashcard game</span>
+      <span>Timer or clock for pacing</span>
+    </div>
+  </div>
+
+  <div class="section-title">Lesson Plan (45–50 minutes)</div>
+  <table class="lp-table-lg">
+    <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td>Warm-Up</td><td>Write <em>one child → two ______</em> on the board and let the class guess. Collect other irregulars they already know. Establish the idea: some plurals break the rules.</td></tr>
+      <tr><td>12 min</td><td>Presentation</td><td>Study the table in A together, completing the plural column. Group the words into the three families (vowel change / no change / special) on the board — see Teacher Tip. Drill pronunciation, especially <em>women</em> /ˈwɪmɪn/.</td></tr>
+      <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete B individually. Check as a class; celebrate whoever spots that <em>passport</em> is the only regular noun. Present the Latin/Greek items (data, crises, nuclei...) as curiosities, not test material.</td></tr>
+      <tr><td>8 min</td><td>Guided Practice</td><td>Students do C in pairs, reading the full sentences aloud. Review by asking which family each answer belongs to.</td></tr>
+      <tr><td>10 min</td><td>Application</td><td>Students read the paragraph in D, underline the irregular plurals and write them in the box. Warn them first: not every blank will be used. Check and discuss why <em>grandparents</em> and <em>stories</em> don't count.</td></tr>
+      <tr><td>5 min</td><td>Wrap-Up + Challenge</td><td>Introduce the Challenge (5 sentences with 5 different irregular plurals). Start in class, finish for homework. Exit ticket: each student says one singular→plural pair on the way out.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title purple" style="margin-top:18px;">Follow-Up / Homework Idea</div>
+  <div class="followup-box">
+    Students finish their flashcard set (from the extra activity) at home covering all the irregulars in this worksheet, and bring it next class for a 5-minute speed round in pairs. Bonus: find one NEW irregular plural not on the worksheet (e.g. <em>cactus/cacti</em> counts if they didn't reach Section B item 4 in class).
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-col">
+      <span class="diff-label">For Extra Support</span>
+      Limit Section B to items 1–7 (the no-change family plus <em>passports</em>) for weaker students, and let them keep the completed table of A visible during C and D.
+    </div>
+    <div class="diff-col">
+      <span class="diff-label">For an Extra Challenge</span>
+      Fast finishers research the singular of <em>data</em> and <em>media</em>, and write one sentence with a Latin/Greek plural used correctly. Ask them to explain to the class why "the data are" and "the data is" both appear in modern English.
+    </div>
+  </div>
+
+  <div class="footer">workshido.com</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .section-title.teal { background: #0e7c66; }
+  .section-title.purple { background: #7b2d8b; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #9a5b00; line-height: 1.45; margin: 4px 0 6px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 16px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .page2 { break-before: page; page-break-before: always; }
+  .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .page2-header .brand-mini { font-size: 15px; font-weight: 900; color: #1a3a5c; letter-spacing: 0.5px; }
+  .page2-header .brand-mini span { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 8px; letter-spacing: 0; }
+  .page2-header .ws-title-mini { font-size: 11px; font-weight: 700; color: #1a3a5c; text-align: right; }
+  .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; margin-top: 4px; }
+  .prep-grid span::before { content: "• "; color: #0e7c66; font-weight: 700; }
+  .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  .lp-table-lg th { background: #1a3a5c; color: #fff; padding: 9px 12px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .lp-table-lg td { border: 1px solid #d0d8e4; padding: 11px 12px; vertical-align: top; line-height: 1.55; }
+  .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table-lg td:first-child { font-weight: 800; color: #1a3a5c; white-space: nowrap; width: 12%; }
+  .lp-table-lg td:nth-child(2) { font-weight: 700; color: #1a3a5c; width: 20%; }
+  .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 6px; padding: 12px 14px; margin-top: 18px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 6px; overflow: hidden; margin-top: 18px; }
+  .diff-col { padding: 12px 14px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
+  .diff-col:last-child { background: #f7f9fc; }
+  .diff-col .diff-label { font-weight: 800; color: #1a3a5c; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ PAGE 1 ═══════════════════════ -->
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Possessive 's / Possessive Case &bull; Grammar &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key</span>
+    <span>Full Lesson Plan</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Teacher Extra Activity</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+
+  <!-- LEFT: ANSWER KEY -->
+  <div>
+    <div class="section-title">Answer Key</div>
+
+    <div class="ex-title">B. Practice 1 – Add 's to the Nouns</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="n">1.</span> the <strong>boy's</strong></div>
+      <div class="ans-item"><span class="n">6.</span> my <strong>brother's</strong></div>
+      <div class="ans-item"><span class="n">2.</span> my <strong>mom's</strong></div>
+      <div class="ans-item"><span class="n">7.</span> the <strong>baby's</strong></div>
+      <div class="ans-item"><span class="n">3.</span> the <strong>dog's</strong></div>
+      <div class="ans-item"><span class="n">8.</span> the <strong>cat's</strong></div>
+      <div class="ans-item"><span class="n">4.</span> <strong>Sarah's</strong></div>
+      <div class="ans-item"><span class="n">9.</span> my <strong>uncle's</strong></div>
+      <div class="ans-item"><span class="n">5.</span> the <strong>teacher's</strong></div>
+      <div class="ans-item"><span class="n">10.</span> the <strong>girls'</strong></div>
+    </div>
+    <div class="flag">Item 10 is the trap: <em>the girls</em> is plural and ends in -s, so it takes only an apostrophe (<em>the girls'</em>), not <em>'s</em>. Point students back to the green rule box.</div>
+
+    <div class="ex-title">C. Practice 2 – Rewrite the Sentences Using 's</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> This is my <strong>friend's</strong> book.</li>
+      <li><span class="n">2.</span> The <strong>children's</strong> room is very clean.</li>
+      <li><span class="n">3.</span> My <strong>brother's</strong> bike is red.</li>
+      <li><span class="n">4.</span> That is our <strong>teacher's</strong> car.</li>
+      <li><span class="n">5.</span> The <strong>dog's</strong> toys are on the floor.</li>
+    </ul>
+    <div class="flag">Item 2: <em>children</em> is plural but does NOT end in -s, so it takes the full <em>'s</em> (<em>children's</em>) — a classic follow-up question after Practice 1 item 10.</div>
+
+    <div class="ex-title">D. Identify the Possessive – Noun to Underline</div>
+    <div class="ans-grid-2">
+      <div class="ans-item"><span class="n">1.</span> <strong>Emma's</strong> (laptop)</div>
+      <div class="ans-item"><span class="n">4.</span> <strong>students'</strong> (classroom)</div>
+      <div class="ans-item"><span class="n">2.</span> <strong>dog's</strong> (bone)</div>
+      <div class="ans-item"><span class="n">5.</span> <strong>children's</strong> (books)</div>
+      <div class="ans-item"><span class="n">3.</span> <strong>parents'</strong> (car)</div>
+      <div class="ans-item"><span class="n">6.</span> <strong>teacher's</strong> (chair)</div>
+    </div>
+
+    <div class="ex-title">E. Choose the Correct Option</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> This is <strong>the boy's</strong> backpack.</li>
+      <li><span class="n">2.</span> The <strong>cat's</strong> food is in the kitchen.</li>
+      <li><span class="n">3.</span> My <strong>sister's</strong> room is small.</li>
+      <li><span class="n">4.</span> The <strong>teachers'</strong> meeting is at 3 p.m.</li>
+      <li><span class="n">5.</span> The <strong>baby's</strong> bottle is over there.</li>
+    </ul>
+    <div class="flag">⚠ Both options in each item are grammatically possible out of context. The key follows the most natural reading: one owner in items 1, 2, 3 and 5, and a group meeting in item 4 (<em>teachers'</em>). If a student justifies the other option (e.g. several boys sharing one backpack), accept it and discuss the difference.</div>
+
+    <div class="ex-title">F. Sentence Building – Suggested Answers</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> This is my <strong>brother's</strong> guitar.</li>
+      <li><span class="n">2.</span> The <strong>dogs'</strong> toys are on the floor.</li>
+      <li><span class="n">3.</span> Our <strong>teacher's</strong> office is big.</li>
+      <li><span class="n">4.</span> The <strong>girls'</strong> notebooks are on the desk.</li>
+      <li><span class="n">5.</span> The <strong>children's</strong> playground is fun.</li>
+      <li><span class="n">6.</span> My <strong>friend's</strong> birthday is today.</li>
+    </ul>
+    <div class="flag">Answers are open — accept any correct sentence. Check the apostrophe position carefully: <em>dogs'</em> and <em>girls'</em> (plural + '), but <em>children's</em> (irregular plural + 's).</div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <div class="section-title amber">Teacher Tip</div>
+    <div class="right-box">
+      Teach the three cases as a simple decision tree on the board: Is the owner one person/thing? → add <em>'s</em>. More than one and it ends in -s? → add only <em>'</em>. More than one but irregular (<em>children, people</em>)? → add <em>'s</em>. Have students point at the branch they used every time they answer.
+    </div>
+
+    <div class="section-title red">Common Student Mistakes</div>
+    <div class="right-box">
+      <div class="mistake-row"><span class="wrong">✗ The book of my friend is here.</span><br><span class="correct">✓ My friend's book is here.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The girls's notebooks are new.</span><br><span class="correct">✓ The girls' notebooks are new.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The childrens' toys are here.</span><br><span class="correct">✓ The children's toys are here.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ This is Sarahs book.</span><br><span class="correct">✓ This is Sarah's book.</span></div>
+    </div>
+
+    <div class="section-title green">Teacher Extra Activity</div>
+    <div class="right-box">
+      <div class="activity-title">Whose Desk Is This? (10 min)</div>
+      Students put one personal object on their desk and stand up. Walk the class around the room: point at a desk and ask <em>"Whose pencil is this?"</em> — the class answers in chorus: <em>"It's Maria's pencil!"</em> Include pairs of students ("<em>It's Ana and Luis's project</em>") to practise joint possession.
+    </div>
+
+    <div class="section-title gray">Worksheet Information</div>
+    <div class="right-box" style="padding: 0; overflow: hidden;">
+      <table class="info-table">
+        <tr><td>Level</td><td>A1</td></tr>
+        <tr><td>Skill</td><td>Grammar</td></tr>
+        <tr><td>Grammar Focus</td><td>Possessive 's / possessive case (singular, plural -s', irregular plurals)</td></tr>
+        <tr><td>Exercises</td><td>5 (add 's, rewrite, identify, choose, sentence building)</td></tr>
+        <tr><td>Estimated Time</td><td>40–50 minutes</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">workshido.com</div>
+
+<!-- ═══════════════════════ PAGE 2 — LESSON PLAN ═══════════════════════ -->
+<div class="page2">
+
+  <div class="page2-header">
+    <div class="brand-mini">WORKSHIDO <span>Teacher Edition</span></div>
+    <div class="ws-title-mini">Possessive 's / Possessive Case &bull; Grammar &bull; A1</div>
+  </div>
+
+  <div class="section-title teal">Materials &amp; Prep</div>
+  <div class="prep-box">
+    <div class="prep-grid">
+      <span>Printed worksheet copies (1 per student)</span>
+      <span>Board and markers</span>
+      <span>Personal objects on desks for the extra activity</span>
+      <span>Timer or clock for pacing</span>
+    </div>
+  </div>
+
+  <div class="section-title">Lesson Plan (45–50 minutes)</div>
+  <table class="lp-table-lg">
+    <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td>Warm-Up</td><td>Pick up a student's pen and say "This is Ana's pen." Repeat with two or three objects. Write one sentence on the board and circle the <em>'s</em> — ask the class what it shows.</td></tr>
+      <tr><td>10 min</td><td>Presentation</td><td>Work through Section A (Grammar Focus): the singular table, then the green rule and the plural table. Drill the three cases on the board: <em>Emma's / the girls' / the children's</em>.</td></tr>
+      <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Practice 1 (B) individually, then Practice 2 (C) in pairs. Check as a class; make students say aloud where the apostrophe goes in item 10 (<em>girls'</em>).</td></tr>
+      <tr><td>10 min</td><td>Guided Practice</td><td>Students do D (identify the possessive) and E (choose the correct option). Review E by asking "one owner or many owners?" for each item before confirming the answer.</td></tr>
+      <tr><td>10 min</td><td>Production</td><td>Students write the six sentences of F (Sentence Building) individually. Monitor apostrophe placement. Early finishers write one extra sentence about a classmate's object.</td></tr>
+      <tr><td>5 min</td><td>Wrap-Up</td><td>Quick board race: write <em>the boy / the boys / the children</em> and elicit the possessive form of each as fast as possible.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title purple" style="margin-top:18px;">Follow-Up / Homework Idea</div>
+  <div class="followup-box">
+    Students write 6 sentences about things that belong to people in their family, using at least one plural owner (<em>my parents' car</em>) and one irregular plural (<em>the children's room</em>). Next class, they read one sentence aloud and the class says where the apostrophe goes.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-col">
+      <span class="diff-label">For Extra Support</span>
+      Keep the decision tree (one owner / plural -s / irregular plural) visible on the board during the whole lesson. For Practice 2, do items 1 and 2 together as models before students continue alone.
+    </div>
+    <div class="diff-col">
+      <span class="diff-label">For an Extra Challenge</span>
+      Ask fast finishers to rewrite three sentences from E with the option they did NOT choose and explain how the meaning changes (e.g. <em>the boy's backpack</em> vs. <em>the boys' backpack</em> — one owner or several).
+    </div>
+  </div>
+
+  <div class="footer">workshido.com</div>
+</div>
+
+</body>
+</html>

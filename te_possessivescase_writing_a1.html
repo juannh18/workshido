@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .section-title.teal { background: #0e7c66; }
+  .section-title.purple { background: #7b2d8b; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #9a5b00; line-height: 1.45; margin: 4px 0 6px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 16px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .page2 { break-before: page; page-break-before: always; }
+  .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .page2-header .brand-mini { font-size: 15px; font-weight: 900; color: #1a3a5c; letter-spacing: 0.5px; }
+  .page2-header .brand-mini span { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 8px; letter-spacing: 0; }
+  .page2-header .ws-title-mini { font-size: 11px; font-weight: 700; color: #1a3a5c; text-align: right; }
+  .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; margin-top: 4px; }
+  .prep-grid span::before { content: "• "; color: #0e7c66; font-weight: 700; }
+  .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  .lp-table-lg th { background: #1a3a5c; color: #fff; padding: 9px 12px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .lp-table-lg td { border: 1px solid #d0d8e4; padding: 11px 12px; vertical-align: top; line-height: 1.55; }
+  .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table-lg td:first-child { font-weight: 800; color: #1a3a5c; white-space: nowrap; width: 12%; }
+  .lp-table-lg td:nth-child(2) { font-weight: 700; color: #1a3a5c; width: 20%; }
+  .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 6px; padding: 12px 14px; margin-top: 18px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 6px; overflow: hidden; margin-top: 18px; }
+  .diff-col { padding: 12px 14px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
+  .diff-col:last-child { background: #f7f9fc; }
+  .diff-col .diff-label { font-weight: 800; color: #1a3a5c; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ PAGE 1 ═══════════════════════ -->
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Possessive 's / Possessive Case &bull; Writing &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key &amp; Model Answers</span>
+    <span>Full Lesson Plan</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Teacher Extra Activity</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+
+  <!-- LEFT: ANSWER KEY -->
+  <div>
+    <div class="section-title">Answer Key</div>
+
+    <div class="ex-title">B. Sentence Builder</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> <strong>My friend's</strong> backpack is black.</li>
+      <li><span class="n">2.</span> <strong>The baby's</strong> bottle is on the bed.</li>
+      <li><span class="n">3.</span> <strong>The teacher's</strong> desk is near the window.</li>
+      <li><span class="n">4.</span> <strong>My parents'</strong> car is very fast.</li>
+      <li><span class="n">5.</span> <strong>The boys'</strong> room is messy.</li>
+      <li><span class="n">6.</span> <strong>Emma and Jack's</strong> dog is very playful.</li>
+    </ul>
+    <div class="flag">Watch items 4 and 5: <em>parents</em> and <em>boys</em> are plurals ending in -s, so only the apostrophe is added (<em>parents', boys'</em>). Item 6 is joint possession: the 's goes only on the last name (<em>Emma and Jack's</em>), not on both.</div>
+
+    <div class="ex-title">C. Guided Writing – Suggested Sentences (open)</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> This is my brother's bedroom.</li>
+      <li><span class="n">2.</span> My brother's desk is near the window.</li>
+      <li><span class="n">3.</span> My brother's backpack is on the floor.</li>
+      <li><span class="n">4.</span> My brother's ball is next to the bed.</li>
+      <li><span class="n">5.</span> My brother's bed is very comfortable.</li>
+    </ul>
+    <div class="flag">Open answers — the picture shows a bedroom with a desk, a lamp, a chair, a backpack, a soccer ball and a bed. Accept any owner the student invents (my sister's, Tom's...) as long as the possessive 's is correct and the object appears in the picture.</div>
+
+    <div class="ex-title">D. Your Turn – Model Paragraph (open)</div>
+    <ul class="ans">
+      <li>My name is Daniel and this is my family. My mother's name is Rosa. My father's car is blue and very old. My sister's room is next to my room. My grandparents' house is in the city. My best friend's name is Leo. Leo's dog plays with us every weekend. I love my family's Sunday lunch.</li>
+    </ul>
+    <div class="flag">Require 6–8 sentences and at least four different possessive forms. Use the checklist in E as the marking rubric.</div>
+
+    <div class="ex-title">E. Writing Checklist</div>
+    <ul class="ans">
+      <li>No fixed answers — students self-check their own text: possessive 's used correctly, complete sentences, capital letters and punctuation, clear organization.</li>
+    </ul>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <div class="section-title amber">Teacher Tip</div>
+    <div class="right-box">
+      Before Section D, have students write a quick "ownership map": their name in the middle and five people around it, each with one object (<em>mom → kitchen, Leo → dog</em>). Writing from a map removes the "I don't know what to write" block and every branch becomes one possessive sentence.
+    </div>
+
+    <div class="section-title red">Common Student Mistakes</div>
+    <div class="right-box">
+      <div class="mistake-row"><span class="wrong">✗ My parent's car is very fast. (two parents)</span><br><span class="correct">✓ My parents' car is very fast.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ Emma's and Jack's dog is playful. (one shared dog)</span><br><span class="correct">✓ Emma and Jack's dog is playful.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The backpack of my friend is black.</span><br><span class="correct">✓ My friend's backpack is black.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ My brothers bedroom is big.</span><br><span class="correct">✓ My brother's bedroom is big.</span></div>
+    </div>
+
+    <div class="section-title green">Teacher Extra Activity</div>
+    <div class="right-box">
+      <div class="activity-title">Picture Dictation in Reverse (10 min)</div>
+      One student secretly chooses an object in the classroom and says only whose it is: <em>"It's Sofia's..."</em> The class asks yes/no questions to guess the object (<em>"Is Sofia's object blue?"</em>). Every question and answer forces a new possessive phrase.
+    </div>
+
+    <div class="section-title gray">Worksheet Information</div>
+    <div class="right-box" style="padding: 0; overflow: hidden;">
+      <table class="info-table">
+        <tr><td>Level</td><td>A1</td></tr>
+        <tr><td>Skill</td><td>Writing</td></tr>
+        <tr><td>Focus</td><td>Possessive 's — sentence building, guided writing, free paragraph</td></tr>
+        <tr><td>Exercises</td><td>4 (sentence builder, guided writing, your turn, checklist)</td></tr>
+        <tr><td>Estimated Time</td><td>40–50 minutes</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">workshido.com</div>
+
+<!-- ═══════════════════════ PAGE 2 — LESSON PLAN ═══════════════════════ -->
+<div class="page2">
+
+  <div class="page2-header">
+    <div class="brand-mini">WORKSHIDO <span>Teacher Edition</span></div>
+    <div class="ws-title-mini">Possessive 's / Possessive Case &bull; Writing &bull; A1</div>
+  </div>
+
+  <div class="section-title teal">Materials &amp; Prep</div>
+  <div class="prep-box">
+    <div class="prep-grid">
+      <span>Printed worksheet copies (1 per student)</span>
+      <span>Board and markers</span>
+      <span>Blank paper for the ownership map (pre-writing)</span>
+      <span>Timer or clock for pacing</span>
+    </div>
+  </div>
+
+  <div class="section-title">Lesson Plan (45–50 minutes)</div>
+  <table class="lp-table-lg">
+    <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td>Warm-Up</td><td>Read the four Useful Language sentences (A) aloud. Students underline every 's and ' and say who the owner is in each sentence.</td></tr>
+      <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Sentence Builder (B) individually. Check on the board, spelling out the apostrophe position for items 4, 5 and 6 (parents', boys', Emma and Jack's).</td></tr>
+      <tr><td>10 min</td><td>Guided Writing</td><td>Look at the picture in C together and elicit the visible objects (desk, lamp, backpack, ball, bed). Students write their five sentences; monitor and correct apostrophes on the spot.</td></tr>
+      <tr><td>5 min</td><td>Pre-Writing</td><td>Students draw their ownership map (see Teacher Tip): five people + one object each. Quick pair-share of maps before writing.</td></tr>
+      <tr><td>15 min</td><td>Production</td><td>Students write their 6–8 sentence paragraph in D using their map, then self-check with the checklist (E) and tick each box honestly. Volunteers read their paragraph aloud.</td></tr>
+      <tr><td>5 min</td><td>Wrap-Up</td><td>Peer review: partners exchange texts and circle every possessive. The pair with the most correct possessives reads one sentence to the class.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title purple" style="margin-top:18px;">Follow-Up / Homework Idea</div>
+  <div class="followup-box">
+    Students take (or draw) a picture of one room at home and write 5 sentences about what belongs to whom in that room (<em>my dad's chair, my sister's books...</em>). Next class, they show the picture while the class listens and counts the possessives.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-col">
+      <span class="diff-label">For Extra Support</span>
+      For Section D, give a sentence-starter frame on the board: <em>My ______'s ______ is ______.</em> Weaker students complete the frame six times before writing freely. Reduce the target to 5 sentences.
+    </div>
+    <div class="diff-col">
+      <span class="diff-label">For an Extra Challenge</span>
+      Ask fast finishers to include one plural owner (<em>my parents' ...</em>) and one joint possession (<em>... and ...'s</em>) in their paragraph, and to label each type in the margin.
+    </div>
+  </div>
+
+  <div class="footer">workshido.com</div>
+</div>
+
+</body>
+</html>

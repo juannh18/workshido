@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .section-title.teal { background: #0e7c66; }
+  .section-title.purple { background: #7b2d8b; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #9a5b00; line-height: 1.45; margin: 4px 0 6px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 16px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .page2 { break-before: page; page-break-before: always; }
+  .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
+  .page2-header .brand-mini { font-size: 15px; font-weight: 900; color: #1a3a5c; letter-spacing: 0.5px; }
+  .page2-header .brand-mini span { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 8px; letter-spacing: 0; }
+  .page2-header .ws-title-mini { font-size: 11px; font-weight: 700; color: #1a3a5c; text-align: right; }
+  .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; margin-top: 4px; }
+  .prep-grid span::before { content: "• "; color: #0e7c66; font-weight: 700; }
+  .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  .lp-table-lg th { background: #1a3a5c; color: #fff; padding: 9px 12px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .lp-table-lg td { border: 1px solid #d0d8e4; padding: 11px 12px; vertical-align: top; line-height: 1.55; }
+  .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table-lg td:first-child { font-weight: 800; color: #1a3a5c; white-space: nowrap; width: 12%; }
+  .lp-table-lg td:nth-child(2) { font-weight: 700; color: #1a3a5c; width: 20%; }
+  .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 6px; padding: 12px 14px; margin-top: 18px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 6px; overflow: hidden; margin-top: 18px; }
+  .diff-col { padding: 12px 14px; font-size: 10.5px; line-height: 1.6; color: #333; }
+  .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
+  .diff-col:last-child { background: #f7f9fc; }
+  .diff-col .diff-label { font-weight: 800; color: #1a3a5c; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ PAGE 1 ═══════════════════════ -->
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Possessive 's / Possessive Case &bull; Reading &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key</span>
+    <span>Full Lesson Plan</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Teacher Extra Activity</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+
+  <!-- LEFT: ANSWER KEY -->
+  <div>
+    <div class="section-title">Answer Key</div>
+
+    <div class="ex-title">A. Before Reading – Suggested Answers (open)</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> Maybe she is a (high school) student. / She is Mia.</li>
+      <li><span class="n">2.</span> The dog belongs to the girl. (It is Mia's dog, Rocky.)</li>
+      <li><span class="n">3.</span> They are at home, in the living room.</li>
+    </ul>
+    <div class="flag">Prediction questions — accept any reasonable answer. Come back to them after reading to confirm or correct the predictions.</div>
+
+    <div class="ex-title">Vocabulary in Context – Suggested Meanings</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> <strong>amazing</strong> (adj.): very, very good; wonderful</li>
+      <li><span class="n">2.</span> <strong>garden</strong> (n.): an outside area with flowers and plants next to a house</li>
+      <li><span class="n">3.</span> <strong>exciting</strong> (adj.): something that makes you feel happy and interested</li>
+      <li><span class="n">4.</span> <strong>photos</strong> (n.): pictures you take with a camera or phone</li>
+      <li><span class="n">5.</span> <strong>wagging</strong> (v.): moving quickly from side to side (a happy dog's tail)</li>
+    </ul>
+
+    <div class="ex-title">C. Comprehension</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> She makes <strong>pancakes</strong>. (Her mom's pancakes are amazing.)</li>
+      <li><span class="n">2.</span> She goes to her <strong>grandfather's house</strong>.</li>
+      <li><span class="n">3.</span> The flowers in her <strong>grandfather's garden</strong>.</li>
+      <li><span class="n">4.</span> They are <strong>Lily's brothers</strong>.</li>
+      <li><span class="n">5.</span> She <strong>takes lots of photos</strong> with her friends.</li>
+      <li><span class="n">6.</span> Rocky is <strong>Mia's dog</strong>. He is <strong>very happy</strong> — his tail never stops wagging.</li>
+    </ul>
+
+    <div class="ex-title">D. Thinking More – Suggested Answers (open)</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> Because she spends time with her family and friends — the text says her family's time is the best time.</li>
+      <li><span class="n">2.</span> Open answer, e.g. "I like to watch movies with my family and visit my grandmother's house."</li>
+    </ul>
+
+    <div class="ex-title">E. Personal Response – Model Answers (open)</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> "Someone special in my family is my grandmother. I like her stories and her food. My grandmother's cakes are amazing."</li>
+      <li><span class="n">2.</span> "My perfect weekend is with my friends. On Saturday we play soccer in the park. On Sunday I go to my cousin's house and we watch movies."</li>
+    </ul>
+    <div class="flag">Encourage at least one possessive 's in each answer — that is the hidden goal of both writing tasks.</div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <div class="section-title amber">Teacher Tip</div>
+    <div class="right-box">
+      All the possessive forms in the text are printed in bold (<em>Her mom's, Lily's, the boys', her family's</em>). After the first reading, have students copy them into two columns — "one owner" vs. "more than one owner" — before doing the comprehension questions. It turns the bold text into a discovery grammar task.
+    </div>
+
+    <div class="section-title red">Common Student Mistakes</div>
+    <div class="right-box">
+      <div class="mistake-row"><span class="wrong">✗ Mia goes to the house of her grandfather.</span><br><span class="correct">✓ Mia goes to her grandfather's house.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The brothers of Lily are at the park.</span><br><span class="correct">✓ Lily's brothers are at the park.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The boy's soccer game is exciting. (several boys)</span><br><span class="correct">✓ The boys' soccer game is exciting.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ Rockys tail never stops wagging.</span><br><span class="correct">✓ Rocky's tail never stops wagging.</span></div>
+    </div>
+
+    <div class="section-title green">Teacher Extra Activity</div>
+    <div class="right-box">
+      <div class="activity-title">Whose Weekend? (10 min)</div>
+      In pairs, students interview each other about their weekend with three questions (<em>Where do you go? Who do you see? What do you eat?</em>). Then each student reports their partner's weekend to another pair using possessives: <em>"Carla's Saturday is at her aunt's house. Her aunt's food is amazing."</em>
+    </div>
+
+    <div class="section-title gray">Worksheet Information</div>
+    <div class="right-box" style="padding: 0; overflow: hidden;">
+      <table class="info-table">
+        <tr><td>Level</td><td>A1</td></tr>
+        <tr><td>Skill</td><td>Reading</td></tr>
+        <tr><td>Focus</td><td>Possessive 's in context — text "Mia's Weekend"</td></tr>
+        <tr><td>Exercises</td><td>5 (before reading, vocabulary, comprehension, thinking more, personal response)</td></tr>
+        <tr><td>Estimated Time</td><td>40–50 minutes</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">workshido.com</div>
+
+<!-- ═══════════════════════ PAGE 2 — LESSON PLAN ═══════════════════════ -->
+<div class="page2">
+
+  <div class="page2-header">
+    <div class="brand-mini">WORKSHIDO <span>Teacher Edition</span></div>
+    <div class="ws-title-mini">Possessive 's / Possessive Case &bull; Reading &bull; A1</div>
+  </div>
+
+  <div class="section-title teal">Materials &amp; Prep</div>
+  <div class="prep-box">
+    <div class="prep-grid">
+      <span>Printed worksheet copies (1 per student)</span>
+      <span>Board and markers</span>
+      <span>Two-column chart ready on the board (one owner / many owners)</span>
+      <span>Timer or clock for pacing</span>
+    </div>
+  </div>
+
+  <div class="section-title">Lesson Plan (45–50 minutes)</div>
+  <table class="lp-table-lg">
+    <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td>Warm-Up</td><td>Students look only at the photo. Do Section A (Before Reading) orally in pairs, then collect predictions on the board without confirming them yet.</td></tr>
+      <tr><td>10 min</td><td>First Reading</td><td>Students read "Mia's Weekend" silently once. Return to the board predictions: which ones were right? Quick gist questions: Who is Rocky? Who is Lily?</td></tr>
+      <tr><td>8 min</td><td>Vocabulary</td><td>Students complete Vocabulary in Context using the sentences around each word — no dictionaries. Compare guesses in pairs before checking as a class.</td></tr>
+      <tr><td>12 min</td><td>Second Reading + Comprehension</td><td>Students re-read and answer Section C individually. Check as a class, asking students to read aloud the sentence in the text that contains each answer.</td></tr>
+      <tr><td>10 min</td><td>Production</td><td>Students answer D (Thinking More) and E (Personal Response) in writing. Require at least one possessive 's per answer. Volunteers read one answer aloud.</td></tr>
+      <tr><td>5 min</td><td>Wrap-Up</td><td>Board game: write <em>mom / grandfather / Lily / boys / family</em> and elicit the possessive phrase from the text for each one from memory.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title purple" style="margin-top:18px;">Follow-Up / Homework Idea</div>
+  <div class="followup-box">
+    Students write a short paragraph titled "My Weekend" (5–6 sentences) imitating the text, including at least three possessive forms (<em>my mom's..., my friend's..., my parents'...</em>). Next class, they exchange paragraphs and underline every possessive their partner used.
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-col">
+      <span class="diff-label">For Extra Support</span>
+      Let weaker students answer Section C with the text visible and the bold possessives already sorted in the two-column chart. Accept short answers ("pancakes") instead of full sentences.
+    </div>
+    <div class="diff-col">
+      <span class="diff-label">For an Extra Challenge</span>
+      Fast finishers rewrite three sentences from the text replacing the possessive with an "of" structure and compare which version sounds natural (<em>Lily's brothers → the brothers of Lily</em>) — then explain why English prefers 's for people.
+    </div>
+  </div>
+
+  <div class="footer">workshido.com</div>
+</div>
+
+</body>
+</html>
