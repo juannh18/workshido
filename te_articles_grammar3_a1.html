@@ -5,26 +5,18 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
-
-  /* HEADER (page 1) */
   .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
   .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
   .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
   .header-right { text-align: right; }
   .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
   .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
-
-  /* WHAT'S INCLUDED */
   .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
   .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
   .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
   .included-grid span { font-size: 10px; color: #333; }
   .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
-
-  /* TWO COLUMN LAYOUT */
   .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
-
-  /* SECTION TITLES */
   .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
   .section-title.amber { background: #e67e22; }
   .section-title.red { background: #c0392b; }
@@ -32,8 +24,6 @@
   .section-title.gray { background: #2c3e50; }
   .section-title.teal { background: #0e7c66; }
   .section-title.purple { background: #7b2d8b; }
-
-  /* EXERCISE TITLES / ANSWER GRIDS */
   .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
   .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
   .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
@@ -41,45 +31,34 @@
   ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
   ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
   ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
-
-  /* RIGHT COLUMN BOXES (page 1) */
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #9a5b00; line-height: 1.45; margin: 4px 0 6px; }
+  .model-box { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 6px 8px; font-size: 9.5px; line-height: 1.55; margin-bottom: 6px; }
   .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
   .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
   .wrong { color: #c0392b; }
   .correct { color: #1e8449; }
   .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
-  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
-  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
-
-  /* WORKSHEET INFO TABLE */
   .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
   .info-table tr:nth-child(odd) { background: #f0f4f8; }
   .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
   .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
-
-  /* FOOTER */
   .footer { text-align: center; margin-top: 16px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
-
-  /* ── PAGE 2 — LESSON PLAN PAGE ─────────────────────────────────── */
   .page2 { break-before: page; page-break-before: always; }
   .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
   .page2-header .brand-mini { font-size: 15px; font-weight: 900; color: #1a3a5c; letter-spacing: 0.5px; }
   .page2-header .brand-mini span { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 8px; letter-spacing: 0; }
   .page2-header .ws-title-mini { font-size: 11px; font-weight: 700; color: #1a3a5c; text-align: right; }
-
   .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 10.5px; line-height: 1.6; color: #333; }
   .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; margin-top: 4px; }
   .prep-grid span::before { content: "• "; color: #0e7c66; font-weight: 700; }
-
   .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
   .lp-table-lg th { background: #1a3a5c; color: #fff; padding: 9px 12px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; }
   .lp-table-lg td { border: 1px solid #d0d8e4; padding: 11px 12px; vertical-align: top; line-height: 1.55; }
   .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
   .lp-table-lg td:first-child { font-weight: 800; color: #1a3a5c; white-space: nowrap; width: 12%; }
   .lp-table-lg td:nth-child(2) { font-weight: 700; color: #1a3a5c; width: 20%; }
-
   .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 6px; padding: 12px 14px; margin-top: 18px; font-size: 10.5px; line-height: 1.6; color: #333; }
-
   .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 6px; overflow: hidden; margin-top: 18px; }
   .diff-col { padding: 12px 14px; font-size: 10.5px; line-height: 1.6; color: #333; }
   .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
@@ -97,7 +76,7 @@
     <div class="edition">Teacher Edition</div>
   </div>
   <div class="header-right">
-    <div class="ws-title">Verb To Be &bull; Reading &bull; A1</div>
+    <div class="ws-title">Articles A, An, The &bull; Grammar 3 &bull; A1</div>
     <div class="ws-sub">Premium teacher support for the worksheet</div>
   </div>
 </div>
@@ -120,73 +99,69 @@
   <div>
     <div class="section-title">Answer Key</div>
 
-    <div class="ex-title">Exercise 1 – Pre-Reading</div>
-    <div class="note" style="font-style:normal; font-size:10px; color:#555; margin-bottom:6px;">Open answers. Accept any reasonable response based on the image. Example: <em>"He is a student / He is from Mexico."</em></div>
+    <div class="ex-title">Exercise 1 – Picture Sentences (Suggested Answers)</div>
+    <div class="note">Open answers — accept any correct sentence using a, an, or the.</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> Laptop → <em>This is a laptop. / The laptop is new.</em></li>
+      <li><span class="n">2.</span> Airport (Departures) → <em>They are at the airport. / There is an airport near my city.</em></li>
+      <li><span class="n">3.</span> Cup of coffee → <em>This is a cup of coffee. / The coffee smells good.</em></li>
+      <li><span class="n">4.</span> Mountain lake → <em>There is a lake in the mountains. / The lake is very clean.</em></li>
+      <li><span class="n">5.</span> Bookshelf → <em>There is a bookshelf with books. / The books are on the shelf.</em></li>
+    </ul>
+    <div class="flag">⚠ Four of the five pictures (laptop, airport, coffee, mountain lake) are almost identical to Exercise 1 of the <em>Articles Grammar 2</em> worksheet — only the fifth picture changes (bookshelf here vs. living room there). If you use both worksheets with the same group, expect repeated sentences in this exercise.</div>
 
-    <div class="ex-title">Exercise 3A – Choose the Correct Answer</div>
+    <div class="ex-title">Exercise 2 – Complete the Paragraph (10 blanks)</div>
     <div class="ans-grid-2">
-      <div class="ans-item"><span class="n">1.</span> b. 15</div>
-      <div class="ans-item"><span class="n">2.</span> b. Mexico</div>
-      <div class="ans-item"><span class="n">3.</span> c. big and modern</div>
-      <div class="ans-item"><span class="n">4.</span> a. only</div>
-      <div class="ans-item"><span class="n">5.</span> b. dog</div>
-      <div class="ans-item"><span class="n">6.</span> b. soccer</div>
+      <div class="ans-item"><span class="n">1)</span> Today is ___ Saturday — see note ⚠</div>
+      <div class="ans-item"><span class="n">6)</span> <strong>a</strong> pastry</div>
+      <div class="ans-item"><span class="n">2)</span> <strong>a</strong> new café</div>
+      <div class="ans-item"><span class="n">7)</span> <strong>a</strong> bookshop</div>
+      <div class="ans-item"><span class="n">3)</span> <strong>a</strong> small place</div>
+      <div class="ans-item"><span class="n">8)</span> <strong>the</strong> café</div>
+      <div class="ans-item"><span class="n">4)</span> <strong>a</strong> beautiful garden</div>
+      <div class="ans-item"><span class="n">9)</span> <strong>a</strong> great bookshop</div>
+      <div class="ans-item"><span class="n">5)</span> <strong>a</strong> cup of coffee</div>
+      <div class="ans-item"><span class="n">10)</span> ___ interesting books — see note ⚠</div>
     </div>
+    <div class="flag">⚠ Blank 1 — <em>"Today is (1) ___ Saturday"</em>: natural English uses <strong>no article</strong> with days ("Today is Saturday"). If an article is forced, <em>a</em> is the least-bad option. Use it to teach the real rule.<br>
+    ⚠ Blank 10 — <em>"I always find (10) ___ interesting books there"</em>: the noun is <strong>plural</strong>, so a/an is impossible and <em>the</em> sounds unnatural here (natural English: "some interesting books" or no article). If forced, accept <em>the</em>; better, use the item to teach that a/an never goes with plurals.</div>
 
-    <div class="ex-title">Exercise 3B – True or False</div>
-    <table style="width:100%; border-collapse:collapse; font-size:10px;">
-      <thead>
-        <tr><th style="background:#1a3a5c;color:#fff;padding:5px 6px;text-align:left;width:70%">Statement</th><th style="background:#1a3a5c;color:#fff;padding:5px 6px;">True</th><th style="background:#1a3a5c;color:#fff;padding:5px 6px;">False</th></tr>
-      </thead>
-      <tbody>
-        <tr><td style="border:1px solid #d0d8e4;padding:5px 6px;">1. Daniel is 14 years old.</td><td style="border:1px solid #d0d8e4;padding:5px 6px;color:#c0392b;font-weight:700;text-align:center;">✗</td><td style="border:1px solid #d0d8e4;padding:5px 6px;color:#1e8449;font-weight:700;text-align:center;">✓</td></tr>
-        <tr><td style="border:1px solid #d0d8e4;padding:5px 6px;background:#f7f9fc;">2. He is a student.</td><td style="border:1px solid #d0d8e4;padding:5px 6px;background:#f7f9fc;color:#1e8449;font-weight:700;text-align:center;">✓</td><td style="border:1px solid #d0d8e4;padding:5px 6px;background:#f7f9fc;color:#c0392b;font-weight:700;text-align:center;">✗</td></tr>
-      </tbody>
-    </table>
-
-    <div class="ex-title">Exercise 5 – Vocabulary in Context</div>
-    <div class="ans-grid-2">
-      <div class="ans-item"><span class="n">1.</span> modern → c. new and up-to-date</div>
-      <div class="ans-item"><span class="n">2.</span> supportive → d. gives help and encouragement</div>
-      <div class="ans-item"><span class="n">3.</span> friendly → a. kind and easy to talk to</div>
-      <div class="ans-item"><span class="n">4.</span> fan → b. likes something very much</div>
+    <div class="ex-title">Exercise 3 – Write About Your Favorite Place (Model Answer)</div>
+    <div class="note">Guiding questions: Where is it? What can you do there? What makes it special? Useful words: park, restaurant, beach, museum, library, city, place, building.</div>
+    <div class="model-box">
+      <em>My favorite place is a park near my house. It is a quiet place with a small lake. I can ride my bike and read a book under the trees. The park is special because I go there with my family every Sunday.</em>
     </div>
-
-    <div class="ex-title">Exercise 7 – Reflection (Suggested Answers)</div>
-    <div class="sug">I am a student at [school name].</div>
-    <div class="sug">I am from [country].</div>
-    <div class="sug">My friends are very important to me.</div>
   </div>
 
   <!-- RIGHT COLUMN -->
   <div>
     <div class="section-title amber">Teacher Tip</div>
     <div class="right-box">
-      Encourage students to read the text more than once. Ask them to circle key information (names, places, hobbies) before answering the questions — this helps them locate answers faster and builds active reading habits.
+      Exercise 2 tells one continuous story, so it is perfect for teaching first vs. second mention: the bookshop appears with <em>a</em> in blank 7 and the café returns with <em>the</em> in blank 8. Read the paragraph aloud once before students fill anything in.
     </div>
 
     <div class="section-title red">Common Student Mistakes</div>
     <div class="right-box">
-      <div class="mistake-row"><span class="wrong">✗ He have a dog.</span><br><span class="correct">✓ He has a dog.</span></div>
-      <div class="mistake-row"><span class="wrong">✗ Daniel are 15 years old.</span><br><span class="correct">✓ Daniel is 15 years old.</span></div>
-      <div class="mistake-row"><span class="wrong">✗ His parents is teachers.</span><br><span class="correct">✓ His parents are teachers.</span></div>
-      <div class="mistake-row"><span class="wrong">✗ I not am a student.</span><br><span class="correct">✓ I am not a student.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ I'm going to an new café.</span><br><span class="correct">✓ I'm going to a new café. (next sound is /n/)</span></div>
+      <div class="mistake-row"><span class="wrong">✗ a interesting book</span><br><span class="correct">✓ an interesting book</span></div>
+      <div class="mistake-row"><span class="wrong">✗ I visit a bookshop near a café. (second mention)</span><br><span class="correct">✓ ...near the café. (we already know which café)</span></div>
+      <div class="mistake-row"><span class="wrong">✗ I always find an interesting books.</span><br><span class="correct">✓ a/an never goes with plural nouns.</span></div>
     </div>
 
     <div class="section-title green">Teacher Extra Activity</div>
     <div class="right-box">
-      <div class="activity-title">Meet My Classmate (10–15 min)</div>
-      Students write a short paragraph (4–6 sentences) about themselves using the verb <em>to be</em>, following Daniel's text as a model. Then they share with a partner and the partner introduces them to the class.
+      <div class="activity-title">Story Chain (10 min)</div>
+      Start a story: "Yesterday I found a box." Each student adds one sentence, and every new noun must enter with a/an and return with the ("In the box there was an old map. The map showed a beach..."). Great for first/second mention practice.
     </div>
 
     <div class="section-title gray">Worksheet Information</div>
     <div class="right-box" style="padding: 0; overflow: hidden;">
       <table class="info-table">
         <tr><td>Level</td><td>A1</td></tr>
-        <tr><td>Skill</td><td>Reading</td></tr>
-        <tr><td>Grammar Focus</td><td>Verb To Be (am, is, are)</td></tr>
-        <tr><td>Text Type</td><td>Personal profile / blog post</td></tr>
-        <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+        <tr><td>Skill</td><td>Grammar</td></tr>
+        <tr><td>Grammar Focus</td><td>Articles a, an, the (first vs. second mention)</td></tr>
+        <tr><td>Exercises</td><td>3 (picture sentences, paragraph completion, free writing)</td></tr>
+        <tr><td>Estimated Time</td><td>40–50 minutes</td></tr>
       </table>
     </div>
   </div>
@@ -199,7 +174,7 @@
 
   <div class="page2-header">
     <div class="brand-mini">WORKSHIDO <span>Teacher Edition</span></div>
-    <div class="ws-title-mini">Verb To Be &bull; Reading &bull; A1</div>
+    <div class="ws-title-mini">Articles A, An, The &bull; Grammar 3 &bull; A1</div>
   </div>
 
   <div class="section-title teal">Materials &amp; Prep</div>
@@ -207,37 +182,37 @@
     <div class="prep-grid">
       <span>Printed worksheet copies (1 per student)</span>
       <span>Board and markers</span>
+      <span>An object in a box for the Story Chain warm-up (optional)</span>
       <span>Timer or clock for pacing</span>
-      <span>Optional: photo of a person to introduce</span>
     </div>
   </div>
 
-  <div class="section-title">Lesson Plan (45 minutes)</div>
+  <div class="section-title">Lesson Plan (45–50 minutes)</div>
   <table class="lp-table-lg">
     <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
     <tbody>
-      <tr><td>5 min</td><td>Warm-Up</td><td>Show the photo and ask students to guess who the person is and where they are from before reading.</td></tr>
-      <tr><td>10 min</td><td>Presentation</td><td>Read the text aloud once while students follow along, then review the verb to be forms (am/is/are) on the board.</td></tr>
-      <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Exercise 3A and 3B individually, then check answers in pairs.</td></tr>
-      <tr><td>8 min</td><td>Guided Practice</td><td>Students complete Exercise 4, finding every verb to be form in the text.</td></tr>
-      <tr><td>8 min</td><td>Production</td><td>Students complete Exercise 5 and Exercise 7, then share one sentence with a partner.</td></tr>
-      <tr><td>4 min</td><td>Wrap-Up</td><td>A few volunteers introduce themselves to the class using the verb to be, following Daniel's text as a model.</td></tr>
+      <tr><td>5 min</td><td>Warm-Up</td><td>Tell a two-line story on the board: "I have a cat. The cat is black." Ask: why a first and the after? Elicit the first/second mention rule.</td></tr>
+      <tr><td>8 min</td><td>Presentation</td><td>Review the Writing Tip box: one of many → a/an; something specific → the; plural or uncountable → generally no article. Give one example of each.</td></tr>
+      <tr><td>10 min</td><td>Controlled Practice</td><td>Read the Exercise 2 paragraph aloud, then students complete the 10 blanks individually. Check as a class, discussing blanks 1 and 10 as special cases (days and plurals take no article in natural English).</td></tr>
+      <tr><td>10 min</td><td>Guided Practice</td><td>In pairs, students write sentences for the five pictures in Exercise 1. Ask each pair to use a/an in one sentence and the in another.</td></tr>
+      <tr><td>10 min</td><td>Production</td><td>Students write about their favorite place (Exercise 3) using the guiding questions and the Useful Words box. Circulate and check article use.</td></tr>
+      <tr><td>5 min</td><td>Wrap-Up</td><td>Play one round of Story Chain: every new noun enters with a/an and returns with the.</td></tr>
     </tbody>
   </table>
 
   <div class="section-title purple" style="margin-top:18px;">Follow-Up / Homework Idea</div>
   <div class="followup-box">
-    For homework, students write a short profile of a family member or friend using the verb <em>to be</em>, following the same structure as Daniel's text. Collect next class for quick feedback, or have students read theirs aloud in small groups.
+    Students describe their favorite place to a family member and then write two extra sentences answering: "When do you go there?" and "Who do you go with?" — underlining every article they use. Review a few examples next class.
   </div>
 
   <div class="diff-grid">
     <div class="diff-col">
       <span class="diff-label">For Extra Support</span>
-      Pair lower-level students with a stronger partner for Exercise 4. Let them underline the verb to be forms in a different colour before writing them out, and allow them to copy full sentences from the text for Exercise 7 instead of writing from scratch.
+      For Exercise 3, give weaker students a frame: "My favorite place is a ___ . It is in ___ . I can ___ there. The ___ is special because ___ ." They complete it with the Useful Words box.
     </div>
     <div class="diff-col">
       <span class="diff-label">For an Extra Challenge</span>
-      Ask faster finishers to rewrite two sentences from the text in the negative form, or to write one extra question they would ask Daniel using the verb to be.
+      Ask fast finishers to rewrite the Exercise 2 paragraph about a different place (a market, a library) keeping every article correct — first mention a/an, second mention the.
     </div>
   </div>
 

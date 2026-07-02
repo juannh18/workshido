@@ -5,26 +5,18 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
-
-  /* HEADER (page 1) */
   .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
   .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
   .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
   .header-right { text-align: right; }
   .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
   .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
-
-  /* WHAT'S INCLUDED */
   .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
   .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
   .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
   .included-grid span { font-size: 10px; color: #333; }
   .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
-
-  /* TWO COLUMN LAYOUT */
   .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
-
-  /* SECTION TITLES */
   .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
   .section-title.amber { background: #e67e22; }
   .section-title.red { background: #c0392b; }
@@ -32,8 +24,6 @@
   .section-title.gray { background: #2c3e50; }
   .section-title.teal { background: #0e7c66; }
   .section-title.purple { background: #7b2d8b; }
-
-  /* EXERCISE TITLES / ANSWER GRIDS */
   .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
   .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
   .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
@@ -41,45 +31,32 @@
   ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
   ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
   ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
-
-  /* RIGHT COLUMN BOXES (page 1) */
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 4px; padding: 4px 7px; font-size: 9px; color: #9a5b00; line-height: 1.45; margin: 4px 0 6px; }
   .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
   .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
   .wrong { color: #c0392b; }
   .correct { color: #1e8449; }
   .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
-  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
-  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
-
-  /* WORKSHEET INFO TABLE */
   .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
   .info-table tr:nth-child(odd) { background: #f0f4f8; }
   .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
   .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
-
-  /* FOOTER */
   .footer { text-align: center; margin-top: 16px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
-
-  /* ── PAGE 2 — LESSON PLAN PAGE ─────────────────────────────────── */
   .page2 { break-before: page; page-break-before: always; }
   .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 2px solid #1a3a5c; margin-bottom: 16px; }
   .page2-header .brand-mini { font-size: 15px; font-weight: 900; color: #1a3a5c; letter-spacing: 0.5px; }
   .page2-header .brand-mini span { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 8px; letter-spacing: 0; }
   .page2-header .ws-title-mini { font-size: 11px; font-weight: 700; color: #1a3a5c; text-align: right; }
-
   .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; font-size: 10.5px; line-height: 1.6; color: #333; }
   .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; margin-top: 4px; }
   .prep-grid span::before { content: "• "; color: #0e7c66; font-weight: 700; }
-
   .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
   .lp-table-lg th { background: #1a3a5c; color: #fff; padding: 9px 12px; text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px; }
   .lp-table-lg td { border: 1px solid #d0d8e4; padding: 11px 12px; vertical-align: top; line-height: 1.55; }
   .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
   .lp-table-lg td:first-child { font-weight: 800; color: #1a3a5c; white-space: nowrap; width: 12%; }
   .lp-table-lg td:nth-child(2) { font-weight: 700; color: #1a3a5c; width: 20%; }
-
   .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 6px; padding: 12px 14px; margin-top: 18px; font-size: 10.5px; line-height: 1.6; color: #333; }
-
   .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 6px; overflow: hidden; margin-top: 18px; }
   .diff-col { padding: 12px 14px; font-size: 10.5px; line-height: 1.6; color: #333; }
   .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
@@ -97,7 +74,7 @@
     <div class="edition">Teacher Edition</div>
   </div>
   <div class="header-right">
-    <div class="ws-title">Verb To Be &bull; Reading &bull; A1</div>
+    <div class="ws-title">Possessive Adjectives &bull; Grammar &bull; A1</div>
     <div class="ws-sub">Premium teacher support for the worksheet</div>
   </div>
 </div>
@@ -107,9 +84,9 @@
   <div class="included-grid">
     <span>Complete Answer Key</span>
     <span>Full Lesson Plan</span>
-    <span>Suggested Answers</span>
     <span>Common Student Mistakes</span>
     <span>Teacher Tip</span>
+    <span>Teacher Extra Activity</span>
     <span>Worksheet Information</span>
   </div>
 </div>
@@ -120,73 +97,88 @@
   <div>
     <div class="section-title">Answer Key</div>
 
-    <div class="ex-title">Exercise 1 – Pre-Reading</div>
-    <div class="note" style="font-style:normal; font-size:10px; color:#555; margin-bottom:6px;">Open answers. Accept any reasonable response based on the image. Example: <em>"He is a student / He is from Mexico."</em></div>
-
-    <div class="ex-title">Exercise 3A – Choose the Correct Answer</div>
+    <div class="ex-title">Exercise 1 – Choose the Correct Possessive Adjective</div>
     <div class="ans-grid-2">
-      <div class="ans-item"><span class="n">1.</span> b. 15</div>
-      <div class="ans-item"><span class="n">2.</span> b. Mexico</div>
-      <div class="ans-item"><span class="n">3.</span> c. big and modern</div>
-      <div class="ans-item"><span class="n">4.</span> a. only</div>
-      <div class="ans-item"><span class="n">5.</span> b. dog</div>
-      <div class="ans-item"><span class="n">6.</span> b. soccer</div>
+      <div class="ans-item"><span class="n">1.</span> This is <strong>my</strong> laptop.</div>
+      <div class="ans-item"><span class="n">7.</span> They are in <strong>their</strong> room.</div>
+      <div class="ans-item"><span class="n">2.</span> Is this <strong>your</strong> pen?</div>
+      <div class="ans-item"><span class="n">8.</span> Can I see <strong>your</strong> homework?</div>
+      <div class="ans-item"><span class="n">3.</span> He is <strong>his</strong> brother.</div>
+      <div class="ans-item"><span class="n">9.</span> That's <strong>his</strong> bike.</div>
+      <div class="ans-item"><span class="n">4.</span> That is <strong>her</strong> book.</div>
+      <div class="ans-item"><span class="n">10.</span> She likes <strong>her</strong> new dress.</div>
+      <div class="ans-item"><span class="n">5.</span> The dog is eating <strong>its</strong> food.</div>
+      <div class="ans-item"><span class="n">11.</span> The bird is in <strong>its</strong> nest.</div>
+      <div class="ans-item"><span class="n">6.</span> We love <strong>our</strong> school.</div>
+      <div class="ans-item"><span class="n">12.</span> This is <strong>our</strong> project.</div>
     </div>
 
-    <div class="ex-title">Exercise 3B – True or False</div>
-    <table style="width:100%; border-collapse:collapse; font-size:10px;">
-      <thead>
-        <tr><th style="background:#1a3a5c;color:#fff;padding:5px 6px;text-align:left;width:70%">Statement</th><th style="background:#1a3a5c;color:#fff;padding:5px 6px;">True</th><th style="background:#1a3a5c;color:#fff;padding:5px 6px;">False</th></tr>
-      </thead>
-      <tbody>
-        <tr><td style="border:1px solid #d0d8e4;padding:5px 6px;">1. Daniel is 14 years old.</td><td style="border:1px solid #d0d8e4;padding:5px 6px;color:#c0392b;font-weight:700;text-align:center;">✗</td><td style="border:1px solid #d0d8e4;padding:5px 6px;color:#1e8449;font-weight:700;text-align:center;">✓</td></tr>
-        <tr><td style="border:1px solid #d0d8e4;padding:5px 6px;background:#f7f9fc;">2. He is a student.</td><td style="border:1px solid #d0d8e4;padding:5px 6px;background:#f7f9fc;color:#1e8449;font-weight:700;text-align:center;">✓</td><td style="border:1px solid #d0d8e4;padding:5px 6px;background:#f7f9fc;color:#c0392b;font-weight:700;text-align:center;">✗</td></tr>
-      </tbody>
-    </table>
-
-    <div class="ex-title">Exercise 5 – Vocabulary in Context</div>
+    <div class="ex-title">Exercise 2 – Complete the Sentences</div>
     <div class="ans-grid-2">
-      <div class="ans-item"><span class="n">1.</span> modern → c. new and up-to-date</div>
-      <div class="ans-item"><span class="n">2.</span> supportive → d. gives help and encouragement</div>
-      <div class="ans-item"><span class="n">3.</span> friendly → a. kind and easy to talk to</div>
-      <div class="ans-item"><span class="n">4.</span> fan → b. likes something very much</div>
+      <div class="ans-item"><span class="n">1.</span> <strong>Its</strong> color is blue.</div>
+      <div class="ans-item"><span class="n">8.</span> <strong>His</strong> hair is black.</div>
+      <div class="ans-item"><span class="n">2.</span> Maria is reading <strong>her</strong> favorite book.</div>
+      <div class="ans-item"><span class="n">9.</span> The cat is cleaning <strong>its</strong> face.</div>
+      <div class="ans-item"><span class="n">3.</span> Tom and I are in <strong>our</strong> English class.</div>
+      <div class="ans-item"><span class="n">10.</span> <strong>Their</strong> room is big.</div>
+      <div class="ans-item"><span class="n">4.</span> <strong>Her</strong> name is Laura.</div>
+      <div class="ans-item"><span class="n">11.</span> <strong>His</strong> car is white.</div>
+      <div class="ans-item"><span class="n">5.</span> The baby is sleeping in <strong>its</strong> bed.</div>
+      <div class="ans-item"><span class="n">12.</span> We are happy with <strong>our</strong> teacher.</div>
+      <div class="ans-item"><span class="n">6.</span> You and <strong>your</strong> friends are invited.</div>
+      <div class="ans-item"><span class="n">13.</span> The students did <strong>their</strong> homework.</div>
+      <div class="ans-item"><span class="n">7.</span> My parents love <strong>their</strong> garden.</div>
+      <div class="ans-item"><span class="n">14.</span> Look at the bird and <strong>its</strong> wings!</div>
     </div>
+    <div class="flag">Item 5: <em>its</em> is the expected answer at this level, but also accept <em>his</em> or <em>her</em> — both are natural when talking about a baby.</div>
 
-    <div class="ex-title">Exercise 7 – Reflection (Suggested Answers)</div>
-    <div class="sug">I am a student at [school name].</div>
-    <div class="sug">I am from [country].</div>
-    <div class="sug">My friends are very important to me.</div>
+    <div class="ex-title">Exercise 3 – Rewrite the Sentences</div>
+    <ul class="ans">
+      <li><span class="n">1.</span> That is <strong>her</strong> book.</li>
+      <li><span class="n">2.</span> This is <strong>his</strong> car.</li>
+      <li><span class="n">3.</span> It is <strong>my</strong> dog.</li>
+      <li><span class="n">4.</span> That is <strong>their</strong> house.</li>
+      <li><span class="n">5.</span> It is <strong>your</strong> phone.</li>
+      <li><span class="n">6.</span> They are <strong>their</strong> children.</li>
+      <li><span class="n">7.</span> This is <strong>our</strong> classroom.</li>
+      <li><span class="n">8.</span> It is <strong>her</strong> bike.</li>
+      <li><span class="n">9.</span> He is <strong>his</strong> brother.</li>
+      <li><span class="n">10.</span> It is <strong>my</strong> computer.</li>
+      <li><span class="n">11.</span> It is <strong>its</strong> toy.</li>
+      <li><span class="n">12.</span> They are <strong>our</strong> tickets.</li>
+    </ul>
+    <div class="flag">⚠ Item 7 says <em>"This is the classroom of students"</em> but the cue in parentheses is <em>(our)</em>. Logically, <em>their</em> would match "students"; the key above follows the printed cue. If students write <em>"This is their classroom"</em>, accept it and point out the mismatch.</div>
   </div>
 
   <!-- RIGHT COLUMN -->
   <div>
     <div class="section-title amber">Teacher Tip</div>
     <div class="right-box">
-      Encourage students to read the text more than once. Ask them to circle key information (names, places, hobbies) before answering the questions — this helps them locate answers faster and builds active reading habits.
+      Draw a two-column chart on the board (subject pronoun → possessive adjective) and elicit each pair from students before starting. Keep it visible while they work — most A1 errors disappear when the reference chart is in sight.
     </div>
 
     <div class="section-title red">Common Student Mistakes</div>
     <div class="right-box">
-      <div class="mistake-row"><span class="wrong">✗ He have a dog.</span><br><span class="correct">✓ He has a dog.</span></div>
-      <div class="mistake-row"><span class="wrong">✗ Daniel are 15 years old.</span><br><span class="correct">✓ Daniel is 15 years old.</span></div>
-      <div class="mistake-row"><span class="wrong">✗ His parents is teachers.</span><br><span class="correct">✓ His parents are teachers.</span></div>
-      <div class="mistake-row"><span class="wrong">✗ I not am a student.</span><br><span class="correct">✓ I am not a student.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ This is mine book.</span><br><span class="correct">✓ This is my book.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The dog is eating it's food.</span><br><span class="correct">✓ The dog is eating its food.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ Maria is reading his favorite book.</span><br><span class="correct">✓ Maria is reading her favorite book.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ They love they house.</span><br><span class="correct">✓ They love their house.</span></div>
     </div>
 
     <div class="section-title green">Teacher Extra Activity</div>
     <div class="right-box">
-      <div class="activity-title">Meet My Classmate (10–15 min)</div>
-      Students write a short paragraph (4–6 sentences) about themselves using the verb <em>to be</em>, following Daniel's text as a model. Then they share with a partner and the partner introduces them to the class.
+      <div class="activity-title">Whose Is It? (10 min)</div>
+      Collect one small object from several students (pen, eraser, keyring). Hold each one up and ask <em>"Whose is this?"</em> — the class answers with a full sentence: <em>"It's her pencil! It's his eraser!"</em> Fast, fun, and forces his/her/their choices in real time.
     </div>
 
     <div class="section-title gray">Worksheet Information</div>
     <div class="right-box" style="padding: 0; overflow: hidden;">
       <table class="info-table">
         <tr><td>Level</td><td>A1</td></tr>
-        <tr><td>Skill</td><td>Reading</td></tr>
-        <tr><td>Grammar Focus</td><td>Verb To Be (am, is, are)</td></tr>
-        <tr><td>Text Type</td><td>Personal profile / blog post</td></tr>
-        <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+        <tr><td>Skill</td><td>Grammar</td></tr>
+        <tr><td>Grammar Focus</td><td>Possessive adjectives (my, your, his, her, its, our, their)</td></tr>
+        <tr><td>Exercises</td><td>3 (choose, complete, rewrite)</td></tr>
+        <tr><td>Estimated Time</td><td>40–50 minutes</td></tr>
       </table>
     </div>
   </div>
@@ -199,7 +191,7 @@
 
   <div class="page2-header">
     <div class="brand-mini">WORKSHIDO <span>Teacher Edition</span></div>
-    <div class="ws-title-mini">Verb To Be &bull; Reading &bull; A1</div>
+    <div class="ws-title-mini">Possessive Adjectives &bull; Grammar &bull; A1</div>
   </div>
 
   <div class="section-title teal">Materials &amp; Prep</div>
@@ -207,37 +199,37 @@
     <div class="prep-grid">
       <span>Printed worksheet copies (1 per student)</span>
       <span>Board and markers</span>
+      <span>Small classroom objects for the extra activity</span>
       <span>Timer or clock for pacing</span>
-      <span>Optional: photo of a person to introduce</span>
     </div>
   </div>
 
-  <div class="section-title">Lesson Plan (45 minutes)</div>
+  <div class="section-title">Lesson Plan (45–50 minutes)</div>
   <table class="lp-table-lg">
     <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
     <tbody>
-      <tr><td>5 min</td><td>Warm-Up</td><td>Show the photo and ask students to guess who the person is and where they are from before reading.</td></tr>
-      <tr><td>10 min</td><td>Presentation</td><td>Read the text aloud once while students follow along, then review the verb to be forms (am/is/are) on the board.</td></tr>
-      <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Exercise 3A and 3B individually, then check answers in pairs.</td></tr>
-      <tr><td>8 min</td><td>Guided Practice</td><td>Students complete Exercise 4, finding every verb to be form in the text.</td></tr>
-      <tr><td>8 min</td><td>Production</td><td>Students complete Exercise 5 and Exercise 7, then share one sentence with a partner.</td></tr>
-      <tr><td>4 min</td><td>Wrap-Up</td><td>A few volunteers introduce themselves to the class using the verb to be, following Daniel's text as a model.</td></tr>
+      <tr><td>5 min</td><td>Warm-Up</td><td>Hold up your own pen and say "This is my pen." Point to a student's bag: "This is her bag." Elicit more examples from the room without explaining the rule yet.</td></tr>
+      <tr><td>10 min</td><td>Presentation</td><td>Go through the reference table at the top of the worksheet. Build the pronoun → possessive adjective chart on the board and drill pronunciation, highlighting its vs. it's and his vs. her.</td></tr>
+      <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Exercise 1 individually. Check as a class: read each sentence aloud and have students call out the correct option.</td></tr>
+      <tr><td>10 min</td><td>Guided Practice</td><td>Students complete Exercise 2 in pairs, deciding together which possessive adjective fits each subject. Review answers, asking "Who does it belong to?" for each item.</td></tr>
+      <tr><td>10 min</td><td>Production</td><td>Students complete Exercise 3 individually, rewriting the sentences. Early finishers write one extra sentence about a classmate's object.</td></tr>
+      <tr><td>5 min</td><td>Wrap-Up</td><td>Quick oral quiz: say a subject pronoun ("they!") and students respond with the possessive adjective and an example sentence.</td></tr>
     </tbody>
   </table>
 
   <div class="section-title purple" style="margin-top:18px;">Follow-Up / Homework Idea</div>
   <div class="followup-box">
-    For homework, students write a short profile of a family member or friend using the verb <em>to be</em>, following the same structure as Daniel's text. Collect next class for quick feedback, or have students read theirs aloud in small groups.
+    Students write 6 sentences about objects at home using a different possessive adjective in each one (<em>my bedroom, our kitchen, their car...</em>). Next class, they read one sentence aloud and the class identifies the possessive adjective used.
   </div>
 
   <div class="diff-grid">
     <div class="diff-col">
       <span class="diff-label">For Extra Support</span>
-      Pair lower-level students with a stronger partner for Exercise 4. Let them underline the verb to be forms in a different colour before writing them out, and allow them to copy full sentences from the text for Exercise 7 instead of writing from scratch.
+      Let weaker students keep the reference table visible and complete only the odd-numbered items of Exercise 2 before comparing with a partner. For Exercise 3, do the first two items together on the board as extra models.
     </div>
     <div class="diff-col">
       <span class="diff-label">For an Extra Challenge</span>
-      Ask faster finishers to rewrite two sentences from the text in the negative form, or to write one extra question they would ask Daniel using the verb to be.
+      Ask fast finishers to rewrite three sentences from Exercise 1 in the plural or with a different subject (e.g., "This is my laptop" → "These are our laptops"), keeping the possessive adjective consistent.
     </div>
   </div>
 

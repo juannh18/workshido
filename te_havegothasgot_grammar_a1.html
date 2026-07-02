@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 26px 30px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 2px solid #1a3a5c; margin-bottom: 14px; }
+  .header-left .brand { font-size: 22px; font-weight: 900; color: #1a3a5c; letter-spacing: 1px; }
+  .header-left .edition { font-size: 14px; font-weight: 700; color: #e67e22; margin-top: 2px; }
+  .header-right { text-align: right; }
+  .header-right .ws-title { font-size: 14px; font-weight: 700; color: #1a3a5c; }
+  .header-right .ws-sub { font-size: 10px; color: #666; margin-top: 3px; }
+  .included-box { background: #f0f4f8; border-radius: 8px; padding: 10px 16px; margin-bottom: 14px; border-left: 4px solid #1a3a5c; }
+  .included-box h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .included-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; }
+  .included-grid span { font-size: 10px; color: #333; }
+  .included-grid span::before { content: "✓ "; color: #1a3a5c; font-weight: 700; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #fff; background: #1a3a5c; padding: 5px 9px; border-radius: 5px; margin-bottom: 8px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .ex-title { font-size: 10px; font-weight: 700; color: #1a3a5c; margin: 8px 0 3px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 12px; margin-bottom: 5px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 5px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 3px; padding: 2px 6px; font-size: 9.5px; line-height: 1.4; margin-bottom: 2px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 3px; }
+  .right-box { background: #fdfefe; border: 1px solid #d0d8e4; border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 10px; line-height: 1.6; color: #333; }
+  .mistake-row { margin-bottom: 3px; font-size: 9.5px; line-height: 1.4; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10px; margin-bottom: 4px; color: #1a3a5c; }
+  .sug { font-size: 9.5px; line-height: 1.6; padding: 1px 0; }
+  .info-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .info-table tr:nth-child(odd) { background: #f0f4f8; }
+  .info-table td { padding: 4px 7px; border: 1px solid #d0d8e4; }
+  .info-table td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; }
+  .footer { text-align: center; margin-top: 14px; padding-top: 8px; border-top: 1px solid #d0d8e4; font-size: 9.5px; color: #999; letter-spacing: 0.5px; }
+  .note { font-size: 9px; color: #777; font-style: italic; margin-bottom: 3px; }
+  .lp-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table th { background: #1a3a5c; color: #fff; padding: 4px 6px; text-align: left; }
+  .lp-table td { border: 1px solid #d0d8e4; padding: 4px 6px; vertical-align: top; }
+  .lp-table tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table td:first-child { font-weight: 700; color: #1a3a5c; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand">WORKSHIDO</div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Have Got / Has Got &bull; Grammar &bull; A1</div>
+    <div class="ws-sub">Premium teacher support for the worksheet</div>
+  </div>
+</div>
+
+<div class="included-box">
+  <h3>What's Included</h3>
+  <div class="included-grid">
+    <span>Complete Answer Key (5 exercises)</span>
+    <span>Full Lesson Plan</span>
+    <span>Suggested Answers</span>
+    <span>Common Student Mistakes</span>
+    <span>Teacher Tip</span>
+    <span>Worksheet Information</span>
+  </div>
+</div>
+
+<div class="two-col">
+<div>
+  <div class="section-title">Answer Key</div>
+
+  <div class="ex-title">Exercise 1 – Complete with have got / has got</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> I <strong>have got</strong> a new laptop.</div>
+    <div class="ans-item"><span class="n">2.</span> She <strong>has got</strong> two sisters.</div>
+    <div class="ans-item"><span class="n">3.</span> They <strong>have got</strong> a big garden.</div>
+    <div class="ans-item"><span class="n">4.</span> He <strong>has got</strong> a red bicycle.</div>
+    <div class="ans-item"><span class="n">5.</span> We <strong>have got</strong> a dog.</div>
+    <div class="ans-item"><span class="n">6.</span> You <strong>have got</strong> an interesting book.</div>
+    <div class="ans-item"><span class="n">7.</span> It <strong>has got</strong> a long tail.</div>
+    <div class="ans-item"><span class="n">8.</span> My brother <strong>has got</strong> a guitar.</div>
+  </div>
+
+  <div class="ex-title">Exercise 2 – Choose the Correct Option</div>
+  <div class="ans-grid-2">
+    <div class="ans-item"><span class="n">1.</span> I <strong>have got</strong> a blue pen.</div>
+    <div class="ans-item"><span class="n">2.</span> My parents <strong>have got</strong> a small flat.</div>
+    <div class="ans-item"><span class="n">3.</span> He <strong>has got</strong> a new phone.</div>
+    <div class="ans-item"><span class="n">4.</span> We <strong>have got</strong> a Geography lesson today.</div>
+    <div class="ans-item"><span class="n">5.</span> They <strong>have got</strong> three cats.</div>
+    <div class="ans-item"><span class="n">6.</span> She <strong>has got</strong> a green jacket.</div>
+    <div class="ans-item"><span class="n">7.</span> You <strong>have got</strong> a lot of friends.</div>
+    <div class="ans-item"><span class="n">8.</span> The dog <strong>has got</strong> big ears.</div>
+  </div>
+
+  <div class="ex-title">Exercise 3 – Make the Sentences Negative</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> I haven't got a dictionary.</li>
+    <li><span class="n">2.</span> She hasn't got a brother.</li>
+    <li><span class="n">3.</span> They haven't got a new car.</li>
+    <li><span class="n">4.</span> He hasn't got a pet.</li>
+    <li><span class="n">5.</span> We haven't got English on Monday.</li>
+    <li><span class="n">6.</span> You haven't got a ticket.</li>
+    <li><span class="n">7.</span> It hasn't got a beautiful colour.</li>
+    <li><span class="n">8.</span> My friend hasn't got a skateboard.</li>
+  </ul>
+
+  <div class="ex-title">Exercise 4 – Write Questions</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> Have you got a camera?</li>
+    <li><span class="n">2.</span> Has she got any brothers?</li>
+    <li><span class="n">3.</span> Have they got a garden?</li>
+    <li><span class="n">4.</span> Has he got a computer?</li>
+    <li><span class="n">5.</span> Have we got English today?</li>
+    <li><span class="n">6.</span> Has it got big eyes?</li>
+  </ul>
+
+  <div class="ex-title">Exercise 5 – Write Complete Sentences</div>
+  <ul class="ans">
+    <li><span class="n">1.</span> I have got a new tablet. (I've got a new tablet.)</li>
+    <li><span class="n">2.</span> My family has got a holiday home.</li>
+    <li><span class="n">3.</span> She has got a lot of books.</li>
+    <li><span class="n">4.</span> They have got a football pitch.</li>
+    <li><span class="n">5.</span> He has got a motorbike.</li>
+    <li><span class="n">6.</span> We have got two English teachers.</li>
+  </ul>
+</div>
+
+<div>
+  <div class="section-title amber">Teacher Tip</div>
+  <div class="right-box">
+    Drill the Form Summary table chorally before the exercises: point at "I/You/We/They" and elicit "have got", then "He/She/It" and elicit "has got". This pattern (not the meaning) is what students get wrong most, so automate it first.
+  </div>
+
+  <div class="section-title red">Common Student Mistakes</div>
+  <div class="right-box">
+    <div class="mistake-row"><span class="wrong">✗ She have got a brother.</span><br><span class="correct">✓ She has got a brother.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ I hasn't got a car.</span><br><span class="correct">✓ I haven't got a car.</span></div>
+    <div class="mistake-row"><span class="wrong">✗ Has you got a pencil?</span><br><span class="correct">✓ Have you got a pencil?</span></div>
+    <div class="mistake-row"><span class="wrong">✗ He don't have got a dog.</span><br><span class="correct">✓ He hasn't got a dog. (no "don't" with have got)</span></div>
+  </div>
+
+  <div class="section-title green">Teacher Extra Activity</div>
+  <div class="right-box">
+    <div class="activity-title">Find Someone Who... (10 min)</div>
+    Students walk around asking classmates "Have you got a...?" questions (pet, bike, brother/sister, etc.) and write down the name of a classmate who answers "Yes, I have" for each item. Wrap up by reporting back with "She has got..." / "He has got...".
+  </div>
+
+  <div class="section-title gray">Worksheet Information</div>
+  <div class="right-box" style="padding:0; overflow:hidden;">
+    <table class="info-table">
+      <tr><td>Level</td><td>A1</td></tr>
+      <tr><td>Skill</td><td>Grammar</td></tr>
+      <tr><td>Focus</td><td>Have got / has got — affirmative, negative, questions and short answers</td></tr>
+      <tr><td>Exercises</td><td>5 (+ Grammar Box and Form Summary)</td></tr>
+      <tr><td>Estimated Time</td><td>35–45 minutes</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<div class="section-title" style="margin-top:14px;">Lesson Plan (45 minutes)</div>
+<table class="lp-table">
+  <thead><tr><th style="width:14%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+  <tbody>
+    <tr><td>5 min</td><td>Warm-Up</td><td>Hold up a few personal objects and model "I have got a..." / ask a student "Have you got a...?" to elicit the form naturally.</td></tr>
+    <tr><td>10 min</td><td>Presentation</td><td>Go through the Grammar Box and Form Summary table together, drilling affirmative, negative and question forms chorally.</td></tr>
+    <tr><td>10 min</td><td>Controlled Practice</td><td>Students complete Exercises 1 and 2 individually, then check answers in pairs.</td></tr>
+    <tr><td>8 min</td><td>Guided Practice</td><td>Students complete Exercise 3 (negatives) in pairs, reading their sentences aloud to each other.</td></tr>
+    <tr><td>8 min</td><td>Production</td><td>Students complete Exercises 4 and 5, then ask a partner two of the Exercise 4 questions for real.</td></tr>
+    <tr><td>4 min</td><td>Wrap-Up</td><td>Volunteers share one true sentence with "have got / has got" about themselves or their family.</td></tr>
+  </tbody>
+</table>
+
+<div class="footer">workshido.com</div>
+</body>
+</html>
