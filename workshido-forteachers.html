@@ -262,7 +262,7 @@
     <a href="workshido-signup.html" class="cta-secondary">Sign up free to download</a>
   </div>
   <div class="stats">
-    <div class="stat"><span class="stat-num" id="statWs">70+</span><span class="stat-lbl">Free worksheets</span></div>
+    <div class="stat"><span class="stat-num" id="statWs">100+</span><span class="stat-lbl">Free worksheets</span></div>
     <div class="stat"><span class="stat-num" id="statLv">A1–B1</span><span class="stat-lbl">CEFR levels · growing</span></div>
     <div class="stat"><span class="stat-num">Weekly</span><span class="stat-lbl">New worksheets added</span></div>
     <div class="stat"><span class="stat-num">100%</span><span class="stat-lbl">Print-ready</span></div>
@@ -401,7 +401,8 @@ async function logOut() { await sb.auth.signOut(); window.location.reload(); }
 async function loadLiveStats() {
   const { data, error } = await sb.from('worksheets').select('level');
   if (error || !data || !data.length) return;
-  const rounded = data.length >= 10 ? Math.floor(data.length / 10) * 10 + '+' : String(data.length);
+  // Worksheet count floors at 100+; beyond that it tracks the real total
+  const rounded = data.length > 100 ? Math.floor(data.length / 10) * 10 + '+' : '100+';
   const elWs = document.getElementById('statWs');
   if (elWs) elWs.textContent = rounded;
   const order = ['A1', 'A2', 'B1', 'B2', 'C1'];

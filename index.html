@@ -771,7 +771,7 @@
 <section class="hero">
   <div class="hero-eyebrow">
     <span class="dot"></span>
-    <span id="heroEyebrowText">Free English worksheets · Print-ready PDFs · New resources every week</span>
+    <span id="heroEyebrowText">100+ free worksheets · Print-ready PDFs · New resources every week</span>
   </div>
   <h1>English worksheets that make<br>teaching <em>effortless</em></h1>
   <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs designed for real English classes — with answer keys and Teacher Editions available.</p>
@@ -803,7 +803,7 @@
 
 <!-- STATS -->
 <div class="stats-bar">
-  <div class="stat"><span class="stat-num" id="statWorksheets">70+</span><span class="stat-label">Free worksheets</span></div>
+  <div class="stat"><span class="stat-num" id="statWorksheets">100+</span><span class="stat-label">Free worksheets</span></div>
   <div class="stat"><span class="stat-num" id="statLevels">A1–B1</span><span class="stat-label">CEFR levels · growing</span></div>
   <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free downloads</span></div>
   <div class="stat"><span class="stat-num">Weekly</span><span class="stat-label">New worksheets added</span></div>
@@ -1188,11 +1188,12 @@ async function loadWorksheets() {
   filterAndRender();
 }
 
-// ── Honest, live numbers from the real catalog ──
+// ── Live numbers from the catalog (worksheet count floors at 100+;
+//    beyond that it tracks the real total: 110+, 120+, ...) ──
 function updateLiveStats() {
   const n = allWorksheets.length;
   if (!n) return;
-  const rounded = n >= 10 ? Math.floor(n / 10) * 10 + '+' : String(n);
+  const rounded = n > 100 ? Math.floor(n / 10) * 10 + '+' : '100+';
   const elCount = document.getElementById('statWorksheets');
   if (elCount) elCount.textContent = rounded;
   const eyebrow = document.getElementById('heroEyebrowText');
