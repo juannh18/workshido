@@ -9,17 +9,17 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Workshido — Free English Worksheets for Teachers</title>
-<meta name="description" content="Download free printable ESL worksheets with answer keys included. Grammar, vocabulary, reading and writing PDFs organized by CEFR level. New worksheets every week.">
+<meta name="description" content="Download free printable ESL worksheets. Grammar, vocabulary, reading and writing PDFs organized by CEFR level, with answer keys and Teacher Editions available. New worksheets every week.">
 <link rel="canonical" href="https://workshido.com/workshido-index.html">
 <meta property="og:site_name" content="Workshido">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Browse Worksheets — Workshido">
-<meta property="og:description" content="Free, print-ready English worksheets with answer keys included — organized by CEFR level and topic.">
+<meta property="og:description" content="Free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
 <meta property="og:image" content="https://workshido.com/favicon-192.png">
 <meta property="og:url" content="https://workshido.com/workshido-index.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Browse Worksheets — Workshido">
-<meta name="twitter:description" content="Free, print-ready English worksheets with answer keys included — organized by CEFR level and topic.">
+<meta name="twitter:description" content="Free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
 <meta name="twitter:image" content="https://workshido.com/favicon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -770,10 +770,10 @@
 <section class="hero">
   <div class="hero-eyebrow">
     <span class="dot"></span>
-    <span id="heroEyebrowText">Free English worksheets · Answer keys included · New resources every week</span>
+    <span id="heroEyebrowText">Free English worksheets · Print-ready PDFs · New resources every week</span>
   </div>
   <h1>English worksheets that make<br>teaching <em>effortless</em></h1>
-  <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs with answer keys included — designed for real English classes.</p>
+  <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs designed for real English classes — with answer keys and Teacher Editions available.</p>
 
   <div class="search-wrap">
     <div class="search-box">
@@ -805,7 +805,7 @@
   <div class="stat"><span class="stat-num" id="statWorksheets">70+</span><span class="stat-label">Free worksheets</span></div>
   <div class="stat"><span class="stat-num" id="statLevels">A1–B1</span><span class="stat-label">CEFR levels · growing</span></div>
   <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free downloads</span></div>
-  <div class="stat"><span class="stat-num">✓</span><span class="stat-label">Answer keys included</span></div>
+  <div class="stat"><span class="stat-num">Weekly</span><span class="stat-label">New worksheets added</span></div>
 </div>
 
 <!-- WHY WORKSHIDO -->
@@ -815,8 +815,8 @@
     <div class="why-grid">
       <div class="why-card">
         <div class="why-icon">🗝️</div>
-        <div class="why-card-title">Answer keys included</div>
-        <p>Every worksheet comes with its answer key — free, no strings attached. Less correction time, more teaching time.</p>
+        <div class="why-card-title">Answer keys for every worksheet</div>
+        <p>Every worksheet has a complete answer key — included free with many downloads, or inside its premium Teacher Edition.</p>
       </div>
       <div class="why-card">
         <div class="why-icon">🖨️</div>
@@ -1195,7 +1195,7 @@ function updateLiveStats() {
   const elCount = document.getElementById('statWorksheets');
   if (elCount) elCount.textContent = rounded;
   const eyebrow = document.getElementById('heroEyebrowText');
-  if (eyebrow) eyebrow.textContent = `${rounded} free worksheets · Answer keys included · New resources every week`;
+  if (eyebrow) eyebrow.textContent = `${rounded} free worksheets · Print-ready PDFs · New resources every week`;
   // CEFR range actually covered by the catalog
   const order = ['A1', 'A2', 'B1', 'B2', 'C1'];
   const present = order.filter(l => allWorksheets.some(w => w.level === l));
