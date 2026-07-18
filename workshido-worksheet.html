@@ -323,7 +323,7 @@ async function loadWorksheet() {
             </span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
-          <p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>`)
+          ${!currentUser ? '<p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>' : ''}`)
     : '';
 
   document.getElementById('pageWrap').innerHTML = `
