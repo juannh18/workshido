@@ -592,6 +592,7 @@
   }
   .stars { color: var(--amber-400); font-size: 11px; }
   .reviews { font-size: 10px; color: var(--gray-300); }
+  .badge-new { font-size: 10px; font-weight: 700; color: var(--teal-600); background: var(--teal-50, #e6f7f4); border-radius: var(--radius-sm); padding: 2px 7px; }
   .btn-download {
     background: var(--blue-600);
     color: var(--white);
@@ -754,9 +755,9 @@
   <a href="index.html" class="nav-logo">work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="workshido-index.html">Browse</a></li>
-    <li><a href="#" onclick="setCategory('Grammar');return false;">Grammar</a></li>
-    <li><a href="#" onclick="setCategory('Vocabulary');return false;">Vocabulary</a></li>
-    <li><a href="#" onclick="setCategory(['Reading','Writing','Speaking']);return false;">Skills</a></li>
+    <li><a href="workshido-index.html?cat=Grammar" onclick="setCategory('Grammar');return false;">Grammar</a></li>
+    <li><a href="workshido-index.html?cat=Vocabulary" onclick="setCategory('Vocabulary');return false;">Vocabulary</a></li>
+    <li><a href="workshido-index.html?cat=Reading" onclick="setCategory(['Reading','Writing','Speaking']);return false;">Skills</a></li>
     <li><a href="workshido-forteachers.html">For teachers</a></li>
     <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
   </ul>
@@ -1045,7 +1046,12 @@ function buildSidebar() {
         : allWorksheets.filter(w => wsMatchesTerms(w, item.match)).length;
       if (count === 0) continue;
       const payload = item.cat ? `data-cat="${item.cat}"` : `data-match="${item.match.join('|')}"`;
-      itemsHtml += `<a href="#" class="sidebar-item" ${payload} data-label="${item.label}">
+      // Real crawlable href (same ?cat=/?topic= scheme as syncUrl) so search
+      // engines can follow and index these filtered views, not just JS clicks.
+      const href = item.cat
+        ? `workshido-index.html?cat=${encodeURIComponent(item.cat)}`
+        : `workshido-index.html?topic=${encodeURIComponent(item.match.join('|'))}`;
+      itemsHtml += `<a href="${href}" class="sidebar-item" ${payload} data-label="${item.label}">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
         ${item.label}<span class="sidebar-count">${count}</span>
       </a>`;
@@ -1139,6 +1145,13 @@ function catalogStars(ws) {
   return '★'.repeat(full) + '☆'.repeat(5 - full);
 }
 
+// No ratings yet -> a neutral "New" badge instead of empty stars, which
+// otherwise reads as "0/5, badly rated" rather than "not rated yet".
+function catalogRatingHtml(ws) {
+  if (!ws.ratings_count) return `<span class="badge-new">🆕 New</span>`;
+  return `<span class="stars">${catalogStars(ws)}</span><span class="reviews">(${ws.downloads||0})</span>`;
+}
+
 // Worksheet title/tags/category are free text set at upload time — never trust
 // them as safe HTML when building cards from the catalog.
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -1163,7 +1176,7 @@ function buildCard(ws) {
       <a href="workshido-worksheet.html?id=${ws.id}" class="card-title" style="text-decoration:none;color:inherit;">${esc(ws.title)}</a>
       <div class="card-tags">${tags}</div>
       <div class="card-footer">
-        <div class="card-rating"><span class="stars">${catalogStars(ws)}</span><span class="reviews">(${ws.downloads||0})</span></div>
+        <div class="card-rating">${catalogRatingHtml(ws)}</div>
         ${btn}
       </div>
     </div>

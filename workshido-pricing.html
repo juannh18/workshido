@@ -163,7 +163,7 @@
       <hr class="plan-divider">
       <div class="features">
         <div class="feature"><span class="feature-check yes">✓</span><div><strong>Unlimited</strong> downloads</div></div>
-        <div class="feature"><span class="feature-check yes">✓</span><div>Full catalog, <strong>all levels A1–C1</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>Full catalog, <strong id="pricingLevelRange">all available CEFR levels</strong></div></div>
         <div class="feature"><span class="feature-check yes">✓</span><div><strong>PDF & DOCX</strong> worksheets</div></div>
         <div class="feature"><span class="feature-check yes">✓</span><div>Many worksheets include a <strong>free answer key</strong></div></div>
         <div class="feature"><span class="feature-check yes">✓</span><div>Community <strong>reviews & ratings</strong></div></div>
@@ -291,6 +291,19 @@ async function checkAuth2(){
   }
 }
 async function logOut2(){await sb2.auth.signOut();window.location.reload();}
+
+// Reflect the CEFR range actually in the catalog (same source of truth as
+// workshido-index.html's live stats) instead of a hand-typed range that can
+// drift from reality and overclaim levels that don't exist yet.
+async function updateLevelRange(){
+  const { data, error } = await sb2.from('worksheets').select('level');
+  if (error || !data || !data.length) return;
+  const order = ['A1','A2','B1','B2','C1'];
+  const present = order.filter(l => data.some(w => w.level === l));
+  const el = document.getElementById('pricingLevelRange');
+  if (el && present.length) el.textContent = present.length > 1 ? `all levels ${present[0]}–${present[present.length-1]}` : `all ${present[0]} worksheets`;
+}
+updateLevelRange();
 
 async function startCheckout(plan) {
   const { data: { session } } = await sb2.auth.getSession();
