@@ -113,7 +113,7 @@
     `;
     document.body.appendChild(wrap);
     const bubble = document.getElementById('wsMascotBubble');
-    bubble.textContent = label || 'Hi there! 👋';
+    bubble.textContent = label || 'Thank you for using Workshido! 👋';
     setTimeout(() => bubble.classList.add('show'), 1600);
     setTimeout(() => bubble.classList.remove('show'), 5500);
     setTimeout(() => wrap.remove(), 13500);
@@ -134,7 +134,7 @@
     const forcedHoliday = forcedKey && HOLIDAYS.find(h => h.accessory === forcedKey);
     if (holiday || params.has('fiesta')) {
       const h = forcedHoliday || holiday;
-      setTimeout(() => spawnMascot(h ? h.label : 'Hi there! 👋', h && h.accessory), 1200);
+      setTimeout(() => spawnMascot(h ? h.label : 'Thank you for using Workshido! 👋', h && h.accessory), 1200);
     }
   });
 })();
