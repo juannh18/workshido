@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#042C53">
 <title>For Teachers — Workshido</title>
 <meta name="description" content="Save hours of prep time. Free, print-ready English worksheets organized by CEFR level, with answer keys and Teacher Editions available — new resources every week.">
 <link rel="canonical" href="https://workshido.com/workshido-forteachers.html">
@@ -15,14 +16,15 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="For Teachers — Workshido">
 <meta property="og:description" content="Save hours of prep time. Free, print-ready English worksheets — new resources every week.">
-<meta property="og:image" content="https://workshido.com/favicon-192.png">
+<meta property="og:image" content="https://workshido.com/og-image.png">
 <meta property="og:url" content="https://workshido.com/workshido-forteachers.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="For Teachers — Workshido">
 <meta name="twitter:description" content="Save hours of prep time. Free, print-ready English worksheets by CEFR level.">
-<meta name="twitter:image" content="https://workshido.com/favicon-192.png">
+<meta name="twitter:image" content="https://workshido.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -244,7 +246,7 @@
     <li><a href="workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
     <li><a href="workshido-index.html?cat=Reading">Skills</a></li>
     <li><a href="workshido-forteachers.html" class="active">For teachers</a></li>
-    <li><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
+    <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
     <a href="workshido-login.html" class="btn-ghost">Log in</a>
@@ -388,6 +390,8 @@
 const sb = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
+  const uploadLink = document.getElementById('navUploadLink');
+  if (uploadLink) uploadLink.style.display = (user?.email === 'juanda.5790@hotmail.com') ? '' : 'none';
   const nav = document.getElementById('navActions');
   if (user && nav) {
     const name = user.user_metadata?.full_name || user.email;

@@ -3,15 +3,21 @@ const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_K
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+
+  const token = (event.headers.authorization || event.headers.Authorization || '').replace('Bearer ', '');
+  if (!token) return { statusCode: 401, body: 'Not authenticated' };
+  const { data: { user }, error: userErr } = await sb.auth.getUser(token);
+  if (userErr || !user) return { statusCode: 401, body: 'Invalid session' };
+
   try {
     const { worksheetId, rating } = JSON.parse(event.body);
     if (!worksheetId || !rating || rating < 1 || rating > 5)
       return { statusCode: 400, body: 'Invalid data' };
-    const { data } = await sb.from('worksheets').select('rating, ratings_count').eq('id', worksheetId).single();
-    const count = (data?.ratings_count || 0) + 1;
-    const avg = (((data?.rating || 0) * (count - 1)) + rating) / count;
-    await sb.from('worksheets').update({ rating: avg, ratings_count: count }).eq('id', worksheetId);
-    return { statusCode: 200, body: JSON.stringify({ rating: avg, ratings_count: count }) };
+    // Atomic increment (single UPDATE ... RETURNING in Postgres) — avoids the
+    // lost-update race of a separate read-then-write under concurrent requests.
+    const { data, error } = await sb.rpc('submit_rating', { ws_id: worksheetId, new_rating: rating }).single();
+    if (error) throw error;
+    return { statusCode: 200, body: JSON.stringify({ rating: data.rating, ratings_count: data.ratings_count }) };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }

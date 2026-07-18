@@ -8,6 +8,8 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#042C53">
 <title>Log in — Workshido</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -165,7 +167,7 @@ async function handleCredentialResponse(response) {
     const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
     if (error) throw error;
     const params = new URLSearchParams(window.location.search);
-    window.location.href = params.get('redirect') || 'workshido-index.html';
+    window.location.href = safeRedirect(params.get('redirect'));
   } catch (e) {
     showError('Google sign-in failed. Please try again.');
   }
@@ -175,6 +177,21 @@ function showError(msg) {
   const el = document.getElementById('errorBanner');
   el.textContent = msg;
   el.style.display = 'block';
+}
+
+// ?redirect= must stay same-site — otherwise a crafted link (workshido.com
+// itself, so it looks trustworthy) could send a user who just logged in for
+// real straight to an external phishing/malware page, or even run a
+// javascript:/data: URI. Resolve it and compare the real origin rather than
+// pattern-matching, since scheme tricks are easy to miss with a regex.
+function safeRedirect(target) {
+  if (!target) return 'workshido-index.html';
+  try {
+    const resolved = new URL(target, window.location.origin);
+    return resolved.origin === window.location.origin ? target : 'workshido-index.html';
+  } catch (e) {
+    return 'workshido-index.html';
+  }
 }
 
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -192,7 +209,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     btn.textContent = 'Log in';
   } else {
     const params = new URLSearchParams(window.location.search);
-    window.location.href = params.get('redirect') || 'workshido-index.html';
+    window.location.href = safeRedirect(params.get('redirect'));
   }
 });
 </script>

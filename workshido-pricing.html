@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#042C53">
 <title>Premium Plans — Workshido</title>
 <meta name="description" content="All Workshido worksheets are free. Upgrade to Premium to unlock the Teacher Edition — full answer key, lesson plan, and teacher tips — for every worksheet.">
 <link rel="canonical" href="https://workshido.com/workshido-pricing.html">
@@ -15,13 +16,16 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Premium Plans — Workshido">
 <meta property="og:description" content="All worksheets are free. Premium unlocks the Teacher Edition for every worksheet.">
-<meta property="og:image" content="https://workshido.com/favicon-192.png">
+<meta property="og:image" content="https://workshido.com/og-image.png">
 <meta property="og:url" content="https://workshido.com/workshido-pricing.html">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Premium Plans — Workshido">
 <meta name="twitter:description" content="All worksheets are free. Premium unlocks the Teacher Edition for every worksheet.">
+<meta name="twitter:image" content="https://workshido.com/og-image.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Workshido Premium","description":"Premium subscription that unlocks the Teacher Edition — full answer key, lesson plan and teacher tips — for every Workshido worksheet.","brand":{"@type":"Brand","name":"Workshido"},"offers":[{"@type":"Offer","name":"Monthly","price":"2.99","priceCurrency":"USD","url":"https://workshido.com/workshido-pricing.html","availability":"https://schema.org/InStock"},{"@type":"Offer","name":"Yearly","price":"24.99","priceCurrency":"USD","url":"https://workshido.com/workshido-pricing.html","availability":"https://schema.org/InStock"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -129,7 +133,7 @@
     <li><a href="workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
     <li><a href="workshido-index.html?cat=Skills">Skills</a></li>
     <li><a href="workshido-forteachers.html">For teachers</a></li>
-    <li><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
+    <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
     <a href="workshido-login.html" class="btn-ghost">Log in</a>
@@ -277,6 +281,8 @@
 const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 async function checkAuth2(){
   const {data:{user}} = await sb2.auth.getUser();
+  const uploadLink = document.getElementById('navUploadLink');
+  if (uploadLink) uploadLink.style.display = (user?.email === 'juanda.5790@hotmail.com') ? '' : 'none';
   const nav = document.getElementById('navActions');
   if(user && nav){
     const name = user.user_metadata?.full_name || user.email;
@@ -287,16 +293,16 @@ async function checkAuth2(){
 async function logOut2(){await sb2.auth.signOut();window.location.reload();}
 
 async function startCheckout(plan) {
-  const { data: { user } } = await sb2.auth.getUser();
-  if (!user) {
+  const { data: { session } } = await sb2.auth.getSession();
+  if (!session) {
     window.location.href = 'workshido-login.html?redirect=' + encodeURIComponent(window.location.href);
     return;
   }
   try {
     const res = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan, userId: user.id, userEmail: user.email }),
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ plan }),
     });
     const { url } = await res.json();
     if (url) window.location.href = url;

@@ -4,3 +4,6 @@ node_modules/
 .claude/
 .netlify/netlify.toml
 .netlify/functions/
+.netlify/db/
+deno.lock
+tools/__pycache__/

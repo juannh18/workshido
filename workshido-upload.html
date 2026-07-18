@@ -8,6 +8,8 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#042C53">
 <title>Upload Worksheet — Workshido</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,15 +94,15 @@
   .page-header p { font-size: 15px; color: var(--blue-100); max-width: 480px; margin: 0 auto; }
 
   /* AUTH GATE */
-  #authGate {
+  #authGate, #notAdminGate {
     max-width: 480px; margin: 80px auto; text-align: center;
     background: var(--white); border-radius: var(--radius-lg);
     padding: 48px 40px; box-shadow: 0 2px 16px rgba(0,0,0,0.06);
   }
-  #authGate .gate-icon { font-size: 48px; margin-bottom: 16px; }
-  #authGate h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--gray-900); }
-  #authGate p { font-size: 14px; color: var(--gray-600); margin-bottom: 28px; line-height: 1.6; }
-  #authGate .gate-btns { display: flex; gap: 12px; justify-content: center; }
+  #authGate .gate-icon, #notAdminGate .gate-icon { font-size: 48px; margin-bottom: 16px; }
+  #authGate h2, #notAdminGate h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--gray-900); }
+  #authGate p, #notAdminGate p { font-size: 14px; color: var(--gray-600); margin-bottom: 28px; line-height: 1.6; }
+  #authGate .gate-btns, #notAdminGate .gate-btns { display: flex; gap: 12px; justify-content: center; }
   .btn-primary-lg {
     background: var(--blue-600); color: var(--white); border: none;
     border-radius: var(--radius-sm); padding: 11px 24px;
@@ -305,7 +307,7 @@
     <li><a href="workshido-index.html?cat=Grammar">Grammar</a></li>
     <li><a href="workshido-index.html?cat=Skills">Skills</a></li>
     <li><a href="workshido-forteachers.html">For teachers</a></li>
-    <li><a href="workshido-upload.html" style="color:var(--white);">⬆ Upload</a></li>
+    <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--white);">⬆ Upload</a></li>
     <li><a href="workshido-pricing.html">Pricing</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
@@ -331,7 +333,17 @@
   </div>
 </div>
 
-<!-- UPLOAD FORM (shown if logged in) -->
+<!-- NOT-ADMIN GATE (shown if logged in but not the site owner) -->
+<div id="notAdminGate" style="display:none;">
+  <div class="gate-icon">🚧</div>
+  <h2>Uploads are paused for now</h2>
+  <p>Workshido isn't accepting community uploads at the moment — all worksheets are currently curated directly by the Workshido team. Check back later!</p>
+  <div class="gate-btns">
+    <a href="workshido-index.html" class="btn-primary-lg">Browse worksheets</a>
+  </div>
+</div>
+
+<!-- UPLOAD FORM (shown only to the site owner) -->
 <div class="upload-wrap" id="uploadWrap" style="display:none;">
 
   <!-- FORM -->
@@ -485,15 +497,24 @@ let isFree = true;
 let isUploading = false;
 
 // ── Auth check ──────────────────────────────────────────
+const ADMIN_EMAIL = 'juanda.5790@hotmail.com';
+
 async function initPage() {
   const { data: { user } } = await sbUp.auth.getUser();
   currentUser = user;
 
+  document.getElementById('authGate').style.display = 'none';
+  document.getElementById('notAdminGate').style.display = 'none';
+  document.getElementById('uploadWrap').style.display = 'none';
+  const uploadLink = document.getElementById('navUploadLink');
+  if (uploadLink) uploadLink.style.display = (user?.email === ADMIN_EMAIL) ? '' : 'none';
+
   if (!user) {
     document.getElementById('authGate').style.display = 'block';
-    document.getElementById('uploadWrap').style.display = 'none';
+  } else if (user.email !== ADMIN_EMAIL) {
+    document.getElementById('notAdminGate').style.display = 'block';
+    updateNav(user);
   } else {
-    document.getElementById('authGate').style.display = 'none';
     document.getElementById('uploadWrap').style.display = 'grid';
     updateNav(user);
   }

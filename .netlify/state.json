@@ -1,3 +1,22 @@
 {
-	"siteId": "718a5737-c426-4970-ac48-c6bd37a7db07"
+	"siteId": "718a5737-c426-4970-ac48-c6bd37a7db07",
+	"dbConnectionString": "postgres://localhost:60162/postgres",
+	"geolocation": {
+		"data": {
+			"city": "Manzanares",
+			"country": {
+				"code": "CO",
+				"name": "Colombia"
+			},
+			"subdivision": {
+				"code": "CAL",
+				"name": "Caldas Department"
+			},
+			"timezone": "America/Bogota",
+			"latitude": 5.2533,
+			"longitude": -75.1545,
+			"postalCode": "173020"
+		},
+		"timestamp": 1784063266236
+	}
 }

@@ -9,8 +9,6 @@ const STATIC_PAGES = [
   { loc: '/workshido-forteachers.html', changefreq: 'weekly', priority: '0.8' },
   { loc: '/workshido-pricing.html', changefreq: 'monthly', priority: '0.7' },
   { loc: '/workshido-signup.html', changefreq: 'monthly', priority: '0.7' },
-  { loc: '/workshido-upload.html', changefreq: 'monthly', priority: '0.6' },
-  { loc: '/workshido-login.html', changefreq: 'monthly', priority: '0.5' },
   { loc: '/workshido-privacy.html', changefreq: 'yearly', priority: '0.3' },
   { loc: '/workshido-terms.html', changefreq: 'yearly', priority: '0.3' },
 ];

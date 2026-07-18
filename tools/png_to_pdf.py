@@ -1,4 +1,7 @@
-"""Convierte PNGs de worksheets a PDF de 1 página (escala 150 dpi, igual a los ya subidos).
+"""Convierte PNGs de worksheets a PDF de 1 página, ajustado al máximo tamaño que
+quepa en A4 preservando la proporción de la imagen (sin deformar). Antes se usaba
+una escala fija de 150dpi, que producía páginas más chicas que una hoja A4/Carta
+real (~7x10in) e imprimía todo -incluido el texto- más pequeño de lo necesario.
 
 Uso:
   python tools/png_to_pdf.py manifest.json            # convierte todos los del manifiesto
@@ -10,6 +13,7 @@ import sys, os, json
 import fitz
 
 DL = r'C:\Users\juand\Downloads'
+A4_WIDTH, A4_HEIGHT = 595.28, 841.89
 
 
 def resolve(p):
@@ -19,8 +23,9 @@ def resolve(p):
 def convert(png, pdf):
     src, out = resolve(png), resolve(pdf)
     img = fitz.Pixmap(src)
+    dpi = max(img.width * 72 / A4_WIDTH, img.height * 72 / A4_HEIGHT)
     doc = fitz.open()
-    page = doc.new_page(width=img.width * 72 / 150, height=img.height * 72 / 150)
+    page = doc.new_page(width=img.width * 72 / dpi, height=img.height * 72 / dpi)
     page.insert_image(page.rect, filename=src)
     doc.save(out, deflate=True)
     d2 = fitz.open(out)

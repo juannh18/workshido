@@ -34,6 +34,9 @@ Cuando Juan diga "sube los worksheets que descargué hoy", usar este pipeline (n
 
 1. **Localizar**: PNGs del día en `C:\Users\juand\Downloads` (los genera con ChatGPT).
 2. **Leer los PNGs COMPLETOS** con la herramienta Read (+crops con zoom si algo no se lee) — regla dura: texto ilegible/corrupto = NO se sube; listar literalmente todas las secciones antes de escribir la TE.
+   - **Puzzles/cuadrículas (word search, crucigramas)**: hacer zoom letra por letra — es el punto más común donde ChatGPT genera glifos rotados/espejados ilegibles. Si está corrupta, reconstruirla (nunca subir tal cual): detectar el bounding box de la caja, redibujar la cuadrícula completa con las palabras reales del checklist (fuente bold sans tipo Arial Bold, mismo color de borde) y pegarla sobre el PNG original.
+   - **Consistencia numérica entre actividades**: si un dato (precio, cantidad, hora) aparece en más de un ejercicio del mismo worksheet, verificar que coincida en todos (ej. precio de un ítem en "Match" vs. en "Look and Write").
+   - **Ejercicios de matching/opuestos**: verificar que cada opción de la derecha tenga exactamente una pareja correcta a la izquierda (sin dos ítems compitiendo por la misma respuesta ni opciones sobrantes sin pareja real).
 3. **Manifiesto**: crear `manifest.json` temporal (schema documentado en `tools/upload_batch.py`): slug, png, pdf, thumb, te_html, te_pdf, title, level, category, tags (`worksheet` primero), description.
 4. **Convertir worksheets**: `python tools/png_to_pdf.py manifest.json`
 5. **Teacher Editions**: escribir un JSON de contenido por worksheet (schema en `tools/build_te.py`) → `python tools/build_te.py contenido.json te_xxx.html` → `python tools/html_to_pdf_cdp.py manifest.json`

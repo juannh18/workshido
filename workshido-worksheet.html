@@ -8,9 +8,11 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#042C53">
 <title>Workshido</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="canonical" href="https://workshido.com/workshido-worksheet.html">
 <meta name="description" content="Free English worksheet — download and print for class.">
@@ -18,12 +20,12 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Workshido">
 <meta property="og:description" content="Free English worksheet — download and print for class.">
-<meta property="og:image" content="https://workshido.com/favicon-192.png">
+<meta property="og:image" content="https://workshido.com/og-image.png">
 <meta property="og:url" content="https://workshido.com/workshido-worksheet.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Workshido">
 <meta name="twitter:description" content="Free English worksheet — download and print for class.">
-<meta name="twitter:image" content="https://workshido.com/favicon-192.png">
+<meta name="twitter:image" content="https://workshido.com/og-image.png">
 <script type="application/ld+json" id="schemaLD"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -165,7 +167,7 @@
     <li><a href="workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
     <li><a href="workshido-index.html?cat=Skills">Skills</a></li>
     <li><a href="workshido-forteachers.html">For teachers</a></li>
-    <li><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
+    <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
     <a href="workshido-login.html" class="btn-ghost">Log in</a>
@@ -194,9 +196,12 @@ let _wsFileUrl = null;
 let _answerKeyUrl = null;
 let _isPremium = false;
 let _wsId = null;
+let _wsTitle = 'worksheet';
 
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
+  const uploadLink = document.getElementById('navUploadLink');
+  if (uploadLink) uploadLink.style.display = (user?.email === 'juanda.5790@hotmail.com') ? '' : 'none';
   const nav = document.getElementById('navActions');
   if (user && nav) {
     const name = user.user_metadata?.full_name || user.email;
@@ -259,6 +264,7 @@ async function loadWorksheet() {
   _wsFileUrl = data.file_url || null;
   _answerKeyUrl = data.teacher_edition_url || null;
   _wsId = data.id;
+  _wsTitle = data.title || 'worksheet';
   const _rating = data.rating || 0;
   const _ratingsCount = data.ratings_count || 0;
 
@@ -292,10 +298,15 @@ async function loadWorksheet() {
       ${starInteractive}
     </div>`;
 
-  const downloadBtn = `<button class="btn-download-big" onclick="downloadWS('${data.id}',${data.downloads||0})">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Download free
-    </button>`;
+  // data.is_free is always true by policy (upload scripts force it), but the
+  // button still respects it instead of always rendering "Download free" —
+  // a worksheet ever marked premium shouldn't silently stay downloadable.
+  const downloadBtn = (data.is_free !== false || _isPremium)
+    ? `<button class="btn-download-big" onclick="downloadWS('${data.id}',${data.downloads||0})">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download free
+      </button>`
+    : `<button class="btn-download-big locked" onclick="openPremiumModal()">🔒 Premium — Unlock to download</button>`;
 
   const answerKeyBtn = _answerKeyUrl
     ? (_isPremium
@@ -323,7 +334,7 @@ async function loadWorksheet() {
         <div class="ws-badges">
           <span class="badge-level ${lvlCls}">${data.level}</span>
           ${data.category ? `<span class="badge-cat">${esc(data.category)}</span>` : ''}
-          <span class="badge-free">Free</span>
+          ${freeBadge}
         </div>
         ${data.description ? `<p class="ws-desc">${esc(data.description)}</p>` : ''}
         ${tags ? `<div class="ws-tags">${tags}</div>` : ''}
@@ -332,10 +343,7 @@ async function loadWorksheet() {
           <div class="ws-meta-row"><span class="ws-meta-label">Level</span><span class="ws-meta-value">${data.level || '—'}</span></div>
           <div class="ws-meta-row"><span class="ws-meta-label">Downloads</span><span class="ws-meta-value" id="dlCount">${data.downloads || 0}</span></div>
         </div>
-        <button class="btn-download-big" onclick="downloadWS('${data.id}',${data.downloads||0})">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download free
-        </button>
+        ${downloadBtn}
         ${answerKeyBtn}
         <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
         ${starSection}
@@ -345,7 +353,9 @@ async function loadWorksheet() {
 
 function openDlModal(action) {
   document.getElementById('dlModalTitle').textContent =
-    action === 'print' ? 'Sign in to print for free' : 'Sign in to download for free';
+    action === 'print' ? 'Sign in to print for free' :
+    action === 'rate'  ? 'Sign in to rate this worksheet' :
+    'Sign in to download for free';
   document.getElementById('dlModal').classList.add('open');
 }
 
@@ -357,22 +367,45 @@ async function getSignedUrl(fileUrl) {
 }
 
 async function downloadWS(id, currentDl) {
+  let session;
   try {
-    const { data: { user } } = await sb.auth.getUser();
-    if (!user) { openDlModal('download'); return; }
+    const { data } = await sb.auth.getSession();
+    session = data.session;
+    if (!session) { openDlModal('download'); return; }
   } catch(e) { openDlModal('download'); return; }
   if (!_wsFileUrl) return;
   const url = await getSignedUrl(_wsFileUrl);
-  window.open(url, '_blank');
+  await forceDownload(url, _wsTitle);
   try {
     const res = await fetch('/.netlify/functions/increment-downloads', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ worksheetId: id }),
     });
     const { downloads } = await res.json();
     const el = document.getElementById('dlCount');
     if (el && downloads) el.textContent = downloads;
   } catch(e) {}
+}
+
+async function forceDownload(url, filename) {
+  const safeName = (filename || 'worksheet').replace(/[\\/:*?"<>|]+/g, '').trim() || 'worksheet';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('fetch failed');
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = `${safeName}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 4000);
+  } catch (e) {
+    // Cross-origin fetch blocked or network error — fall back to opening the file directly.
+    window.open(url, '_blank');
+  }
 }
 
 function starsHover(v) {
@@ -387,6 +420,13 @@ async function rateWS(v) {
   const input = document.getElementById('starInput');
   if (!input) return;
 
+  let session;
+  try {
+    const { data } = await sb.auth.getSession();
+    session = data.session;
+    if (!session) { openDlModal('rate'); return; }
+  } catch(e) { openDlModal('rate'); return; }
+
   // Feedback inmediato — no esperar la red
   localStorage.setItem('rated_' + _wsId, v);
   input.innerHTML = `<div class="star-done">✓ You rated ${v}/5 — thanks!</div>`;
@@ -394,7 +434,8 @@ async function rateWS(v) {
   // Guardar en DB en segundo plano
   try {
     const res = await fetch('/.netlify/functions/submit-rating', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ worksheetId: _wsId, rating: v }),
     });
     if (res.ok) {
@@ -430,9 +471,22 @@ async function printWS() {
 function closeDlModal() { document.getElementById('dlModal').classList.remove('open'); }
 
 async function downloadAnswerKey() {
-  if (!_answerKeyUrl) return;
-  const url = await getSignedUrl(_answerKeyUrl);
-  window.open(url, '_blank');
+  if (!_answerKeyUrl || !_wsId) return;
+  // Premium is verified server-side here (not just the button being hidden) —
+  // the signed URL for the paid Teacher Edition is only ever issued after that check.
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { openDlModal('download'); return; }
+    const res = await fetch('/.netlify/functions/get-teacher-edition-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ worksheetId: _wsId }),
+    });
+    if (res.status === 403) { openPremiumModal(); return; }
+    if (!res.ok) return;
+    const { url } = await res.json();
+    if (url) window.open(url, '_blank');
+  } catch (e) {}
 }
 
 async function openPremiumModal() {
@@ -447,8 +501,8 @@ async function openPremiumModal() {
 function closePremiumModal() { document.getElementById('premiumModal').classList.remove('open'); }
 
 async function startCheckout(plan) {
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
     document.getElementById('premiumModal').classList.remove('open');
     document.getElementById('dlModalTitle').textContent = 'Sign in to access Premium';
     document.getElementById('dlModal').classList.add('open');
@@ -457,8 +511,8 @@ async function startCheckout(plan) {
   try {
     const res = await fetch('/.netlify/functions/create-checkout', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan, userId: user.id, userEmail: user.email }),
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ plan }),
     });
     const { url } = await res.json();
     if (url) window.location.href = url;

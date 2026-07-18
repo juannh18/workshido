@@ -42,7 +42,11 @@ exports.handler = async (event) => {
     const isPremium = status === 'active' || status === 'on_trial';
 
     if (userId) {
-      await sb.from('profiles').update({ is_premium: isPremium }).eq('id', userId);
+      // upsert so premium activates even if the profile row is somehow missing
+      await sb.from('profiles').upsert(
+        { id: userId, email: userEmail, is_premium: isPremium },
+        { onConflict: 'id' }
+      );
     } else if (userEmail) {
       await sb.from('profiles').update({ is_premium: isPremium }).eq('email', userEmail);
     }
