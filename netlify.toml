@@ -6,6 +6,83 @@
   to = "/.netlify/functions/sitemap"
   status = 200
 
+# Consolidate URL duplication: Netlify serves "/page" for "page.html" by
+# default (pretty URLs), so both forms returned 200 with identical content —
+# split ranking signals and wasted crawl budget. Every canonical tag on the
+# site already points at the .html form, so that's the one we keep; force
+# a 301 from the extensionless path to it instead of letting both live.
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-index"
+  to = "/workshido-index.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-forteachers"
+  to = "/workshido-forteachers.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-pricing"
+  to = "/workshido-pricing.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-worksheet"
+  to = "/workshido-worksheet.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-login"
+  to = "/workshido-login.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-signup"
+  to = "/workshido-signup.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-reset"
+  to = "/workshido-reset.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-profile"
+  to = "/workshido-profile.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-upload"
+  to = "/workshido-upload.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-privacy"
+  to = "/workshido-privacy.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/workshido-terms"
+  to = "/workshido-terms.html"
+  status = 301
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -13,21 +90,34 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    # Report-Only first: observe violations in the browser console for a
+    # while (nothing gets blocked) before ever switching this to an
+    # enforcing Content-Security-Policy. 'unsafe-inline' is required for now
+    # since the site relies heavily on inline <script>/onclick — tightening
+    # that is a separate, bigger refactor, not a one-line change.
+    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: https://*.supabase.co; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://accounts.google.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
 
 [[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# JS/CSS are referenced by unversioned filenames (js/workshido-index.js, etc.),
+# so they must NOT be cached "immutable" — that pinned old copies on returning
+# devices (esp. mobile) for up to a year, so a deployed bug fix never reached
+# them. Revalidate on every load instead: a conditional request returns a tiny
+# 304 when unchanged, but picks up new code immediately after a deploy.
+# (The ?v= query on each <script src> additionally busts any copy already
+# cached under the previous immutable header.)
 [[headers]]
   for = "/*.js"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/*.css"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
   for = "/favicon*"

@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -66,7 +66,7 @@
   .field label { font-size: 13px; font-weight: 500; color: var(--gray-900); }
   .field a { font-size: 12px; color: var(--blue-600); text-decoration: none; }
   .field input { padding: 11px 14px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; color: var(--gray-900); outline: none; transition: border-color 0.15s, box-shadow 0.15s; width: 100%; }
-  .field input::placeholder { color: var(--gray-300); }
+  .field input::placeholder { color: var(--gray-600); }
   .field input:focus { border-color: var(--blue-400); box-shadow: 0 0 0 3px var(--blue-50); }
   .password-wrap { position: relative; }
   .password-wrap input { padding-right: 44px; }
@@ -117,14 +117,14 @@
     </button>
     <div class="divider-text">or log in with email</div>
     <form class="login-form" id="loginForm" novalidate>
-      <div id="errorBanner" class="error-banner"></div>
-      <div class="field"><label for="email">Email address</label><input type="email" id="email" placeholder="sarah@school.com" /></div>
+      <div id="errorBanner" class="error-banner" role="alert" aria-live="assertive"></div>
+      <div class="field"><label for="email">Email address</label><input type="email" id="email" name="email" autocomplete="email" required aria-describedby="errorBanner" placeholder="sarah@school.com" /></div>
       <div class="field">
         <div class="field-row"><label for="password">Password</label><a href="workshido-reset.html">Forgot password?</a></div>
         <div class="password-wrap">
-          <input type="password" id="password" placeholder="Your password" />
-          <button type="button" class="toggle-pw" onclick="document.getElementById('password').type = document.getElementById('password').type === 'password' ? 'text' : 'password'">
-            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <input type="password" id="password" name="password" autocomplete="current-password" required aria-describedby="errorBanner" placeholder="Your password" />
+          <button type="button" class="toggle-pw" aria-label="Show password" aria-pressed="false" onclick="const p=document.getElementById('password'); const show=p.type==='password'; p.type=show?'text':'password'; this.setAttribute('aria-label', show?'Hide password':'Show password'); this.setAttribute('aria-pressed', show)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
       </div>
@@ -134,84 +134,7 @@
     </form>
   </div>
 </div>
-<script>
-const SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo';
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const GIS_CLIENT_ID = '402662121573-hjto2nl434h1qdgvtl21n58du49kl2bd.apps.googleusercontent.com';
-
-window.addEventListener('load', () => {
-  if (typeof google === 'undefined') return;
-  google.accounts.id.initialize({
-    client_id: GIS_CLIENT_ID,
-    callback: handleCredentialResponse,
-    auto_select: false,
-    cancel_on_tap_outside: true,
-  });
-});
-
-function handleGoogle() {
-  if (typeof google === 'undefined') { showError('Google Sign-In not available. Please try again.'); return; }
-  google.accounts.id.prompt((n) => {
-    if (n.isNotDisplayed() || n.isSkippedMoment()) {
-      google.accounts.id.renderButton(document.getElementById('gisFallbackBtn'), { theme: 'outline', size: 'large', width: 300 });
-      setTimeout(() => document.querySelector('#gisFallbackBtn [role="button"]')?.click(), 100);
-    }
-  });
-}
-
-async function handleCredentialResponse(response) {
-  try {
-    const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
-    if (error) throw error;
-    const params = new URLSearchParams(window.location.search);
-    window.location.href = safeRedirect(params.get('redirect'));
-  } catch (e) {
-    showError('Google sign-in failed. Please try again.');
-  }
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorBanner');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-// ?redirect= must stay same-site — otherwise a crafted link (workshido.com
-// itself, so it looks trustworthy) could send a user who just logged in for
-// real straight to an external phishing/malware page, or even run a
-// javascript:/data: URI. Resolve it and compare the real origin rather than
-// pattern-matching, since scheme tricks are easy to miss with a regex.
-function safeRedirect(target) {
-  if (!target) return 'workshido-index.html';
-  try {
-    const resolved = new URL(target, window.location.origin);
-    return resolved.origin === window.location.origin ? target : 'workshido-index.html';
-  } catch (e) {
-    return 'workshido-index.html';
-  }
-}
-
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  if (!email || !password) return showError('Please enter your email and password.');
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  btn.textContent = 'Logging in...';
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) {
-    showError('Incorrect email or password. Please try again.');
-    btn.disabled = false;
-    btn.textContent = 'Log in';
-  } else {
-    const params = new URLSearchParams(window.location.search);
-    window.location.href = safeRedirect(params.get('redirect'));
-  }
-});
-</script>
+<script src="js/workshido-login.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260721" defer></script>
 </body>
 </html>

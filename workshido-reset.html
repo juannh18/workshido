@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -55,54 +55,16 @@
     <div class="card-icon">🔑</div>
     <h1>Reset your password</h1>
     <p class="sub">Enter your email address and we'll send you a link to reset your password.</p>
-    <div id="msg" class="msg"></div>
+    <div id="msg" class="msg" role="alert" aria-live="assertive"></div>
     <div class="field">
-      <label>Email address</label>
-      <input type="email" id="email" placeholder="sarah@school.com" />
+      <label for="email">Email address</label>
+      <input type="email" id="email" name="email" autocomplete="email" required aria-describedby="msg" placeholder="sarah@school.com" />
     </div>
     <button class="btn-submit" id="submitBtn" onclick="sendReset()">Send reset link</button>
     <a href="workshido-login.html" class="back-link">← Back to login</a>
   </div>
 </div>
-<script>
-const sb = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
-
-async function sendReset() {
-  const email = document.getElementById('email').value.trim();
-  const btn = document.getElementById('submitBtn');
-  const msg = document.getElementById('msg');
-  msg.className = 'msg';
-  msg.style.display = 'none';
-
-  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    msg.textContent = 'Please enter a valid email address.';
-    msg.className = 'msg error';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/workshido-index.html'
-  });
-
-  btn.disabled = false;
-  btn.textContent = 'Send reset link';
-
-  if (error) {
-    msg.textContent = 'Something went wrong. Please try again.';
-    msg.className = 'msg error';
-  } else {
-    msg.textContent = 'Check your email — we sent a reset link!';
-    msg.className = 'msg success';
-    document.getElementById('email').value = '';
-  }
-}
-
-document.getElementById('email').addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendReset();
-});
-</script>
+<script src="js/workshido-reset.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260721" defer></script>
 </body>
 </html>

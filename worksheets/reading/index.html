@@ -8,21 +8,22 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Workshido — Free English Worksheets for Teachers</title>
-<meta name="description" content="Download free printable ESL worksheets. Grammar, vocabulary, reading and writing PDFs organized by CEFR level, with answer keys and Teacher Editions available. New worksheets every week.">
-<link rel="canonical" href="https://workshido.com/">
+<title>Free Reading Comprehension Worksheets for English Teachers | Workshido</title>
+<meta name="description" content="Free printable English reading comprehension worksheets with short stories, true/false questions and vocabulary practice. CEFR-levelled PDFs with answer keys.">
+<link rel="canonical" href="https://workshido.com/worksheets/reading/">
 <meta property="og:site_name" content="Workshido">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Workshido — Free English Worksheets for Teachers">
-<meta property="og:description" content="Free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
+<meta property="og:title" content="Free Reading Comprehension Worksheets for English Teachers | Workshido">
+<meta property="og:description" content="Free printable English reading comprehension worksheets with short stories, true/false questions and vocabulary practice. CEFR-levelled PDFs with answer keys.">
 <meta property="og:image" content="https://workshido.com/og-image.png">
-<meta property="og:url" content="https://workshido.com/">
+<meta property="og:url" content="https://workshido.com/worksheets/reading/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Workshido — Free English Worksheets for Teachers">
-<meta name="twitter:description" content="Free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
+<meta name="twitter:title" content="Free Reading Comprehension Worksheets for English Teachers | Workshido">
+<meta name="twitter:description" content="Free printable English reading comprehension worksheets with short stories, true/false questions and vocabulary practice. CEFR-levelled PDFs with answer keys.">
 <meta name="twitter:image" content="https://workshido.com/og-image.png">
 <meta name="theme-color" content="#042C53">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Workshido","url":"https://workshido.com","logo":"https://workshido.com/favicon-192.png","description":"Free printable English worksheets for teachers and students worldwide."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Free English Reading Worksheets","url":"https://workshido.com/worksheets/reading/","isPartOf":{"@type":"WebSite","name":"Workshido","url":"https://workshido.com/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Browse", "item": "https://workshido.com/workshido-index.html"}, {"@type": "ListItem", "position": 2, "name": "Reading", "item": "https://workshido.com/worksheets/reading/"}]}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
@@ -379,15 +380,49 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin: 0 -28px 20px;
+    padding: 16px 28px;
+    position: sticky;
+    top: 60px;
+    z-index: 20;
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-100);
   }
   .content-title {
     font-family: var(--font-display);
     font-size: 16px;
     font-weight: 600;
     color: var(--gray-900);
+    white-space: nowrap;
   }
   .content-count { font-size: 13px; color: var(--gray-300); margin-left: 8px; font-weight: 400; }
+
+  .mini-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 20px;
+    padding: 7px 14px;
+    flex: 1;
+    min-width: 160px;
+    max-width: 320px;
+  }
+  .mini-search svg { flex-shrink: 0; color: var(--gray-300); }
+  .mini-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--gray-900);
+    min-width: 0;
+  }
+  .mini-search input::placeholder { color: var(--gray-600); }
 
   .sort-select {
     border: 1px solid var(--gray-100);
@@ -555,8 +590,8 @@
     gap: 4px;
   }
   .stars { color: var(--amber-400); font-size: 11px; }
-  .badge-new { font-size: 10px; font-weight: 700; color: var(--teal-600); background: var(--teal-50, #e6f7f4); border-radius: var(--radius-sm); padding: 2px 7px; }
   .reviews { font-size: 10px; color: var(--gray-300); }
+  .badge-new { font-size: 10px; font-weight: 700; color: var(--teal-600); background: var(--teal-50, #e6f7f4); border-radius: var(--radius-sm); padding: 2px 7px; }
   .btn-download {
     background: var(--blue-600);
     color: var(--white);
@@ -729,23 +764,35 @@
     .chip { min-height: 44px; padding-inline: 14px; display: inline-flex; align-items: center; }
   }
 </style>
+<style>
+  .hero-lite { padding: 56px 32px 40px; }
+  .hero-lite .intro { max-width: 720px; margin: 0 auto; text-align: left; color: var(--blue-100); font-size: 15px; line-height: 1.7; }
+  .hero-lite .intro p { margin-bottom: 14px; }
+  .hero-lite .browse-all { display: inline-block; margin-top: 6px; color: var(--white); font-size: 13px; text-decoration: underline; }
+  .related-section { max-width: 1100px; margin: 0 auto; padding: 8px 32px 40px; }
+  .related-section h2 { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .related-link { display: inline-block; padding: 7px 16px; border: 1px solid var(--gray-100); border-radius: 20px; font-size: 13px; color: var(--blue-600); text-decoration: none; }
+  .related-link:hover { background: var(--blue-50); border-color: var(--blue-200); }
+  .content { padding: 32px; max-width: 1100px; margin: 0 auto; }
+  @media (max-width: 480px) { .hero-lite { padding: 40px 16px 32px; } .related-section { padding: 8px 16px 32px; } }
+</style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo">work<span>shido</span></a>
+  <a href="/index.html" class="nav-logo">work<span>shido</span></a>
   <ul class="nav-links">
-    <li><a href="workshido-index.html">Browse</a></li>
-    <li><a href="workshido-index.html?cat=Grammar" onclick="setCategory('Grammar');return false;">Grammar</a></li>
-    <li><a href="workshido-index.html?cat=Vocabulary" onclick="setCategory('Vocabulary');return false;">Vocabulary</a></li>
-    <li><a href="workshido-index.html?cat=Reading" onclick="setCategory(['Reading','Writing','Speaking']);return false;">Skills</a></li>
-    <li><a href="workshido-forteachers.html">For teachers</a></li>
-    <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
+    <li><a href="/workshido-index.html">Browse</a></li>
+    <li><a href="/workshido-index.html?cat=Grammar">Grammar</a></li>
+    <li><a href="/workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
+    <li><a href="/workshido-index.html?cat=Reading">Skills</a></li>
+    <li><a href="/workshido-forteachers.html">For teachers</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
-    <a href="workshido-login.html" class="btn-ghost">Log in</a>
-    <a href="workshido-signup.html" class="btn-primary">Sign up free to download</a>
+    <a href="/workshido-login.html" class="btn-ghost">Log in</a>
+    <a href="/workshido-signup.html" class="btn-primary">Sign up free</a>
   </div>
   <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -757,130 +804,75 @@
   <div class="mobile-menu-backdrop" onclick="closeMobileMenu()"></div>
   <div class="mobile-menu-panel">
     <div class="mobile-menu-header">
-      <a href="index.html" class="mobile-menu-logo">work<span>shido</span></a>
+      <a href="/index.html" class="mobile-menu-logo">work<span>shido</span></a>
       <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
     </div>
     <div class="mobile-menu-links">
-      <a href="workshido-index.html">Browse all</a>
-      <a href="workshido-index.html?cat=Grammar">Grammar</a>
-      <a href="workshido-index.html?cat=Vocabulary">Vocabulary</a>
-      <a href="workshido-index.html?cat=Reading">Reading</a>
-      <a href="workshido-index.html?cat=Writing">Writing</a>
-      <a href="workshido-forteachers.html">For teachers</a>
-      <a href="workshido-upload.html">⬆ Upload</a>
+      <a href="/workshido-index.html">Browse all</a>
+      <a href="/workshido-index.html?cat=Grammar">Grammar</a>
+      <a href="/workshido-index.html?cat=Vocabulary">Vocabulary</a>
+      <a href="/workshido-index.html?cat=Reading">Reading</a>
+      <a href="/workshido-index.html?cat=Writing">Writing</a>
+      <a href="/workshido-forteachers.html">For teachers</a>
     </div>
     <div class="mobile-menu-footer">
-      <a href="workshido-login.html" class="m-login">Log in</a>
-      <a href="workshido-signup.html" class="m-signup">Sign up free to download</a>
+      <a href="/workshido-login.html" class="m-login">Log in</a>
+      <a href="/workshido-signup.html" class="m-signup">Sign up free</a>
     </div>
   </div>
+</div>
+
+<div class="breadcrumb" role="navigation" aria-label="Breadcrumb">
+  <a href="/workshido-index.html">Browse</a>
+  <span>›</span>
+  <span>Reading</span>
 </div>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-eyebrow">
+<section class="hero hero-lite">
+  <div class="hero-eyebrow" style="margin-left:auto;margin-right:auto;">
     <span class="dot"></span>
-    <span id="heroEyebrowText">100+ free worksheets · Print-ready PDFs · New resources every week</span>
+    <span>Free · Print-ready PDFs · Answer keys included</span>
   </div>
-  <h1>English worksheets that make<br>teaching <em>effortless</em></h1>
-  <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs designed for real English classes — with answer keys and Teacher Editions available.</p>
-
-  <div class="search-wrap">
-    <div class="search-box">
-      <input type="text" placeholder="Try 'present simple', 'food vocabulary', 'B1 reading'..." />
-      <button>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:6px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Search
-      </button>
-    </div>
-  </div>
-
-  <div class="hero-chips">
-    <button class="chip active" data-level="all">All levels</button>
-    <button class="chip" data-level="A1">A1 Beginner</button>
-    <button class="chip" data-level="A2">A2 Elementary</button>
-    <button class="chip" data-level="B1">B1 Intermediate</button>
-    <button class="chip" data-level="B2">B2 Upper-intermediate</button>
-    <button class="chip" data-level="C1">C1 Advanced</button>
-    <button class="chip" data-cat="Grammar">Grammar</button>
-    <button class="chip" data-cat="Vocabulary">Vocabulary</button>
-    <button class="chip" data-cat="Reading">Reading</button>
-    <button class="chip" data-cat="Writing">Writing</button>
-    <button class="chip" data-cat="Speaking">Speaking</button>
+  <h1 style="max-width:720px;margin-left:auto;margin-right:auto;">Free English Reading Worksheets</h1>
+  <div class="intro">
+    <p>Reading worksheets here pair a short, level-appropriate story or text with a set of comprehension tasks — multiple choice, true/false with correction, vocabulary-in-context, and short-answer questions — so a single text does double duty as both a reading and a grammar or vocabulary review.</p>
+<p>Texts are written specifically for each CEFR level rather than adapted from adult content, so the language stays natural without outrunning what an A1 or A2 student can handle. Every worksheet is a free, print-ready PDF, and most include a full answer key.</p>
+    <a href="/workshido-index.html?category=Reading" class="browse-all">Browse and filter the full catalog →</a>
   </div>
 </section>
 
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat"><span class="stat-num" id="statWorksheets">100+</span><span class="stat-label">Free worksheets</span></div>
-  <div class="stat"><span class="stat-num" id="statLevels">A1–B1</span><span class="stat-label">CEFR levels · growing</span></div>
-  <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free downloads</span></div>
-  <div class="stat"><span class="stat-num">Weekly</span><span class="stat-label">New worksheets added</span></div>
-</div>
-
-<!-- WHY WORKSHIDO -->
-<section class="why-section">
-  <div class="why-inner">
-    <h2 class="why-title">What makes Workshido worksheets different?</h2>
-    <div class="why-grid">
-      <div class="why-card">
-        <div class="why-icon">🗝️</div>
-        <div class="why-card-title">Answer keys for every worksheet</div>
-        <p>Every worksheet has a complete answer key — included free with many downloads, or inside its premium Teacher Edition.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🖨️</div>
-        <div class="why-card-title">Print-ready design</div>
-        <p>Clean A4 PDFs designed for the classroom: clear instructions, readable fonts, and no wasted ink.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">📊</div>
-        <div class="why-card-title">CEFR-levelled</div>
-        <p>Every worksheet is tagged by CEFR level and skill, so you find material that actually fits your class.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🎓</div>
-        <div class="why-card-title">Teacher Editions</div>
-        <p>Most new worksheets include a Teacher Edition: full answer key, complete lesson plan, common mistakes, and extra activities.</p>
-      </div>
+<!-- CONTENT -->
+<main class="content">
+  <div class="content-header">
+    <div>
+      <span class="content-title" id="contentTitle">Free English Reading Worksheets</span>
+      <span class="content-count" id="contentCount"></span>
     </div>
+    <select class="sort-select" id="sortSelect">
+      <option value="newest">Newest first</option>
+      <option value="downloads">Most downloaded</option>
+    </select>
+  </div>
+
+  <div class="card-grid" id="cardGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Loading worksheets...</div>
+  </div>
+
+  <nav class="pagination" id="pagination" style="display:none;" aria-label="Worksheet results pages"></nav>
+</main>
+
+<section class="related-section">
+  <h2>Explore more</h2>
+  <div class="related-links">
+    <a href="/worksheets/grammar/" class="related-link">Grammar</a>
+      <a href="/worksheets/vocabulary/" class="related-link">Vocabulary</a>
+      <a href="/worksheets/writing/" class="related-link">Writing</a>
+      <a href="/worksheets/levels/a1/" class="related-link">A1 Beginner</a>
+      <a href="/worksheets/levels/a2/" class="related-link">A2 Elementary</a>
+    <a href="/workshido-index.html" class="related-link">Full catalog →</a>
   </div>
 </section>
-
-<!-- MAIN LAYOUT -->
-<div class="main-layout">
-
-  <!-- SIDEBAR (populated dynamically from the real catalog) -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-title">Loading topics...</div>
-    </div>
-  </aside>
-
-  <!-- CONTENT -->
-  <main class="content">
-    <div class="content-header">
-      <div>
-        <span class="content-title" id="contentTitle">All worksheets</span>
-        <span class="content-count" id="contentCount"></span>
-      </div>
-      <select class="sort-select" id="sortSelect">
-        <option value="newest">Newest first</option>
-        <option value="downloads">Most downloaded</option>
-      </select>
-    </div>
-
-    <div class="section-label" id="catalogLabel">Loading worksheets...</div>
-
-    <div class="card-grid" id="cardGrid">
-      <div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">
-        Loading worksheets...
-      </div>
-    </div>
-
-    <nav class="pagination" id="pagination" style="display:none;" aria-label="Worksheet results pages"></nav>
-  </main>
-</div>
 
 <!-- FOOTER -->
 <footer>
@@ -895,24 +887,20 @@
       <a href="/worksheets/vocabulary/">Vocabulary</a>
       <a href="/worksheets/reading/">Reading</a>
       <a href="/worksheets/writing/">Writing</a>
-      <a href="workshido-index.html?topic=practice">Practice</a>
     </div>
     <div class="footer-col">
       <h4>Levels</h4>
       <a href="/worksheets/levels/a1/">A1 Beginner</a>
       <a href="/worksheets/levels/a2/">A2 Elementary</a>
-      <a href="workshido-index.html?level=B1">B1 Intermediate</a>
-      <a href="workshido-index.html?level=B2">B2 Upper-intermediate</a>
-      <a href="workshido-index.html?level=C1">C1 Advanced</a>
+      <a href="/workshido-index.html?level=B1">B1 Intermediate</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
-      <a href="workshido-forteachers.html">For teachers</a>
-      <a href="/guides/">Teaching guides</a>
-      <a href="workshido-pricing.html">Premium</a>
+      <a href="/workshido-forteachers.html">For teachers</a>
+      <a href="/workshido-pricing.html">Premium</a>
       <a href="mailto:hello@workshido.com">Contact</a>
-      <a href="workshido-privacy.html">Privacy</a>
-      <a href="workshido-terms.html">Terms</a>
+      <a href="/workshido-privacy.html">Privacy</a>
+      <a href="/workshido-terms.html">Terms</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -921,11 +909,136 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7"></script>
+<script>
+const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
+const LEVEL_COLORS = { A1:'teal', A2:'blue', B1:'amber', B2:'purple', C1:'coral' };
+const LEVEL_CLASS  = { A1:'a1',   A2:'a2',   B1:'b1',   B2:'b2',   C1:'c1'   };
+const ACCENT       = { A1:'accent-teal', A2:'accent-blue', B1:'accent-amber', B2:'accent-purple', C1:'accent-amber' };
+const PAGE_SIZE = 24;
+let currentPage = 1;
+let _lastFiltered = [];
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/index.js?v=20260721" defer></script>
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-<script src="mascot.js" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+function catalogStars(ws) {
+  const avg = ws.rating || 0;
+  const full = Math.round(avg);
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += i <= full ? '★' : '☆';
+  return s;
+}
+function catalogRatingHtml(ws) {
+  if (!ws.ratings_count) return `<span class="badge-new">🆕 New</span>`;
+  return `<span class="stars">${catalogStars(ws)}</span><span class="reviews">(${ws.downloads||0})</span>`;
+}
+
+function buildCard(ws) {
+  const color  = LEVEL_COLORS[ws.level] || 'teal';
+  const lvlCls = LEVEL_CLASS[ws.level]  || 'a1';
+  const accent = ACCENT[ws.level]        || 'accent-teal';
+  const badge  = ws.is_free ? '<span class="badge-type free">Free</span>' : '<span class="badge-type premium">Premium</span>';
+  const btn    = ws.is_free
+    ? `<a href="/workshido-worksheet.html?id=${ws.id}" class="btn-download" style="text-decoration:none;">↓ Download</a>`
+    : `<a href="/workshido-worksheet.html?id=${ws.id}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
+  const tags   = (ws.tags || ws.category || '').split(',').slice(0,2).map(t=>`<span class="tag">${esc(t.trim())}</span>`).join('');
+  const thumb = ws.thumbnail_url
+    ? `<img src="${ws.thumbnail_url}" alt="${esc(ws.title)}" loading="lazy">`
+    : `<div class="ws-preview"><div class="wl ${accent}"></div><div class="wl"></div><div class="wl short"></div><div class="wb"></div><div class="wb"></div><div class="wl short"></div></div>`;
+  const overlay = !ws.thumbnail_url ? `<div class="card-thumb-overlay"><span class="overlay-logo">Work<span>shido</span></span><span class="overlay-level ${lvlCls}">${ws.level}</span></div>` : '';
+  return `<div class="ws-card">
+    <a href="/workshido-worksheet.html?id=${ws.id}" class="card-thumb ${color}" style="display:block;text-decoration:none;">${thumb}${overlay}</a>
+    <div class="card-body">
+      <div class="card-meta"><span class="badge-level ${lvlCls}">${ws.level}</span>${badge}</div>
+      <a href="/workshido-worksheet.html?id=${ws.id}" class="card-title" style="text-decoration:none;color:inherit;">${esc(ws.title)}</a>
+      <div class="card-tags">${tags}</div>
+      <div class="card-footer">
+        <div class="card-rating">${catalogRatingHtml(ws)}</div>
+        ${btn}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCards(pageData, total) {
+  const grid  = document.getElementById('cardGrid');
+  const count = document.getElementById('contentCount');
+  if (!pageData || pageData.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">No worksheets found yet — check back soon.</div>';
+    if (count) count.textContent = '';
+    renderPagination(0);
+    return;
+  }
+  const txt = `${total} worksheet${total !== 1 ? 's' : ''}`;
+  if (count) count.textContent = txt;
+  grid.innerHTML = pageData.map(buildCard).join('');
+  renderPagination(total);
+}
+
+function renderPage() {
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageData = _lastFiltered.slice(start, start + PAGE_SIZE);
+  renderCards(pageData, _lastFiltered.length);
+}
+
+function renderPagination(total) {
+  const el = document.getElementById('pagination');
+  if (!el) return;
+  const pageCount = Math.ceil(total / PAGE_SIZE);
+  if (pageCount <= 1) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'flex';
+  const btn = (label, page, opts = {}) =>
+    `<button class="page-btn${opts.active ? ' active' : ''}" ${opts.disabled ? 'disabled' : ''} onclick="goToPage(${page})" aria-label="${opts.ariaLabel || `Page ${label}`}" ${opts.active ? 'aria-current="page"' : ''}>${label}</button>`;
+  let html = btn('‹', currentPage - 1, { disabled: currentPage === 1, ariaLabel: 'Previous page' });
+  const windowSize = 2;
+  for (let p = 1; p <= pageCount; p++) {
+    if (p === 1 || p === pageCount || (p >= currentPage - windowSize && p <= currentPage + windowSize)) {
+      html += btn(p, p, { active: p === currentPage });
+    } else if (p === currentPage - windowSize - 1 || p === currentPage + windowSize + 1) {
+      html += '<span class="page-ellipsis">…</span>';
+    }
+  }
+  html += btn('›', currentPage + 1, { disabled: currentPage === pageCount, ariaLabel: 'Next page' });
+  el.innerHTML = html;
+}
+
+function goToPage(page) {
+  const pageCount = Math.ceil(_lastFiltered.length / PAGE_SIZE);
+  if (page < 1 || page > pageCount || page === currentPage) return;
+  currentPage = page;
+  renderPage();
+  document.getElementById('cardGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function applySort() {
+  const sort = document.getElementById('sortSelect')?.value || 'newest';
+  _lastFiltered = [..._lastFiltered].sort((a, b) => {
+    if (sort === 'newest') {
+      const da = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const db = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return db - da;
+    }
+    return (b.downloads || 0) - (a.downloads || 0);
+  });
+  currentPage = 1;
+  renderPage();
+}
+
+document.getElementById('sortSelect').addEventListener('change', applySort);
+document.getElementById('yr').textContent = new Date().getFullYear();
+function openMobileMenu()  { document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow = ''; }
+
+async function loadWorksheets() {
+  const { data, error } = await sb2.from('worksheets').select('*').eq('category', 'Reading').order('created_at', { ascending: false, nullsFirst: false }).limit(500);
+  if (error) {
+    document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
+    return;
+  }
+  _lastFiltered = data || [];
+  renderPage();
+}
+loadWorksheets();
+</script>
 </body>
 </html>

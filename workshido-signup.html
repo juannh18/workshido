@@ -9,10 +9,11 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign up free — Workshido</title>
+<meta name="robots" content="noindex, follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -70,7 +71,7 @@
   .field { display: flex; flex-direction: column; gap: 6px; }
   .field label { font-size: 13px; font-weight: 500; color: var(--gray-900); }
   .field input, .field select { padding: 11px 14px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; color: var(--gray-900); background: var(--white); transition: border-color 0.15s, box-shadow 0.15s; outline: none; }
-  .field input::placeholder { color: var(--gray-300); }
+  .field input::placeholder { color: var(--gray-600); }
   .field input:focus { border-color: var(--blue-400); box-shadow: 0 0 0 3px var(--blue-50); }
   .password-wrap { position: relative; }
   .password-wrap input { padding-right: 44px; width: 100%; }
@@ -133,19 +134,19 @@
         Continue with Google
       </button>
       <div class="divider-text">or sign up with email</div>
-      <div id="errorBanner" class="error-banner"></div>
+      <div id="errorBanner" class="error-banner" role="alert" aria-live="assertive"></div>
       <form class="signup-form" id="signupForm" novalidate>
         <div class="form-row">
-          <div class="field"><label for="firstName">First name</label><input type="text" id="firstName" placeholder="Sarah" /></div>
-          <div class="field"><label for="lastName">Last name</label><input type="text" id="lastName" placeholder="Miller" /></div>
+          <div class="field"><label for="firstName">First name</label><input type="text" id="firstName" name="given-name" autocomplete="given-name" required placeholder="Sarah" /></div>
+          <div class="field"><label for="lastName">Last name</label><input type="text" id="lastName" name="family-name" autocomplete="family-name" required placeholder="Miller" /></div>
         </div>
-        <div class="field"><label for="email">Email address</label><input type="email" id="email" placeholder="sarah@school.com" /></div>
+        <div class="field"><label for="email">Email address</label><input type="email" id="email" name="email" autocomplete="email" required placeholder="sarah@school.com" /></div>
         <div class="field">
           <label for="password">Password</label>
           <div class="password-wrap">
-            <input type="password" id="password" placeholder="At least 8 characters" />
-            <button type="button" class="toggle-pw" onclick="togglePassword()">
-              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <input type="password" id="password" name="new-password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters" />
+            <button type="button" class="toggle-pw" id="togglePwBtn" aria-label="Show password" aria-pressed="false" onclick="togglePassword()">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
           </div>
           <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
@@ -161,133 +162,23 @@
           </div>
         </div>
         <div class="terms">
-          <input type="checkbox" id="terms" />
+          <input type="checkbox" id="terms" name="terms" required />
           <label for="terms">I agree to the <a href="workshido-terms.html">Terms of Service</a> and <a href="workshido-privacy.html">Privacy Policy</a>.</label>
         </div>
         <button type="submit" class="btn-signup" id="submitBtn">Create free account</button>
-        <div class="login-link">Already have an account? <a href="workshido-login.html">Log in</a></div>
+        <div class="login-link">Already have an account? <a href="workshido-login.html" id="loginLink">Log in</a></div>
       </form>
     </div>
     <div class="success-state" id="successState">
       <div class="success-icon">🎉</div>
       <h2>Welcome to Workshido!</h2>
       <p>Check your email to confirm your account, then start downloading worksheets!</p>
-      <a href="workshido-index.html" class="btn-go">Browse worksheets →</a>
+      <a href="workshido-index.html" class="btn-go" id="successGoLink">Browse worksheets →</a>
     </div>
   </div>
 </div>
 
-<script>
-const SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo';
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let selectedRole = 'teacher';
-
-function selectRole(btn, role) {
-  document.querySelectorAll('.role-option').forEach(r => r.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedRole = role;
-}
-
-function togglePassword() {
-  const input = document.getElementById('password');
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-
-document.getElementById('password').addEventListener('input', function() {
-  const val = this.value;
-  const fill = document.getElementById('strengthFill');
-  const label = document.getElementById('strengthLabel');
-  let strength = 0;
-  if (val.length >= 8) strength++;
-  if (/[A-Z]/.test(val)) strength++;
-  if (/[0-9]/.test(val)) strength++;
-  if (/[^A-Za-z0-9]/.test(val)) strength++;
-  const levels = [
-    { pct: '0%', color: '#D3D1C7', text: 'Enter a password' },
-    { pct: '25%', color: '#C0392B', text: 'Weak' },
-    { pct: '50%', color: '#BA7517', text: 'Fair' },
-    { pct: '75%', color: '#378ADD', text: 'Good' },
-    { pct: '100%', color: '#1D9E75', text: 'Strong ✓' },
-  ];
-  const lvl = val.length === 0 ? levels[0] : levels[strength] || levels[1];
-  fill.style.width = lvl.pct;
-  fill.style.background = lvl.color;
-  label.textContent = lvl.text;
-});
-
-const GIS_CLIENT_ID = '402662121573-hjto2nl434h1qdgvtl21n58du49kl2bd.apps.googleusercontent.com';
-
-window.addEventListener('load', () => {
-  if (typeof google === 'undefined') return;
-  google.accounts.id.initialize({
-    client_id: GIS_CLIENT_ID,
-    callback: handleCredentialResponse,
-    auto_select: false,
-    cancel_on_tap_outside: true,
-  });
-});
-
-function handleGoogle() {
-  if (typeof google === 'undefined') { showError('Google Sign-In not available. Please try again.'); return; }
-  google.accounts.id.prompt((n) => {
-    if (n.isNotDisplayed() || n.isSkippedMoment()) {
-      google.accounts.id.renderButton(document.getElementById('gisFallbackBtn'), { theme: 'outline', size: 'large', width: 300 });
-      setTimeout(() => document.querySelector('#gisFallbackBtn [role="button"]')?.click(), 100);
-    }
-  });
-}
-
-async function handleCredentialResponse(response) {
-  try {
-    const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
-    if (error) throw error;
-    window.location.href = 'workshido-index.html';
-  } catch (e) {
-    showError('Google sign-in failed. Please try again.');
-  }
-}
-
-function showError(msg) {
-  const el = document.getElementById('errorBanner');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-document.getElementById('signupForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const firstName = document.getElementById('firstName').value.trim();
-  const lastName = document.getElementById('lastName').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const terms = document.getElementById('terms').checked;
-
-  if (!firstName || !lastName) return showError('Please enter your full name.');
-  if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return showError('Please enter a valid email address.');
-  if (password.length < 8) return showError('Password must be at least 8 characters.');
-  if (!terms) return showError('Please accept the Terms of Service to continue.');
-
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Creating your account...';
-
-  const { data, error } = await sb.auth.signUp({
-    email,
-    password,
-    options: { data: { full_name: `${firstName} ${lastName}`, role: selectedRole } }
-  });
-
-  if (error) {
-    showError(error.message);
-    btn.disabled = false;
-    btn.textContent = 'Create free account';
-  } else {
-    document.getElementById('formState').style.display = 'none';
-    document.getElementById('successState').style.display = 'flex';
-  }
-});
-</script>
+<script src="js/workshido-signup.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260721" defer></script>
 </body>
 </html>

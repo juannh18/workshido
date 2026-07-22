@@ -56,14 +56,23 @@ def upload_pdf(local_path, storage_path):
     return f'{SUPABASE_URL}/storage/v1/object/public/worksheets/{storage_path}'
 
 
+THUMB_MAX_WIDTH = 640  # catalog cards render thumbnails at ~217-320px wide;
+                        # 640px covers 2x/retina without shipping full A4-page
+                        # resolution (1055x1491) for a ~300px card image.
+
+
 def upload_thumb(local_path, storage_path):
-    img = Image.open(local_path)
+    img = Image.open(local_path).convert('RGB')
+    if img.width > THUMB_MAX_WIDTH:
+        ratio = THUMB_MAX_WIDTH / img.width
+        img = img.resize((THUMB_MAX_WIDTH, round(img.height * ratio)), Image.LANCZOS)
     buf = io.BytesIO()
     img.save(buf, 'WEBP', quality=88)
     buf.seek(0)
     res = requests.post(
         f'{SUPABASE_URL}/storage/v1/object/worksheets/{storage_path}',
-        headers={**HEADERS_AUTH, 'Content-Type': 'image/webp', 'x-upsert': 'true'},
+        headers={**HEADERS_AUTH, 'Content-Type': 'image/webp', 'x-upsert': 'true',
+                  'Cache-Control': 'public, max-age=31536000, immutable'},
         data=buf.read(), verify=False
     )
     if res.status_code not in (200, 201):
