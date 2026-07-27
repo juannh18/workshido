@@ -2,8 +2,8 @@ const { createClient } = require('@supabase/supabase-js');
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 const VARIANT_IDS = {
-  monthly: '1852510',
-  yearly: '1852478',
+  monthly: '23098310-2355-4d2c-88a0-23f8d87e6cb0',
+  yearly: '21cd0124-2cbd-4c1a-a201-9290dd919ad0',
 };
 
 const STORE_URL = 'https://workshido.lemonsqueezy.com/checkout/buy';
