@@ -6,6 +6,8 @@ let _answerKeyUrl = null;
 let _isPremium = false;
 let _wsId = null;
 let _wsTitle = 'worksheet';
+let _quizId = null;
+let _quizTitle = 'quiz';
 
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
@@ -36,6 +38,12 @@ async function loadWorksheet() {
   if (currentUser) {
     const { data: prof } = await sb.from('profiles').select('is_premium').eq('id', currentUser.id).single();
     _isPremium = prof?.is_premium || false;
+  }
+
+  let quiz = null;
+  if (data.topic_key) {
+    const { data: quizRow } = await sb.from('quizzes').select('*').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle();
+    quiz = quizRow || null;
   }
 
   document.title = `${esc(data.title)} — Workshido`;
@@ -138,6 +146,27 @@ async function loadWorksheet() {
           ${!currentUser ? '<p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>' : ''}`)
     : '';
 
+  _quizId = quiz?.id || null;
+  _quizTitle = quiz?.title || 'quiz';
+  const quizBtn = quiz
+    ? (_isPremium
+        ? `<button class="btn-quiz unlocked" onclick="downloadQuiz()">
+            <span class="ak-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Full Quiz <span class="ak-sub">⭐ Premium — Download</span></span>
+            </span>
+          </button>
+          <p class="quiz-key-link">Covers ${esc(quiz.skills)} · <a onclick="downloadQuiz('key')">Download answer key</a></p>`
+        : `<button class="btn-quiz" onclick="openPremiumModal()">
+            <span class="ak-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Full Quiz <span class="ak-sub">⭐ Premium only</span></span>
+            </span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <p class="quiz-key-link">Covers ${esc(quiz.skills)}</p>`)
+    : '';
+
   document.getElementById('pageWrap').innerHTML = `
     <div class="preview-box">${preview}</div>
     <div class="detail-sidebar">
@@ -157,6 +186,7 @@ async function loadWorksheet() {
         </div>
         ${downloadBtn}
         ${answerKeyBtn}
+        ${quizBtn}
         <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
         ${starSection}
       </div>
@@ -324,6 +354,25 @@ async function downloadAnswerKey() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ worksheetId: _wsId }),
+    });
+    if (res.status === 403) { openPremiumModal(); return; }
+    if (!res.ok) return;
+    const { url } = await res.json();
+    if (url) window.open(url, '_blank');
+  } catch (e) {}
+}
+
+async function downloadQuiz(kind) {
+  if (!_quizId) return;
+  // Same server-side premium check as downloadAnswerKey — the signed URL is
+  // only ever issued after that check, never derived from the button state.
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { openDlModal('download'); return; }
+    const res = await fetch('/.netlify/functions/get-quiz-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ quizId: _quizId, kind: kind || 'quiz' }),
     });
     if (res.status === 403) { openPremiumModal(); return; }
     if (!res.ok) return;
