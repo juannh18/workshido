@@ -101,6 +101,7 @@
   .btn-plan.primary:hover { background: var(--blue-800); }
   .btn-plan.dark { background: var(--blue-900); color: var(--white); }
   .btn-plan.dark:hover { background: var(--blue-800); }
+  .cta-microcopy { text-align: center; font-size: 11px; color: var(--gray-300); margin-top: 10px; }
 
   /* FAQ */
   .faq-section { max-width: 720px; margin: 0 auto; padding: 0 32px 80px; }
@@ -142,11 +143,11 @@
 </nav>
 
 <div class="pricing-hero">
-  <h1>Simple, <em>honest</em> pricing</h1>
-  <p>Start free. Upgrade when you're ready. Cancel anytime.</p>
+  <h1>Stop building lesson plans <em>from scratch</em></h1>
+  <p>Every worksheet is free. Go Premium and get the full Teacher Edition — answer key, lesson plan, and teacher tips — ready in one click.</p>
   <div class="billing-toggle">
-    <span class="toggle-label active" id="monthlyBtn" onclick="setBilling('monthly')">Monthly</span>
-    <span class="toggle-label" id="yearlyBtn" onclick="setBilling('yearly')">Yearly <span class="save-badge">SAVE 30%</span></span>
+    <span class="toggle-label" id="monthlyBtn" onclick="setBilling('monthly')">Monthly</span>
+    <span class="toggle-label active" id="yearlyBtn" onclick="setBilling('yearly')">Yearly <span class="save-badge">SAVE 30%</span></span>
   </div>
 </div>
 
@@ -179,10 +180,10 @@
       <div class="plan-name">Premium</div>
       <div class="plan-desc">Unlock the Teacher Edition for almost every worksheet on Workshido.</div>
       <div class="plan-price">
-        <span class="price-amount" id="premiumPrice">$2.99</span>
+        <span class="price-amount" id="premiumPrice">$2.08</span>
         <span class="price-period">/month</span>
       </div>
-      <div class="price-annual" id="premiumNote">Billed monthly · Cancel anytime</div>
+      <div class="price-annual" id="premiumNote"><strong style="color:var(--teal-400)">Save $10.89/year</strong> · Billed as $24.99/yr</div>
       <hr class="plan-divider">
       <div class="features">
         <div class="feature"><span class="feature-check yes">✓</span><div>Everything in <strong>Free</strong></div></div>
@@ -192,10 +193,17 @@
         <div class="feature"><span class="feature-check yes">✓</span><div><strong>Teacher tips</strong> & common student mistakes</div></div>
         <div class="feature"><span class="feature-check yes">✓</span><div><strong>Extra activity</strong> to do in classroom</div></div>
       </div>
-      <button class="btn-plan primary" onclick="startCheckout(currentBilling)" id="premiumCta">Get Premium — $2.99/mo</button>
+      <button class="btn-plan primary" onclick="startCheckout(currentBilling)" id="premiumCta">Unlock Teacher Edition — $24.99/yr</button>
+      <div class="cta-microcopy">🔒 Secure checkout · Cancel anytime · Instant access</div>
     </div>
 
   </div>
+</div>
+
+<div class="guarantee">
+  <div class="guarantee-icon">🛡️</div>
+  <h3>Cancel anytime, no questions asked</h3>
+  <p>Manage or cancel your subscription in one click from your account settings. You'll keep full access until the end of your billing period — every time.</p>
 </div>
 
 <!-- FAQ -->

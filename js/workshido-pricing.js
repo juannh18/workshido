@@ -1,4 +1,4 @@
-  let currentBilling = 'monthly';
+  let currentBilling = 'yearly';
 
   function setBilling(type) {
     currentBilling = type;
@@ -13,13 +13,13 @@
       yearlyBtn.classList.remove('active');
       premiumPrice.textContent = '$2.99';
       premiumNote.innerHTML = 'Billed monthly · Cancel anytime';
-      premiumCta.textContent = 'Get Premium — $2.99/mo';
+      premiumCta.textContent = 'Unlock Teacher Edition — $2.99/mo';
     } else {
       yearlyBtn.classList.add('active');
       monthlyBtn.classList.remove('active');
       premiumPrice.textContent = '$2.08';
       premiumNote.innerHTML = '<strong style="color:var(--teal-400)">Save $10.89/year</strong> · Billed as $24.99/yr';
-      premiumCta.textContent = 'Get Premium — $24.99/yr';
+      premiumCta.textContent = 'Unlock Teacher Edition — $24.99/yr';
     }
   }
 
