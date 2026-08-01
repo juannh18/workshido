@@ -313,18 +313,30 @@ function filterAndRender() {
     // simple tense" used to require that exact 3-word string verbatim, so it
     // only matched a worksheet literally titled "Past Simple Tense" and
     // dropped "Past Simple Grammar", "Past Simple Vocabulary", etc.
-    // Requiring every token (strict AND) was still too narrow: those
-    // worksheets have "past" and "simple" but nowhere say "tense", so they
-    // still failed. Require a majority of tokens instead — for 1-2 words
-    // (the common case, e.g. "past simple") every word must still match, but
-    // 3+ word queries only need most of them, so an extra/descriptive word
-    // like "tense" doesn't silently exclude the whole topic.
     const tokens = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
-    const threshold = tokens.length <= 2 ? tokens.length : Math.floor(tokens.length / 2) + 1;
-    filtered = filtered.filter(w => {
-      const hay = [w.title, w.tags, w.category, w.description].filter(Boolean).join(' ').toLowerCase();
-      return tokens.filter(t => hay.includes(t)).length >= threshold;
-    });
+    const phrase = tokens.join(' ');
+    // For short queries (1-2 words — the common case for a specific grammar
+    // term) require the words to appear TOGETHER, and only in title/tags/
+    // category, not the free-text description. Matching tokens independently
+    // against a blob that includes descriptions let unrelated topics sneak
+    // in — e.g. "present" (from "Present Perfect") + "simple" (from "Past
+    // Simple") both appearing somewhere on "Present Perfect vs. Past Simple",
+    // or a Conditional worksheet's description that explains "if + present
+    // simple" in passing. Longer queries keep the looser per-token majority
+    // match below, since an extra descriptive word (like "tense") shouldn't
+    // silently exclude the whole topic.
+    if (tokens.length <= 2) {
+      filtered = filtered.filter(w => {
+        const hay = [w.title, w.tags, w.category].filter(Boolean).join(' ').toLowerCase();
+        return hay.includes(phrase);
+      });
+    } else {
+      const threshold = Math.floor(tokens.length / 2) + 1;
+      filtered = filtered.filter(w => {
+        const hay = [w.title, w.tags, w.category, w.description].filter(Boolean).join(' ').toLowerCase();
+        return tokens.filter(t => hay.includes(t)).length >= threshold;
+      });
+    }
   }
   const sort = document.getElementById('sortSelect')?.value || 'newest';
   const sortSecondary = (a, b) => {
@@ -362,7 +374,16 @@ function wsRelevanceScore(w, q) {
   let score = 0;
   if (title === q) score += 200;
   else if (title.startsWith(q)) score += 140;
-  else if (title.includes(q)) score += 100;
+  else {
+    // Weight by position: a match right at the start of the title ("Present
+    // Simple – Grammar") should outrank one buried inside a differently-named
+    // topic ("Passive Voice in Present Simple", "Reported Speech: Present
+    // Simple to Past Simple") — those are legitimate related results, but the
+    // worksheet's own topic isn't the query, so they shouldn't outrank
+    // worksheets whose core topic actually is.
+    const idx = title.indexOf(q);
+    if (idx >= 0) score += Math.max(20, 100 - idx * 3);
+  }
   if (tags.includes(q)) {
     const idx = tags.indexOf(q);
     score += Math.max(10, 45 - Math.floor(idx / 4));
