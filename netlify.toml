@@ -1,5 +1,14 @@
 [build]
   functions = "netlify/functions"
+  edge_functions = "netlify/edge-functions"
+
+# Country-level geolocation for js/analytics.js — uses Netlify's own edge
+# geo data (no third-party IP-lookup service, no API key), fetched once per
+# session and attached to every analytics event. See
+# netlify/edge-functions/geo.js.
+[[edge_functions]]
+  path = "/api/geo"
+  function = "geo"
 
 [[redirects]]
   from = "/sitemap.xml"

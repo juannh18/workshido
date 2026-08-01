@@ -20,11 +20,27 @@
     }
   }
 
+  // Country from Netlify's edge geo (netlify/edge-functions/geo.js) —
+  // fetched once per session and cached, same lifetime as the session id.
+  // Best-effort: if the fetch fails or is still pending, events just go
+  // out with country: null rather than waiting on it.
+  let country = null;
+  try {
+    const cached = sessionStorage.getItem('ws_country');
+    if (cached) country = JSON.parse(cached);
+  } catch (e) { /* private mode, etc. — fall through to fetching fresh */ }
+  if (!country) {
+    fetch('/api/geo').then((r) => r.json()).then((geo) => {
+      country = geo;
+      try { sessionStorage.setItem('ws_country', JSON.stringify(geo)); } catch (e) {}
+    }).catch(() => {});
+  }
+
   function track(eventName, properties) {
     try {
       const body = JSON.stringify({
         event_name: eventName,
-        properties: properties || {},
+        properties: { ...(properties || {}), country_code: country?.code || null, country_name: country?.name || null },
         session_id: sessionId(),
         path: location.pathname + location.search,
         referrer: document.referrer || null,
