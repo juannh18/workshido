@@ -14,6 +14,19 @@ async function checkAuth() {
   const uploadLink = document.getElementById('navUploadLink');
   if (uploadLink) uploadLink.style.display = (user?.email === 'juanda.5790@hotmail.com') ? '' : 'none';
   const nav = document.getElementById('navActions');
+  // Not logged in: carry this worksheet's URL through Log in / Sign up so a
+  // new user who registers via the nav (instead of the download modal's
+  // Google button, which already does this) lands back here afterward
+  // instead of the homepage.
+  if (!user && nav) {
+    // Match by substring, not the exact "workshido-login.html" filename —
+    // the server-rendered version of this page (netlify/functions/worksheet-
+    // page.js, used for SEO) links to the extensionless "/workshido-login"
+    // clean URL instead, which an exact selector silently misses.
+    const redirect = encodeURIComponent(window.location.href);
+    nav.querySelectorAll('a[href*="workshido-login"]').forEach(a => a.href = a.getAttribute('href') + `?redirect=${redirect}`);
+    nav.querySelectorAll('a[href*="workshido-signup"]').forEach(a => a.href = a.getAttribute('href') + `?redirect=${redirect}`);
+  }
   if (user && nav) {
     const name = user.user_metadata?.full_name || user.email;
     const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
