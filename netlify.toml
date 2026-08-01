@@ -6,6 +6,17 @@
   to = "/.netlify/functions/sitemap"
   status = 200
 
+# Server-render real title/description/canonical/OG tags per worksheet
+# before the client JS runs — see netlify/functions/worksheet-page.js for
+# why. force=true is required: a static file still exists at this exact
+# path (workshido-worksheet.html), and without force Netlify would keep
+# serving that file directly instead of routing through the function.
+[[redirects]]
+  from = "/workshido-worksheet.html"
+  to = "/.netlify/functions/worksheet-page"
+  status = 200
+  force = true
+
 # Consolidate URL duplication: Netlify serves "/page" for "page.html" by
 # default (pretty URLs), so both forms returned 200 with identical content —
 # split ranking signals and wasted crawl budget. Every canonical tag on the
