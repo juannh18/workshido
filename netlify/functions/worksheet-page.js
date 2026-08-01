@@ -59,7 +59,11 @@ exports.handler = async (event) => {
     ]);
 
     if (error || !data) {
-      return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
+      // A real, since-deleted/renamed worksheet id — this is the exact
+      // shape of a "soft 404" (200 OK, no real content) that Search Console
+      // flags. Serve the shell but say so with the status code, so it's an
+      // unambiguous 404 instead of looking like a valid empty page.
+      return { statusCode: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
     }
 
     const title = `${data.title} — Workshido`;
