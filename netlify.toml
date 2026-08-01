@@ -17,6 +17,45 @@
   status = 200
   force = true
 
+# Inject real <a href> links to individual worksheets into the 6 category/
+# level landing pages before their JS-driven card grid loads — see
+# netlify/functions/category-page.js. Same force=true reasoning as above.
+[[redirects]]
+  from = "/worksheets/grammar/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/worksheets/vocabulary/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/worksheets/reading/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/worksheets/writing/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/worksheets/levels/a1/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/worksheets/levels/a2/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
 # Consolidate URL duplication: Netlify serves "/page" for "page.html" by
 # default (pretty URLs), so both forms returned 200 with identical content —
 # split ranking signals and wasted crawl budget. Every canonical tag on the
