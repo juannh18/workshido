@@ -167,6 +167,7 @@ function syncUrl() {
     params.set('topic', terms.join('|'));
   }
   if (searchQuery) params.set('q', searchQuery);
+  if (currentPage > 1) params.set('page', currentPage);
   const qs = params.toString();
   history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
 }
@@ -293,6 +294,10 @@ function goToPage(page) {
   const pageCount = Math.ceil(_lastFiltered.length / PAGE_SIZE);
   if (page < 1 || page > pageCount || page === currentPage) return;
   currentPage = page;
+  // Keep ?page= in sync so the Back button from a worksheet opened on page 4
+  // returns to page 4, not page 1 — filters were already preserved this way,
+  // the page number was the one thing missing.
+  syncUrl();
   renderPage();
   document.getElementById('cardGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -537,6 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const level = params.get('level');
     const topic = params.get('topic');
     const q     = params.get('q');
+    const page  = parseInt(params.get('page'), 10);
     if (cat) { activeCategory = cat; syncCategoryChips(); }
     if (level) { activeLevel = level.toUpperCase(); syncLevelChips(); }
     if (topic) {
@@ -559,5 +565,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (mini) mini.value = q;
     }
     if (cat || level || topic || q) filterAndRender();
+    // filterAndRender() always resets to page 1, so restore the saved page
+    // afterward (e.g. returning via Back from a worksheet opened on page 4).
+    if (page > 1) {
+      const pageCount = Math.ceil(_lastFiltered.length / PAGE_SIZE);
+      if (page <= pageCount) { currentPage = page; renderPage(); }
+    }
   });
 });
