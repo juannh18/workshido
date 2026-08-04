@@ -155,6 +155,8 @@ function syncUrl() {
     params.set('topic', terms.join('|'));
   }
   if (searchQuery) params.set('q', searchQuery);
+  const sort = document.getElementById('sortSelect')?.value;
+  if (sort && sort !== 'newest') params.set('sort', sort);
   if (currentPage > 1) params.set('page', currentPage);
   const qs = params.toString();
   history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
@@ -503,7 +505,7 @@ document.querySelector('.search-box input').addEventListener('keydown', e => {
   }
 });
 
-document.getElementById('sortSelect').addEventListener('change', filterAndRender);
+document.getElementById('sortSelect').addEventListener('change', () => { syncUrl(); filterAndRender(); });
 
 // Reload on back/forward navigation to avoid stale auth state from bfcache
 window.addEventListener('pageshow', (e) => { if (e.persisted) window.location.reload(); });
@@ -520,7 +522,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const level = params.get('level');
     const topic = params.get('topic');
     const q     = params.get('q');
+    const sort  = params.get('sort');
     const page  = parseInt(params.get('page'), 10);
+    if (sort) { const sel = document.getElementById('sortSelect'); if (sel) sel.value = sort; }
     if (cat) { activeCategory = cat; syncCategoryChips(); }
     if (level) { activeLevel = level.toUpperCase(); syncLevelChips(); }
     if (topic) {
@@ -540,7 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const input = document.querySelector('.search-box input');
       if (input) input.value = q;
     }
-    if (cat || level || topic || q) filterAndRender();
+    if (cat || level || topic || q || sort) filterAndRender();
     // filterAndRender() always resets to page 1, so restore the saved page
     // afterward (e.g. returning via Back from a worksheet opened on page 4).
     if (page > 1) {

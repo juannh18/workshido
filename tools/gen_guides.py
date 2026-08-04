@@ -216,7 +216,7 @@ def render_page(guide, others):
 <body>
 <nav>
   <a href="/index.html" class="nav-logo">work<span>shido</span></a>
-  <div class="nav-actions">
+  <div class="nav-actions" id="navActions">
     <a href="/workshido-login.html" class="btn-ghost">Log in</a>
     <a href="/workshido-signup.html" class="btn-primary">Sign up free</a>
   </div>
@@ -244,6 +244,8 @@ def render_page(guide, others):
 <footer>
   <span>© 2026 Workshido — <a href="/workshido-index.html">Free English worksheets</a></span>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
+<script src="/js/guides-auth.js" defer></script>
 <script src="/js/analytics.js" defer></script>
 </body>
 </html>
@@ -299,7 +301,7 @@ def render_hub():
 <body>
 <nav>
   <a href="/index.html" class="nav-logo">work<span>shido</span></a>
-  <div class="nav-actions">
+  <div class="nav-actions" id="navActions">
     <a href="/workshido-login.html" class="btn-ghost">Log in</a>
     <a href="/workshido-signup.html" class="btn-primary">Sign up free</a>
   </div>
@@ -314,6 +316,8 @@ def render_hub():
 <footer>
   <span>© 2026 Workshido — <a href="/workshido-index.html">Free English worksheets</a></span>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
+<script src="/js/guides-auth.js" defer></script>
 <script src="/js/analytics.js" defer></script>
 </body>
 </html>

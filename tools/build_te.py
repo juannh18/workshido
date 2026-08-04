@@ -14,18 +14,36 @@ Formato del JSON de contenido:
   "activity_title": "Plural Corners (10 min)",
   "activity_body": "texto/html de la actividad",
   "info_rows": [["Level","A1"], ["Skill","Grammar"], ...],
+
+  // --- Learning Focus (pág. 2, arriba de todo) ---
+  "learning_objective": "Students will be able to ... (una frase medible, verbo de acción)",
+  "success_criteria": "I can ... . I can ... .",   // 1-2 frases en 1a persona, lo que el estudiante puede autoevaluar
+  "prior_knowledge": "texto breve: qué se asume que ya saben",
+
   "materials": ["Printed worksheet copies (1 per student)", ...],
   "lesson_title": "Lesson Plan (45–50 minutes)",
-  "lesson_rows": [["5 min","Warm-Up","procedimiento..."], ...],
+  // lesson_rows: usar SIEMPRE estas etapas pedagógicas en la columna Stage, en este
+  // orden (gradual release of responsibility). El Warm-Up SIEMPRE lleva la pregunta/
+  // actividad concreta que activa el tema (no genérico). Assessment describe cómo se
+  // mide el aprendizaje (no es una sección aparte, es una fila más de esta tabla).
+  "lesson_rows": [
+    ["5 min", "Warm-Up", "pregunta o actividad concreta que activa el tema..."],
+    ["8 min", "Presentation (I Do)", "el profesor modela/explica el contenido nuevo..."],
+    ["10 min", "Guided Practice (We Do)", "qué ejercicios de la worksheet, con apoyo del profesor..."],
+    ["10 min", "Independent Practice (You Do)", "qué ejercicios, sin apoyo..."],
+    ["5 min", "Assessment", "cómo se verifica el aprendizaje (worksheet + exit ticket, etc.)..."],
+    ["5 min", "Closure", "actividad de cierre/resumen..."]
+  ],
   "followup": "texto/html",
   "support": "texto/html",
   "challenge": "texto/html",
+  "anticipated_problems": [["qué puede confundir a los estudiantes con este contenido", "cómo lo previene el profesor"], ...],  // 2-3 pares
 
   // --- Secciones opcionales de página 2 (RECOMENDADO llenarlas: aprovechan el
   //     espacio sobrante con info útil para el profesor; si se omiten, el bloque
   //     desaparece). Ajustar la cantidad para que la TE quede en 2 páginas exactas. ---
   "extension": ["idea 1 para quienes terminan rápido", "idea 2", ...],  // bullets (2 columnas)
-  "key_language": "<b>Target:</b> ... <br><b>Board:</b> ...",           // frases clave / plan de pizarra
+  "key_language": "<b>Grammar/Vocab:</b> ... <br><b>Skills:</b> Reading, Writing... <br><b>Board:</b> ...",  // sección "Language Focus & Board Notes"
   "exit_ticket": "<ul class='ans'><li>...</li>...</ul>"                  // 2-3 preguntas de cierre
 }
 
@@ -50,6 +68,9 @@ def build(content):
         f'      <div class="mistake-row"><span class="wrong">✗ {w}</span><br>'
         f'<span class="correct">✓ {c}</span></div>'
         for w, c in content['mistakes'])
+    anticipated = '\n'.join(
+        f'      <div class="mistake-row"><b>Problem:</b> {p}<br><b>Solution:</b> {s}</div>'
+        for p, s in content['anticipated_problems'])
     info_rows = '\n'.join(f'        <tr><td>{k}</td><td>{v}</td></tr>' for k, v in content['info_rows'])
     materials = '\n'.join(f'      <span>{m}</span>' for m in content['materials'])
     lesson_rows = '\n'.join(
@@ -72,6 +93,10 @@ def build(content):
         '{{WS_TITLE}}': content['ws_title'],
         '{{ANSWER_KEY}}': answer_key,
         '{{LP_META}}': lp_meta,
+        '{{OBJECTIVE}}': content['learning_objective'],
+        '{{SUCCESS_CRITERIA}}': content['success_criteria'],
+        '{{PRIOR_KNOWLEDGE}}': content['prior_knowledge'],
+        '{{ANTICIPATED}}': anticipated,
         '{{TEACHER_TIP}}': content['teacher_tip'],
         '{{MISTAKES}}': mistakes,
         '{{ACTIVITY_TITLE}}': content['activity_title'],
