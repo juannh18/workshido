@@ -18,6 +18,11 @@ const STATIC_PAGES = [
   { loc: '/guides/how-to-teach-present-simple/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/cefr-levels-guide/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/esl-warm-up-activities/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-past-simple/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-present-perfect/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-present-continuous/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-comparatives-superlatives/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-reported-speech/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/workshido-privacy.html', changefreq: 'yearly', priority: '0.3' },
   { loc: '/workshido-terms.html', changefreq: 'yearly', priority: '0.3' },
 ];

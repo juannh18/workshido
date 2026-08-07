@@ -1,6 +1,39 @@
 const sb = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 const LEVEL_CLASS = { A1:'a1', A2:'a2', B1:'b1', B2:'b2', C1:'c1' };
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// "Comparative Adjectives – Practice" -> "comparative adjectives". Titles
+// with no " – "/" - " separator (standalone worksheets like "Articles",
+// "Body Parts") return their own full lowercased title, which only matches
+// another worksheet with the exact same title — i.e. effectively no match,
+// same as having no related worksheets at all. Also strips a trailing
+// "(A2)"-style level marker some titles carry before the dash (e.g.
+// "Present Perfect Tense (A2) – Grammar") — left in, it made that title's
+// base "present perfect tense (a2)", which never matches the A1 sibling's
+// base "present perfect tense", silently hiding the cross-level match.
+function titleBase(t) {
+  return (t || '').split(/\s[–-]\s/)[0].replace(/\s*\((?:a1|a2|b1|b2|c1)\)\s*$/i, '').trim().toLowerCase();
+}
+// Vocabulary worksheets rarely share a title-base sibling ("Body Parts" has
+// no "Body Parts – Reading" counterpart) but do share topic tags with other
+// worksheets phrased differently ("Body Parts" / "Parts of the Face" both
+// tagged "body parts") — strip generic tags (format/level/category words)
+// so only real topic words are left to match on.
+const TAG_STOPLIST = new Set(['worksheet','vocabulary','grammar','reading','writing','practice','listening','speaking','esl','english','a1','a2','b1','b2','c1','reading comprehension','comprehension','labeling','label and learn','language focus']);
+function meaningfulTags(tagsStr) {
+  return (tagsStr || '').split(',').map(t => t.trim().toLowerCase()).filter(t => t.length > 2 && !TAG_STOPLIST.has(t));
+}
+// Safety net beyond the static stoplist above: a tag shared by an unusually
+// large slice of the WHOLE catalog (not one level) behaves like a category
+// label in disguise ("language focus" sat on 61/176 A1 worksheets alone —
+// now in the stoplist directly) rather than a real topic. The limit has to
+// stay generous, though: a genuinely popular grammar topic spanning 3+
+// levels at ~10-12 worksheets each (e.g. "present perfect": 32 across the
+// catalog) is completely normal and must NOT be filtered out as generic —
+// that silently broke A1↔A2 present-perfect matching until this was raised.
+const TAG_FREQ_LIMIT = 45;
+function specificTags(tags, freq) {
+  return tags.filter(t => (freq.get(t) || 0) <= TAG_FREQ_LIMIT);
+}
 let _wsFileUrl = null;
 let _answerKeyUrl = null;
 let _isPremium = false;
@@ -53,11 +86,56 @@ async function loadWorksheet() {
     _isPremium = prof?.is_premium || false;
   }
 
+  // Related worksheets: matched across ALL levels (not just this one), so a
+  // learner on an A1 topic sees the same topic continue into A2/B1 as they
+  // progress — combining three signals: (1) same topic_key (only set once a
+  // quiz exists for that topic — exact, but covers a minority of worksheets);
+  // (2) the title's "Topic – Type" convention (e.g. "Comparative Adjectives
+  // – Practice" / "– Reading Practice" share the "comparative adjectives"
+  // base, even across levels — "Daily Routines" at A1 and "Daily Routines –
+  // Vocabulary (A2)" both reduce to "daily routines"); (3) shared specific
+  // topic tags, for cases like Vocabulary worksheets that rarely have a
+  // same-titled sibling ("Body Parts" has no "Body Parts – Reading") but do
+  // share tags with worksheets on a similar theme phrased differently
+  // ("Body Parts" / "Parts of the Face" both tagged "body parts").
   let quiz = null;
-  if (data.topic_key) {
-    const { data: quizRow } = await sb.from('quizzes').select('*').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle();
-    quiz = quizRow || null;
+  let related = [];
+  const quizPromise = data.topic_key
+    ? sb.from('quizzes').select('*').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle()
+    : Promise.resolve({ data: null });
+  const base = titleBase(data.title);
+  const myTags = meaningfulTags(data.tags);
+  const [{ data: quizRow }, { data: allRows }] = await Promise.all([
+    quizPromise,
+    sb.from('worksheets').select('id,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id),
+  ]);
+  quiz = quizRow || null;
+  const rows = allRows || [];
+
+  const byTopicKey = data.topic_key ? rows.filter(r => r.topic_key === data.topic_key) : [];
+  const byTitle = base ? rows.filter(r => titleBase(r.title) === base) : [];
+  let byTag = [];
+  if (myTags.length) {
+    const freq = new Map();
+    for (const r of rows) for (const t of meaningfulTags(r.tags)) freq.set(t, (freq.get(t) || 0) + 1);
+    const myTagsSpecific = specificTags(myTags, freq);
+    byTag = myTagsSpecific.length
+      ? rows.filter(r => specificTags(meaningfulTags(r.tags), freq).some(t => myTagsSpecific.includes(t)))
+      : [];
   }
+  // byTopicKey/byTitle are the exact-same-topic "set" siblings (e.g. this
+  // worksheet's Reading/Writing/Practice counterparts) — flagged so
+  // renderRelated can list them first and style them as the featured set,
+  // vs. byTag matches which are merely thematically related. Restricted to
+  // the SAME level: the quiz itself is scoped per topic_key+level (a "set"
+  // is Grammar+Reading+Writing+Practice at one level, same as the quiz
+  // bundle), so a same-title worksheet at a different level is a topic
+  // continuation to explore, not literally part of this set.
+  const setMatchIds = new Set([...byTopicKey, ...byTitle].filter(r => r.level === data.level).map(r => r.id));
+  const seen = new Set();
+  related = [...byTopicKey, ...byTitle, ...byTag]
+    .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
+    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id) }));
 
   document.title = `${esc(data.title)} — Workshido`;
   const wsMetaDescription = data.description || `${data.level} ${data.category} worksheet. Free download.`;
@@ -204,6 +282,101 @@ async function loadWorksheet() {
         ${starSection}
       </div>
     </div>`;
+
+  renderRelated(related, lvlCls, data.category, data.level);
+}
+
+// Groups related worksheets first by level (A1 → C1, so a learner sees the
+// same topic continue as they progress), then by category within each level
+// — a visitor reading a Reading worksheet should see "try the Grammar/
+// Writing version" as a distinct next step, not buried among more
+// worksheets of the same type they already have. Within the CURRENT level,
+// categories other than the one they're already reading lead; the current
+// category trails last. Other levels use the plain topic order since
+// there's no "already looking at this" bias for a level the visitor isn't on.
+const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1'];
+const CATEGORY_ORDER = ['Grammar', 'Practice', 'Reading', 'Writing', 'Vocabulary', 'Listening', 'Speaking'];
+// The DB only has 5 category values (Grammar/Reading/Writing/Vocabulary/
+// Speaking) — "Practice" isn't one, so drill-style worksheets ("Possessive
+// Adjectives – Practice", "Comparative Adjectives – Practice Time") sit
+// under Grammar alongside explainer-style ones. Split them into their own
+// group by title wording instead, so the two don't read as one bucket.
+function displayCategory(r) {
+  return (r.category === 'Grammar' && /\bpractice\b/i.test(r.title || '')) ? 'Practice' : (r.category || 'Other');
+}
+function renderRelated(related, lvlCls, currentCategory, currentLevel) {
+  const section = document.getElementById('relatedSection');
+  const grid = document.getElementById('relatedGrid');
+  if (!section || !grid || !related.length) return;
+
+  const levelGroups = new Map();
+  for (const r of related) {
+    const lvl = r.level || 'Other';
+    if (!levelGroups.has(lvl)) levelGroups.set(lvl, []);
+    levelGroups.get(lvl).push(r);
+  }
+  // Current level always leads. After that, other levels are ordered by how
+  // close they are on the CEFR ladder (A2 view: B1 next, then A1 — not
+  // always ascending A1→C1) since "what's the next step up" is more useful
+  // than a fixed alphabetical march; ties (e.g. from A2, B1 and A1 are both
+  // 1 step away) favor the higher level as the more natural "next step".
+  const curIdx = LEVEL_ORDER.indexOf(currentLevel);
+  const orderedLevels = [...levelGroups.keys()].sort((a, b) => {
+    if (a === currentLevel) return -1;
+    if (b === currentLevel) return 1;
+    const ia = LEVEL_ORDER.indexOf(a), ib = LEVEL_ORDER.indexOf(b);
+    const da = (ia === -1 || curIdx === -1) ? 99 : Math.abs(ia - curIdx);
+    const db = (ib === -1 || curIdx === -1) ? 99 : Math.abs(ib - curIdx);
+    if (da !== db) return da - db;
+    return ib - ia; // tie: higher level first
+  });
+
+  const cardHtml = r => {
+    const rLvlCls = LEVEL_CLASS[r.level] || lvlCls;
+    const thumb = r.thumbnail_url
+      ? `<img src="${r.thumbnail_url}" alt="${esc(r.title)}" loading="lazy">`
+      : `<div class="related-thumb-placeholder">📄</div>`;
+    // Same-topic "set" siblings (this worksheet's Reading/Writing/Practice
+    // counterparts) get a distinct featured treatment so they read as "the
+    // rest of this set" at a glance, not just another suggestion in the pile.
+    // The strip sits above the thumbnail, never over it, so it never covers
+    // the worksheet's own printed title in the preview image.
+    const setBadge = r._setMatch ? `<div class="set-match-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Complete the set</div>` : '';
+    return `<a href="workshido-worksheet.html?id=${r.id}" class="related-card${r._setMatch ? ' set-match' : ''}">
+      ${setBadge}
+      <div class="related-thumb">${thumb}</div>
+      <div class="related-body">
+        <div class="related-badges">
+          <span class="badge-level ${rLvlCls}">${r.level}</span>
+          <span class="badge-cat">${esc(displayCategory(r))}</span>
+        </div>
+        <div class="related-name">${esc(r.title)}</div>
+      </div>
+    </a>`;
+  };
+
+  // One flowing row of cards per level (wrapping left-to-right, no per-
+  // category sub-blocks/headers) — the category is still visible on each
+  // card's own badge. Same-topic "set" siblings always lead within their
+  // level group; after that, within the worksheet's own level, its own
+  // category trails last, and other levels use the plain topic order.
+  const sortForLevel = (items, biasCurrentCategory) => [...items].sort((a, b) => {
+    if (a._setMatch !== b._setMatch) return a._setMatch ? -1 : 1;
+    const ca = displayCategory(a), cb = displayCategory(b);
+    if (biasCurrentCategory) {
+      if (ca === currentCategory && cb !== currentCategory) return 1;
+      if (cb === currentCategory && ca !== currentCategory) return -1;
+    }
+    const ia = CATEGORY_ORDER.indexOf(ca), ib = CATEGORY_ORDER.indexOf(cb);
+    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  });
+
+  grid.innerHTML = orderedLevels.map(lvl => `
+    <div class="related-level-group">
+      <h2 class="related-level-title"><span class="badge-level ${LEVEL_CLASS[lvl] || lvlCls}">${esc(lvl)}</span></h2>
+      <div class="related-grid">${sortForLevel(levelGroups.get(lvl), lvl === currentLevel).map(cardHtml).join('')}</div>
+    </div>`).join('');
+  section.style.display = '';
 }
 
 // Focus management for modals: remember what had focus before opening so

@@ -499,6 +499,16 @@ function runSearch(value) {
   searchQuery = value.trim();
   if (searchInput.value !== searchQuery) searchInput.value = searchQuery;
   if (miniSearchInput.value !== searchQuery) miniSearchInput.value = searchQuery;
+  // A search is an intent to look across the whole catalog — a leftover topic/category
+  // filter from wherever the user was browsing (e.g. a "Present Simple" topic view) would
+  // otherwise silently AND with the query and could hide every result (searching "present
+  // perfect" while still scoped to "Present Simple" matches nothing, with no clue why).
+  if (searchQuery && (activeTopic !== 'all' || activeCategory !== 'all')) {
+    activeTopic = 'all'; activeTopicLabel = '';
+    activeCategory = 'all';
+    document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+    syncCategoryChips();
+  }
   syncUrl();
   filterAndRender();
   if (searchQuery) window.wsTrack?.('search_submitted', { query: searchQuery, results: _lastFiltered.length });
