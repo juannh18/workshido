@@ -63,6 +63,13 @@ function isDefaultView() {
   return activeLevel === 'all' && activeCategory === 'all' && activeTopic === 'all' && !searchQuery;
 }
 
+// Landed on a level with no other filter yet (e.g. the A1 chip, or
+// ?level=A1) — same "curated rows" idea as the default view, but broken
+// out by category within that one level instead of by level.
+function isLevelOnlyView() {
+  return activeLevel !== 'all' && activeCategory === 'all' && activeTopic === 'all' && !searchQuery;
+}
+
 // allWorksheets is already sorted newest-first (the initial query orders by
 // created_at desc), so filtering it per group and taking the first 5 gives
 // the latest 5 of that group without needing to re-sort — unless the sort
@@ -100,6 +107,60 @@ function latestRowSeeAll(type, value) {
   if (type === 'level') { activeLevel = value; syncLevelChips(); }
   else { activeCategory = value; syncCategoryChips(); }
   resetSearch();
+  syncUrl();
+  filterAndRender();
+  document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Level-only view: same 5-per-row idea as renderLatestRows(), scoped to
+//    one CEFR level and split by category instead of by level. "Practice" is
+//    matched by title/tag (like the "Practice worksheets" sidebar item) since
+//    it isn't a real category value in the DB — drill-style worksheets are
+//    stored as Grammar. Excluded from the Grammar row for the same reason
+//    the worksheet detail page splits them out: otherwise a "X – Practice"
+//    Grammar worksheet would show up in both rows.
+const LEVEL_ROW_LABELS = ['Vocabulary', 'Grammar', 'Reading', 'Writing', 'Practice'];
+
+function levelRowMatches(w, label) {
+  const isPractice = wsMatchesTerms(w, ['practice']);
+  if (label === 'Practice') return isPractice;
+  return (w.category || '').toLowerCase() === label.toLowerCase() && !isPractice;
+}
+
+function renderLevelRows(level) {
+  const container = document.getElementById('latestRows');
+  if (!container) return;
+  const sort = document.getElementById('sortSelect')?.value || 'newest';
+  const rowsHtml = LEVEL_ROW_LABELS.map(label => {
+    let items = allWorksheets.filter(w => w.level === level && levelRowMatches(w, label));
+    if (sort === 'downloads') items = [...items].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+    items = items.slice(0, 5);
+    if (!items.length) return '';
+    return `<div class="latest-row">
+      <div class="latest-row-header">
+        <span class="latest-row-title">${label}</span>
+        <button type="button" class="latest-row-seeall" onclick="levelRowSeeAll('${label}')">See all →</button>
+      </div>
+      <div class="card-grid">${items.map(buildCard).join('')}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+  container.innerHTML = rowsHtml;
+}
+
+function levelRowSeeAll(label) {
+  // "Practice" filters via activeTopic (title/tag match), same mechanism as
+  // the sidebar's "Practice worksheets" item — there's no real category to
+  // filter on. Every other row is a real category. Level stays as-is.
+  if (label === 'Practice') {
+    activeCategory = 'all';
+    activeTopic = ['practice'];
+    activeTopicLabel = 'Practice worksheets';
+  } else {
+    activeCategory = label;
+    activeTopic = 'all';
+    activeTopicLabel = '';
+  }
+  syncCategoryChips();
   syncUrl();
   filterAndRender();
   document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
@@ -617,6 +678,16 @@ function filterAndRender() {
     if (pagination)   pagination.style.display = 'none';
     if (contentCount) contentCount.textContent = `${filtered.length} worksheet${filtered.length !== 1 ? 's' : ''}`;
     renderLatestRows();
+  } else if (isLevelOnlyView()) {
+    // Same idea, one level deep: a level with no category/topic/search yet
+    // shows its own "latest 5 per category" rows instead of jumping
+    // straight to one flat paginated list of every category mixed together.
+    if (latestRows)  latestRows.style.display = '';
+    if (cardGrid)     cardGrid.style.display = 'none';
+    if (catalogLabel) catalogLabel.style.display = 'none';
+    if (pagination)   pagination.style.display = 'none';
+    if (contentCount) contentCount.textContent = `${filtered.length} worksheet${filtered.length !== 1 ? 's' : ''}`;
+    renderLevelRows(activeLevel);
   } else {
     if (latestRows)  latestRows.style.display = 'none';
     if (cardGrid)     cardGrid.style.display = '';
