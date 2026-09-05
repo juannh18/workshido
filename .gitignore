@@ -5,5 +5,22 @@ node_modules/
 .netlify/netlify.toml
 .netlify/functions/
 .netlify/db/
+.netlify/edge-functions-dist/
+.netlify/edge-functions-import-map.json
 deno.lock
-tools/__pycache__/
+__pycache__/
+
+# Ephemeral worksheet-upload pipeline artifacts (manifests, per-batch verify
+# renders, TE/quiz build intermediates) — real output lands in R2/Supabase,
+# these are just scratch on the way there. See CLAUDE.md pipeline section.
+tools/manifest*.json
+tools/te_content/
+tools/te_output/
+tools/quiz_content/
+tools/quiz_output/
+tools/scratch_dl/
+tools/png_audit.json
+tools/regenerate_a4_log.json
+tools/*backup*.html
+/te_*.html
+Usersjuand*/
