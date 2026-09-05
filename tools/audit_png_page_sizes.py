@@ -10,16 +10,17 @@ Escribe el resultado en tools/manifest.json bajo la clave "png_audit" (no se
 sobreescribe el resto del archivo si ya existe).
 """
 import sys, io, json, os
-import requests, fitz, urllib3
-urllib3.disable_warnings()
+import pip_system_certs.wrapt_requests  # noqa: usa el almacén de certificados de Windows en vez de desactivar la verificación TLS
+import requests, fitz
 
-SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co'
-SERVICE_KEY  = 'REDACTED_SUPABASE_SERVICE_KEY'
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+from env_secrets import SUPABASE_URL, SERVICE_KEY
+
 H = {'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
 
 A4_WIDTH, A4_HEIGHT = 595.28, 841.89
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 def main():
     rows = []
@@ -32,7 +33,7 @@ def main():
             params={'select': 'id,title,file_url,category,tags',
                      'order': 'created_at.asc',
                      'limit': str(page_size), 'offset': str(offset)},
-            verify=False)
+            )
         batch = res.json()
         if not isinstance(batch, list) or not batch:
             break
@@ -48,7 +49,7 @@ def main():
         if not url:
             continue
         try:
-            d = requests.get(url, verify=False, timeout=30)
+            d = requests.get(url, timeout=30)
             doc = fitz.open(stream=io.BytesIO(d.content), filetype='pdf')
         except Exception as e:
             print(f'ERROR {r["title"]}: {e}')
@@ -74,7 +75,6 @@ def main():
     with open(manifest_path, 'w', encoding='utf-8') as f:
         json.dump({'candidates': png_based}, f, indent=2, ensure_ascii=False)
     print(f'Guardado: {manifest_path}')
-
 
 if __name__ == '__main__':
     main()

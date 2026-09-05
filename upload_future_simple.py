@@ -8,8 +8,7 @@ from PIL import Image
 
 warnings.filterwarnings('ignore')  # suppress SSL warnings
 
-SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co'
-SERVICE_KEY  = 'REDACTED_SUPABASE_SERVICE_KEY'
+from env_secrets import SUPABASE_URL, SERVICE_KEY
 
 HEADERS = {
     'apikey': SERVICE_KEY,

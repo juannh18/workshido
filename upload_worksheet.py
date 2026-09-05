@@ -1,9 +1,7 @@
 import requests, json, os, uuid
 from datetime import datetime
 
-SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co'
-# Using service role key for server-side upload
-SERVICE_KEY  = 'REDACTED_SUPABASE_SERVICE_KEY'
+from env_secrets import SUPABASE_URL, SERVICE_KEY
 
 HEADERS_AUTH = {
     'apikey': SERVICE_KEY,

@@ -8,21 +8,21 @@ páginas del PDF (imagen presente) y del TE (2 páginas, texto WORKSHIDO).
 Correr con PYTHONIOENCODING=utf-8 si la consola es cp1252.
 """
 import sys, io
-import requests, fitz, urllib3
-urllib3.disable_warnings()
+import pip_system_certs.wrapt_requests  # noqa: usa el almacén de certificados de Windows en vez de desactivar la verificación TLS
+import requests, fitz
 
-SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co'
-SERVICE_KEY  = 'REDACTED_SUPABASE_SERVICE_KEY'
+import sys as _sys, os as _os
+_sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+from env_secrets import SUPABASE_URL, SERVICE_KEY
+
 H = {'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
-
 
 def main(n):
     res = requests.get(
         f'{SUPABASE_URL}/rest/v1/worksheets',
         headers=H,
         params={'select': 'title,file_url,thumbnail_url,teacher_edition_url,is_free,category,tags',
-                'order': 'created_at.desc', 'limit': str(n)},
-        verify=False)
+                'order': 'created_at.desc', 'limit': str(n)})
     rows = res.json()
     print(f'{len(rows)} filas mas recientes:\n')
     problems = 0
@@ -35,7 +35,7 @@ def main(n):
             if not url:
                 print(f'   {label}: (sin url)')
                 continue
-            d = requests.get(url, verify=False)
+            d = requests.get(url)
             info = f'{d.status_code} {len(d.content)}b'
             ok = d.status_code == 200
             if label in ('pdf', 'te') and ok:
@@ -55,7 +55,6 @@ def main(n):
         print()
     print('TODO OK' if problems == 0 else f'{problems} PROBLEMAS ENCONTRADOS')
     return problems
-
 
 if __name__ == '__main__':
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 6

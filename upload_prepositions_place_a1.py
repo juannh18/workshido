@@ -6,8 +6,7 @@ para que aparezcan de ultimas en el home (orden: created_at desc).
 import requests, uuid, warnings
 warnings.filterwarnings('ignore')
 
-SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co'
-SERVICE_KEY  = 'REDACTED_SUPABASE_SERVICE_KEY'
+from env_secrets import SUPABASE_URL, SERVICE_KEY
 
 HEADERS = {
     'apikey': SERVICE_KEY,
@@ -51,7 +50,6 @@ WORKSHEETS = [
     },
 ]
 
-
 def upload_pdf(local_path, storage_path):
     with open(local_path, 'rb') as f:
         res = requests.post(
@@ -63,7 +61,6 @@ def upload_pdf(local_path, storage_path):
         print(f'  ERROR PDF upload: {res.status_code} {res.text[:200]}')
         return None
     return f'{SUPABASE_URL}/storage/v1/object/public/worksheets/{storage_path}'
-
 
 def upload_thumb(local_path, storage_path):
     with open(local_path, 'rb') as f:
@@ -77,7 +74,6 @@ def upload_thumb(local_path, storage_path):
         return None
     return f'{SUPABASE_URL}/storage/v1/object/public/worksheets/{storage_path}'
 
-
 def insert_worksheet(record):
     res = requests.post(
         f'{SUPABASE_URL}/rest/v1/worksheets',
@@ -85,7 +81,6 @@ def insert_worksheet(record):
         json=record, verify=False
     )
     return res.status_code, res.text[:300]
-
 
 for ws in WORKSHEETS:
     print(f'\n{"="*60}')

@@ -5,8 +5,8 @@ import fitz
 
 requests.packages.urllib3.disable_warnings()
 
-SUPABASE_URL = 'https://mhbgxdsdaalvtgobnvbh.supabase.co'
-SERVICE_KEY  = 'REDACTED_SUPABASE_SERVICE_KEY'
+from env_secrets import SUPABASE_URL, SERVICE_KEY
+
 HEADERS_AUTH = {'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
 DL = r'C:\Users\juand\Downloads'
 
