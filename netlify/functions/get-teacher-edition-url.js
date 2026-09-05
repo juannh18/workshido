@@ -20,13 +20,7 @@ exports.handler = async (event) => {
     const { data: ws } = await sb.from('worksheets').select('teacher_edition_url').eq('id', worksheetId).single();
     if (!ws?.teacher_edition_url) return { statusCode: 404, body: JSON.stringify({ error: 'No Teacher Edition for this worksheet' }) };
 
-    const m = ws.teacher_edition_url.match(/\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/);
-    if (!m) return { statusCode: 500, body: JSON.stringify({ error: 'Unexpected file path' }) };
-
-    const { data: signed, error: signErr } = await sb.storage.from(m[1]).createSignedUrl(m[2], 60);
-    if (signErr || !signed) return { statusCode: 500, body: JSON.stringify({ error: 'Could not sign URL' }) };
-
-    return { statusCode: 200, body: JSON.stringify({ url: signed.signedUrl }) };
+    return { statusCode: 200, body: JSON.stringify({ url: ws.teacher_edition_url }) };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }

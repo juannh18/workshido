@@ -85,6 +85,15 @@
   .badge-level.b2 { background: #EEEDFE; color: #534AB7; }
   .badge-level.c1 { background: var(--coral-50); color: var(--coral-600); }
   .badge-cat { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: var(--gray-50); color: var(--gray-600); border: 1px solid var(--gray-100); }
+  /* Category colors — deliberately distinct hues from the 5 level colors
+     above (teal/blue/amber/purple/coral) so a level+category pair sitting
+     side by side never looks like a coincidental color match. */
+  .badge-cat.cat-grammar { background: var(--green-50); color: var(--green-600); }
+  .badge-cat.cat-reading { background: #E0F2FE; color: #0369A1; }
+  .badge-cat.cat-writing { background: #FFEDD5; color: #C2410C; }
+  .badge-cat.cat-vocabulary { background: #F5EDE4; color: #8B5E34; }
+  .badge-cat.cat-speaking { background: #FAE8FF; color: #A21CAF; }
+  .badge-cat.cat-practice { background: #F1F5F9; color: #475569; }
   .badge-free { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--teal-50); color: var(--teal-600); }
 
   .ws-desc { font-size: 14px; color: var(--gray-600); line-height: 1.65; margin-bottom: 16px; }
@@ -119,6 +128,40 @@
   .quiz-key-link { font-size: 12px; color: var(--gray-300); text-align: center; margin-top: 6px; }
   .quiz-key-link a { color: #BE185D; cursor: pointer; text-decoration: none; font-weight: 600; }
   .quiz-key-link a:hover { text-decoration: underline; }
+
+  /* PREVIEW-THEN-PAYWALL — a blurred mockup of the real PDF's structure
+     (labels only, no actual content) instead of a flat locked button, so
+     the value feels tangible before asking to unlock. */
+  .te-preview { margin-top: 10px; border-radius: var(--radius-md); border: 1px solid var(--gray-100); overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+  .te-preview:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.10); transform: translateY(-1px); }
+  .te-preview-head { display: flex; align-items: center; gap: 6px; padding: 9px 14px; font-size: 12px; font-weight: 700; color: #fff; }
+  .te-preview.te-amber .te-preview-head { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+  .te-preview.te-pink .te-preview-head { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
+  .te-preview-tag { margin-left: auto; font-size: 9px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; background: rgba(255,255,255,0.25); padding: 2px 7px; border-radius: 10px; }
+  .te-preview-body { position: relative; padding: 14px 14px 48px; background: var(--white); }
+  .te-preview-label { font-size: 9.5px; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase; color: var(--gray-300); margin: 10px 0 6px; }
+  .te-preview-label:first-child { margin-top: 0; }
+  .te-preview-line { height: 9px; border-radius: 4px; background: var(--gray-100); margin-bottom: 7px; filter: blur(2.5px); }
+  .te-preview-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 60px; background: linear-gradient(to bottom, rgba(255,255,255,0), var(--white) 70%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px; }
+  .te-preview-cta { font-size: 11.5px; font-weight: 700; color: var(--white); padding: 7px 16px; border-radius: 20px; }
+  .te-preview.te-amber .te-preview-cta { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+  .te-preview.te-pink .te-preview-cta { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
+
+  /* QUIZ PREP TIP — sits right where the user decides whether to take the
+     quiz, so it can answer "am I ready for this?" at the moment it matters,
+     instead of on a page nobody visits ahead of time. Steps as scannable
+     chips (not a run-on sentence) so it reads in ~1 second next to the CTA. */
+  .quiz-prep-tip { font-size: 11px; color: var(--gray-600); background: #FDF2F8; border: 1px solid #FBCFE8; border-radius: var(--radius-sm); padding: 9px 10px; margin-top: 8px; }
+  .quiz-prep-tip .prep-label { font-size: 10px; font-weight: 800; letter-spacing: 0.3px; color: #9D174D; text-transform: uppercase; margin-bottom: 5px; }
+  .prep-steps { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+  .prep-step { display: inline-flex; align-items: center; gap: 4px; background: #fff; border: 1px solid #FBCFE8; border-radius: 20px; padding: 2px 9px 2px 5px; font-size: 10.5px; font-weight: 700; color: var(--gray-900); }
+  .prep-step .num { background: #BE185D; color: #fff; width: 14px; height: 14px; border-radius: 50%; font-size: 8.5px; display: flex; align-items: center; justify-content: center; }
+  .prep-arrow { color: #F0ABCE; font-weight: 700; }
+  .prep-extra { color: var(--gray-300); font-size: 10.5px; }
+  .quiz-prep-tip .prep-line { line-height: 1.5; }
+  .quiz-prep-tip .prep-line b { color: #9D174D; }
+  .quiz-prep-tip a { color: #BE185D; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .quiz-prep-tip a:hover { text-decoration: underline; }
 
   /* PRINT BUTTON */
   .btn-print { width: 100%; padding: 10px; margin-top: 8px; background: transparent; border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--blue-600); cursor: pointer; transition: all 0.15s; }
@@ -237,7 +280,7 @@
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-worksheet.js?v=20260803i" defer></script>
+<script src="js/workshido-worksheet.js?v=20260904" defer></script>
 
 <!-- Login modal -->
 <div class="modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">
@@ -271,5 +314,6 @@
 </div>
 <script src="mascot.js" defer></script>
 <script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>

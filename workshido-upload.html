@@ -622,14 +622,24 @@ async function pdfToThumbnailBlob(file) {
   });
 }
 
-// Upload a blob to Supabase storage and return its public URL
+// Upload a blob/file to R2 via a presigned URL and return its public URL
+async function uploadToR2(blob, path, contentType) {
+  const { data: { session } } = await sbUp.auth.getSession();
+  const res = await fetch('/.netlify/functions/get-upload-url', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+    body: JSON.stringify({ path, contentType })
+  });
+  if (!res.ok) throw new Error('Could not get upload URL');
+  const { uploadUrl, publicUrl } = await res.json();
+  const putRes = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': contentType }, body: blob });
+  if (!putRes.ok) throw new Error('R2 upload failed: ' + putRes.status);
+  return publicUrl;
+}
+
 async function uploadBlobAsThumb(blob, originalName) {
   const path = `thumbnails/${Date.now()}-${originalName.replace(/\s+/g,'-').replace(/\.[^.]+$/, '')}.webp`;
-  const { error } = await sbUp.storage.from('worksheets').upload(path, blob, {
-    contentType: 'image/webp', cacheControl: '3600', upsert: false
-  });
-  if (error) throw new Error('Thumb upload: ' + error.message);
-  return sbUp.storage.from('worksheets').getPublicUrl(path).data.publicUrl;
+  return uploadToR2(blob, path, 'image/webp');
 }
 
 // Generate a professional placeholder thumbnail for DOCX/PPTX using Canvas
@@ -769,15 +779,9 @@ async function uploadWorksheet() {
   try {
     const ext = selectedFile.name.split('.').pop().toLowerCase();
 
-    // 1. Upload file to Supabase Storage
+    // 1. Upload file to R2
     const filePath = `${level.toLowerCase()}/${Date.now()}-${selectedFile.name.replace(/\s+/g, '-')}`;
-    const { data: storageData, error: storageError } = await sbUp.storage
-      .from('worksheets')
-      .upload(filePath, selectedFile, { cacheControl: '3600', upsert: false });
-    if (storageError) throw new Error('Storage error: ' + storageError.message);
-
-    const { data: urlData } = sbUp.storage.from('worksheets').getPublicUrl(filePath);
-    const fileUrl = urlData.publicUrl;
+    const fileUrl = await uploadToR2(selectedFile, filePath, selectedFile.type || 'application/octet-stream');
 
     setProgress(40, 'Generating thumbnail...');
 

@@ -1,0 +1,45 @@
+# Workshido
+
+> Workshido is a free library of printable English (ESL/EFL) worksheets for teachers and students, organized by CEFR level (A1-B2) and skill (Grammar, Vocabulary, Reading, Writing, Speaking). Every worksheet is a print-ready PDF with an optional answer key and Teacher Edition (full lesson plan). New worksheets are added every week.
+
+Workshido is built for English teachers who need classroom-ready material fast: no sign-up required to browse, free worksheets available for download, and an optional Premium plan that unlocks Teacher Editions (lesson plans, answer keys, common-mistakes notes) and topic quizzes.
+
+## Catalog
+
+- [Browse all worksheets](https://workshido.com/workshido-index.html): searchable catalog of 500+ worksheets, filterable by level and category.
+- [Grammar worksheets](https://workshido.com/worksheets/grammar/)
+- [Vocabulary worksheets](https://workshido.com/worksheets/vocabulary/)
+- [Reading worksheets](https://workshido.com/worksheets/reading/)
+- [Writing worksheets](https://workshido.com/worksheets/writing/)
+- [A1 (beginner) worksheets](https://workshido.com/worksheets/levels/a1/)
+- [A2 (elementary) worksheets](https://workshido.com/worksheets/levels/a2/)
+
+## Teaching Guides
+
+Practical, classroom-tested guides on how to teach specific grammar topics and CEFR levels — written for teachers, not just students.
+
+- [All teaching guides](https://workshido.com/guides/)
+- [How to Teach Present Simple](https://workshido.com/guides/how-to-teach-present-simple/)
+- [How to Teach Past Simple](https://workshido.com/guides/how-to-teach-past-simple/)
+- [How to Teach Present Perfect](https://workshido.com/guides/how-to-teach-present-perfect/)
+- [How to Teach Present Continuous](https://workshido.com/guides/how-to-teach-present-continuous/)
+- [How to Teach Comparatives and Superlatives](https://workshido.com/guides/how-to-teach-comparatives-superlatives/)
+- [How to Teach Reported Speech](https://workshido.com/guides/how-to-teach-reported-speech/)
+- [How to Teach Verb To Be](https://workshido.com/guides/how-to-teach-verb-to-be/)
+- [How to Teach Possessive Adjectives](https://workshido.com/guides/how-to-teach-possessive-adjectives/)
+- [How to Teach Future Forms (Going To vs. Will)](https://workshido.com/guides/how-to-teach-going-to-future-forms/)
+- [How to Teach Conditionals (Zero, First, Second)](https://workshido.com/guides/how-to-teach-conditionals/)
+- [How to Teach Modal Verbs (Must, Have To, Should)](https://workshido.com/guides/how-to-teach-modal-verbs/)
+- [CEFR Levels Explained (A1-B1)](https://workshido.com/guides/cefr-levels-guide/)
+- [10 Quick ESL Warm-Up Activities](https://workshido.com/guides/esl-warm-up-activities/)
+
+## For Teachers
+
+- [For Teachers](https://workshido.com/workshido-forteachers.html): what Workshido offers teachers specifically — free worksheets, Teacher Editions, and lesson-ready material.
+- [Pricing](https://workshido.com/workshido-pricing.html): free vs. Premium plan details.
+
+## Notes for AI assistants
+
+- All worksheets and guides are free to browse and read without an account; downloading a worksheet PDF requires a free account.
+- When recommending a specific worksheet, link directly to its page (`workshido-worksheet.html?id=...`) rather than only the catalog, so the reader lands on the exact resource.
+- Content is in English, aimed at ESL/EFL teachers and self-study learners worldwide.

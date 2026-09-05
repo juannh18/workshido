@@ -11,8 +11,23 @@ async function loadProfile() {
   const { data: { user } } = await sb2.auth.getUser();
   if (!user) { window.location.href = 'workshido-login.html'; return; }
 
+  const isJuan = user.email === 'juanda.5790@hotmail.com';
   const uploadSection = document.getElementById('uploadSection');
-  if (uploadSection) uploadSection.style.display = (user.email === 'juanda.5790@hotmail.com') ? '' : 'none';
+  if (uploadSection) uploadSection.style.display = isJuan ? '' : 'none';
+
+  // The uploader dashboard (stats + "my worksheets") only makes sense for
+  // Juan — uploading is admin-only, so everyone else's would always be
+  // empty. Regular subscribers get an account/plan overview instead.
+  const statsOverview = document.getElementById('statsOverview');
+  const myWsSection = document.getElementById('my-worksheets');
+  const subscriberOverview = document.getElementById('subscriberOverview');
+  const navMyWsLink = document.getElementById('navMyWsLink');
+  const sidebarMyWsLink = document.getElementById('sidebarMyWsLink');
+  if (statsOverview) statsOverview.style.display = isJuan ? '' : 'none';
+  if (myWsSection) myWsSection.style.display = isJuan ? '' : 'none';
+  if (subscriberOverview) subscriberOverview.style.display = isJuan ? 'none' : '';
+  if (navMyWsLink) navMyWsLink.style.display = isJuan ? '' : 'none';
+  if (sidebarMyWsLink) sidebarMyWsLink.style.display = isJuan ? '' : 'none';
 
   const name = user.user_metadata?.full_name || user.email;
   const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -20,7 +35,92 @@ async function loadProfile() {
   document.querySelector('.profile-name').textContent  = name;
   document.querySelector('.profile-email').textContent = user.email;
   document.querySelector('.nav-avatar').textContent    = initials;
-  document.querySelector('.plan-badge').textContent    = '✓ Free';
+
+  const { data: profile } = await sb2
+    .from('profiles')
+    .select('marketing_consent, is_premium, lemon_portal_url')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  const planBadge = document.querySelector('.plan-badge');
+  if (profile?.is_premium) {
+    planBadge.textContent = '⭐ Premium';
+    planBadge.classList.add('premium');
+  } else {
+    planBadge.textContent = '✓ Free';
+  }
+
+  // "Billing & plan" only becomes a real "manage subscription" link once we
+  // have this user's Lemon Squeezy portal URL (arrives on their first
+  // webhook event after this field was added — see lemon-webhook.js). Until
+  // then it falls back to the pricing page rather than a dead end.
+  const billingLink = document.getElementById('billingLink');
+  const billingLabel = document.getElementById('billingLinkLabel');
+  if (profile?.is_premium && profile?.lemon_portal_url) {
+    billingLink.href = profile.lemon_portal_url;
+    billingLink.target = '_blank';
+    billingLink.rel = 'noopener';
+    billingLabel.textContent = 'Manage subscription';
+  } else if (profile?.is_premium) {
+    billingLabel.textContent = 'Billing & plan';
+  }
+
+  // Same plan state, rendered as the main "Your account" card for regular
+  // (non-Juan) subscribers — see subscriberOverview in the HTML.
+  const acctPlanTitle = document.getElementById('acctPlanTitle');
+  const acctPlanDesc = document.getElementById('acctPlanDesc');
+  const acctPlanCta = document.getElementById('acctPlanCta');
+  if (acctPlanTitle && acctPlanDesc && acctPlanCta) {
+    if (profile?.is_premium) {
+      acctPlanTitle.textContent = '⭐ Premium plan — active';
+      acctPlanDesc.textContent = 'You have full access to the Teacher Edition and the graded Quiz for every worksheet.';
+      acctPlanCta.removeAttribute('target');
+      acctPlanCta.removeAttribute('rel');
+      if (profile?.lemon_portal_url) {
+        acctPlanCta.textContent = 'Manage subscription';
+        acctPlanCta.href = profile.lemon_portal_url;
+        acctPlanCta.target = '_blank';
+        acctPlanCta.rel = 'noopener';
+      } else {
+        acctPlanCta.textContent = 'Billing & plan';
+        acctPlanCta.href = 'workshido-pricing.html';
+      }
+    } else {
+      acctPlanTitle.textContent = 'Free plan';
+      acctPlanDesc.textContent = 'Upgrade to Premium to unlock the Teacher Edition and the full Quiz for every worksheet.';
+      acctPlanCta.textContent = 'Upgrade to Premium';
+      acctPlanCta.href = 'workshido-pricing.html';
+      acctPlanCta.removeAttribute('target');
+      acctPlanCta.removeAttribute('rel');
+    }
+  }
+
+  const marketingToggle = document.getElementById('marketingToggle');
+  if (marketingToggle) {
+    marketingToggle.checked = !!profile?.marketing_consent;
+    marketingToggle.addEventListener('change', async () => {
+      const desired = marketingToggle.checked;
+      marketingToggle.disabled = true;
+      const { error } = await sb2.rpc('set_marketing_consent', {
+        p_consent: desired,
+        p_version: 'v1',
+        p_source: 'profile_settings',
+      });
+      marketingToggle.disabled = false;
+      if (error) {
+        console.error('set_marketing_consent failed', error);
+        marketingToggle.checked = !desired; // revert — the save didn't actually happen
+        return;
+      }
+      const saved = document.getElementById('marketingSaved');
+      saved.style.display = 'inline';
+      setTimeout(() => { saved.style.display = 'none'; }, 2000);
+    });
+  }
+
+  // Uploading is Juan-only, so the "my worksheets" query/render below only
+  // applies to his account — everyone else already saw subscriberOverview.
+  if (!isJuan) return;
 
   const { data: worksheets } = await sb2
     .from('worksheets')

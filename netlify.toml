@@ -10,6 +10,176 @@
   path = "/api/geo"
   function = "geo"
 
+# Internal-only pipeline scripts (Python upload/build tools) were being
+# served as plain static files — a hardcoded Supabase secret key and R2
+# secret were downloadable straight from the live site until this was found
+# and fixed (see env_secrets.py). No [build] publish dir exists to scope
+# what's public, so block these explicitly instead; force=true because a
+# real file exists at each path and would otherwise be served directly.
+# New internal scripts should live under tools/ (already blocked below),
+# never loose at the repo root.
+[[redirects]]
+  from = "/tools/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.env"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/env_secrets.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/create_pdf_worksheet.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/create_template.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/create_worksheet.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/fix_descriptions.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/fix_tags.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/gen_favicon.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/gen_past_simple_writing_v3.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/gen_past_simple_writing_v4.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/gen_worksheet_past_simple_writing.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/generate_worksheet_image.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_dailyroutine_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_demonstratives_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_future_simple.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_going_to_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_havegothasgot_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_imperatives_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_possessiveadjectives_articles_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_possessivescase_pluralnouns_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_prepositions_place_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_there_is_are_a1.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/upload_worksheet.py"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/check-thumbnails.js"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/add-worksheet-tag.js"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/fix-thumbnails.js"
+  to = "/"
+  status = 404
+  force = true
+
 [[redirects]]
   from = "/sitemap.xml"
   to = "/.netlify/functions/sitemap"
@@ -154,7 +324,7 @@
     # enforcing Content-Security-Policy. 'unsafe-inline' is required for now
     # since the site relies heavily on inline <script>/onclick — tightening
     # that is a separate, bigger refactor, not a one-line change.
-    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: https://*.supabase.co; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://accounts.google.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: https://*.supabase.co https://files.workshido.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://files.workshido.com https://accounts.google.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
 
 [[headers]]
   for = "/*.html"

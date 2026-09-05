@@ -40,26 +40,123 @@ let activeCategory = 'all';
 let activeTopic = 'all';      // 'all' | array of matcher terms
 let activeTopicLabel = '';
 let searchQuery = '';
+// Set (to the level that was dropped) when a level-scoped search comes up
+// empty and gets retried against the whole catalog — see filterAndRender().
+let searchBroadenedFromLevel = '';
+
+// ── "Latest worksheets" rows — the default (no filter/search) landing view.
+//    One row per CEFR level plus a Vocabulary row, each showing the 5 most
+//    recently uploaded worksheets in that group, instead of one flat
+//    newest-first list mixing every level/category together. A row with 0
+//    matches (e.g. C1 today) is simply skipped — it appears on its own once
+//    that group has worksheets.
+const LATEST_ROWS_DEF = [
+  { label: 'Vocabulary', type: 'category', value: 'Vocabulary' },
+  { label: 'A1', type: 'level', value: 'A1' },
+  { label: 'A2', type: 'level', value: 'A2' },
+  { label: 'B1', type: 'level', value: 'B1' },
+  { label: 'B2', type: 'level', value: 'B2' },
+  { label: 'C1', type: 'level', value: 'C1' },
+];
+
+function isDefaultView() {
+  return activeLevel === 'all' && activeCategory === 'all' && activeTopic === 'all' && !searchQuery;
+}
+
+// allWorksheets is already sorted newest-first (the initial query orders by
+// created_at desc), so filtering it per group and taking the first 5 gives
+// the latest 5 of that group without needing to re-sort — unless the sort
+// dropdown is set to "Most downloaded", in which case each row re-sorts its
+// own group by downloads instead, so the rows track the chosen sort just
+// like the flat grid does.
+function renderLatestRows() {
+  const container = document.getElementById('latestRows');
+  if (!container) return;
+  const sort = document.getElementById('sortSelect')?.value || 'newest';
+  const rowsHtml = LATEST_ROWS_DEF.map(row => {
+    // Level rows exclude Vocabulary — otherwise whenever a level's most
+    // recent/downloaded uploads happen to also be its most recent/downloaded
+    // Vocabulary uploads (e.g. several new A1 word searches in a row), that
+    // level's row is just a duplicate of the Vocabulary row above it.
+    let items = allWorksheets
+      .filter(w => row.type === 'level'
+        ? w.level === row.value && (w.category || '').toLowerCase() !== 'vocabulary'
+        : (w.category || '').toLowerCase() === row.value.toLowerCase());
+    if (sort === 'downloads') items = [...items].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+    items = items.slice(0, 5);
+    if (!items.length) return '';
+    return `<div class="latest-row">
+      <div class="latest-row-header">
+        <span class="latest-row-title">${row.label}</span>
+        <button type="button" class="latest-row-seeall" onclick="latestRowSeeAll('${row.type}','${row.value}')">See all →</button>
+      </div>
+      <div class="card-grid">${items.map(buildCard).join('')}</div>
+    </div>`;
+  }).filter(Boolean).join('');
+  container.innerHTML = rowsHtml;
+}
+
+function latestRowSeeAll(type, value) {
+  if (type === 'level') { activeLevel = value; syncLevelChips(); }
+  else { activeCategory = value; syncCategoryChips(); }
+  resetSearch();
+  syncUrl();
+  filterAndRender();
+  document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
+}
 
 // ── Sidebar definition: label + matcher terms against real tags/titles.
 //    Items with 0 matching worksheets are hidden automatically.
 const SIDEBAR_SECTIONS = [
+  // Grammar topics is curated by real popularity in buildSidebar() (top N by
+  // downloads, rest behind a "See all topics" toggle) — this list only needs
+  // to be COMPLETE, not pre-sorted, so it's fine to list every real topic in
+  // the catalog even though most won't fit in the default view.
   { title: 'Grammar topics', items: [
     { label: 'Verb to be',            match: ['verb to be', 'am is are'] },
     { label: 'Present simple',        match: ['present simple', 'presentsimple'] },
     { label: 'Present continuous',    match: ['present continuous'] },
+    { label: 'Present simple vs continuous', match: ['present simple vs'] },
+    { label: 'Present perfect',       match: ['present perfect'] },
+    { label: 'Present perfect continuous', match: ['present perfect continuous'] },
+    { label: 'Present perfect vs past simple', match: ['present perfect vs'] },
     { label: 'Past simple',           match: ['past simple'] },
+    { label: 'Past continuous',       match: ['past continuous'] },
+    { label: 'Past perfect',          match: ['past perfect'] },
     { label: 'Future & going to',     match: ['going to', 'future simple', 'future plans', 'will'] },
+    { label: 'Future time clauses',   match: ['future time clauses'] },
+    { label: 'Zero conditional',      match: ['zero conditional'] },
+    { label: 'First conditional',     match: ['first conditional'] },
+    { label: 'Second conditional',    match: ['second conditional'] },
+    { label: 'First vs second conditional', match: ['first vs. second conditional', 'first vs second conditional'] },
+    { label: 'Passive voice',         match: ['passive voice'] },
+    { label: 'Reported speech',       match: ['reported speech'] },
     { label: 'Imperatives',           match: ['imperatives', 'commands'] },
     { label: 'Demonstratives',        match: ['demonstratives', 'this that these those'] },
     { label: 'Articles a/an/the',     match: ['articles', 'a an the'] },
     { label: 'Possessive adjectives', match: ['possessive adjectives', 'possessiveadjectives', 'possessives'] },
+    { label: 'Possessive pronouns',   match: ['possessive pronouns'] },
+    { label: "Possessive 's (case)",  match: ['possessive s', 'possessive case'] },
+    { label: 'Object pronouns',       match: ['object pronouns'] },
+    { label: 'Pronouns',              match: ['pronouns'] },
     { label: 'There is / There are',  match: ['there is there are', 'there is/are'] },
     { label: 'Prepositions of place', match: ['prepositions of place'] },
     { label: 'Have got / Has got',    match: ['have got'] },
-    { label: 'Modal verbs (can)',     match: ['modal', 'can and can', "can & can"] },
+    { label: 'Modal verbs: can/could', match: ['can & can', 'can and could', 'modalcan'] },
+    { label: 'Modal verbs: advice',   match: ['modal verbs of advice', 'ought to'] },
+    { label: 'Modal verbs: deduction', match: ['modal verbs of deduction'] },
+    { label: 'Modal verbs: obligation', match: ['modal verbs of obligation'] },
+    { label: 'Modal verbs: possibility', match: ['modal verbs of possibility'] },
+    { label: 'Must / Have to',        match: ['must / have to'] },
+    { label: "Should / Shouldn't",    match: ["should / shouldn't"] },
+    { label: 'Used to',               match: ['used to'] },
+    { label: 'Verb patterns',         match: ['verb patterns'] },
+    { label: 'Question words',        match: ['question words'] },
+    { label: 'Question tags',         match: ['question tags'] },
+    { label: 'Too & enough',          match: ['too and enough', 'too & enough'] },
     { label: 'Some & any',            match: ['some and any', 'some any'] },
-    { label: 'Pronouns',              match: ['pronouns'] },
+    { label: 'Quantifiers',           match: ['quantifiers'] },
+    { label: 'Adverbs of frequency',  match: ['adverbs of frequency'] },
   ]},
   { title: 'Skills', items: [
     { label: 'Reading',    cat: 'Reading' },
@@ -91,31 +188,77 @@ function resetSearch() {
   if (mini) mini.value = '';
 }
 
+// How many Grammar-topic items show by default before "See all topics"
+// (the rest still render in the DOM, just hidden — so they stay real,
+// crawlable <a href> links for SEO, not lost until a click reveals them).
+const SIDEBAR_TOP_N = 14;
+const SIDEBAR_SECTION_ICONS = { 'Grammar topics': '📘', 'Skills': '🎯', 'Topic': '🏷️' };
+const CHEVRON_SVG = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+
 function buildSidebar() {
   const aside = document.getElementById('sidebar');
   if (!aside) return;
-  let html = '';
+  let html = `<div class="sidebar-mobile-header"><span>Browse topics</span><button type="button" class="sidebar-mobile-close" aria-label="Close">✕</button></div>`;
   for (const section of SIDEBAR_SECTIONS) {
-    let itemsHtml = '';
-    for (const item of section.items) {
-      const count = item.cat
-        ? allWorksheets.filter(w => (w.category || '').toLowerCase() === item.cat.toLowerCase()).length
-        : allWorksheets.filter(w => wsMatchesTerms(w, item.match)).length;
-      if (count === 0) continue;
+    // Score every item by real demand (total downloads across its matched
+    // worksheets), not just whether it has any — a flat 40+ item list is
+    // choice paralysis, so only "Grammar topics" (the section big enough to
+    // need it) leads with what teachers actually download most and tucks
+    // the long tail behind a toggle instead of dumping it all inline.
+    let scored = section.items.map(item => {
+      const matched = item.cat
+        ? allWorksheets.filter(w => (w.category || '').toLowerCase() === item.cat.toLowerCase())
+        : allWorksheets.filter(w => wsMatchesTerms(w, item.match));
+      const downloads = matched.reduce((sum, w) => sum + (w.downloads || 0), 0);
+      return { item, count: matched.length, downloads };
+    }).filter(s => s.count > 0);
+
+    const curate = section.title === 'Grammar topics' && scored.length > SIDEBAR_TOP_N;
+    if (curate) scored = [...scored].sort((a, b) => b.downloads - a.downloads);
+    const visible = curate ? scored.slice(0, SIDEBAR_TOP_N) : scored;
+    const hidden  = curate ? scored.slice(SIDEBAR_TOP_N) : [];
+
+    // Real crawlable href (same ?cat=/?topic= scheme as syncUrl) so search
+    // engines can follow and index these filtered views, not just JS clicks.
+    // The top 3 of a curated (popularity-sorted) list get a flame instead of
+    // a plain count — makes the "sorted by real demand" idea visible at a
+    // glance rather than only implied by list order.
+    const renderItem = (s, i) => {
+      const item = s.item;
       const payload = item.cat ? `data-cat="${item.cat}"` : `data-match="${item.match.join('|')}"`;
-      // Real crawlable href (same ?cat=/?topic= scheme as syncUrl) so search
-      // engines can follow and index these filtered views, not just JS clicks.
       const href = item.cat
         ? `workshido-index.html?cat=${encodeURIComponent(item.cat)}`
         : `workshido-index.html?topic=${encodeURIComponent(item.match.join('|'))}`;
-      itemsHtml += `<a href="${href}" class="sidebar-item" ${payload} data-label="${item.label}">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg>
-        ${item.label}<span class="sidebar-count">${count}</span>
+      const popular = curate && i < 3;
+      return `<a href="${href}" class="sidebar-item${popular ? ' is-popular' : ''}" ${payload} data-label="${item.label}">
+        <span class="sidebar-item-label">${item.label}</span>
+        ${popular ? '<span class="sidebar-popular-mark">🔥</span>' : ''}
+        <span class="sidebar-count">${s.count}</span>
       </a>`;
+    };
+
+    let itemsHtml = visible.map(renderItem).join('');
+    if (hidden.length) {
+      itemsHtml += `<div class="sidebar-more" hidden>${hidden.map(renderItem).join('')}</div>
+        <button type="button" class="sidebar-toggle-more"><span class="sidebar-toggle-label">See all topics (${scored.length})</span>${CHEVRON_SVG}</button>`;
     }
-    if (itemsHtml) html += `<div class="sidebar-section"><div class="sidebar-title">${section.title}</div>${itemsHtml}</div>`;
+    const icon = SIDEBAR_SECTION_ICONS[section.title] || '';
+    if (itemsHtml) html += `<div class="sidebar-section"><div class="sidebar-title">${icon ? `<span class="sidebar-title-icon">${icon}</span>` : ''}${section.title}</div>${itemsHtml}</div>`;
   }
   aside.innerHTML = html || '<div class="sidebar-section"><div class="sidebar-title">No topics yet</div></div>';
+
+  aside.querySelector('.sidebar-mobile-close')?.addEventListener('click', closeTopicsMobile);
+
+  aside.querySelectorAll('.sidebar-toggle-more').forEach(btn => {
+    const label = btn.querySelector('.sidebar-toggle-label');
+    const collapsedText = label.textContent;
+    btn.addEventListener('click', () => {
+      const more = btn.previousElementSibling;
+      const nowHidden = more.hasAttribute('hidden');
+      if (nowHidden) { more.removeAttribute('hidden'); label.textContent = 'Show fewer topics'; btn.classList.add('expanded'); }
+      else { more.setAttribute('hidden', ''); label.textContent = collapsedText; btn.classList.remove('expanded'); }
+    });
+  });
 
   aside.querySelectorAll('.sidebar-item').forEach(item => {
     item.addEventListener('click', e => {
@@ -142,9 +285,24 @@ function buildSidebar() {
       resetSearch();
       syncUrl();
       filterAndRender();
+      closeTopicsMobile();
       document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
     });
   });
+}
+
+// Mobile: the sidebar renders as a slide-in drawer instead of the sticky
+// desktop column (see the @media (max-width:768px) rules), opened from the
+// "Browse topics" button that replaces it in that breakpoint.
+function openTopicsMobile() {
+  document.getElementById('sidebar')?.classList.add('mobile-open');
+  document.getElementById('sidebarBackdrop')?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTopicsMobile() {
+  document.getElementById('sidebar')?.classList.remove('mobile-open');
+  document.getElementById('sidebarBackdrop')?.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 function syncLevelChips() {
@@ -181,7 +339,10 @@ function composeTitle() {
   if (activeLevel !== 'all') parts.push(activeLevel);
   if (searchQuery) parts.push(`"${searchQuery}"`);
   const title = document.getElementById('contentTitle');
-  if (title) title.textContent = parts.length ? parts.join(' · ') : 'All worksheets';
+  if (title) {
+    const sort = document.getElementById('sortSelect')?.value;
+    title.textContent = parts.length ? parts.join(' · ') : (sort === 'downloads' ? 'Most downloaded worksheets' : 'Latest worksheets');
+  }
 }
 
 function clearFilters() {
@@ -196,20 +357,14 @@ function clearFilters() {
   filterAndRender();
 }
 
-// Same source of truth as workshido-worksheet.html's star display: real
-// ws.rating/ws.ratings_count, rounded to whole stars for the compact card
-// (no ratings yet -> all empty, never a fake perfect score).
-function catalogStars(ws) {
-  const avg = ws.ratings_count ? (ws.rating || 0) : 0;
-  const full = Math.round(avg);
-  return '★'.repeat(full) + '☆'.repeat(5 - full);
-}
-
-// No ratings yet -> a neutral "New" badge instead of empty stars, which
-// otherwise reads as "0/5, badly rated" rather than "not rated yet".
+// Catalog cards show downloads, not star ratings — most worksheets have no
+// ratings yet, so stars would mostly read as a generic "New" badge across
+// the whole grid. Downloads are populated for nearly every worksheet and
+// give a faster trust signal when scanning many cards at once. The detailed
+// star rating still lives on the individual worksheet page.
 function catalogRatingHtml(ws) {
-  if (!ws.ratings_count) return `<span class="badge-new">🆕 New</span>`;
-  return `<span class="stars">${catalogStars(ws)}</span><span class="reviews">(${ws.downloads||0})</span>`;
+  if (!ws.downloads) return `<span class="badge-new">🆕 New</span>`;
+  return `<span class="reviews">↓ ${ws.downloads} download${ws.downloads === 1 ? '' : 's'}</span>`;
 }
 
 // Worksheet title/tags/category are free text set at upload time — never trust
@@ -256,7 +411,9 @@ function renderCards(pageData, total) {
     return;
   }
   const txt = `${total} worksheet${total !== 1 ? 's' : ''}`;
-  label.textContent = txt + ' available';
+  label.textContent = searchBroadenedFromLevel
+    ? `No ${searchBroadenedFromLevel} results for "${searchQuery}" — showing ${txt} from all levels`
+    : txt + ' available';
   if (count) count.textContent = txt;
   grid.innerHTML = pageData.map(buildCard).join('');
   renderPagination(total);
@@ -304,9 +461,52 @@ function goToPage(page) {
   document.getElementById('cardGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function filterAndRender() {
-  let filtered = allWorksheets;
-  if (activeLevel !== 'all') filtered = filtered.filter(w => w.level === activeLevel);
+// Edit distance between two short words, capped so a couple of typos (one
+// swapped/missing/extra letter) still counts as a match without turning
+// unrelated words into false positives.
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (Math.abs(m - n) > 2) return 3; // early out, lengths too far apart to matter
+  const prev = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    let cur = [i];
+    for (let j = 1; j <= n; j++) {
+      cur[j] = a[i - 1] === b[j - 1]
+        ? prev[j - 1]
+        : 1 + Math.min(prev[j - 1], prev[j], cur[j - 1]);
+    }
+    prev.splice(0, prev.length, ...cur);
+  }
+  return prev[n];
+}
+
+// Whether a single catalog word (from a title/tag) should count as matching
+// a single search token — covers exact match, shared root ("transport" /
+// "transportation" — one word starting with the other), and small typos
+// ("trasportation" for "transportation") via edit distance.
+function wsWordMatches(word, token) {
+  if (!word || !token) return false;
+  if (word === token) return true;
+  if (token.length >= 3 && (word.startsWith(token) || token.startsWith(word))) return true;
+  if (token.length >= 4) {
+    const maxDist = token.length >= 8 ? 2 : 1;
+    if (levenshtein(word, token) <= maxDist) return true;
+  }
+  return false;
+}
+
+// Whether a search token appears (exactly, by root, or with a small typo)
+// anywhere among the words of a haystack string.
+function wsFuzzyIncludes(hay, token) {
+  return hay.split(/[\s,/–—-]+/).some(w => wsWordMatches(w, token));
+}
+
+// Every filter except level — factored out so a level-scoped search that
+// comes up empty (see filterAndRender) can be retried against the whole
+// catalog with the same category/topic/search logic, level just dropped.
+function applyNonLevelFilters(base) {
+  let filtered = base;
   if (activeCategory !== 'all') {
     const cats = Array.isArray(activeCategory) ? activeCategory.map(c => c.toLowerCase()) : [activeCategory.toLowerCase()];
     filtered = filtered.filter(w => cats.includes((w.category || '').toLowerCase()));
@@ -321,30 +521,54 @@ function filterAndRender() {
     // only matched a worksheet literally titled "Past Simple Tense" and
     // dropped "Past Simple Grammar", "Past Simple Vocabulary", etc.
     const tokens = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
-    const phrase = tokens.join(' ');
     // For short queries (1-2 words — the common case for a specific grammar
-    // term) require the words to appear TOGETHER, and only in title/tags/
-    // category, not the free-text description. Matching tokens independently
-    // against a blob that includes descriptions let unrelated topics sneak
-    // in — e.g. "present" (from "Present Perfect") + "simple" (from "Past
-    // Simple") both appearing somewhere on "Present Perfect vs. Past Simple",
-    // or a Conditional worksheet's description that explains "if + present
-    // simple" in passing. Longer queries keep the looser per-token majority
-    // match below, since an extra descriptive word (like "tense") shouldn't
-    // silently exclude the whole topic.
+    // term) require EVERY word to fuzzy-match (root or small typo) somewhere
+    // in title/tags/category, not the free-text description. Matching tokens
+    // independently against a blob that includes descriptions let unrelated
+    // topics sneak in — e.g. "present" (from "Present Perfect") + "simple"
+    // (from "Past Simple") both appearing somewhere on "Present Perfect vs.
+    // Past Simple", or a Conditional worksheet's description that explains
+    // "if + present simple" in passing. Longer queries keep the looser
+    // per-token majority match below, since an extra descriptive word (like
+    // "tense") shouldn't silently exclude the whole topic.
     if (tokens.length <= 2) {
       filtered = filtered.filter(w => {
         const hay = [w.title, w.tags, w.category].filter(Boolean).join(' ').toLowerCase();
-        return hay.includes(phrase);
+        return tokens.every(t => wsFuzzyIncludes(hay, t));
       });
     } else {
       const threshold = Math.floor(tokens.length / 2) + 1;
       filtered = filtered.filter(w => {
         const hay = [w.title, w.tags, w.category, w.description].filter(Boolean).join(' ').toLowerCase();
-        return tokens.filter(t => hay.includes(t)).length >= threshold;
+        return tokens.filter(t => wsFuzzyIncludes(hay, t)).length >= threshold;
       });
     }
   }
+  return filtered;
+}
+
+function filterAndRender() {
+  let filtered = activeLevel !== 'all' ? allWorksheets.filter(w => w.level === activeLevel) : allWorksheets;
+  filtered = applyNonLevelFilters(filtered);
+
+  // A level filter should scope results, never make a real topic look like
+  // it doesn't exist just because it hasn't reached that level yet — e.g.
+  // searching "reported speech"/"passive voice" while browsing A1 used to
+  // say "No worksheets match your filters" even though those topics exist
+  // (just starting at a higher level), which reads as "this doesn't exist
+  // on the site" rather than "not at A1". If a level-scoped search comes up
+  // empty, drop the level and search the whole catalog instead — each
+  // result card still shows its own level badge, so it's clear where it's
+  // actually found (e.g. B2).
+  searchBroadenedFromLevel = '';
+  if (searchQuery && filtered.length === 0 && activeLevel !== 'all') {
+    searchBroadenedFromLevel = activeLevel;
+    activeLevel = 'all';
+    syncLevelChips();
+    syncUrl();
+    filtered = applyNonLevelFilters(allWorksheets);
+  }
+
   const sort = document.getElementById('sortSelect')?.value || 'newest';
   const sortSecondary = (a, b) => {
     if (sort === 'newest') {
@@ -360,13 +584,65 @@ function filterAndRender() {
       const diff = wsRelevanceScore(b, q) - wsRelevanceScore(a, q);
       return diff !== 0 ? diff : sortSecondary(a, b);
     });
+  } else if (activeTopic !== 'all') {
+    // Same relevance ranking as free-text search, keyed off the topic's own
+    // match terms — otherwise a worksheet whose core topic IS "Present
+    // continuous" ties on sortSecondary (newest/downloads) with one that only
+    // carries "present continuous" as a cross-reference tag (e.g. a Future
+    // Forms worksheet comparing it to "will"/"going to"), and a newer tag-only
+    // match buries the actually-on-topic worksheet.
+    const terms = (Array.isArray(activeTopic) ? activeTopic : [activeTopic]).map(t => t.toLowerCase());
+    const topicScore = w => Math.max(...terms.map(t => wsRelevanceScore(w, t)));
+    filtered = [...filtered].sort((a, b) => {
+      const diff = topicScore(b) - topicScore(a);
+      return diff !== 0 ? diff : sortSecondary(a, b);
+    });
   } else {
     filtered = [...filtered].sort(sortSecondary);
   }
   composeTitle();
   _lastFiltered = filtered;
   currentPage = 1;
-  renderPage();
+  const latestRows   = document.getElementById('latestRows');
+  const cardGrid      = document.getElementById('cardGrid');
+  const catalogLabel  = document.getElementById('catalogLabel');
+  const pagination    = document.getElementById('pagination');
+  const contentCount  = document.getElementById('contentCount');
+  if (isDefaultView()) {
+    // Landing with no filter/search active: show curated "latest per group"
+    // rows instead of one flat newest-first list of the whole catalog.
+    if (latestRows)  latestRows.style.display = '';
+    if (cardGrid)     cardGrid.style.display = 'none';
+    if (catalogLabel) catalogLabel.style.display = 'none';
+    if (pagination)   pagination.style.display = 'none';
+    if (contentCount) contentCount.textContent = `${filtered.length} worksheet${filtered.length !== 1 ? 's' : ''}`;
+    renderLatestRows();
+  } else {
+    if (latestRows)  latestRows.style.display = 'none';
+    if (cardGrid)     cardGrid.style.display = '';
+    if (catalogLabel) catalogLabel.style.display = '';
+    renderPage();
+  }
+}
+
+// Titles follow "{Topic} – {Type}" (e.g. "Present Perfect Tense – Grammar",
+// "Present Perfect vs. Past Simple – Writing"). The part after the dash is
+// the worksheet type (already scored separately via category), not the
+// topic, and a couple of generic descriptor words add no topic information
+// of their own ("Present Perfect Tense" IS "Present Perfect"). Stripped here
+// so the relevance score below can tell "this worksheet's topic almost
+// exactly IS the query" apart from "this worksheet's topic merely starts
+// with the query's words before continuing into a different one" — e.g. a
+// "present perfect" search used to give "Present Perfect Continuous" and
+// "Present Perfect vs. Past Simple" the exact same flat title bonus as the
+// actual "Present Perfect" worksheet (both are literal string prefixes of
+// "present perfect"), leaving only recency to break the tie and burying the
+// one worksheet that IS the query's topic under newer, more specific ones.
+const TOPIC_FILLER_WORDS = new Set(['tense']);
+function wsCoreTopic(title) {
+  const dash = title.search(/[–—-]/);
+  const topic = dash >= 0 ? title.slice(0, dash) : title;
+  return topic.replace(/[():,.&]/g, ' ').split(/\s+/).filter(w => w && !TOPIC_FILLER_WORDS.has(w)).join(' ').trim();
 }
 
 // Ranks a worksheet's relevance to a search query: exact title match scores
@@ -379,9 +655,19 @@ function wsRelevanceScore(w, q) {
   const category = (w.category || '').toLowerCase();
   const description = (w.description || '').toLowerCase();
   let score = 0;
-  if (title === q) score += 200;
-  else if (title.startsWith(q)) score += 140;
-  else {
+  const topic = wsCoreTopic(title);
+  if (title === q || topic === q) {
+    score += 200;
+  } else if (title.startsWith(q) || topic.startsWith(q)) {
+    // Dilute by how much real topic content trails the match — "present
+    // perfect" fully covers the "Present Perfect" worksheet's topic (no
+    // leftover, full 140) but only partially covers "Present Perfect
+    // Continuous" (1 leftover word) or "Present Perfect vs. Past Simple" (3
+    // leftover words), so those score progressively lower instead of tying.
+    const base = topic.startsWith(q) ? topic : title;
+    const extraWords = base.slice(q.length).trim().split(/\s+/).filter(Boolean).length;
+    score += Math.max(20, 140 - extraWords * 40);
+  } else {
     // Weight by position: a match right at the start of the title ("Present
     // Simple – Grammar") should outrank one buried inside a differently-named
     // topic ("Passive Voice in Present Simple", "Reported Speech: Present
@@ -400,14 +686,25 @@ function wsRelevanceScore(w, q) {
   // Per-word credit: rewards how many of the query's individual words show up
   // and where, so "past simple tense" still ranks "Past Simple Grammar" (2/3
   // words in the title) above something that only matches in the description.
+  // Uses fuzzy (root/typo-tolerant) matching so a single-word query like
+  // "transportation" still gets scored against a "transport" tag, or a typo
+  // like "trasportation" against results found only via wsFuzzyIncludes.
   const tokens = q.split(/\s+/).filter(Boolean);
-  if (tokens.length > 1) {
+  {
     tokens.forEach(t => {
-      if (title.includes(t)) score += 8;
-      if (tags.includes(t)) score += 4;
-      if (category.includes(t)) score += 2;
-      if (description.includes(t)) score += 1;
+      if (wsFuzzyIncludes(title, t)) score += 8;
+      if (wsFuzzyIncludes(tags, t)) score += 4;
+      if (wsFuzzyIncludes(category, t)) score += 2;
+      if (wsFuzzyIncludes(description, t)) score += 1;
     });
+  }
+  // Recency nudge: among worksheets that match the topic about equally well,
+  // surface newer ones first. Decays linearly to 0 over a year so it can't
+  // outweigh a real relevance gap (e.g. an exact title match vs. a tag-only
+  // mention), it only breaks near-ties in favor of the newest worksheet.
+  if (w.created_at) {
+    const daysOld = (Date.now() - new Date(w.created_at).getTime()) / 86400000;
+    score += Math.max(0, 20 * (1 - daysOld / 365));
   }
   return score;
 }
@@ -473,6 +770,7 @@ document.querySelectorAll('.chip[data-level]').forEach(chip => {
     resetSearch();
     syncUrl();
     filterAndRender();
+    document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
   });
 });
 document.querySelectorAll('.chip[data-cat]').forEach(chip => {
@@ -485,6 +783,7 @@ document.querySelectorAll('.chip[data-cat]').forEach(chip => {
     resetSearch();
     syncUrl();
     filterAndRender();
+    document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
   });
 });
 
@@ -578,7 +877,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const mini = document.getElementById('miniSearchInput');
       if (mini) mini.value = q;
     }
-    if (cat || level || topic || q || sort) filterAndRender();
+    if (cat || level || topic || q || sort) {
+      filterAndRender();
+      // Arriving here via a nav button/chip/search from another page (or a
+      // shared/bookmarked filtered link) means the user already expressed
+      // intent — land them on the results instead of the hero, which on
+      // mobile pushes results below several screens of marketing content.
+      document.querySelector('.main-layout').scrollIntoView({ behavior: 'smooth' });
+    }
     // filterAndRender() always resets to page 1, so restore the saved page
     // afterward (e.g. returning via Back from a worksheet opened on page 4).
     if (page > 1) {

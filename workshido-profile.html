@@ -47,6 +47,7 @@
   .profile-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
   .profile-email { font-size: 12px; color: var(--gray-300); margin-bottom: 12px; }
   .plan-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--amber-50); color: var(--amber-600); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+  .plan-badge.premium { background: var(--teal-50); color: var(--teal-600); }
 
   .nav-menu { display: flex; flex-direction: column; gap: 2px; }
   .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); font-size: 13px; color: var(--gray-600); cursor: pointer; text-decoration: none; font-weight: 500; transition: all 0.12s; }
@@ -123,7 +124,21 @@
   .stat-box-label { font-size: 12px; color: var(--gray-600); }
   .stat-box-change { font-size: 11px; color: var(--teal-400); font-weight: 600; margin-top: 4px; }
 
+  /* ACCOUNT OVERVIEW (non-uploader / regular subscriber view) */
+  .account-plan-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .account-plan-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .account-plan-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; max-width: 440px; }
+  .account-plan-row .btn-upload { text-decoration: none; display: inline-block; flex-shrink: 0; }
+
+  .quick-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+  .quick-link-card { display: block; text-decoration: none; border: 1px solid var(--gray-100); border-radius: var(--radius-md); padding: 16px; transition: all 0.15s; }
+  .quick-link-card:hover { border-color: var(--blue-200); background: var(--blue-50); }
+  .quick-link-icon { font-size: 20px; margin-bottom: 8px; }
+  .quick-link-title { font-size: 13px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+  .quick-link-desc { font-size: 12px; color: var(--gray-600); line-height: 1.4; }
+
   @media (max-width: 900px) {
+    .quick-links-grid { grid-template-columns: 1fr; }
     .page-layout { grid-template-columns: 1fr; }
     .sidebar { display: none; }
     .stats-overview { grid-template-columns: 1fr 1fr; }
@@ -136,7 +151,7 @@
   <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="workshido-index.html">Browse Worksheets</a></li>
-    <li><a href="#my-worksheets">My worksheets</a></li>
+    <li id="navMyWsLink"><a href="#my-worksheets">My worksheets</a></li>
   </ul>
   <div class="nav-right">
     <div class="nav-avatar">JD</div>
@@ -154,30 +169,18 @@
     </div>
     <div class="nav-menu">
       <div class="nav-section-label">My account</div>
-      <a href="#" class="nav-item active">
+      <a href="workshido-profile.html" class="nav-item active">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         Dashboard
       </a>
-      <a href="#" class="nav-item">
+      <a href="#my-worksheets" class="nav-item" id="sidebarMyWsLink">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         My worksheets
       </a>
-      <a href="#" class="nav-item">
-        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        Favorites
-      </a>
-      <a href="#" class="nav-item">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Downloads
-      </a>
       <div class="nav-section-label">Settings</div>
-      <a href="#" class="nav-item">
-        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Account settings
-      </a>
-      <a href="#" class="nav-item">
+      <a href="workshido-pricing.html" class="nav-item" id="billingLink">
         <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Billing & plan
+        <span id="billingLinkLabel">Billing & plan</span>
       </a>
       <a href="#" onclick="logOut()" class="nav-item" style="margin-top:12px;color:var(--red-600)">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -189,8 +192,39 @@
   <!-- MAIN -->
   <main class="main">
 
-    <!-- STATS -->
-    <div class="stats-overview">
+    <!-- ACCOUNT OVERVIEW (regular subscribers — replaces the uploader stats, which are only meaningful for Juan) -->
+    <div class="my-ws-section" id="subscriberOverview" style="display:none;">
+      <div class="section-header">
+        <h2>Your account</h2>
+      </div>
+      <div class="account-plan-row">
+        <div>
+          <div class="account-plan-title" id="acctPlanTitle">Free plan</div>
+          <div class="account-plan-desc" id="acctPlanDesc">Upgrade to Premium to unlock the Teacher Edition and the full Quiz for every worksheet.</div>
+        </div>
+        <a href="workshido-pricing.html" class="btn-upload" id="acctPlanCta">Upgrade to Premium</a>
+      </div>
+      <div class="quick-links-grid">
+        <a href="workshido-index.html" class="quick-link-card">
+          <div class="quick-link-icon">📚</div>
+          <div class="quick-link-title">Browse worksheets</div>
+          <div class="quick-link-desc">Explore the full catalog by level and category</div>
+        </a>
+        <a href="workshido-how-quiz-works.html" class="quick-link-card">
+          <div class="quick-link-icon">📝</div>
+          <div class="quick-link-title">How the Quiz works</div>
+          <div class="quick-link-desc">Grammar → Reading → Writing, then test your students</div>
+        </a>
+        <a href="workshido-forteachers.html" class="quick-link-card">
+          <div class="quick-link-icon">🍎</div>
+          <div class="quick-link-title">For teachers</div>
+          <div class="quick-link-desc">Tips, guides and lesson ideas</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- STATS (Juan only — the uploader dashboard) -->
+    <div class="stats-overview" id="statsOverview" style="display:none;">
       <div class="stat-box">
         <div class="stat-box-num" id="statUploaded">—</div>
         <div class="stat-box-label">Worksheets uploaded</div>
@@ -228,8 +262,20 @@
       </div>
     </div>
 
+    <!-- EMAIL PREFERENCES -->
+    <div class="my-ws-section">
+      <div class="section-header">
+        <h2>Email preferences</h2>
+      </div>
+      <label style="display:flex;align-items:center;gap:12px;cursor:pointer;">
+        <input type="checkbox" id="marketingToggle" style="width:18px;height:18px;accent-color:var(--blue-600);cursor:pointer;" />
+        <span style="font-size:13px;color:var(--gray-600);">I want to receive new worksheets, teacher resources and offers from Workshido by email. Unsubscribe anytime.</span>
+      </label>
+      <span id="marketingSaved" style="font-size:12px;color:var(--teal-400);font-weight:600;display:none;margin-left:30px;">Saved ✓</span>
+    </div>
+
     <!-- MY WORKSHEETS -->
-    <div class="my-ws-section" id="my-worksheets">
+    <div class="my-ws-section" id="my-worksheets" style="display:none;">
       <div class="section-header">
         <h2>My worksheets</h2>
         <span id="wsCount" style="font-size:12px;color:var(--gray-300)">Loading...</span>

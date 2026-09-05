@@ -4,6 +4,15 @@
 // see the "anon can insert events" RLS policy) and are queried later via
 // the Supabase dashboard or a service-role script, never read back here.
 (function () {
+  // Known crawlers/bots/uptime monitors — without this, Googlebot rendering
+  // JS pages (and similar) inflates session/page-view counts. wsTrack still
+  // exists as a no-op so callers elsewhere on the site don't need a guard.
+  const UA = navigator.userAgent || '';
+  if (/bot|crawl|spider|slurp|facebookexternalhit|whatsapp|telegrambot|slackbot|discordbot|skypeuripreview|applebot|google-inspectiontool|adsbot|mediapartners|headlesschrome|phantomjs|pingdom|uptimerobot|gtmetrix|lighthouse|ahrefsbot|semrushbot|mj12bot|dotbot|petalbot|bingpreview/i.test(UA)) {
+    window.wsTrack = function () {};
+    return;
+  }
+
   const ENDPOINT = 'https://mhbgxdsdaalvtgobnvbh.supabase.co/rest/v1/analytics_events';
   const ANON_KEY = 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo';
 
@@ -36,12 +45,74 @@
     }).catch(() => {});
   }
 
+  // Coarse channel bucket for traffic that arrives with no UTM tag at all —
+  // mirrors the CASE in the channel_funnel SQL view, so a session and the
+  // signup it eventually produces land in the same bucket.
+  function classifyReferrerChannel(referrer) {
+    if (!referrer) return 'direct';
+    let host;
+    try { host = new URL(referrer).hostname.replace(/^www\./, '').toLowerCase(); } catch (e) { return 'direct'; }
+    // Exact host / suffix match only — a substring test would match "t.co"
+    // (Twitter's shortener) inside "chatgpt.com" and misclassify it.
+    const is = (d) => host === d || host.endsWith('.' + d);
+    if (host === location.hostname || is('workshido.com')) return 'direct';
+    if (/(^|\.)google\.[a-z.]+$/.test(host) || is('bing.com') || is('duckduckgo.com') || /(^|\.)yahoo\.[a-z.]+$/.test(host)) return 'search_organic';
+    if (is('facebook.com') || is('instagram.com')) return 'facebook_instagram_referral';
+    if (/(^|\.)pinterest\.[a-z.]+$/.test(host)) return 'pinterest_referral';
+    if (is('tiktok.com')) return 'tiktok_referral';
+    if (is('youtube.com') || is('youtu.be')) return 'youtube_referral';
+    if (is('chatgpt.com') || is('chat.openai.com') || is('perplexity.ai') || is('claude.ai') || is('copilot.microsoft.com') || is('gemini.google.com')) return 'ai_assistant_referral';
+    if (is('twitter.com') || is('x.com') || is('t.co')) return 'twitter_referral';
+    return 'other_referral';
+  }
+  const CHANNEL_ALIASES = { ig: 'instagram', fb: 'facebook' };
+
+  // First-touch attribution — captured once per browser (localStorage, not
+  // sessionStorage) and never overwritten: ws_utm holds the raw utm_* tags
+  // when present; ws_channel is always set (utm_source when tagged, else the
+  // referrer guess above), so every signup gets credited to a channel even
+  // without a tagged link.
+  try {
+    if (!localStorage.getItem('ws_channel')) {
+      const params = new URLSearchParams(location.search);
+      const source = params.get('utm_source');
+      if (source) {
+        localStorage.setItem('ws_utm', JSON.stringify({
+          source,
+          medium: params.get('utm_medium') || null,
+          campaign: params.get('utm_campaign') || null,
+        }));
+        const norm = source.toLowerCase();
+        localStorage.setItem('ws_channel', CHANNEL_ALIASES[norm] || norm);
+      } else {
+        localStorage.setItem('ws_channel', classifyReferrerChannel(document.referrer));
+      }
+    }
+  } catch (e) { /* private mode, etc. — attribution just won't be captured */ }
+
+  // Persistent visitor id — survives across sessions (localStorage, not
+  // sessionStorage) so repeat visits from the same browser can be told apart
+  // from genuinely new traffic before someone registers.
+  function visitorId() {
+    try {
+      let id = localStorage.getItem('ws_vid');
+      if (!id) {
+        id = (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+        localStorage.setItem('ws_vid', id);
+      }
+      return id;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function track(eventName, properties) {
     try {
       const body = JSON.stringify({
         event_name: eventName,
         properties: { ...(properties || {}), country_code: country?.code || null, country_name: country?.name || null },
         session_id: sessionId(),
+        visitor_id: visitorId(),
         path: location.pathname + location.search,
         referrer: document.referrer || null,
       });

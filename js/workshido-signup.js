@@ -42,6 +42,10 @@ document.getElementById('password').addEventListener('input', function() {
   label.textContent = lvl.text;
 });
 
+// Bump when the marketing opt-in copy changes, so consent records stay tied
+// to the exact text the user agreed to (SIC requires "previa, expresa e informada").
+const MARKETING_CONSENT_VERSION = 'v1';
+
 const GIS_CLIENT_ID = '402662121573-hjto2nl434h1qdgvtl21n58du49kl2bd.apps.googleusercontent.com';
 
 window.addEventListener('load', () => {
@@ -76,11 +80,66 @@ function safeRedirect(target) {
   }
 }
 
+// Country from Netlify's edge geo (netlify/edge-functions/geo.js), reusing
+// analytics.js's sessionStorage cache when it already fetched it — falls
+// back to fetching directly so signup doesn't depend on load order.
+async function getCountryData() {
+  try {
+    const cached = sessionStorage.getItem('ws_country');
+    if (cached) return JSON.parse(cached);
+  } catch (e) { /* private mode, etc. — fall through to fetching fresh */ }
+  try {
+    const r = await fetch('/api/geo');
+    const geo = await r.json();
+    try { sessionStorage.setItem('ws_country', JSON.stringify(geo)); } catch (e) {}
+    return geo;
+  } catch (e) {
+    return { code: null, name: null };
+  }
+}
+
+// UTM + channel attribution captured on first landing by analytics.js —
+// read here at signup time, for both the email and Google paths.
+function getUtmData() {
+  try {
+    const raw = localStorage.getItem('ws_utm');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+function getChannel() {
+  try {
+    return localStorage.getItem('ws_channel');
+  } catch (e) {
+    return null;
+  }
+}
+
 async function handleCredentialResponse(response) {
   try {
     const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
     if (error) throw error;
     window.wsTrack?.('signup_completed', { method: 'google' });
+    // signInWithIdToken doesn't accept custom options.data like signUp does
+    // (see handle_new_user() trigger), so country/utm/channel are filled in
+    // via a single best-effort RPC right after sign-in instead. Raced against
+    // a short timeout (not fired-and-forgotten) — an un-awaited redirect right
+    // after this cancels the in-flight request almost every time, which is
+    // why nearly every Google signup landed with a null country/attribution.
+    const utm = getUtmData();
+    const attribution = getCountryData()
+      .then((geo) => sb.rpc('set_signup_attribution', {
+        p_country_code: geo?.code || null,
+        p_country_name: geo?.name || null,
+        p_utm_source: utm?.source || null,
+        p_utm_medium: utm?.medium || null,
+        p_utm_campaign: utm?.campaign || null,
+        p_channel: getChannel(),
+      }))
+      .catch(() => {});
+    const timeout = new Promise((resolve) => setTimeout(resolve, 1500));
+    await Promise.race([attribution, timeout]);
     const params = new URLSearchParams(window.location.search);
     window.location.href = safeRedirect(params.get('redirect'));
   } catch (e) {
@@ -105,6 +164,7 @@ document.getElementById('signupForm').addEventListener('submit', async function(
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   const terms = document.getElementById('terms').checked;
+  const marketingConsent = document.getElementById('marketingConsent').checked;
 
   if (!firstName || !lastName) return showError('Please enter your full name.');
   if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return showError('Please enter a valid email address.');
@@ -120,10 +180,32 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     ? `${window.location.origin}/workshido-login.html?redirect=${encodeURIComponent(redirectParam)}`
     : `${window.location.origin}/workshido-login.html`;
 
+  const geo = await getCountryData();
+  const utm = getUtmData();
   const { data, error } = await sb.auth.signUp({
     email,
     password,
-    options: { data: { full_name: `${firstName} ${lastName}`, role: selectedRole }, emailRedirectTo }
+    options: {
+      data: {
+        full_name: `${firstName} ${lastName}`,
+        role: selectedRole,
+        // Read by the handle_new_user() trigger so consent is recorded on
+        // the profiles row at the exact moment it was given.
+        marketing_consent: marketingConsent,
+        marketing_consent_version: MARKETING_CONSENT_VERSION,
+        // Same trigger copies this to profiles.country_code/country_name —
+        // works even before email confirmation, unlike the RPC used for Google.
+        country_code: geo?.code || null,
+        country_name: geo?.name || null,
+        // Same trigger copies these to profiles.utm_source/medium/campaign
+        // and profiles.first_touch_channel.
+        utm_source: utm?.source || null,
+        utm_medium: utm?.medium || null,
+        utm_campaign: utm?.campaign || null,
+        first_touch_channel: getChannel(),
+      },
+      emailRedirectTo,
+    }
   });
 
   if (error) {

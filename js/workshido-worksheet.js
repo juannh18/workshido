@@ -13,12 +13,27 @@ function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function titleBase(t) {
   return (t || '').split(/\s[–-]\s/)[0].replace(/\s*\((?:a1|a2|b1|b2|c1)\)\s*$/i, '').trim().toLowerCase();
 }
+// The "(Easy Version)" Word Searches are the older, simpler puzzles being
+// phased out in favor of full diagonal/reversed-word versions — even when
+// one's title-base collides with a real set sibling (e.g. "Feelings and
+// Emotions – Word Search" vs. "Feelings and Emotions – Label and Learn"),
+// it must never carry the "Complete the set" badge. Regular Word Searches
+// (no "Easy Version" suffix) are unaffected and still count normally.
+function isEasyWordSearch(t) {
+  return /\(easy version\)/i.test(t || '');
+}
 // Vocabulary worksheets rarely share a title-base sibling ("Body Parts" has
 // no "Body Parts – Reading" counterpart) but do share topic tags with other
 // worksheets phrased differently ("Body Parts" / "Parts of the Face" both
 // tagged "body parts") — strip generic tags (format/level/category words)
 // so only real topic words are left to match on.
-const TAG_STOPLIST = new Set(['worksheet','vocabulary','grammar','reading','writing','practice','listening','speaking','esl','english','a1','a2','b1','b2','c1','reading comprehension','comprehension','labeling','label and learn','language focus']);
+// Format/activity-type tags (how a worksheet is exercised, not what it's
+// about) belong here too, or they masquerade as topic tags in byTag — e.g.
+// "word search" sat outside the list and matched EVERY "* – Word Search"
+// worksheet regardless of subject, drowning out the real same-topic matches
+// (Body Parts / Parts of the Face) with unrelated ones (Colors, Weather...)
+// that just happen to share the word-search format.
+const TAG_STOPLIST = new Set(['worksheet','vocabulary','grammar','reading','writing','practice','listening','speaking','esl','english','a1','a2','b1','b2','c1','reading comprehension','comprehension','labeling','label and learn','language focus','word search','matching','fill-in-the-blank','review']);
 function meaningfulTags(tagsStr) {
   return (tagsStr || '').split(',').map(t => t.trim().toLowerCase()).filter(t => t.length > 2 && !TAG_STOPLIST.has(t));
 }
@@ -41,6 +56,25 @@ let _wsId = null;
 let _wsTitle = 'worksheet';
 let _quizId = null;
 let _quizTitle = 'quiz';
+
+// Preview-then-paywall: a blurred mockup of what the real PDF looks like
+// (structure/labels only — no actual answer-key or quiz content, since none
+// is stored server-side for non-premium users) instead of a flat locked
+// button. Replaces guessing "what's even in there?" with a tangible look,
+// then asks to unlock.
+function lockedPreviewCard(kind, colorClass, icon, headLabel, sections) {
+  const body = sections.map(s => `
+    <div class="te-preview-label">${esc(s.label)}</div>
+    ${s.lines.map(w => `<div class="te-preview-line" style="width:${w}%"></div>`).join('')}
+  `).join('');
+  return `<div class="te-preview ${colorClass}" onclick="openPremiumModal('${kind}')" role="button" tabindex="0" aria-label="Preview: unlock ${esc(headLabel)}" onkeydown="if(event.key==='Enter'){openPremiumModal('${kind}')}">
+    <div class="te-preview-head">${icon} ${esc(headLabel)} <span class="te-preview-tag">Preview</span></div>
+    <div class="te-preview-body">
+      ${body}
+      <div class="te-preview-fade"><span class="te-preview-cta">🔒 Unlock ${esc(headLabel)}</span></div>
+    </div>
+  </div>`;
+}
 
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
@@ -131,7 +165,9 @@ async function loadWorksheet() {
   // is Grammar+Reading+Writing+Practice at one level, same as the quiz
   // bundle), so a same-title worksheet at a different level is a topic
   // continuation to explore, not literally part of this set.
-  const setMatchIds = new Set([...byTopicKey, ...byTitle].filter(r => r.level === data.level).map(r => r.id));
+  const setMatchIds = isEasyWordSearch(data.title) ? new Set() : new Set(
+    [...byTopicKey, ...byTitle].filter(r => r.level === data.level && !isEasyWordSearch(r.title)).map(r => r.id)
+  );
   const seen = new Set();
   related = [...byTopicKey, ...byTitle, ...byTag]
     .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
@@ -217,7 +253,7 @@ async function loadWorksheet() {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Download free
       </button>`
-    : `<button class="btn-download-big locked" onclick="openPremiumModal()">🔒 Premium — Unlock to download</button>`;
+    : `<button class="btn-download-big locked" onclick="openPremiumModal('worksheet_download')">🔒 Premium — Unlock to download</button>`;
 
   const answerKeyBtn = _answerKeyUrl
     ? (_isPremium
@@ -227,13 +263,11 @@ async function loadWorksheet() {
               <span>Teacher Edition <span class="ak-sub">⭐ Premium — Download</span></span>
             </span>
           </button>`
-        : `<button class="btn-answer-key" onclick="openPremiumModal()">
-            <span class="ak-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <span>Teacher Edition <span class="ak-sub">⭐ Premium only</span></span>
-            </span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
+        : `${lockedPreviewCard('teacher_edition', 'te-amber', '📘', 'Teacher Edition', [
+            { label: 'Learning Objective', lines: [92, 68] },
+            { label: 'Answer Key', lines: [40, 88, 75, 55] },
+            { label: 'Common Student Mistakes', lines: [80] },
+          ])}
           ${!currentUser ? '<p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>' : ''}`)
     : '';
 
@@ -247,15 +281,23 @@ async function loadWorksheet() {
               <span>Full Quiz <span class="ak-sub">⭐ Premium — Download</span></span>
             </span>
           </button>
-          <p class="quiz-key-link">Covers ${esc(quiz.skills)} · <a onclick="downloadQuiz('key')">Download answer key</a></p>`
-        : `<button class="btn-quiz" onclick="openPremiumModal()">
-            <span class="ak-left">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <span>Full Quiz <span class="ak-sub">⭐ Premium only</span></span>
-            </span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-          <p class="quiz-key-link">Covers ${esc(quiz.skills)}</p>`)
+          <p class="quiz-key-link">Covers ${esc(quiz.skills)} · <a onclick="downloadQuiz('key')">Download answer key</a></p>
+          <div class="quiz-prep-tip">
+            <div class="prep-label">Your prep checklist</div>
+            <div class="prep-steps"><span class="prep-step"><span class="num">1</span>Grammar</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">2</span>Reading</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">3</span>Writing</span><span class="prep-extra">(+ Practice if you want extra reps)</span></div>
+            <div class="prep-line">Done with those? You're ready. <a href="workshido-how-quiz-works.html">Why this order →</a></div>
+          </div>`
+        : `${lockedPreviewCard('quiz', 'te-pink', '📝', 'Full Quiz', [
+            { label: 'Grammar', lines: [85, 60] },
+            { label: 'Reading', lines: [95, 70] },
+            { label: 'Writing', lines: [50] },
+          ])}
+          <p class="quiz-key-link">Covers ${esc(quiz.skills)}</p>
+          <div class="quiz-prep-tip">
+            <div class="prep-label">How to get there</div>
+            <div class="prep-steps"><span class="prep-step"><span class="num">1</span>Grammar</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">2</span>Reading</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">3</span>Writing</span><span class="prep-extra">(all free)</span></div>
+            <div class="prep-line">Then unlock the <b>only graded evaluation</b> on Workshido — full answer key included. <a href="workshido-how-quiz-works.html">Why this order →</a></div>
+          </div>`)
     : '';
 
   document.getElementById('pageWrap').innerHTML = `
@@ -265,7 +307,7 @@ async function loadWorksheet() {
         <h1 class="ws-title">${esc(data.title)}</h1>
         <div class="ws-badges">
           <span class="badge-level ${lvlCls}">${data.level}</span>
-          ${data.category ? `<span class="badge-cat">${esc(data.category)}</span>` : ''}
+          ${data.category ? `<span class="badge-cat ${catClass(data.category)}">${esc(data.category)}</span>` : ''}
           ${freeBadge}
         </div>
         ${data.description ? `<p class="ws-desc">${esc(data.description)}</p>` : ''}
@@ -304,6 +346,12 @@ const CATEGORY_ORDER = ['Grammar', 'Practice', 'Reading', 'Writing', 'Vocabulary
 function displayCategory(r) {
   return (r.category === 'Grammar' && /\bpractice\b/i.test(r.title || '')) ? 'Practice' : (r.category || 'Other');
 }
+// Category → color class, so Grammar/Reading/Writing/Vocabulary/Speaking/
+// Practice each get a distinct pastel pill (same pattern as the level badge)
+// instead of sharing one flat gray — lets a learner scan a row of related
+// cards by color instead of reading every label.
+const CAT_CLASS = { Grammar: 'cat-grammar', Reading: 'cat-reading', Writing: 'cat-writing', Vocabulary: 'cat-vocabulary', Speaking: 'cat-speaking', Practice: 'cat-practice' };
+function catClass(name) { return CAT_CLASS[name] || 'cat-other'; }
 function renderRelated(related, lvlCls, currentCategory, currentLevel) {
   const section = document.getElementById('relatedSection');
   const grid = document.getElementById('relatedGrid');
@@ -348,7 +396,7 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
       <div class="related-body">
         <div class="related-badges">
           <span class="badge-level ${rLvlCls}">${r.level}</span>
-          <span class="badge-cat">${esc(displayCategory(r))}</span>
+          <span class="badge-cat ${catClass(displayCategory(r))}">${esc(displayCategory(r))}</span>
         </div>
         <div class="related-name">${esc(r.title)}</div>
       </div>
@@ -407,6 +455,12 @@ function openDlModal(action) {
 }
 
 async function getSignedUrl(fileUrl) {
+  // Worksheet files live in a PUBLIC storage bucket, so the URL already
+  // works as-is — signing it added an extra ~0.5-1s network round-trip to
+  // Supabase's sign endpoint before the actual PDF fetch could even start,
+  // on every single download/print click, for no benefit (nothing about a
+  // public file needs a signature to be readable).
+  if (fileUrl.includes('/object/public/')) return fileUrl;
   const m = fileUrl.match(/\/object\/(?:public|sign)\/([^/]+)\/([^?]+)/);
   if (!m) return fileUrl;
   const { data } = await sb.storage.from(m[1]).createSignedUrl(m[2], 60);
@@ -541,7 +595,7 @@ async function downloadAnswerKey() {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ worksheetId: _wsId }),
     });
-    if (res.status === 403) { openPremiumModal(); return; }
+    if (res.status === 403) { openPremiumModal('teacher_edition'); return; }
     if (!res.ok) return;
     const { url } = await res.json();
     if (url) window.open(url, '_blank');
@@ -560,15 +614,16 @@ async function downloadQuiz(kind) {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
       body: JSON.stringify({ quizId: _quizId, kind: kind || 'quiz' }),
     });
-    if (res.status === 403) { openPremiumModal(); return; }
+    if (res.status === 403) { openPremiumModal('quiz'); return; }
     if (!res.ok) return;
     const { url } = await res.json();
     if (url) window.open(url, '_blank');
   } catch (e) {}
 }
 
-async function openPremiumModal() {
+async function openPremiumModal(source) {
   const { data: { user } } = await sb.auth.getUser();
+  window.wsTrack?.('premium_modal_opened', { worksheet_id: _wsId, source: source || 'other', signed_in: !!user });
   if (!user) {
     document.getElementById('dlModalTitle').textContent = 'Sign in to access Premium';
     _openModal(document.getElementById('dlModal'));
@@ -576,7 +631,12 @@ async function openPremiumModal() {
     _openModal(document.getElementById('premiumModal'));
   }
 }
-function closePremiumModal() { _closeModal(document.getElementById('premiumModal')); }
+function closePremiumModal() {
+  if (document.getElementById('premiumModal').classList.contains('open')) {
+    window.wsTrack?.('premium_modal_dismissed', { worksheet_id: _wsId });
+  }
+  _closeModal(document.getElementById('premiumModal'));
+}
 
 async function startCheckout(plan) {
   const { data: { session } } = await sb.auth.getSession();

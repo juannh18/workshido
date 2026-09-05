@@ -37,26 +37,33 @@ exports.handler = async (event) => {
   const userId = payload.meta?.custom_data?.user_id;
   const userEmail = payload.data?.attributes?.user_email;
 
-  if (eventName === 'subscription_created' || eventName === 'subscription_updated') {
+  const SUBSCRIPTION_EVENTS = ['subscription_created', 'subscription_updated', 'subscription_cancelled', 'subscription_expired'];
+  if (SUBSCRIPTION_EVENTS.includes(eventName)) {
     const status = payload.data?.attributes?.status;
-    const isPremium = status === 'active' || status === 'on_trial';
+    const endsAt = payload.data?.attributes?.ends_at;
+    // Lemon Squeezy sets status='cancelled' the INSTANT the customer cancels —
+    // that only means "won't renew", not "access revoked now". The customer
+    // already paid for the current period and keeps access until `ends_at`.
+    // Only 'expired' (or a cancelled sub whose ends_at has passed) should
+    // actually revoke Premium.
+    const isPremium = status === 'active' || status === 'on_trial'
+      || (status === 'cancelled' && !!endsAt && new Date(endsAt) > new Date());
+    // LS returns the customer's self-service portal link directly on the
+    // subscription resource — no separate API call needed to fetch it.
+    const customerId = payload.data?.attributes?.customer_id != null ? String(payload.data.attributes.customer_id) : null;
+    const portalUrl = payload.data?.attributes?.urls?.customer_portal || null;
+    const extra = {};
+    if (customerId) extra.lemon_customer_id = customerId;
+    if (portalUrl) extra.lemon_portal_url = portalUrl;
 
     if (userId) {
       // upsert so premium activates even if the profile row is somehow missing
       await sb.from('profiles').upsert(
-        { id: userId, email: userEmail, is_premium: isPremium },
+        { id: userId, email: userEmail, is_premium: isPremium, ...extra },
         { onConflict: 'id' }
       );
     } else if (userEmail) {
-      await sb.from('profiles').update({ is_premium: isPremium }).eq('email', userEmail);
-    }
-  }
-
-  if (eventName === 'subscription_cancelled' || eventName === 'subscription_expired') {
-    if (userId) {
-      await sb.from('profiles').update({ is_premium: false }).eq('id', userId);
-    } else if (userEmail) {
-      await sb.from('profiles').update({ is_premium: false }).eq('email', userEmail);
+      await sb.from('profiles').update({ is_premium: isPremium, ...extra }).eq('email', userEmail);
     }
   }
 

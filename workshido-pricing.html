@@ -146,8 +146,8 @@
   <h1>Stop building lesson plans <em>from scratch</em></h1>
   <p>Every worksheet is free. Go Premium and get the full Teacher Edition — answer key, lesson plan, and teacher tips — ready in one click.</p>
   <div class="billing-toggle">
-    <span class="toggle-label" id="monthlyBtn" onclick="setBilling('monthly')">Monthly</span>
-    <span class="toggle-label active" id="yearlyBtn" onclick="setBilling('yearly')">Yearly <span class="save-badge">SAVE 30%</span></span>
+    <span class="toggle-label active" id="monthlyBtn" onclick="setBilling('monthly')">Monthly</span>
+    <span class="toggle-label" id="yearlyBtn" onclick="setBilling('yearly')">Yearly <span class="save-badge">SAVE 30%</span></span>
   </div>
 </div>
 
@@ -165,8 +165,8 @@
       <div class="features">
         <div class="feature"><span class="feature-check yes">✓</span><div><strong>Unlimited</strong> downloads</div></div>
         <div class="feature"><span class="feature-check yes">✓</span><div>Full catalog, <strong id="pricingLevelRange">all available CEFR levels</strong></div></div>
-        <div class="feature"><span class="feature-check yes">✓</span><div><strong>PDF & DOCX</strong> worksheets</div></div>
-        <div class="feature"><span class="feature-check yes">✓</span><div>Many worksheets include a <strong>free answer key</strong></div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div><strong>PDF</strong> worksheets, ready to print</div></div>
+        <div class="feature"><span class="feature-check yes">✓</span><div>Some worksheets include a <strong>quick answer key</strong></div></div>
         <div class="feature"><span class="feature-check yes">✓</span><div>Community <strong>reviews & ratings</strong></div></div>
         <div class="feature"><span class="feature-check no">✗</span><div style="color:var(--gray-300)">Teacher Edition (full answer key + lesson plan)</div></div>
       </div>
@@ -180,10 +180,10 @@
       <div class="plan-name">Premium</div>
       <div class="plan-desc">Unlock the Teacher Edition for almost every worksheet on Workshido.</div>
       <div class="plan-price">
-        <span class="price-amount" id="premiumPrice">$2.08</span>
+        <span class="price-amount" id="premiumPrice">$2.99</span>
         <span class="price-period">/month</span>
       </div>
-      <div class="price-annual" id="premiumNote"><strong style="color:var(--teal-400)">Save $10.89/year</strong> · Billed as $24.99/yr</div>
+      <div class="price-annual" id="premiumNote">Billed monthly · Cancel anytime</div>
       <hr class="plan-divider">
       <div class="features">
         <div class="feature"><span class="feature-check yes">✓</span><div>Everything in <strong>Free</strong></div></div>
@@ -193,7 +193,7 @@
         <div class="feature"><span class="feature-check yes">✓</span><div><strong>Teacher tips</strong> & common student mistakes</div></div>
         <div class="feature"><span class="feature-check yes">✓</span><div><strong>Extra activity</strong> to do in classroom</div></div>
       </div>
-      <button class="btn-plan primary" onclick="startCheckout(currentBilling)" id="premiumCta">Unlock Teacher Edition — $24.99/yr</button>
+      <button class="btn-plan primary" onclick="startCheckout(currentBilling)" id="premiumCta">Unlock Teacher Edition — $2.99/mo</button>
       <div class="cta-microcopy">🔒 Secure checkout · Cancel anytime · Instant access</div>
     </div>
 
@@ -255,5 +255,6 @@
 <script src="js/workshido-pricing.js?v=20260721" defer></script>
 <script src="mascot.js" defer></script>
 <script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>
