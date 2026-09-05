@@ -71,6 +71,13 @@
   .hub-card-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--gray-900); }
   .hub-card-desc { font-size: 14px; color: var(--gray-600); line-height: 1.5; }
   @media (max-width: 480px) { .hub-grid { padding: 0 16px; } }
+  .friends-section { max-width: 760px; margin: 0 auto 60px; padding: 0 32px; }
+  .friends-section h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .friends-section > p { font-size: 14px; color: var(--gray-600); margin-bottom: 14px; }
+  .friends-links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .friends-links a { display: inline-block; padding: 10px 16px; border: 1px solid var(--gray-100); border-radius: var(--radius-md); text-decoration: none; color: var(--blue-900); font-weight: 600; font-size: 13px; transition: border-color 0.15s, background 0.15s; }
+  .friends-links a:hover { border-color: var(--blue-200); background: var(--blue-50); }
+  @media (max-width: 480px) { .friends-section { padding: 0 16px; } }
 </style>
 </head>
 <body>
@@ -152,6 +159,14 @@
       <span class="hub-card-desc">A practical guide to teaching obligation and advice modals — why must and have to aren't interchangeable, and the mustn't vs. don't have to trap.</span>
     </a>
 </div>
+<section class="friends-section">
+  <h2>Communities we're part of</h2>
+  <p>Language teachers and learners worth following:</p>
+  <div class="friends-links">
+    <a href="https://www.facebook.com/WorldLanguagespage/" target="_blank" rel="noopener">World Languages on Facebook →</a>
+    <a href="https://www.instagram.com/worldlanguagespage/" target="_blank" rel="noopener">World Languages on Instagram →</a>
+  </div>
+</section>
 <footer>
   <span>© 2026 Workshido — <a href="/workshido-index.html">Free English worksheets</a></span>
 </footer>
