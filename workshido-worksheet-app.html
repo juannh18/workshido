@@ -129,23 +129,28 @@
   .quiz-key-link a { color: #BE185D; cursor: pointer; text-decoration: none; font-weight: 600; }
   .quiz-key-link a:hover { text-decoration: underline; }
 
-  /* PREVIEW-THEN-PAYWALL — a blurred mockup of the real PDF's structure
-     (labels only, no actual content) instead of a flat locked button, so
-     the value feels tangible before asking to unlock. */
-  .te-preview { margin-top: 10px; border-radius: var(--radius-md); border: 1px solid var(--gray-100); overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
-  .te-preview:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.10); transform: translateY(-1px); }
-  .te-preview-head { display: flex; align-items: center; gap: 6px; padding: 9px 14px; font-size: 12px; font-weight: 700; color: #fff; }
-  .te-preview.te-amber .te-preview-head { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
-  .te-preview.te-pink .te-preview-head { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
-  .te-preview-tag { margin-left: auto; font-size: 9px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; background: rgba(255,255,255,0.25); padding: 2px 7px; border-radius: 10px; }
-  .te-preview-body { position: relative; padding: 14px 14px 48px; background: var(--white); }
-  .te-preview-label { font-size: 9.5px; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase; color: var(--gray-300); margin: 10px 0 6px; }
-  .te-preview-label:first-child { margin-top: 0; }
-  .te-preview-line { height: 9px; border-radius: 4px; background: var(--gray-100); margin-bottom: 7px; filter: blur(2.5px); }
-  .te-preview-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 60px; background: linear-gradient(to bottom, rgba(255,255,255,0), var(--white) 70%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px; }
-  .te-preview-cta { font-size: 11.5px; font-weight: 700; color: var(--white); padding: 7px 16px; border-radius: 20px; }
-  .te-preview.te-amber .te-preview-cta { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
-  .te-preview.te-pink .te-preview-cta { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
+  /* LOCKED VALUE CARD — a concrete checklist of what unlocking delivers,
+     with a full-width CTA. Beats blurred skeleton bars, which read as
+     "broken / still loading" and plant doubt right before the ask. */
+  .te-card { margin-top: 10px; border-radius: var(--radius-md); border: 1px solid var(--gray-100); overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
+  .te-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.10); transform: translateY(-1px); }
+  .te-card-head { display: flex; align-items: center; gap: 6px; padding: 9px 14px; font-size: 12px; font-weight: 700; color: #fff; }
+  .te-card.te-amber .te-card-head { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
+  .te-card.te-pink .te-card-head { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
+  .te-card-tag { margin-left: auto; font-size: 9px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; background: rgba(255,255,255,0.25); padding: 2px 7px; border-radius: 10px; }
+  .te-card-body { padding: 12px 14px 14px; background: var(--white); }
+  .te-card-feat { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; }
+  .te-card-ic { flex-shrink: 0; margin-top: 2px; }
+  .te-card.te-amber .te-card-ic { color: #D97706; }
+  .te-card.te-pink .te-card-ic { color: #BE185D; }
+  .te-card-feat-txt { display: flex; flex-direction: column; line-height: 1.35; }
+  .te-card-feat-t { font-size: 12.5px; font-weight: 700; color: var(--gray-900); }
+  .te-card-feat-d { font-size: 11px; color: var(--gray-600); }
+  .te-card-cta { width: 100%; margin-top: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 800; color: #fff; padding: 11px 14px; border-radius: var(--radius-md); }
+  .te-card.te-amber .te-card-cta { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 2px 8px rgba(217,119,6,0.30); }
+  .te-card.te-amber .te-card-cta:hover { background: linear-gradient(135deg, #FBBF24 0%, #B45309 100%); }
+  .te-card.te-pink .te-card-cta { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); box-shadow: 0 2px 8px rgba(190,24,93,0.30); }
+  .te-card.te-pink .te-card-cta:hover { background: linear-gradient(135deg, #F472B6 0%, #9D174D 100%); }
 
   /* QUIZ PREP TIP — sits right where the user decides whether to take the
      quiz, so it can answer "am I ready for this?" at the moment it matters,
@@ -280,7 +285,7 @@
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-worksheet.js?v=20260904" defer></script>
+<script src="js/workshido-worksheet.js?v=20260905b" defer></script>
 
 <!-- Login modal -->
 <div class="modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">

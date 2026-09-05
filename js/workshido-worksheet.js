@@ -57,21 +57,24 @@ let _wsTitle = 'worksheet';
 let _quizId = null;
 let _quizTitle = 'quiz';
 
-// Preview-then-paywall: a blurred mockup of what the real PDF looks like
-// (structure/labels only — no actual answer-key or quiz content, since none
-// is stored server-side for non-premium users) instead of a flat locked
-// button. Replaces guessing "what's even in there?" with a tangible look,
-// then asks to unlock.
-function lockedPreviewCard(kind, colorClass, icon, headLabel, sections) {
-  const body = sections.map(s => `
-    <div class="te-preview-label">${esc(s.label)}</div>
-    ${s.lines.map(w => `<div class="te-preview-line" style="width:${w}%"></div>`).join('')}
-  `).join('');
-  return `<div class="te-preview ${colorClass}" onclick="openPremiumModal('${kind}')" role="button" tabindex="0" aria-label="Preview: unlock ${esc(headLabel)}" onkeydown="if(event.key==='Enter'){openPremiumModal('${kind}')}">
-    <div class="te-preview-head">${icon} ${esc(headLabel)} <span class="te-preview-tag">Preview</span></div>
-    <div class="te-preview-body">
+// Preview-then-paywall: instead of blurred skeleton bars (which read as
+// "broken / still loading" and plant doubt right before the ask), show a
+// concrete checklist of exactly what unlocking delivers, plus a full-width
+// CTA. No real answer-key/quiz content is stored server-side for non-premium
+// users, so the value has to be sold with specifics, not a fake mockup.
+function lockedPreviewCard(kind, colorClass, icon, headLabel, items, ctaLabel) {
+  const check = `<svg class="te-card-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const body = items.map(s => `
+    <div class="te-card-feat">
+      ${check}
+      <div class="te-card-feat-txt"><span class="te-card-feat-t">${esc(s.t)}</span>${s.d ? `<span class="te-card-feat-d">${esc(s.d)}</span>` : ''}</div>
+    </div>`).join('');
+  const cta = ctaLabel || `Unlock ${headLabel}`;
+  return `<div class="te-card ${colorClass}" onclick="openPremiumModal('${kind}')" role="button" tabindex="0" aria-label="Unlock ${esc(headLabel)}" onkeydown="if(event.key==='Enter'){openPremiumModal('${kind}')}">
+    <div class="te-card-head">${icon} ${esc(headLabel)} <span class="te-card-tag">Preview</span></div>
+    <div class="te-card-body">
       ${body}
-      <div class="te-preview-fade"><span class="te-preview-cta">🔒 Unlock ${esc(headLabel)}</span></div>
+      <button class="te-card-cta" onclick="event.stopPropagation();openPremiumModal('${kind}')">🔓 ${esc(cta)}</button>
     </div>
   </div>`;
 }
@@ -264,10 +267,11 @@ async function loadWorksheet() {
             </span>
           </button>`
         : `${lockedPreviewCard('teacher_edition', 'te-amber', '📘', 'Teacher Edition', [
-            { label: 'Learning Objective', lines: [92, 68] },
-            { label: 'Answer Key', lines: [40, 88, 75, 55] },
-            { label: 'Common Student Mistakes', lines: [80] },
-          ])}
+            { t: 'Complete answer key', d: 'every exercise, fully worked' },
+            { t: 'Learning objective & success criteria' },
+            { t: 'Lesson plan', d: 'I Do / We Do / You Do, ready to teach' },
+            { t: 'Common student mistakes', d: 'and how to correct them' },
+          ], 'Unlock Teacher Edition')}
           ${!currentUser ? '<p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>' : ''}`)
     : '';
 
@@ -288,10 +292,10 @@ async function loadWorksheet() {
             <div class="prep-line">Done with those? You're ready. <a href="workshido-how-quiz-works.html">Why this order →</a></div>
           </div>`
         : `${lockedPreviewCard('quiz', 'te-pink', '📝', 'Full Quiz', [
-            { label: 'Grammar', lines: [85, 60] },
-            { label: 'Reading', lines: [95, 70] },
-            { label: 'Writing', lines: [50] },
-          ])}
+            { t: 'Grammar, Reading & Writing', d: 'one graded evaluation' },
+            { t: 'Score at the end', d: 'see exactly where the student stands' },
+            { t: 'Full answer key', d: 'model answers for every section' },
+          ], 'Unlock Full Quiz')}
           <p class="quiz-key-link">Covers ${esc(quiz.skills)}</p>
           <div class="quiz-prep-tip">
             <div class="prep-label">How to get there</div>
@@ -318,9 +322,9 @@ async function loadWorksheet() {
           <div class="ws-meta-row"><span class="ws-meta-label">Downloads</span><span class="ws-meta-value" id="dlCount">${data.downloads || 0}</span></div>
         </div>
         ${downloadBtn}
+        <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
         ${answerKeyBtn}
         ${quizBtn}
-        <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
         ${starSection}
       </div>
     </div>`;
@@ -474,20 +478,40 @@ async function downloadWS(id, currentDl) {
     session = data.session;
     if (!session) { openDlModal('download'); return; }
   } catch(e) { openDlModal('download'); return; }
-  if (!_wsFileUrl) return;
-  const url = await getSignedUrl(_wsFileUrl);
-  await forceDownload(url, _wsTitle);
-  window.wsTrack?.('download_completed', { worksheet_id: id });
+  // Preferred path: a SAME-ORIGIN call to our own function, which hands back a
+  // short-lived R2 URL with Content-Disposition: attachment. Navigating to it
+  // downloads the file directly — no cross-origin fetch that ad blockers /
+  // tracking protection / stale-CDN-CORS can silently break into an "open in
+  // new tab". Works on iOS too. Falls back to the old blob method on failure.
+  let directUrl = null;
   try {
-    const res = await fetch('/.netlify/functions/increment-downloads', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
-      body: JSON.stringify({ worksheetId: id }),
+    const r = await fetch(`/.netlify/functions/download-worksheet?id=${encodeURIComponent(id)}`, {
+      headers: { 'Authorization': `Bearer ${session.access_token}` },
     });
-    const { downloads } = await res.json();
-    const el = document.getElementById('dlCount');
-    if (el && downloads) el.textContent = downloads;
-  } catch(e) {}
+    if (r.ok) directUrl = (await r.json()).url || null;
+  } catch (e) {}
+
+  // Fire analytics + the download-count bump BEFORE triggering the download, so
+  // a stripped-down in-app webview that treats the attachment URL as a plain
+  // navigation can't cancel them mid-flight.
+  window.wsTrack?.('download_completed', { worksheet_id: id });
+  fetch('/.netlify/functions/increment-downloads', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+    body: JSON.stringify({ worksheetId: id }),
+  })
+    .then((res) => res.json())
+    .then(({ downloads }) => {
+      const el = document.getElementById('dlCount');
+      if (el && downloads) el.textContent = downloads;
+    })
+    .catch(() => {});
+
+  if (directUrl) {
+    window.location.href = directUrl;
+  } else if (_wsFileUrl) {
+    await forceDownload(await getSignedUrl(_wsFileUrl), _wsTitle);
+  }
 }
 
 async function forceDownload(url, filename) {
