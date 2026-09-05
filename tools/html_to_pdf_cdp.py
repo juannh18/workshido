@@ -6,6 +6,12 @@ Uso:
 
 HTML relativos se resuelven contra la raíz del repo; PDFs relativos contra Downloads.
 IMPORTANTE: Chrome exige --remote-allow-origins=* para aceptar el websocket (si no, 403).
+
+Si corres esto en paralelo (varios procesos a la vez, ej. varios agentes generando
+quizzes al mismo tiempo), cada invocación DEBE usar un puerto CDP distinto — de lo
+contrario dos procesos comparten el mismo Chrome y sus PDFs pueden mezclarse entre
+sí. Setea la variable de entorno CDP_PORT (ej. `CDP_PORT=9334 python tools/html_to_pdf_cdp.py ...`)
+con un puerto distinto por invocación paralela; si no se define, usa 9333 por defecto.
 """
 import subprocess, time, json, base64, os, tempfile, sys
 import urllib.request
@@ -14,7 +20,7 @@ import websocket
 CHROME = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DL = r'C:\Users\juand\Downloads'
-PORT = 9333
+PORT = int(os.environ.get('CDP_PORT', 9333))
 
 
 def resolve_html(p):

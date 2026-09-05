@@ -9,11 +9,12 @@ Uso:
 """
 import sys, os, io, json, argparse
 from datetime import datetime
+import pip_system_certs.wrapt_requests  # noqa: usa el almacén de certificados de Windows en vez de desactivar la verificación TLS
 import requests
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(__file__))
-from upload_batch import SUPABASE_URL, HEADERS_AUTH, resolve, upload_pdf, upload_thumb
+from upload_batch import SUPABASE_URL, HEADERS_AUTH, resolve, upload_pdf, upload_thumb, check_r2_domain, s3, R2_BUCKET, R2_PUBLIC_BASE
 
 
 def find(title_substr):
@@ -21,7 +22,6 @@ def find(title_substr):
         f'{SUPABASE_URL}/rest/v1/worksheets',
         headers=HEADERS_AUTH,
         params={'title': f'ilike.*{title_substr}*', 'select': 'id,title,file_url,thumbnail_url,teacher_edition_url'},
-        verify=False,
     )
     rows = res.json()
     for r in rows:
@@ -32,20 +32,30 @@ def find(title_substr):
 
 
 def storage_path_from_url(url):
-    marker = '/storage/v1/object/public/worksheets/'
-    if not url or marker not in url:
+    """Devuelve (backend, path) detectando si la URL es de R2 (nueva) o Supabase (legacy)."""
+    if not url:
         return None
-    return url.split(marker, 1)[1]
+    if url.startswith(R2_PUBLIC_BASE + '/'):
+        return ('r2', url[len(R2_PUBLIC_BASE) + 1:])
+    marker = '/storage/v1/object/public/worksheets/'
+    if marker in url:
+        return ('supabase', url.split(marker, 1)[1])
+    return None
 
 
-def delete_storage_object(path):
-    if not path:
+def delete_storage_object(loc):
+    if not loc:
         return
-    res = requests.delete(
-        f'{SUPABASE_URL}/storage/v1/object/worksheets/{path}',
-        headers=HEADERS_AUTH, verify=False,
-    )
-    print(f'  storage delete {path}: {res.status_code}')
+    backend, path = loc
+    if backend == 'r2':
+        s3.delete_object(Bucket=R2_BUCKET, Key=path)
+        print(f'  R2 delete {path}: done')
+    else:
+        res = requests.delete(
+            f'{SUPABASE_URL}/storage/v1/object/worksheets/{path}',
+            headers=HEADERS_AUTH,
+        )
+        print(f'  Supabase storage delete {path}: {res.status_code}')
 
 
 def delete_record(record_id):
@@ -53,7 +63,6 @@ def delete_record(record_id):
         f'{SUPABASE_URL}/rest/v1/worksheets',
         headers=HEADERS_AUTH,
         params={'id': f'eq.{record_id}', 'select': 'id,title,file_url,thumbnail_url,teacher_edition_url'},
-        verify=False,
     )
     rows = res.json()
     if not rows:
@@ -67,12 +76,13 @@ def delete_record(record_id):
         f'{SUPABASE_URL}/rest/v1/worksheets',
         headers=HEADERS_AUTH,
         params={'id': f'eq.{record_id}'},
-        verify=False,
     )
     print(f'  DB delete: {res.status_code}')
 
 
 def update_record(record_id, pdf=None, thumb=None, te_pdf=None, slug=None, level_folder='a1'):
+    if pdf or thumb or te_pdf:
+        check_r2_domain()
     ts = int(datetime.now().timestamp() * 1000)
     patch = {}
     if pdf:
@@ -97,7 +107,7 @@ def update_record(record_id, pdf=None, thumb=None, te_pdf=None, slug=None, level
         f'{SUPABASE_URL}/rest/v1/worksheets',
         headers={**HEADERS_AUTH, 'Content-Type': 'application/json', 'Prefer': 'return=representation'},
         params={'id': f'eq.{record_id}'},
-        json=patch, verify=False,
+        json=patch,
     )
     print(f'  DB update: {res.status_code} {res.text[:300]}')
 

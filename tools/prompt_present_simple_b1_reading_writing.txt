@@ -1,0 +1,15 @@
+Create 2 ESL worksheets for B1 level, topic: Present Simple (daily habits, routines, general truths, timetables), matching the existing "Mastering the Present Simple" worksheet's scope (affirmative/negative/questions, 3rd person -s/-es, do/does).
+
+1. Present Simple – Reading (B1)
+A short reading passage (a person describing their daily routine, weekly schedule, or a general-truths topic), followed by comprehension questions: true/false, multiple choice, and short answer. Follow the standard Workshido reading worksheet layout.
+
+2. Present Simple – Writing (B1)
+Guided writing practice: sentence completion about routines, a paragraph-writing task describing a typical day/week using present simple (affirmative, negative, and questions), and a short personalization task. Follow the standard Workshido writing worksheet layout.
+
+Both should use natural B1 vocabulary and sentence complexity, matching the CEFR level of the existing Present Simple B1 worksheets. Follow the WORKSHIDO-DESIGN-MANUAL-2.0 instructions exactly, and apply these standing design rules (not a one-off suggestion — follow them on every future worksheet, not just these two):
+
+- Treat each worksheet as an independent, standalone design — do not reuse the same layout, header composition, or visual template across worksheets. Vary the design choices (layout structure, color palette, header style, icon set) from one worksheet to the next.
+- Mix imagery types: use real professional photography for some worksheets and cartoon/illustration style for others; mix in animated-style icons that look hand-crafted/editorial, not generic or obviously AI-generated (avoid stock "AI look" icons — clip-art/flat-icon or line-icon styles read as more professional).
+- Titles: catchy but professional, moderate size — not oversized/shouty headline treatment.
+- Keep every word, label, and example sentence grammatically consistent and coherent — proofread all text within the design itself for correctness (subject-verb agreement, correct tense, no typos) before finalizing.
+- Maintain good content density and spacing — balanced use of white space, no overcrowded sections and no excessive empty gaps.

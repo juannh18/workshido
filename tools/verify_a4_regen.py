@@ -6,15 +6,15 @@ Uso:
   python tools/verify_a4_regen.py tools/regenerate_a4_log.json
 """
 import sys, io, json, time
-import requests, fitz, urllib3
-urllib3.disable_warnings()
+import pip_system_certs.wrapt_requests  # noqa: usa el almacén de certificados de Windows en vez de desactivar la verificación TLS
+import requests, fitz
 
 
 def get_with_retry(url, tries=3):
     last = None
     for _ in range(tries):
         try:
-            return requests.get(url, verify=False, timeout=30)
+            return requests.get(url, timeout=30)
         except Exception as e:
             last = e
             time.sleep(2)
