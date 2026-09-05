@@ -16,6 +16,12 @@
   const ENDPOINT = 'https://mhbgxdsdaalvtgobnvbh.supabase.co/rest/v1/analytics_events';
   const ANON_KEY = 'sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo';
 
+  // Own-testing flag — set once per browser/device via the console
+  // (localStorage.setItem('ws_internal','1')) so Juan's manual QA sessions
+  // can be filtered out of real-user analytics instead of skewing them.
+  let isInternal = false;
+  try { isInternal = localStorage.getItem('ws_internal') === '1'; } catch (e) {}
+
   function sessionId() {
     try {
       let id = sessionStorage.getItem('ws_sid');
@@ -110,7 +116,7 @@
     try {
       const body = JSON.stringify({
         event_name: eventName,
-        properties: { ...(properties || {}), country_code: country?.code || null, country_name: country?.name || null },
+        properties: { ...(properties || {}), country_code: country?.code || null, country_name: country?.name || null, is_internal: isInternal || undefined },
         session_id: sessionId(),
         visitor_id: visitorId(),
         path: location.pathname + location.search,

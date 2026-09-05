@@ -70,6 +70,36 @@ async function checkAuth2(){
     portalUrl = profile?.lemon_portal_url || null;
     renderPremiumCta();
   }
+  handleCheckoutReturn(user);
+}
+
+// Lemon Squeezy redirects back here with ?success=1 right after payment, but
+// the webhook that flips profiles.is_premium runs async — it's usually
+// already there, but can lag a few seconds. Poll briefly instead of leaving
+// the payer looking at the same "Unlock" button they just paid to get rid of.
+async function handleCheckoutReturn(user) {
+  if (new URLSearchParams(window.location.search).get('success') !== '1') return;
+  history.replaceState(null, '', window.location.pathname);
+  const banner = document.getElementById('successBanner');
+  if (!banner || !user) return;
+  banner.style.display = 'block';
+  if (userIsPremium) {
+    banner.textContent = "🎉 Payment received — you're Premium! Full Teacher Edition access is unlocked.";
+    return;
+  }
+  banner.textContent = '🎉 Payment received — activating your Premium access…';
+  for (let i = 0; i < 6; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    const { data: profile } = await sb2.from('profiles').select('is_premium, lemon_portal_url').eq('id', user.id).maybeSingle();
+    if (profile?.is_premium) {
+      userIsPremium = true;
+      portalUrl = profile?.lemon_portal_url || null;
+      renderPremiumCta();
+      banner.textContent = "🎉 Payment received — you're Premium! Full Teacher Edition access is unlocked.";
+      return;
+    }
+  }
+  banner.textContent = "🎉 Payment received! It's taking a little longer than usual to activate — refresh this page in a minute.";
 }
 async function logOut2(){await sb2.auth.signOut();window.location.reload();}
 
