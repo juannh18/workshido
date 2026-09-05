@@ -845,8 +845,52 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 function openMobileMenu()  { document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow = ''; }
 
+// Anonymous homepage lead capture — separate from the logged-in marketing
+// consent banner (marketing-consent.js, which only fires for existing
+// accounts). Public insert-only table (email_leads), no auth required.
+const EMAIL_CAPTURE_CONSENT_VERSION = 'v1';
+function initEmailCapture() {
+  const form = document.getElementById('ecForm');
+  if (!form) return;
+  const status = document.getElementById('ecStatus');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('ecEmail').value.trim();
+    const consent = document.getElementById('ecConsent').checked;
+    if (!consent) {
+      status.textContent = 'Please check the box to agree to receive emails.';
+      status.className = 'email-capture-status err';
+      return;
+    }
+    const btn = document.getElementById('ecBtn');
+    btn.disabled = true;
+    btn.textContent = 'Subscribing…';
+    const { error } = await sb2.from('email_leads').insert({
+      email, source: 'catalog', consent_version: EMAIL_CAPTURE_CONSENT_VERSION,
+    });
+    btn.disabled = false;
+    btn.textContent = 'Subscribe free';
+    if (error) {
+      // Unique index on lower(email) — a repeat signup is not a real error.
+      if (error.code === '23505') {
+        status.textContent = "You're already on the list!";
+        status.className = 'email-capture-status ok';
+        form.reset();
+        return;
+      }
+      status.textContent = 'Something went wrong — please try again.';
+      status.className = 'email-capture-status err';
+      return;
+    }
+    status.textContent = "You're in! Watch your inbox for new worksheets.";
+    status.className = 'email-capture-status ok';
+    form.reset();
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth2();
+  initEmailCapture();
   loadWorksheets().then(() => {
     const params = new URLSearchParams(window.location.search);
     const cat   = params.get('cat');
