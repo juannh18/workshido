@@ -85,10 +85,14 @@ function renderLatestRows() {
     // recent/downloaded uploads happen to also be its most recent/downloaded
     // Vocabulary uploads (e.g. several new A1 word searches in a row), that
     // level's row is just a duplicate of the Vocabulary row above it.
+    // The Vocabulary row itself uses cardCategory() (same "Practice" split as
+    // the card badge) instead of the raw DB category — otherwise a "X –
+    // Vocabulary Practice" worksheet shows a "Practice" badge on its card
+    // while sitting inside a row header that says "Vocabulary".
     let items = allWorksheets
       .filter(w => row.type === 'level'
         ? w.level === row.value && (w.category || '').toLowerCase() !== 'vocabulary'
-        : (w.category || '').toLowerCase() === row.value.toLowerCase());
+        : cardCategory(w) === row.value);
     if (sort === 'downloads') items = [...items].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
     items = items.slice(0, 5);
     if (!items.length) return '';
