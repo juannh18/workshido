@@ -432,11 +432,23 @@ function catalogRatingHtml(ws) {
 // them as safe HTML when building cards from the catalog.
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// Category badge for a card — same "Practice" split used for the level rows
+// above (drill-style worksheets are stored as Grammar in the DB, so a title
+// match takes them out of the Grammar bucket and into their own), and the
+// same color-per-category the worksheet detail page's related cards use.
+const CARD_CAT_CLASS = { Grammar: 'cat-grammar', Reading: 'cat-reading', Writing: 'cat-writing', Vocabulary: 'cat-vocabulary', Speaking: 'cat-speaking', Practice: 'cat-practice' };
+function cardCategory(ws) {
+  if (wsMatchesTerms(ws, ['practice'])) return 'Practice';
+  return ws.category || '';
+}
+
 function buildCard(ws) {
   const color  = LEVEL_COLORS[ws.level] || 'teal';
   const lvlCls = LEVEL_CLASS[ws.level]  || 'a1';
   const accent = ACCENT[ws.level]        || 'accent-teal';
   const badge  = ws.is_free ? '<span class="badge-type free">Free</span>' : '<span class="badge-type premium">Premium</span>';
+  const cat    = cardCategory(ws);
+  const catBadge = cat ? `<span class="badge-cat ${CARD_CAT_CLASS[cat] || ''}">${esc(cat)}</span>` : '';
   const btn    = ws.is_free
     ? `<a href="workshido-worksheet.html?id=${ws.id}" class="btn-download" style="text-decoration:none;">↓ Download</a>`
     : `<a href="workshido-worksheet.html?id=${ws.id}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
@@ -448,7 +460,7 @@ function buildCard(ws) {
   return `<div class="ws-card">
     <a href="workshido-worksheet.html?id=${ws.id}" class="card-thumb ${color}" style="display:block;text-decoration:none;">${thumb}${overlay}</a>
     <div class="card-body">
-      <div class="card-meta"><span class="badge-level ${lvlCls}">${ws.level}</span>${badge}</div>
+      <div class="card-meta"><span class="badge-level ${lvlCls}">${ws.level}</span>${badge}${catBadge}</div>
       <a href="workshido-worksheet.html?id=${ws.id}" class="card-title" style="text-decoration:none;color:inherit;">${esc(ws.title)}</a>
       <div class="card-tags">${tags}</div>
       <div class="card-footer">

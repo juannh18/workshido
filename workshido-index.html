@@ -594,6 +594,17 @@
   .badge-type.free { background: var(--green-50); color: var(--green-600); }
   .badge-type.premium { background: var(--amber-50); color: var(--amber-600); }
 
+  /* Category badge — same palette as the worksheet detail page's related-
+     worksheets cards, so "Grammar"/"Reading"/etc. mean the same color
+     everywhere on the site, not just here. */
+  .badge-cat { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 10px; background: var(--gray-50); color: var(--gray-600); }
+  .badge-cat.cat-grammar { background: var(--green-50); color: var(--green-600); }
+  .badge-cat.cat-reading { background: #E0F2FE; color: #0369A1; }
+  .badge-cat.cat-writing { background: #FFEDD5; color: #C2410C; }
+  .badge-cat.cat-vocabulary { background: #F5EDE4; color: #8B5E34; }
+  .badge-cat.cat-speaking { background: #FAE8FF; color: #A21CAF; }
+  .badge-cat.cat-practice { background: #F1F5F9; color: #475569; }
+
   /* Worksheet mini preview (fallback when no thumbnail) */
   .ws-preview {
     width: 88px; height: 114px;
@@ -618,7 +629,9 @@
   .card-meta {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 6px;
+    row-gap: 4px;
     margin-bottom: 8px;
   }
   .card-title {
@@ -1130,7 +1143,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-index.js?v=20260905" defer></script>
+<script src="js/workshido-index.js?v=20260905b" defer></script>
 
 <script src="mascot.js" defer></script>
 <script src="js/analytics.js?v=20260721" defer></script>
