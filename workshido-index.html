@@ -8,27 +8,29 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Workshido — Free English Worksheets for Teachers</title>
-<meta name="description" content="Download free printable ESL worksheets. Grammar, vocabulary, reading and writing PDFs organized by CEFR level, with answer keys and Teacher Editions available. New worksheets every week.">
-<!-- This page is a byte-identical duplicate of the homepage (index.html) — canonical
-     points at the root so Google consolidates ranking signals there instead of treating
-     this (and its ?level=/?cat=/?topic=/?q= variants) as a separate, competing page. -->
-<link rel="canonical" href="https://workshido.com/">
+<title>Browse Free English Worksheets by Level & Topic | Workshido</title>
+<meta name="description" content="Browse 700+ free printable English worksheets by CEFR level (A1–B2) and topic — grammar, vocabulary, reading and writing PDFs with answer keys and Teacher Editions.">
+<!-- Self-canonical: this is the functional catalog (topic sidebar, filters,
+     search, pagination), a distinct page from the marketing homepage at "/".
+     The ?level=/?cat=/?topic=/?q= filter variants all canonical here so they
+     aren't indexed separately — the 6 /worksheets/<cat|level>/ pages own those. -->
+<link rel="canonical" href="https://workshido.com/workshido-index.html">
 <meta property="og:site_name" content="Workshido">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Browse Worksheets — Workshido">
-<meta property="og:description" content="Free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
+<meta property="og:title" content="Browse Free English Worksheets by Level & Topic">
+<meta property="og:description" content="700+ free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
 <meta property="og:image" content="https://workshido.com/og-image.png">
-<meta property="og:url" content="https://workshido.com/">
+<meta property="og:url" content="https://workshido.com/workshido-index.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Browse Worksheets — Workshido">
-<meta name="twitter:description" content="Free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
+<meta name="twitter:title" content="Browse Free English Worksheets by Level & Topic">
+<meta name="twitter:description" content="700+ free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
 <meta name="twitter:image" content="https://workshido.com/og-image.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Browse English Worksheets","description":"Free printable English worksheets by CEFR level (A1–B2) and topic — grammar, vocabulary, reading and writing PDFs with answer keys and Teacher Editions.","url":"https://workshido.com/workshido-index.html","isPartOf":{"@type":"WebSite","name":"Workshido","url":"https://workshido.com/"}}</script>
 <meta name="theme-color" content="#042C53">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -909,9 +911,12 @@
     .search-wrap { max-width: 100%; }
     .chip { min-height: 44px; padding-inline: 14px; display: inline-flex; align-items: center; }
   }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 
 <!-- NAV -->
 <nav>
@@ -1143,10 +1148,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-index.js?v=20260905c" defer></script>
+<script src="/js/avatar-render.js" defer></script>
+<script src="js/workshido-index.js?v=20260908d" defer></script>
 
 <script src="mascot.js" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 <script src="js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>

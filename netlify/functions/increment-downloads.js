@@ -16,6 +16,16 @@ exports.handler = async (event) => {
     // lost-update race of a separate read-then-write under concurrent requests.
     const { data: newCount, error } = await sb.rpc('increment_downloads', { ws_id: worksheetId });
     if (error) throw error;
+
+    // Per-user download log (powers "Recently downloaded" on the profile).
+    // Non-fatal: a failure here must not break the public download counter.
+    try {
+      await sb.from('user_downloads').upsert(
+        { user_id: user.id, worksheet_id: worksheetId, last_at: new Date().toISOString() },
+        { onConflict: 'user_id,worksheet_id' }
+      );
+    } catch (e) { /* ignore */ }
+
     return { statusCode: 200, body: JSON.stringify({ downloads: newCount }) };
   } catch (err) {
     return { statusCode: 500, body: JSON.stringify({ error: err.message }) };

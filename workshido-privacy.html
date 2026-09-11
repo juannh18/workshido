@@ -9,9 +9,20 @@
 <title>Privacy Policy — Workshido</title>
 <meta name="description" content="Workshido Privacy Policy — how we collect, use and protect your data.">
 <link rel="canonical" href="https://workshido.com/workshido-privacy.html">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<meta property="og:site_name" content="Workshido">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Privacy Policy — Workshido">
+<meta property="og:description" content="How Workshido collects, uses and protects your data.">
+<meta property="og:image" content="https://workshido.com/og-image.png">
+<meta property="og:url" content="https://workshido.com/workshido-privacy.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Privacy Policy — Workshido">
+<meta name="twitter:description" content="How Workshido collects, uses and protects your data.">
+<meta name="twitter:image" content="https://workshido.com/og-image.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy","url":"https://workshido.com/workshido-privacy.html","isPartOf":{"@type":"WebSite","name":"Workshido","url":"https://workshido.com/"}}</script>
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -38,7 +49,7 @@
 <nav>
   <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
 </nav>
-<div class="content">
+<main class="content">
   <h1>Privacy Policy</h1>
   <p class="updated">Last updated: August 2026</p>
 
@@ -66,7 +77,7 @@
   <p>You can withdraw your consent at any time from <a href="workshido-profile.html">Account settings → Email preferences</a>, or via the unsubscribe link included in every marketing email. Withdrawing consent never affects the account-related emails described above.</p>
 
   <h2>4. Data storage</h2>
-  <p>Your data is stored securely via <a href="https://supabase.com" target="_blank">Supabase</a> (PostgreSQL) on servers in the European Union. Files are stored on Supabase Storage with encrypted connections.</p>
+  <p>Your account and usage data is stored securely via <a href="https://supabase.com" target="_blank">Supabase</a> (PostgreSQL) on servers in the European Union. Worksheet and PDF files are stored on <a href="https://www.cloudflare.com/developer-platform/products/r2/" target="_blank">Cloudflare R2</a> and served over encrypted connections.</p>
 
   <h2>5. Cookies</h2>
   <p>We use session cookies to keep you logged in. We do not use advertising or tracking cookies.</p>
@@ -83,7 +94,7 @@
   <ul>
     <li><strong>Supabase</strong> — authentication and database.</li>
     <li><strong>Netlify</strong> — static site hosting.</li>
-    <li><strong>Google Fonts</strong> — typography (no tracking).</li>
+    <li><strong>Cloudflare R2</strong> — worksheet and PDF file storage.</li>
   </ul>
 
   <h2>8. Contact</h2>
@@ -91,6 +102,6 @@
 
   <hr>
   <p><a href="workshido-terms.html">Terms of Service</a> · <a href="workshido-index.html">Back to browse</a></p>
-</div>
+</main>
 </body>
 </html>

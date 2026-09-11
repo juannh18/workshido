@@ -319,12 +319,25 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    # Netlify sets a default HSTS header (max-age only) for the custom domain;
+    # this overrides it to add includeSubDomains. Verified every subdomain
+    # (www, files.workshido.com for R2 assets) already fully supports HTTPS,
+    # so forcing it site-wide breaks nothing. No "preload" — that gets baked
+    # into browsers themselves via a public list and is much harder to undo.
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    # same-origin-allow-popups (not the stricter same-origin) specifically
+    # because Google Identity Services' Sign-In popup/One Tap flow needs
+    # window.opener access back to this origin — the strict value breaks it.
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     # Report-Only first: observe violations in the browser console for a
     # while (nothing gets blocked) before ever switching this to an
     # enforcing Content-Security-Policy. 'unsafe-inline' is required for now
     # since the site relies heavily on inline <script>/onclick — tightening
     # that is a separate, bigger refactor, not a one-line change.
-    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: https://*.supabase.co https://files.workshido.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://files.workshido.com https://accounts.google.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+    # Fonts are now self-hosted (see /fonts/fonts.css), so fonts.googleapis.com
+    # / fonts.gstatic.com are no longer allowed here — style-src stays only for
+    # the site's inline <style> blocks, font-src is 'self' only.
+    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: https://*.supabase.co https://files.workshido.com https://api.dicebear.com https://lh3.googleusercontent.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.supabase.co https://files.workshido.com https://accounts.google.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
 
 [[headers]]
   for = "/*.html"
@@ -352,6 +365,14 @@
   for = "/favicon*"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# Self-hosted font files — content is fixed per filename, so cache hard and
+# long. This is what makes the self-hosting a real win on repeat views: no
+# revalidation round-trip before first paint.
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/*.png"

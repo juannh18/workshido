@@ -155,11 +155,23 @@
       }
     }).observe({ type: 'layout-shift', buffered: true });
 
+    // INP — the third Core Web Vital. Full INP is a high-percentile of all
+    // interactions; this keeps the lightweight approach and reports the
+    // single worst interaction latency (the dominant term on most pages)
+    // rather than pulling in the web-vitals library's binning logic.
+    let inp = 0;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (entry.interactionId && entry.duration > inp) inp = entry.duration;
+      }
+    }).observe({ type: 'event', buffered: true, durationThreshold: 40 });
+
     const sendVitals = () => {
       const nav = performance.getEntriesByType('navigation')[0];
       track('web_vitals', {
         lcp_ms: lcp ? Math.round(lcp.startTime) : null,
         cls: Math.round(cls * 1000) / 1000,
+        inp_ms: inp ? Math.round(inp) : null,
         ttfb_ms: nav ? Math.round(nav.responseStart) : null,
         load_ms: nav ? Math.round(nav.loadEventEnd) : null,
       });

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 16px 32px; }
+
+  /* ---------- Header ---------- */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 3px solid #1a3a5c; margin-bottom: 16px; }
+  .header-left .brand-row { display: flex; align-items: center; gap: 9px; }
+  .header-left .brand-logo { width: 30px; height: 30px; border-radius: 7px; }
+  .header-left .brand-mini { font-size: 25px; font-weight: 900; letter-spacing: 0.3px; color: #1a3a5c; }
+  .header-left .brand-mini .brand-accent { color: #6ea8dc; }
+  .header-left .edition { font-size: 13px; font-weight: 700; color: #e67e22; margin-top: 3px; letter-spacing: 0.5px; }
+  .header-right { text-align: right; max-width: 55%; }
+  .header-right .ws-title { font-size: 15px; font-weight: 800; color: #1a3a5c; line-height: 1.3; }
+  .header-right .ws-sub { font-size: 10.5px; color: #7a8699; margin-top: 4px; font-style: italic; }
+
+  /* ---------- Top panel: What's Included + Worksheet Information ---------- */
+  .top-panel { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 16px; margin-bottom: 12px; }
+  .panel-card { background: #f5f8fb; border: 1px solid #dbe4ee; border-radius: 9px; padding: 9px 16px; }
+  .panel-card h3 { font-size: 11px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid #dbe4ee; }
+  .incl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; }
+  .incl-grid span { font-size: 10.5px; color: #33415c; }
+  .incl-grid span::before { content: "\2713"; color: #1e8449; font-weight: 800; margin-right: 5px; }
+  .wsinfo { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .wsinfo td { padding: 4px 2px; border-bottom: 1px solid #e6edf4; }
+  .wsinfo tr:last-child td { border-bottom: none; }
+  .wsinfo td:first-child { font-weight: 700; color: #1a3a5c; width: 42%; text-transform: uppercase; font-size: 9px; letter-spacing: 0.4px; }
+  .wsinfo td:last-child { color: #33415c; }
+
+  /* ---------- Section titles ---------- */
+  .section-title { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #fff; background: #1a3a5c; padding: 3px 11px; border-radius: 6px; margin-bottom: 4px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .section-title.teal { background: #0e7c66; }
+  .section-title.purple { background: #7b2d8b; }
+
+  /* ---------- Answer Key (full-width, flows into 2 balanced columns) ---------- */
+  .ak-flow { column-count: 2; column-gap: 26px; margin-top: 2px; }
+  .ak-item { break-inside: avoid; -webkit-column-break-inside: avoid; margin-bottom: 10px; }
+  .ex-title { font-size: 11px; font-weight: 700; color: #1a3a5c; margin: 0 0 5px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-bottom: 4px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 4px 8px; font-size: 10.5px; line-height: 1.45; }
+  .ans-item .n { font-weight: 700; color: #1a3a5c; }
+  ul.ans { list-style: none; margin: 0 0 4px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 4px 8px; font-size: 10.5px; line-height: 1.45; margin-bottom: 4px; }
+  ul.ans li .n { font-weight: 700; color: #1a3a5c; margin-right: 4px; }
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 5px; padding: 6px 9px; font-size: 9.5px; color: #9a5b00; line-height: 1.5; margin: 5px 0 0; }
+
+  /* ---------- Teaching support: 3 cards ---------- */
+  .support-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 4px; }
+  .s-card { border: 1px solid #d0d8e4; border-radius: 8px; overflow: hidden; }
+  .s-head { color: #fff; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; padding: 7px 11px; }
+  .s-head.amber { background: #e67e22; }
+  .s-head.red { background: #c0392b; }
+  .s-head.green { background: #1e8449; }
+  .s-body { padding: 12px 13px; font-size: 10.5px; line-height: 1.65; color: #333; }
+  .mistake-row { margin-bottom: 6px; font-size: 10px; line-height: 1.45; }
+  .mistake-row:last-child { margin-bottom: 0; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #1a3a5c; }
+
+  /* ---------- Footer ---------- */
+  .footer { text-align: center; margin-top: 3px; padding-top: 3px; border-top: 1px solid #d0d8e4; font-size: 10px; color: #9aa5b4; letter-spacing: 0.6px; }
+
+  /* ---------- Page 2 ---------- */
+  .page2 { break-before: page; page-break-before: always; }
+  .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 9px; border-bottom: 3px solid #1a3a5c; margin-bottom: 13px; }
+  .page2-header .brand-row { display: flex; align-items: center; gap: 8px; }
+  .page2-header .brand-logo { width: 22px; height: 22px; border-radius: 5px; }
+  .page2-header .brand-mini { font-size: 16px; font-weight: 900; color: #1a3a5c; letter-spacing: 0.5px; }
+  .page2-header .brand-mini .brand-accent { color: #6ea8dc; }
+  .page2-header .brand-mini span.edition-tag { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 9px; letter-spacing: 0; }
+  .page2-header .ws-title-mini { font-size: 11.5px; font-weight: 700; color: #1a3a5c; text-align: right; }
+  .lp-meta { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 12px; }
+  .lp-meta span { background: #eef3f8; border: 1px solid #dbe4ee; border-radius: 20px; padding: 4px 12px; font-size: 10px; color: #33415c; }
+  .lp-meta span b { color: #1a3a5c; }
+  .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 7px; padding: 4px 15px; margin-bottom: 4px; font-size: 10.5px; line-height: 1.32; color: #333; }
+  .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 22px; margin-top: 2px; }
+  .prep-grid span::before { content: "\2022 "; color: #0e7c66; font-weight: 700; }
+  .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table-lg th { background: #1a3a5c; color: #fff; padding: 5px 11px; text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .lp-table-lg td { border: 1px solid #d0d8e4; padding: 1.5px 10px; vertical-align: top; line-height: 1.12; }
+  .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table-lg td:first-child { font-weight: 800; color: #1a3a5c; white-space: nowrap; width: 12%; }
+  .lp-table-lg td:nth-child(2) { font-weight: 700; color: #1a3a5c; width: 20%; }
+  .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 7px; padding: 4px 15px; margin-top: 4px; font-size: 10.5px; line-height: 1.32; color: #333; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 7px; overflow: hidden; margin-top: 6px; }
+  .diff-col { padding: 4px 15px; font-size: 10.5px; line-height: 1.32; color: #333; }
+  .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
+  .diff-col:last-child { background: #f7f9fc; }
+  .diff-col .diff-label { font-weight: 800; color: #1a3a5c; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block; }
+  .right-box { border: 1px solid #d0d8e4; border-radius: 7px; padding: 4px 15px; margin-top: 4px; font-size: 10.5px; line-height: 1.32; color: #333; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ PAGE 1 ═══════════════════════ -->
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand-row">
+      <img class="brand-logo" src="data:image/png;base64,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" alt="Workshido">
+      <div class="brand-mini">Work<span class="brand-accent">shido</span></div>
+    </div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">Advanced Quantifiers &bull; Writing &bull; B2</div>
+    <div class="ws-sub">Premium teacher support &mdash; answer key &amp; full lesson plan</div>
+  </div>
+</div>
+
+<div class="top-panel">
+  <div class="panel-card">
+    <h3>What's Included</h3>
+    <div class="incl-grid">
+      <span>Complete Answer Key</span>
+      <span>Full Lesson Plan</span>
+      <span>Common Student Mistakes</span>
+      <span>Teacher Tip</span>
+      <span>Extra Class Activity</span>
+      <span>Extension &amp; Exit Ticket</span>
+    </div>
+  </div>
+  <div class="panel-card">
+    <h3>Worksheet Information</h3>
+    <table class="wsinfo">
+        <tr><td>Level</td><td>B2</td></tr>
+        <tr><td>Skill</td><td>Writing</td></tr>
+        <tr><td>Topic</td><td>Describe quantities and trends accurately with advanced quantifiers</td></tr>
+        <tr><td>Exercises</td><td>A&ndash;F (model, plan, 180&ndash;220-word paragraph)</td></tr>
+        <tr><td>Est. Time</td><td>45&ndash;50 minutes</td></tr>
+        <tr><td>Answer Key</td><td>Included above</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section-title">Answer Key</div>
+<div class="ak-flow">
+<div class='ak-item'><div class='ex-title'>A. Analyse the model</div><ul class='ans'><li><span class='n'>1.</span> Quantifiers for a large amount / many people: <i>a large number of</i> (consumers), <i>The majority of</i> (young adults), <i>a great deal of</i> (their spending), <i>a large number of</i> (consumers&hellip; aware).</li><li><span class='n'>2.</span> Quantifiers for a small amount / low number: <i>few</i> (people visit local shops), <i>little</i> (demand), <i>hardly any</i> (traditional shops left).</li><li><span class='n'>3.</span> Trends: shift to online shopping; decline of small / local shops; rise in packaging waste; growing awareness of environmental costs; growing interest in sustainable shopping.</li><li><span class='n'>4.</span> The writer links trends to a consequence with &ldquo;which has had a significant impact on&hellip;&rdquo;, &ldquo;it also leads to&hellip;&rdquo; and &ldquo;As a result, there is a growing interest in&hellip;&rdquo;.</li></ul></div><div class='ak-item'><div class='ex-title'>B. Organise your ideas / C. Useful language</div><p>Planning notes and phrase bank &ndash; not marked. Check the plan lists at least two quantities/trends and uses quantifiers, and that phrases from C appear in Exercise E.</p></div><div class='ak-item'><div class='ex-title'>D&ndash;E. Writing task</div><p>Model band (strong response): a clear focus (consumer habits / lifestyle changes / public services); a variety of advanced quantifiers used accurately with both countable and uncountable nouns; specific examples or figures; at least one cause&ndash;effect link between a trend and a result; 180&ndash;220 words; organised logically.</p></div><div class='ak-item'><div class='ex-title'>F. Self-check</div><p>Students tick each box; spot-check &ldquo;a variety of quantifiers&rdquo; and &ldquo;countable and uncountable nouns correctly&rdquo;.</p></div>
+</div>
+
+<div class="section-title" style="margin-top:16px;">Teaching Support</div>
+<div class="support-grid">
+  <div class="s-card">
+    <div class="s-head amber">Teacher Tip</div>
+    <div class="s-body">Have students choose four quantifiers from the Exercise C list before drafting &ndash; two for &ldquo;a lot&rdquo; and two for &ldquo;almost none / a small amount&rdquo; &ndash; and mark which noun each will describe. This builds precision in from the plan.</div>
+  </div>
+  <div class="s-card">
+    <div class="s-head red">Common Student Mistakes</div>
+    <div class="s-body">
+      <div class="mistake-row"><span class="wrong">✗ A large number of pollution comes from cars.</span><br><span class="correct">✓ A great deal of pollution comes from cars.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ The majority of the traffic is caused by commuters.</span><br><span class="correct">✓ Most of the traffic is caused by commuters.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ There is few evidence that habits are changing.</span><br><span class="correct">✓ There is little evidence that habits are changing.</span></div>
+      <div class="mistake-row"><span class="wrong">✗ Hardly any of information is available on this trend.</span><br><span class="correct">✓ Hardly any information is available on this trend.</span></div>
+    </div>
+  </div>
+  <div class="s-card">
+    <div class="s-head green">Extra Class Activity</div>
+    <div class="s-body">
+      <div class="activity-title">Trend Lines (8 min)</div>
+      Draw three simple graphs on the board (rising, falling, flat). Students describe each in one sentence using a quantifier + a trend verb (&ldquo;A large number of&hellip; now&hellip;&rdquo;, &ldquo;Hardly any&hellip; still&hellip;&rdquo;, &ldquo;The number of&hellip; has fallen&rdquo;).
+    </div>
+  </div>
+</div>
+
+<div class="footer">workshido.com &nbsp;&bull;&nbsp; Teacher Edition</div>
+
+<!-- ═══════════════════════ PAGE 2 — LESSON PLAN ═══════════════════════ -->
+<div class="page2">
+
+  <div class="page2-header">
+    <div class="brand-row">
+      <img class="brand-logo" src="data:image/png;base64,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" alt="Workshido">
+      <div class="brand-mini">Work<span class="brand-accent">shido</span><span class="edition-tag">Teacher Edition</span></div>
+    </div>
+    <div class="ws-title-mini">Advanced Quantifiers &bull; Writing &bull; B2</div>
+  </div>
+
+  <div class="section-title">Learning Focus</div>
+  <div class="prep-box" style="background:#eef3f8; border-color:#dbe4ee;">
+    <div style="margin-bottom:5px;"><b>Objective:</b> Students will be able to plan and write a 180&ndash;220-word paragraph describing quantities and trends, using a range of advanced quantifiers accurately with countable and uncountable nouns.</div>
+    <div style="margin-bottom:5px;"><b>Success Criteria:</b> I can use a variety of quantifiers (a great deal of, a large number of, few, little, hardly any, the majority of). I can match each to a countable or uncountable noun. I can link a trend to a cause or effect. I can stay within 180&ndash;220 words.</div>
+    <div><b>Prior Knowledge:</b> The advanced quantifiers and their noun types; basic cause&ndash;effect linkers (as a result, this leads to).</div>
+  </div>
+
+  <div class="section-title" style="margin-top:5px;">Lesson Plan (45&ndash;50 minutes)</div>
+  <div class="lp-meta">
+    <span><b>Level:</b> B2</span>
+    <span><b>Skill:</b> Writing</span>
+    <span><b>Topic:</b> Describe quantities and trends accurately with advanced quantifiers</span>
+    <span><b>Exercises:</b> A&ndash;F (model, plan, 180&ndash;220-word paragraph)</span>
+    <span><b>Est. Time:</b> 45&ndash;50 minutes</span>
+  </div>
+
+  <div class="section-title teal">Materials &amp; Prep</div>
+  <div class="prep-box">
+    <div class="prep-grid">
+      <span>Printed worksheet copies (1 per student)</span>
+      <span>Pens or pencils</span>
+      <span>Board for the model paragraph and useful language</span>
+      <span>Lined paper for a second draft (optional)</span>
+    </div>
+  </div>
+
+  <table class="lp-table-lg">
+    <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+    <tbody>
+      <tr><td>5 min</td><td>Warm-Up</td><td>Part 1: elicit three changes in how people shop or travel and write them on the board. Part 2: for each, ask &ldquo;a lot of people or hardly anyone?&rdquo; and add the quantifier.</td></tr>
+      <tr><td>8 min</td><td>Presentation (I Do)</td><td>Read the model paragraph. Point out, with the reason: <i>a large number of</i> / <i>The majority of</i> / <i>a great deal of</i> describe the big trends (many consumers, most young adults, a lot of spending); <i>few</i> / <i>little</i> / <i>hardly any</i> describe the decline (few visit local shops, little demand, hardly any shops left); the noun after each decides countable vs uncountable. Show the three linking phrases the model uses to connect a trend to a consequence.</td></tr>
+      <tr><td>10 min</td><td>Guided Practice (We Do)</td><td>As a class, answer Exercise A questions 1&ndash;2 in full sentences and plan a shared paragraph on &ldquo;how people travel to work&rdquo; using the Exercise B boxes.</td></tr>
+      <tr><td>10 min</td><td>Independent Practice (You Do)</td><td>Students choose an area, complete their Exercise B plan and draft the paragraph (Exercise E), 180&ndash;220 words, with at least four different quantifiers and one cause&ndash;effect link.</td></tr>
+      <tr><td>7 min</td><td>Assessment</td><td>Students run the Exercise F self-check, then a partner circles every quantifier and flags any noun mismatch.</td></tr>
+      <tr><td>5 min</td><td>Closure</td><td>Two students read their trend sentence; the class checks quantifier + noun agreement.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title purple" style="margin-top:5px;">Follow-Up / Homework Idea</div>
+  <div class="followup-box">
+    Homework: redraft after feedback, then add two sentences describing the opposite trend using contrasting quantifiers.
+  </div>
+
+  <div class="section-title red" style="margin-top:5px;">Anticipated Problems &amp; Solutions</div>
+  <div class="s-body" style="border:1px solid #d0d8e4; border-radius:7px; padding:8px 15px;">
+      <div class="mistake-row"><b>Problem:</b> Students overuse &ldquo;a lot of&rdquo; instead of the advanced quantifiers.<br><b>Solution:</b> Set a target: at least four different quantifiers from Exercise C, and &ldquo;a lot of&rdquo; used no more than once.</div>
+      <div class="mistake-row"><b>Problem:</b> Students write &ldquo;a large number of traffic&rdquo; / &ldquo;a great deal of cars&rdquo;.<br><b>Solution:</b> Quick check before drafting: is the noun countable (cars, shops, people) or uncountable (traffic, waste, demand)? Match the quantifier to that.</div>
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-col">
+      <span class="diff-label">For Extra Support</span>
+      Give a gapped version of the model paragraph; students fill the quantifiers, then swap two sentences for their own topic before writing freely.
+    </div>
+    <div class="diff-col">
+      <span class="diff-label">For an Extra Challenge</span>
+      Students include one sentence with &ldquo;The number of&hellip; has increased/decreased&rdquo; and one with &ldquo;a growing/declining number of&hellip;&rdquo; to vary how trends are expressed.
+    </div>
+  </div>
+
+  <!--KEYLANG_START-->
+  <div class="section-title teal" style="margin-top:5px;">Language Focus &amp; Board Notes</div>
+  <div class="right-box" style="background:#eaf6f2; border-color:#b9dfd4;">
+    <b>Grammar:</b> a large number of + countable, a great deal of + uncountable; the majority of + countable; few/little/hardly any for decline. <b>Linking:</b> as a result, this leads to, which has had an impact on. <br><b>Board:</b> A large number of commuters&hellip; &bull; a great deal of packaging waste &bull; hardly any local shops
+  </div>
+  <!--KEYLANG_END-->
+
+  <!--EXITTICKET_START-->
+  <div class="section-title amber" style="margin-top:5px;">Exit Ticket &mdash; Quick Check</div>
+  <div class="followup-box" style="background:#fdf3e7; border-color:#e8c79a; margin-bottom:5px;">
+    <ul class='ans'><li><span class='n'>1.</span> Choose: &ldquo;___ of shoppers now buy online&rdquo; (most) &rarr; <i>The majority</i></li><li><span class='n'>2.</span> Fix: &ldquo;a great deal of shops closed&rdquo; &rarr; <i>a large number of shops</i></li></ul>
+  </div>
+  <!--EXITTICKET_END-->
+
+  <div class="right-box" style="padding:4px 15px; margin-top:3px; font-size:8.5px; display:flex; justify-content:space-between; align-items:center;">
+    <b style="color:#1a3a5c; text-transform:uppercase; letter-spacing:0.4px; white-space:nowrap; margin-right:10px;">Teacher Reflection:</b>
+    <span>&#9633; What worked well? &nbsp;&#9633; What didn't work? &nbsp;&#9633; Who needed extra support? &nbsp;&#9633; What will I change next time?</span>
+  </div>
+
+  <div class="footer">workshido.com &nbsp;&bull;&nbsp; Teacher Edition</div>
+</div>
+
+</body>
+</html>

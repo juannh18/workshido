@@ -57,12 +57,14 @@ async function checkAuth2(){
   if (uploadLink) uploadLink.style.display = (user?.email === 'juanda.5790@hotmail.com') ? '' : 'none';
   const nav = document.getElementById('navActions');
   if(user && nav){
-    const name = user.user_metadata?.full_name || user.email;
-    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-    // full_name is free text the user set at signup — never trust it as safe
-    // HTML when it lands back in innerHTML.
+    let pa = {};
+    try { pa = (await sb2.from('profiles').select('avatar, display_name').eq('id', user.id).maybeSingle()).data || {}; } catch (e) {}
+    const name = (pa.display_name || user.user_metadata?.full_name || user.email || '').trim();
+    const initials = name.split(/\s+/).filter(Boolean).map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const pic = user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
     const escNav = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    nav.innerHTML = '<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;">'+escNav(initials)+'</div>'+escNav(name.split(' ')[0])+'</a><button onclick="logOut2()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>';
+    const inner = window.wsNavAvatar ? window.wsNavAvatar(pa.avatar, pic, initials) : escNav(initials);
+    nav.innerHTML = '<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;flex-shrink:0;">'+inner+'</div>'+escNav(name.split(/\s+/)[0])+'</a><button onclick="logOut2()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>';
   }
   if (user) {
     const { data: profile } = await sb2.from('profiles').select('is_premium, lemon_portal_url').eq('id', user.id).maybeSingle();

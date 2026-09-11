@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito', 'Arial', sans-serif; font-size: 11.3px; color: #000; background: #fff; }
+
+  .page-wrap { padding: 2px 24px 0; }
+
+  /* HEADER — plain white, no color band (no brand name — that lives on the teacher's Answer Key) */
+  .header { text-align: center; margin-bottom: 0; }
+  .header .eyebrow { font-size: 9.5px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #1a3a5c; }
+  .header .ws-title { margin-top: 2px; font-size: 17px; font-weight: 900; color: #1a3a5c; }
+  .header .ws-subtitle { margin-top: 1px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #1a3a5c; }
+
+  .header-rule { border-bottom: 2px solid #1a3a5c; margin-bottom: 1px; }
+
+  /* STUDENT INFO CARD — the card border is the writing boundary, no inner line needed */
+  .student-card { display: grid; grid-template-columns: 2.2fr 0.7fr 1.3fr 1.1fr; border: 1px solid #1a3a5c; border-radius: 9px; overflow: hidden; margin-bottom: 1px; }
+  .student-card > div { padding: 2px 12px 4px; border-right: 1px solid #1a3a5c; }
+  .student-card > div:last-child { border-right: none; }
+  .student-card label { display: block; font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #1a3a5c; }
+
+  /* LEARNING OBJECTIVE */
+  .obj-box { background: #fff; border: 1px solid #1a3a5c; border-left: 3px solid #1a3a5c; border-radius: 8px; padding: 0 12px; margin-bottom: 1px; font-size: 9.8px; line-height: 1.2; }
+  .obj-box b { text-transform: uppercase; letter-spacing: 0.4px; font-size: 8.8px; color: #1a3a5c; }
+
+  .info-line { font-size: 9.3px; color: #1a3a5c; margin-bottom: 1px; text-align: center; }
+  .info-line b { color: #1a3a5c; }
+
+  /* SECTION TITLES — circular letter badge like a premium test paper */
+  .section-title { display: flex; align-items: center; gap: 8px; border-bottom: 1.5px solid #1a3a5c; padding-bottom: 0; margin-bottom: 1px; }
+  .section-title .letter-badge { width: 17px; height: 17px; min-width: 17px; border-radius: 50%; background: #1a3a5c; color: #fff; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .section-title .title-text { flex: 1; font-size: 11.5px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.3px; }
+  .section-title .badge { font-size: 8.8px; font-weight: 700; color: #1a3a5c; white-space: nowrap; }
+  .section-title .badge .earn { display: inline-block; min-width: 24px; border-bottom: 1px solid #1a3a5c; margin: 0 2px; }
+
+  /* QUIZ SECTION WRAPPER */
+  .quiz-section { margin-bottom: 0; break-inside: avoid; page-break-inside: avoid; }
+  .quiz-body { padding: 0 2px 0 25px; }
+  .instructions { font-size: 9.3px; font-style: italic; color: #1a3a5c; margin-bottom: 0; }
+
+  /* COMMON QUESTION FORMATS */
+  .quiz-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--row-gap, 1px) 18px; }
+  .q-item { font-size: 10.6px; line-height: var(--q-lh, 1.28); }
+  .q-item .n { font-weight: 800; color: #1a3a5c; margin-right: 3px; }
+  .mc-options { display: inline-flex; gap: 10px; margin-left: 6px; }
+  .mc-options span { white-space: nowrap; }
+  .blank { display: inline-block; min-width: 100px; border-bottom: 1px solid #5d7a96; margin: 0 3px; }
+  .ans-line { border-bottom: 1px solid #5d7a96; height: var(--ans-h, 12px); margin: 1px 4px 2px 0; }
+  .write-lines div { border-bottom: 1px solid #5d7a96; height: var(--write-h, 15px); margin-bottom: 3px; }
+  .reading-box { border: 1px solid #1a3a5c; background: #fff; border-radius: 7px; padding: 2px 10px; margin-bottom: 1px; font-size: 9.5px; line-height: 1.16; }
+
+  /* TOTAL SCORE RECAP */
+  .total-score-box { display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #1a3a5c; border-radius: 9px; padding: 1px 16px; margin: 1px 0 0; background: #fff; }
+  .total-score-box .label { font-size: 9.5px; font-weight: 900; letter-spacing: 1px; color: #1a3a5c; text-transform: uppercase; }
+  .total-score-box .value { font-size: 9px; font-weight: 700; color: #1a3a5c; }
+  .total-score-box .value b { font-size: 12px; }
+  .total-score-box .grade { font-size: 9px; font-weight: 700; color: #1a3a5c; margin-left: 18px; }
+  .total-score-box .grade .fill { display: inline-block; min-width: 45px; border-bottom: 1px solid #5d7a96; margin-left: 4px; }
+
+  /* FOOTER */
+  .footer { text-align: center; margin-top: 0; padding-top: 0; border-top: 1px solid #1a3a5c; font-size: 7px; color: #1a3a5c; letter-spacing: 0.5px; }
+
+  /* PER-QUIZ FIT OVERRIDES (build_quiz.py fills this from content['fit']; empty = defaults) */
+  :root{--q-lh:1.18;--ans-h:8px;--write-h:11px;--row-gap:0px}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ STUDENT QUIZ (print-ready, no answers, no branding) ═══════════════════════ -->
+
+<div class="page-wrap">
+
+<div class="header">
+  <div class="eyebrow">Quiz</div>
+  <div class="ws-title">Countable & Uncountable Nouns</div>
+  <div class="ws-subtitle">Grammar, Reading &amp; Writing</div>
+</div>
+<div class="header-rule"></div>
+
+<div class="student-card">
+  <div><label>Name</label></div>
+  <div><label>Class</label></div>
+  <div><label>Date</label></div>
+  <div><label>Score</label></div>
+</div>
+
+<div class="obj-box">
+  <b>Learning Objective (A1)</b> &mdash; The student distinguishes countable from uncountable nouns, uses a / an with singular countable nouns, some in affirmatives and any in negatives and questions, reads a short text for detail, and writes accurate sentences about food using these forms.
+</div>
+
+<div class="info-line">
+<!--INFO_START-->
+  <span><b>Topic:</b> Countable & Uncountable Nouns</span>  <span><b>Est. Time:</b> 35–40 min</span>
+<!--INFO_END-->
+</div>
+
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">A</span>
+    <span class="title-text">Countable or Uncountable?</span>
+    <span class="badge">(10 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write C (countable) or U (uncountable) next to each noun.</div>
+    
+    <div class='quiz-grid-2'><div class='q-item'><span class='n'>1.</span> apple <span class='blank'></span></div><div class='q-item'><span class='n'>6.</span> egg <span class='blank'></span></div><div class='q-item'><span class='n'>2.</span> water <span class='blank'></span></div><div class='q-item'><span class='n'>7.</span> cheese <span class='blank'></span></div><div class='q-item'><span class='n'>3.</span> banana <span class='blank'></span></div><div class='q-item'><span class='n'>8.</span> sugar <span class='blank'></span></div><div class='q-item'><span class='n'>4.</span> bread <span class='blank'></span></div><div class='q-item'><span class='n'>9.</span> tomato <span class='blank'></span></div><div class='q-item'><span class='n'>5.</span> rice <span class='blank'></span></div><div class='q-item'><span class='n'>10.</span> milk <span class='blank'></span></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">B</span>
+    <span class="title-text">A / An, Some or Any</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct word.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> Can I have (a / an / some) apple, please?</div><div class='q-item'><span class='n'>2.</span> There isn't (a / some / any) rice left.</div><div class='q-item'><span class='n'>3.</span> I have (a / some / any) milk for my cereal.</div><div class='q-item'><span class='n'>4.</span> Do you have (a / some / any) sugar?</div><div class='q-item'><span class='n'>5.</span> She has (a / an / some) sandwich for lunch.</div><div class='q-item'><span class='n'>6.</span> We don't have (a / some / any) bread.</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">C</span>
+    <span class="title-text">Multiple Choice</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct option.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> I would like ___ water. <span class='mc-options'><span>a. a</span><span>b. an</span><span>c. some</span><span>d. many</span></span></div><div class='q-item'><span class='n'>2.</span> There ___ some eggs in the fridge. <span class='mc-options'><span>a. is</span><span>b. are</span><span>c. has</span><span>d. am</span></span></div><div class='q-item'><span class='n'>3.</span> He eats ___ egg every morning. <span class='mc-options'><span>a. a</span><span>b. an</span><span>c. some</span><span>d. any</span></span></div><div class='q-item'><span class='n'>4.</span> We don't have ___ coffee. <span class='mc-options'><span>a. a</span><span>b. some</span><span>c. any</span><span>d. an</span></span></div><div class='q-item'><span class='n'>5.</span> She wants ___ tomatoes for a salad. <span class='mc-options'><span>a. a</span><span>b. an</span><span>c. some</span><span>d. much</span></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">D</span>
+    <span class="title-text">Complete the Sentences</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Complete with a, an, some or any.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> There aren't <span class='blank'></span> oranges.</div><div class='q-item'><span class='n'>2.</span> I'd like <span class='blank'></span> cup of tea.</div><div class='q-item'><span class='n'>3.</span> She doesn't eat <span class='blank'></span> meat.</div><div class='q-item'><span class='n'>4.</span> Can I have <span class='blank'></span> orange, please?</div><div class='q-item'><span class='n'>5.</span> There is <span class='blank'></span> cheese in the fridge.</div><div class='q-item'><span class='n'>6.</span> Do you have <span class='blank'></span> bananas?</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">E</span>
+    <span class="title-text">Error Correction</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Find the mistake in each sentence and write it correctly.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> I have a milk. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>2.</span> There are some cheese. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>3.</span> She wants an water. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>4.</span> We don't have some sugar. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>5.</span> He eats a rice every day. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>6.</span> Do you have some eggs? (question) &rarr; <span class='blank' style='min-width:210px;'></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">F</span>
+    <span class="title-text">Rewrite the Sentences</span>
+    <span class="badge">(16 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Sentences 1–4: rewrite in the negative. Sentences 5–8: rewrite as a question.</div>
+    
+    <div class='quiz-grid-2'><div class='q-item'><span class='n'>1.</span> There is some bread at home.<div class='ans-line'></div></div><div class='q-item'><span class='n'>5.</span> They have some rice at home.<div class='ans-line'></div></div><div class='q-item'><span class='n'>2.</span> We have some cookies.<div class='ans-line'></div></div><div class='q-item'><span class='n'>6.</span> She wants some tomatoes.<div class='ans-line'></div></div><div class='q-item'><span class='n'>3.</span> I need some milk.<div class='ans-line'></div></div><div class='q-item'><span class='n'>7.</span> He has some cheese.<div class='ans-line'></div></div><div class='q-item'><span class='n'>4.</span> There are some eggs in the box.<div class='ans-line'></div></div><div class='q-item'><span class='n'>8.</span> There is some juice in the bottle.<div class='ans-line'></div></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">G</span>
+    <span class="title-text">Reading Comprehension</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Read the text and answer the questions in complete sentences.</div>
+    <div class='reading-box'>It is Saturday morning. Lucia and her mother are at the supermarket. They are buying food for a picnic. Lucia puts four apples and a bunch of bananas in the basket. Her mother buys some bread, some cheese and a bottle of orange juice. They also buy a box of cookies. Lucia wants some tomatoes for a salad. They have some rice at home, so they don't buy any. Finally, they get some milk for the evening. "We have everything!" says Lucia.</div>
+    <div class='q-item'><span class='n'>1.</span> Where are Lucia and her mother?<div class='ans-line'></div></div><div class='q-item'><span class='n'>2.</span> How many apples does Lucia put in the basket?<div class='ans-line'></div></div><div class='q-item'><span class='n'>3.</span> What does her mother buy?<div class='ans-line'></div></div><div class='q-item'><span class='n'>4.</span> Do they buy any rice? Why / why not?<div class='ans-line'></div></div><div class='q-item'><span class='n'>5.</span> What does Lucia want for a salad?<div class='ans-line'></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">H</span>
+    <span class="title-text">Short Writing</span>
+    <span class="badge">(8 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write four sentences about the food in your kitchen. Use a / an, some and any at least once each.</div>
+    
+    <div class='write-lines'><div></div><div></div><div></div><div></div></div>
+  </div>
+</div>
+
+<div class="total-score-box">
+  <span class="label">Total Score</span>
+  <span class="value">___ <b>/ 100</b></span>
+  <span class="grade">Grade:<span class="fill"></span></span>
+</div>
+
+<div class="footer">workshido.com</div>
+
+</div>
+
+</body>
+</html>

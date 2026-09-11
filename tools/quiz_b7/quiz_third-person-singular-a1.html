@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito', 'Arial', sans-serif; font-size: 11.3px; color: #000; background: #fff; }
+
+  .page-wrap { padding: 2px 24px 0; }
+
+  /* HEADER — plain white, no color band (no brand name — that lives on the teacher's Answer Key) */
+  .header { text-align: center; margin-bottom: 0; }
+  .header .eyebrow { font-size: 9.5px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #1a3a5c; }
+  .header .ws-title { margin-top: 2px; font-size: 17px; font-weight: 900; color: #1a3a5c; }
+  .header .ws-subtitle { margin-top: 1px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #1a3a5c; }
+
+  .header-rule { border-bottom: 2px solid #1a3a5c; margin-bottom: 1px; }
+
+  /* STUDENT INFO CARD — the card border is the writing boundary, no inner line needed */
+  .student-card { display: grid; grid-template-columns: 2.2fr 0.7fr 1.3fr 1.1fr; border: 1px solid #1a3a5c; border-radius: 9px; overflow: hidden; margin-bottom: 1px; }
+  .student-card > div { padding: 2px 12px 4px; border-right: 1px solid #1a3a5c; }
+  .student-card > div:last-child { border-right: none; }
+  .student-card label { display: block; font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #1a3a5c; }
+
+  /* LEARNING OBJECTIVE */
+  .obj-box { background: #fff; border: 1px solid #1a3a5c; border-left: 3px solid #1a3a5c; border-radius: 8px; padding: 0 12px; margin-bottom: 1px; font-size: 9.8px; line-height: 1.2; }
+  .obj-box b { text-transform: uppercase; letter-spacing: 0.4px; font-size: 8.8px; color: #1a3a5c; }
+
+  .info-line { font-size: 9.3px; color: #1a3a5c; margin-bottom: 1px; text-align: center; }
+  .info-line b { color: #1a3a5c; }
+
+  /* SECTION TITLES — circular letter badge like a premium test paper */
+  .section-title { display: flex; align-items: center; gap: 8px; border-bottom: 1.5px solid #1a3a5c; padding-bottom: 0; margin-bottom: 1px; }
+  .section-title .letter-badge { width: 17px; height: 17px; min-width: 17px; border-radius: 50%; background: #1a3a5c; color: #fff; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .section-title .title-text { flex: 1; font-size: 11.5px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.3px; }
+  .section-title .badge { font-size: 8.8px; font-weight: 700; color: #1a3a5c; white-space: nowrap; }
+  .section-title .badge .earn { display: inline-block; min-width: 24px; border-bottom: 1px solid #1a3a5c; margin: 0 2px; }
+
+  /* QUIZ SECTION WRAPPER */
+  .quiz-section { margin-bottom: 0; break-inside: avoid; page-break-inside: avoid; }
+  .quiz-body { padding: 0 2px 0 25px; }
+  .instructions { font-size: 9.3px; font-style: italic; color: #1a3a5c; margin-bottom: 0; }
+
+  /* COMMON QUESTION FORMATS */
+  .quiz-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--row-gap, 1px) 18px; }
+  .q-item { font-size: 10.6px; line-height: var(--q-lh, 1.28); }
+  .q-item .n { font-weight: 800; color: #1a3a5c; margin-right: 3px; }
+  .mc-options { display: inline-flex; gap: 10px; margin-left: 6px; }
+  .mc-options span { white-space: nowrap; }
+  .blank { display: inline-block; min-width: 100px; border-bottom: 1px solid #5d7a96; margin: 0 3px; }
+  .ans-line { border-bottom: 1px solid #5d7a96; height: var(--ans-h, 12px); margin: 1px 4px 2px 0; }
+  .write-lines div { border-bottom: 1px solid #5d7a96; height: var(--write-h, 15px); margin-bottom: 3px; }
+  .reading-box { border: 1px solid #1a3a5c; background: #fff; border-radius: 7px; padding: 2px 10px; margin-bottom: 1px; font-size: 9.5px; line-height: 1.16; }
+
+  /* TOTAL SCORE RECAP */
+  .total-score-box { display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #1a3a5c; border-radius: 9px; padding: 1px 16px; margin: 1px 0 0; background: #fff; }
+  .total-score-box .label { font-size: 9.5px; font-weight: 900; letter-spacing: 1px; color: #1a3a5c; text-transform: uppercase; }
+  .total-score-box .value { font-size: 9px; font-weight: 700; color: #1a3a5c; }
+  .total-score-box .value b { font-size: 12px; }
+  .total-score-box .grade { font-size: 9px; font-weight: 700; color: #1a3a5c; margin-left: 18px; }
+  .total-score-box .grade .fill { display: inline-block; min-width: 45px; border-bottom: 1px solid #5d7a96; margin-left: 4px; }
+
+  /* FOOTER */
+  .footer { text-align: center; margin-top: 0; padding-top: 0; border-top: 1px solid #1a3a5c; font-size: 7px; color: #1a3a5c; letter-spacing: 0.5px; }
+
+  /* PER-QUIZ FIT OVERRIDES (build_quiz.py fills this from content['fit']; empty = defaults) */
+  :root{--q-lh:1.18;--ans-h:8px;--write-h:10px;--row-gap:0px}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ STUDENT QUIZ (print-ready, no answers, no branding) ═══════════════════════ -->
+
+<div class="page-wrap">
+
+<div class="header">
+  <div class="eyebrow">Quiz</div>
+  <div class="ws-title">Third Person Singular: Present Simple</div>
+  <div class="ws-subtitle">Grammar, Reading &amp; Writing</div>
+</div>
+<div class="header-rule"></div>
+
+<div class="student-card">
+  <div><label>Name</label></div>
+  <div><label>Class</label></div>
+  <div><label>Date</label></div>
+  <div><label>Score</label></div>
+</div>
+
+<div class="obj-box">
+  <b>Learning Objective (A1)</b> &mdash; The student correctly forms and uses the present simple third person singular (affirmative -s/-es/-ies, negative with doesn't, questions with Does and short answers), reads a short routine text for detail, and writes accurate sentences about another person.
+</div>
+
+<div class="info-line">
+<!--INFO_START-->
+  <span><b>Topic:</b> Third Person Singular – Present Simple</span>  <span><b>Est. Time:</b> 35–40 min</span>
+<!--INFO_END-->
+</div>
+
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">A</span>
+    <span class="title-text">Spelling Rules</span>
+    <span class="badge">(10 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write the he / she / it form of each verb.</div>
+    
+    <div class='quiz-grid-2'><div class='q-item'><span class='n'>1.</span> play &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>6.</span> study &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>2.</span> watch &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>7.</span> fly &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>3.</span> go &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>8.</span> carry &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>4.</span> read &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>9.</span> have &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>5.</span> do &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>10.</span> like &rarr; <span class='blank'></span></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">B</span>
+    <span class="title-text">Choose the Correct Form</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct word.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> She (play / plays) the piano every day.</div><div class='q-item'><span class='n'>2.</span> They (don't / doesn't) like horror films.</div><div class='q-item'><span class='n'>3.</span> He (go / goes) to school by bike.</div><div class='q-item'><span class='n'>4.</span> It (rain / rains) a lot in winter.</div><div class='q-item'><span class='n'>5.</span> My brother (watch / watches) TV after dinner.</div><div class='q-item'><span class='n'>6.</span> She (doesn't / don't) eat meat.</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">C</span>
+    <span class="title-text">Multiple Choice</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct option.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> ___ he like chocolate? <span class='mc-options'><span>a. Do</span><span>b. Does</span><span>c. Is</span><span>d. Has</span></span></div><div class='q-item'><span class='n'>2.</span> She ___ to music every evening. <span class='mc-options'><span>a. listen</span><span>b. listens</span><span>c. listening</span><span>d. is listen</span></span></div><div class='q-item'><span class='n'>3.</span> My dog ___ (not / eat) vegetables. <span class='mc-options'><span>a. don't eat</span><span>b. doesn't eats</span><span>c. doesn't eat</span><span>d. not eat</span></span></div><div class='q-item'><span class='n'>4.</span> ___ your sister walk to school? <span class='mc-options'><span>a. Do</span><span>b. Does</span><span>c. Are</span><span>d. Is</span></span></div><div class='q-item'><span class='n'>5.</span> It ___ (fly) to warm countries in winter. <span class='mc-options'><span>a. flys</span><span>b. flyes</span><span>c. flies</span><span>d. fly</span></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">D</span>
+    <span class="title-text">Complete the Sentences</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Complete with the correct present simple form of the verb in parentheses.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> My mother <span class='blank'></span> (get) up at six o'clock.</div><div class='q-item'><span class='n'>2.</span> He <span class='blank'></span> (not / do) his homework in the morning.</div><div class='q-item'><span class='n'>3.</span> The shop <span class='blank'></span> (close) at eight.</div><div class='q-item'><span class='n'>4.</span> <span class='blank'></span> she <span class='blank'></span> (study) English at school?</div><div class='q-item'><span class='n'>5.</span> It <span class='blank'></span> (not / rain) much in summer.</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">E</span>
+    <span class="title-text">Error Correction</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Find the mistake in each sentence and write it correctly.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> He go to work by bus. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>2.</span> Does she likes ice cream? &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>3.</span> My sister don't watch TV. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>4.</span> It carry a small box. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>5.</span> She studys every night. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>6.</span> Do he play tennis? &rarr; <span class='blank' style='min-width:210px;'></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">F</span>
+    <span class="title-text">Sentence Transformation</span>
+    <span class="badge">(16 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Sentences 1–4: rewrite in the negative. Sentences 5–8: rewrite as a Does question.</div>
+    
+    <div class='quiz-grid-2'><div class='q-item'><span class='n'>1.</span> He plays football every weekend.<div class='ans-line'></div></div><div class='q-item'><span class='n'>5.</span> She likes chocolate.<div class='ans-line'></div></div><div class='q-item'><span class='n'>2.</span> She watches TV in the evening.<div class='ans-line'></div></div><div class='q-item'><span class='n'>6.</span> He reads English books.<div class='ans-line'></div></div><div class='q-item'><span class='n'>3.</span> It rains a lot in this city.<div class='ans-line'></div></div><div class='q-item'><span class='n'>7.</span> It goes to school by bus.<div class='ans-line'></div></div><div class='q-item'><span class='n'>4.</span> My cousin does karate.<div class='ans-line'></div></div><div class='q-item'><span class='n'>8.</span> She teaches maths.<div class='ans-line'></div></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">G</span>
+    <span class="title-text">Reading Comprehension</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Read the text and answer the questions in complete sentences.</div>
+    <div class='reading-box'>This is my friend Daniel. He is twelve years old and he lives in a small town with his family. Daniel gets up at 6:30 every day and he has breakfast with his sister. He goes to school by bus. He likes science, but he doesn't like history. In the afternoon, he plays basketball with his team, and in the evening he watches sports videos on his phone. He doesn't watch television. On Saturdays, Daniel helps his father in the garden, and on Sundays he visits his grandparents. He always does his homework before dinner.</div>
+    <div class='q-item'><span class='n'>1.</span> What time does Daniel get up?<div class='ans-line'></div></div><div class='q-item'><span class='n'>2.</span> How does he go to school?<div class='ans-line'></div></div><div class='q-item'><span class='n'>3.</span> What subject doesn't Daniel like?<div class='ans-line'></div></div><div class='q-item'><span class='n'>4.</span> Does Daniel watch television?<div class='ans-line'></div></div><div class='q-item'><span class='n'>5.</span> What does he do on Sundays?<div class='ans-line'></div></div><div class='q-item'><span class='n'>6.</span> When does Daniel do his homework?<div class='ans-line'></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">H</span>
+    <span class="title-text">Short Writing</span>
+    <span class="badge">(8 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write four sentences about a friend or a family member. Use he or she. Include one negative sentence (doesn't) and one thing this person likes.</div>
+    
+    <div class='write-lines'><div></div><div></div><div></div><div></div></div>
+  </div>
+</div>
+
+<div class="total-score-box">
+  <span class="label">Total Score</span>
+  <span class="value">___ <b>/ 100</b></span>
+  <span class="grade">Grade:<span class="fill"></span></span>
+</div>
+
+<div class="footer">workshido.com</div>
+
+</div>
+
+</body>
+</html>

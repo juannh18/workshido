@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito', 'Arial', sans-serif; font-size: 11.3px; color: #000; background: #fff; }
+
+  .page-wrap { padding: 2px 24px 0; }
+
+  /* HEADER — plain white, no color band (no brand name — that lives on the teacher's Answer Key) */
+  .header { text-align: center; margin-bottom: 0; }
+  .header .eyebrow { font-size: 9.5px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #1a3a5c; }
+  .header .ws-title { margin-top: 2px; font-size: 17px; font-weight: 900; color: #1a3a5c; }
+  .header .ws-subtitle { margin-top: 1px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #1a3a5c; }
+
+  .header-rule { border-bottom: 2px solid #1a3a5c; margin-bottom: 1px; }
+
+  /* STUDENT INFO CARD — the card border is the writing boundary, no inner line needed */
+  .student-card { display: grid; grid-template-columns: 2.2fr 0.7fr 1.3fr 1.1fr; border: 1px solid #1a3a5c; border-radius: 9px; overflow: hidden; margin-bottom: 1px; }
+  .student-card > div { padding: 2px 12px 4px; border-right: 1px solid #1a3a5c; }
+  .student-card > div:last-child { border-right: none; }
+  .student-card label { display: block; font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #1a3a5c; }
+
+  /* LEARNING OBJECTIVE */
+  .obj-box { background: #fff; border: 1px solid #1a3a5c; border-left: 3px solid #1a3a5c; border-radius: 8px; padding: 0 12px; margin-bottom: 1px; font-size: 9.8px; line-height: 1.2; }
+  .obj-box b { text-transform: uppercase; letter-spacing: 0.4px; font-size: 8.8px; color: #1a3a5c; }
+
+  .info-line { font-size: 9.3px; color: #1a3a5c; margin-bottom: 1px; text-align: center; }
+  .info-line b { color: #1a3a5c; }
+
+  /* SECTION TITLES — circular letter badge like a premium test paper */
+  .section-title { display: flex; align-items: center; gap: 8px; border-bottom: 1.5px solid #1a3a5c; padding-bottom: 0; margin-bottom: 1px; }
+  .section-title .letter-badge { width: 17px; height: 17px; min-width: 17px; border-radius: 50%; background: #1a3a5c; color: #fff; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .section-title .title-text { flex: 1; font-size: 11.5px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.3px; }
+  .section-title .badge { font-size: 8.8px; font-weight: 700; color: #1a3a5c; white-space: nowrap; }
+  .section-title .badge .earn { display: inline-block; min-width: 24px; border-bottom: 1px solid #1a3a5c; margin: 0 2px; }
+
+  /* QUIZ SECTION WRAPPER */
+  .quiz-section { margin-bottom: 0; break-inside: avoid; page-break-inside: avoid; }
+  .quiz-body { padding: 0 2px 0 25px; }
+  .instructions { font-size: 9.3px; font-style: italic; color: #1a3a5c; margin-bottom: 0; }
+
+  /* COMMON QUESTION FORMATS */
+  .quiz-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--row-gap, 1px) 18px; }
+  .q-item { font-size: 10.6px; line-height: var(--q-lh, 1.28); }
+  .q-item .n { font-weight: 800; color: #1a3a5c; margin-right: 3px; }
+  .mc-options { display: inline-flex; gap: 10px; margin-left: 6px; }
+  .mc-options span { white-space: nowrap; }
+  .blank { display: inline-block; min-width: 100px; border-bottom: 1px solid #5d7a96; margin: 0 3px; }
+  .ans-line { border-bottom: 1px solid #5d7a96; height: var(--ans-h, 12px); margin: 1px 4px 2px 0; }
+  .write-lines div { border-bottom: 1px solid #5d7a96; height: var(--write-h, 15px); margin-bottom: 3px; }
+  .reading-box { border: 1px solid #1a3a5c; background: #fff; border-radius: 7px; padding: 2px 10px; margin-bottom: 1px; font-size: 9.5px; line-height: 1.16; }
+
+  /* TOTAL SCORE RECAP */
+  .total-score-box { display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #1a3a5c; border-radius: 9px; padding: 1px 16px; margin: 1px 0 0; background: #fff; }
+  .total-score-box .label { font-size: 9.5px; font-weight: 900; letter-spacing: 1px; color: #1a3a5c; text-transform: uppercase; }
+  .total-score-box .value { font-size: 9px; font-weight: 700; color: #1a3a5c; }
+  .total-score-box .value b { font-size: 12px; }
+  .total-score-box .grade { font-size: 9px; font-weight: 700; color: #1a3a5c; margin-left: 18px; }
+  .total-score-box .grade .fill { display: inline-block; min-width: 45px; border-bottom: 1px solid #5d7a96; margin-left: 4px; }
+
+  /* FOOTER */
+  .footer { text-align: center; margin-top: 0; padding-top: 0; border-top: 1px solid #1a3a5c; font-size: 7px; color: #1a3a5c; letter-spacing: 0.5px; }
+
+  /* PER-QUIZ FIT OVERRIDES (build_quiz.py fills this from content['fit']; empty = defaults) */
+  :root{--q-lh:1.18;--ans-h:8px;--write-h:11px;--row-gap:0px}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ STUDENT QUIZ (print-ready, no answers, no branding) ═══════════════════════ -->
+
+<div class="page-wrap">
+
+<div class="header">
+  <div class="eyebrow">Quiz</div>
+  <div class="ws-title">Likes and Dislikes</div>
+  <div class="ws-subtitle">Grammar, Reading &amp; Writing</div>
+</div>
+<div class="header-rule"></div>
+
+<div class="student-card">
+  <div><label>Name</label></div>
+  <div><label>Class</label></div>
+  <div><label>Date</label></div>
+  <div><label>Score</label></div>
+</div>
+
+<div class="obj-box">
+  <b>Learning Objective (A1)</b> &mdash; The student correctly uses like / likes / don't like / doesn't like with the right subject, forms and answers Do / Does questions about preferences, reads a short text about people's likes, and writes true sentences about their own preferences with reasons.
+</div>
+
+<div class="info-line">
+<!--INFO_START-->
+  <span><b>Topic:</b> Likes and Dislikes</span>  <span><b>Est. Time:</b> 35–40 min</span>
+<!--INFO_END-->
+</div>
+
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">A</span>
+    <span class="title-text">Like or Likes?</span>
+    <span class="badge">(10 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write like or likes for each subject.</div>
+    
+    <div class='quiz-grid-2'><div class='q-item'><span class='n'>1.</span> I <span class='blank'></span></div><div class='q-item'><span class='n'>6.</span> my sister <span class='blank'></span></div><div class='q-item'><span class='n'>2.</span> she <span class='blank'></span></div><div class='q-item'><span class='n'>7.</span> you <span class='blank'></span></div><div class='q-item'><span class='n'>3.</span> we <span class='blank'></span></div><div class='q-item'><span class='n'>8.</span> it <span class='blank'></span></div><div class='q-item'><span class='n'>4.</span> he <span class='blank'></span></div><div class='q-item'><span class='n'>9.</span> my friends <span class='blank'></span></div><div class='q-item'><span class='n'>5.</span> they <span class='blank'></span></div><div class='q-item'><span class='n'>10.</span> my dad <span class='blank'></span></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">B</span>
+    <span class="title-text">Choose the Correct Form</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct words.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> She (like / likes) chocolate.</div><div class='q-item'><span class='n'>2.</span> They (don't like / doesn't like) early mornings.</div><div class='q-item'><span class='n'>3.</span> My brother (like / likes) football.</div><div class='q-item'><span class='n'>4.</span> I (don't like / doesn't like) spiders.</div><div class='q-item'><span class='n'>5.</span> It (like / likes) warm days.</div><div class='q-item'><span class='n'>6.</span> He (don't like / doesn't like) homework.</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">C</span>
+    <span class="title-text">Multiple Choice</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct option.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> ___ you like pizza? <span class='mc-options'><span>a. Do</span><span>b. Does</span><span>c. Are</span><span>d. Is</span></span></div><div class='q-item'><span class='n'>2.</span> ___ she like music? <span class='mc-options'><span>a. Do</span><span>b. Does</span><span>c. Is</span><span>d. Has</span></span></div><div class='q-item'><span class='n'>3.</span> "Does he like cats?" "No, he ___." <span class='mc-options'><span>a. don't</span><span>b. doesn't</span><span>c. isn't</span><span>d. not</span></span></div><div class='q-item'><span class='n'>4.</span> My parents ___ noisy games. <span class='mc-options'><span>a. doesn't like</span><span>b. don't likes</span><span>c. don't like</span><span>d. not like</span></span></div><div class='q-item'><span class='n'>5.</span> "Do they like vegetables?" "Yes, they ___." <span class='mc-options'><span>a. do</span><span>b. does</span><span>c. are</span><span>d. like</span></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">D</span>
+    <span class="title-text">Complete the Dialogues</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Complete with do, does, don't or doesn't.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> "<span class='blank'></span> you like ice cream?" "Yes, I <span class='blank'></span>."</div><div class='q-item'><span class='n'>2.</span> "<span class='blank'></span> she like soccer?" "No, she <span class='blank'></span>."</div><div class='q-item'><span class='n'>3.</span> "<span class='blank'></span> they like vegetables?" "No, they <span class='blank'></span>."</div><div class='q-item'><span class='n'>4.</span> "<span class='blank'></span> your friend like music?" "Yes, he <span class='blank'></span>."</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">E</span>
+    <span class="title-text">Error Correction</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Find the mistake in each sentence and write it correctly.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> She like art. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>2.</span> He don't like carrots. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>3.</span> Do she like dogs? &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>4.</span> I likes pizza. &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>5.</span> Does he likes video games? &rarr; <span class='blank' style='min-width:210px;'></span></div><div class='q-item'><span class='n'>6.</span> They doesn't like loud music. &rarr; <span class='blank' style='min-width:210px;'></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">F</span>
+    <span class="title-text">Sentence Transformation</span>
+    <span class="badge">(16 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Sentences 1–4: rewrite in the negative. Sentences 5–8: rewrite as a question.</div>
+    
+    <div class='quiz-grid-2'><div class='q-item'><span class='n'>1.</span> He likes horror films.<div class='ans-line'></div></div><div class='q-item'><span class='n'>5.</span> She likes comedy films.<div class='ans-line'></div></div><div class='q-item'><span class='n'>2.</span> She likes spiders.<div class='ans-line'></div></div><div class='q-item'><span class='n'>6.</span> They like the same things.<div class='ans-line'></div></div><div class='q-item'><span class='n'>3.</span> They like waking up early.<div class='ans-line'></div></div><div class='q-item'><span class='n'>7.</span> He likes reading.<div class='ans-line'></div></div><div class='q-item'><span class='n'>4.</span> I like carrots.<div class='ans-line'></div></div><div class='q-item'><span class='n'>8.</span> You like video games.<div class='ans-line'></div></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">G</span>
+    <span class="title-text">Reading Comprehension</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Read the text and answer the questions in complete sentences.</div>
+    <div class='reading-box'>Sara and Tom are twins. They are eleven years old. Sara likes drawing, reading and cats. She doesn't like loud music and she doesn't like spiders. She prefers quiet activities. Tom likes football, dogs and pizza. He doesn't like carrots and he doesn't like getting up early. On Saturdays, Sara draws pictures and Tom plays football with his friends. They like different things, but they always have fun together.</div>
+    <div class='q-item'><span class='n'>1.</span> What does Sara like?<div class='ans-line'></div></div><div class='q-item'><span class='n'>2.</span> What doesn't Sara like?<div class='ans-line'></div></div><div class='q-item'><span class='n'>3.</span> What does Tom like?<div class='ans-line'></div></div><div class='q-item'><span class='n'>4.</span> Does Tom like carrots?<div class='ans-line'></div></div><div class='q-item'><span class='n'>5.</span> What does Tom do on Saturdays?<div class='ans-line'></div></div><div class='q-item'><span class='n'>6.</span> Do Sara and Tom like the same things?<div class='ans-line'></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">H</span>
+    <span class="title-text">Short Writing</span>
+    <span class="badge">(8 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write four sentences about you. Write two things you like and two things you don't like. Give one reason with because.</div>
+    
+    <div class='write-lines'><div></div><div></div><div></div><div></div></div>
+  </div>
+</div>
+
+<div class="total-score-box">
+  <span class="label">Total Score</span>
+  <span class="value">___ <b>/ 100</b></span>
+  <span class="grade">Grade:<span class="fill"></span></span>
+</div>
+
+<div class="footer">workshido.com</div>
+
+</div>
+
+</body>
+</html>

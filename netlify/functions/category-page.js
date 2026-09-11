@@ -64,9 +64,27 @@ exports.handler = async (event) => {
   <ul style="columns:3;column-gap:24px;list-style:none;padding:0;margin:0 0 8px;font-size:13px;line-height:1.9;">${links}</ul>
 </section>`;
 
+    // ItemList mirrors the injected <ul> above — gives crawlers/AI assistants
+    // an explicit "this page is a list of N free worksheets" signal instead
+    // of having to infer it from a plain bullet list.
+    const itemListLD = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: `${page.label} worksheets`,
+      numberOfItems: data.length,
+      itemListElement: data.map((ws, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${SITE}/workshido-worksheet.html?id=${ws.id}`,
+        name: ws.title,
+      })),
+    }).replace(/</g, '\\u003c');
+
     // Inserted right before the JS-driven grid takes over — real crawlable
     // links now exist in the raw HTML regardless of whether JS ever runs.
-    const html = template.replace('<main class="content">', `${block}\n<main class="content">`);
+    const html = template
+      .replace('<main class="content">', `${block}\n<main class="content">`)
+      .replace('</head>', `<script type="application/ld+json">${itemListLD}</script>\n</head>`);
 
     return {
       statusCode: 200,

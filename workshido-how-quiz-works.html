@@ -13,9 +13,9 @@
 <meta name="description" content="How to use Workshido's Grammar, Reading, Writing and Practice worksheets to get ready for the Full Quiz — the only graded evaluation with a complete answer key.">
 <link rel="canonical" href="https://workshido.com/workshido-how-quiz-works.html">
 <meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -84,9 +84,12 @@
     .nav-links { display: none; }
     .hero h1 { font-size: 27px; }
   }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 <nav>
   <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
@@ -101,6 +104,7 @@
   </div>
 </nav>
 
+<main>
 <div class="hero">
   <span class="hero-badge">⭐ Full Quiz</span>
   <h1>How the <em>Full Quiz</em> works</h1>
@@ -163,10 +167,11 @@
   </div>
 </div>
 
+</main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/guides-auth.js" defer></script>
 <script src="mascot.js" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 <script>
 // Swap the sell-copy CTA for existing Premium members — otherwise a paying
 // user lands here (from the worksheet's "Why this order" link) and sees

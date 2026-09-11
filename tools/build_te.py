@@ -1,7 +1,9 @@
 """Genera el HTML de una Teacher Edition (template v2, 2 páginas) desde un JSON de contenido.
 
 Uso:
-  python tools/build_te.py contenido.json salida.html   # salida relativa a la raíz del repo
+  python tools/build_te.py contenido.json salida.html [--es]
+  # salida relativa a la raíz del repo; --es usa el template de Spanishido
+  # (te_template_base_es.html: wordmark "Spanishido", spanishido.com, paleta terracota)
 
 Formato del JSON de contenido:
 {
@@ -61,8 +63,9 @@ def _strip_block(tpl, name):
     return re.sub(rf'\s*<!--{name}_START-->.*?<!--{name}_END-->', '', tpl, flags=re.DOTALL)
 
 
-def build(content):
-    tpl = open(os.path.join(TOOLS, 'te_template_base.html'), encoding='utf-8').read()
+def build(content, es=False):
+    tpl_name = 'te_template_base_es.html' if es else 'te_template_base.html'
+    tpl = open(os.path.join(TOOLS, tpl_name), encoding='utf-8').read()
 
     mistakes = '\n'.join(
         f'      <div class="mistake-row"><span class="wrong">✗ {w}</span><br>'
@@ -132,13 +135,15 @@ def build(content):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
+    args = [a for a in sys.argv[1:] if a != '--es']
+    es = '--es' in sys.argv
+    if len(args) != 2:
         sys.exit(__doc__)
-    content = json.load(open(sys.argv[1], encoding='utf-8'))
-    out = sys.argv[2]
+    content = json.load(open(args[0], encoding='utf-8'))
+    out = args[1]
     if not os.path.isabs(out):
         out = os.path.join(REPO, out)
-    html = build(content)
+    html = build(content, es)
     with open(out, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f'OK: {out} ({len(html)} chars)')

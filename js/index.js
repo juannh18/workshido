@@ -1,5 +1,11 @@
 const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 
+// Card thumbnails render at ~150-280px — use the ~440px _sm derivative
+// (tools/make_thumb_sm.py) instead of the full 640px preview image. The
+// onerror on each <img> falls back to the original for any row without an
+// _sm yet.
+function smThumb(u) { return u && /\.webp(\?|$)/i.test(u) ? u.replace(/\.webp(\?|$)/i, '_sm.webp$1') : u; }
+
 // ── Auth state — updated instantly from localStorage via onAuthStateChange ──
 let wsCurrentUser = null;
 
@@ -46,7 +52,7 @@ async function loadTrending() {
     grid.innerHTML = items.map((ws, i) => {
       const lvlCls = LEVEL_CLASS[ws.level] || 'a1';
       const thumb = ws.thumbnail_url
-        ? `<img src="${ws.thumbnail_url}" alt="${esc(ws.title)}" loading="lazy">`
+        ? `<img src="${smThumb(ws.thumbnail_url)}" onerror="this.onerror=null;this.src='${ws.thumbnail_url}'" alt="${esc(ws.title)}" loading="lazy" decoding="async" width="440" height="622">`
         : '';
       return `<a href="workshido-worksheet.html?id=${ws.id}" class="trending-card">
         <span class="trending-rank">${i + 1}</span>
@@ -63,11 +69,10 @@ async function loadTrending() {
 // ── Live numbers for the hero/stats-bar. The full catalog (browse, filter,
 //    search) lives only on workshido-index.html now — this page only needs
 //    the count and which levels exist, not every worksheet's full row. ──
-const COUNT_MILESTONES = [100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000];
+// Rounds the catalog size down to the nearest 100 ("700+", "800+", …) so the
+// hero/stat number is never overstated and steps up every 100 uploads.
 function milestoneCount(n) {
-  let best = COUNT_MILESTONES[0];
-  for (const m of COUNT_MILESTONES) if (n >= m) best = m;
-  return best.toLocaleString('en-US') + '+';
+  return Math.max(100, Math.floor(n / 100) * 100).toLocaleString('en-US') + '+';
 }
 async function loadStats() {
   const { data, count, error } = await sb2.from('worksheets').select('level', { count: 'exact' });

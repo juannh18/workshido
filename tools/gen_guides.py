@@ -13,7 +13,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GUIDES = [
     {
         'slug': 'guides/how-to-teach-present-simple',
-        'title': 'How to Teach Present Simple: A Complete Guide for A1-A2 Classes | Workshido',
+        'title': 'How to Teach Present Simple to A1-A2 Classes | Workshido',
         'description': 'A practical, step-by-step guide to teaching present simple to A1-A2 ESL students, with common mistakes, warm-up ideas, and free printable worksheets.',
         'h1': 'How to Teach Present Simple: A Complete Guide for A1-A2 Classes',
         'reading_time': '7 min read',
@@ -60,7 +60,7 @@ GUIDES = [
     },
     {
         'slug': 'guides/cefr-levels-guide',
-        'title': 'CEFR Levels Explained: A1 to B1 — Which Worksheets to Use | Workshido',
+        'title': 'CEFR Levels Explained: A1 to B1 for Teachers | Workshido',
         'description': 'A plain-English guide to the CEFR levels (A1, A2, B1) for English teachers: what students can actually do at each level, and how to pick the right worksheet.',
         'h1': 'CEFR Levels Explained: A1 to B1 — Which Worksheets to Use',
         'reading_time': '6 min read',
@@ -93,7 +93,7 @@ GUIDES = [
     },
     {
         'slug': 'guides/esl-warm-up-activities',
-        'title': '10 Quick ESL Warm-Up Activities (5-10 Minutes, No Prep) | Workshido',
+        'title': '10 Quick ESL Warm-Up Activities (No Prep) | Workshido',
         'description': '10 fast, low-prep warm-up activities for ESL classes, organized by CEFR level, to get students speaking English in the first five minutes of class.',
         'h1': '10 Quick ESL Warm-Up Activities (5-10 Minutes, No Prep)',
         'reading_time': '5 min read',
@@ -138,7 +138,7 @@ GUIDES = [
     },
     {
         'slug': 'guides/how-to-teach-past-simple',
-        'title': 'How to Teach Past Simple: Regular and Irregular Verbs for A1-A2 | Workshido',
+        'title': 'How to Teach Past Simple: Regular & Irregular | Workshido',
         'description': 'A practical guide to teaching past simple to A1-A2 ESL students — how to sequence regular and irregular verbs, the -ed pronunciation rule, and common mistakes.',
         'h1': 'How to Teach Past Simple: Regular and Irregular Verbs for A1-A2',
         'reading_time': '6 min read',
@@ -185,7 +185,7 @@ GUIDES = [
     },
     {
         'slug': 'guides/how-to-teach-present-perfect',
-        'title': 'How to Teach Present Perfect: A Practical Guide for A2-B1 Classes | Workshido',
+        'title': 'How to Teach Present Perfect to A2-B1 Classes | Workshido',
         'description': 'A practical guide to teaching present perfect — why it confuses students, how to sequence for/since and just/already/yet, and how to contrast it with past simple.',
         'h1': 'How to Teach Present Perfect: A Practical Guide for A2-B1 Classes',
         'reading_time': '8 min read',
@@ -233,7 +233,7 @@ GUIDES = [
     },
     {
         'slug': 'guides/how-to-teach-present-continuous',
-        'title': 'How to Teach Present Continuous (Present Progressive) for A2 Classes | Workshido',
+        'title': 'How to Teach Present Continuous to A2 Classes | Workshido',
         'description': 'A practical guide to teaching present continuous — the -ing spelling rules, stative verbs that break the pattern, and how to contrast it with present simple.',
         'h1': 'How to Teach Present Continuous (Present Progressive) for A2 Classes',
         'reading_time': '6 min read',
@@ -280,7 +280,7 @@ GUIDES = [
     },
     {
         'slug': 'guides/how-to-teach-comparatives-superlatives',
-        'title': 'How to Teach Comparative and Superlative Adjectives for A1-A2 | Workshido',
+        'title': 'How to Teach Comparatives & Superlatives (A1-A2) | Workshido',
         'description': 'A practical guide to teaching comparative and superlative adjectives — the syllable-counting rule, irregular forms, and the most common student mistakes.',
         'h1': 'How to Teach Comparative and Superlative Adjectives for A1-A2',
         'reading_time': '6 min read',
@@ -443,9 +443,10 @@ def render_page(guide, others):
 <meta name="theme-color" content="#042C53">
 <script type="application/ld+json">{{"@context":"https://schema.org","@type":"Article","headline":"{guide['h1']}","description":"{guide['description']}","author":{{"@type":"Organization","name":"Workshido"}},"publisher":{{"@type":"Organization","name":"Workshido","logo":{{"@type":"ImageObject","url":"https://workshido.com/favicon-192.png"}}}},"mainEntityOfPage":"https://workshido.com/{guide['slug']}/"}}</script>
 <script type="application/ld+json">{{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{"@type":"ListItem","position":1,"name":"Guides","item":"https://workshido.com/guides/"}},{{"@type":"ListItem","position":2,"name":"{guide['h1']}","item":"https://workshido.com/{guide['slug']}/"}}]}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 {ARTICLE_STYLE}
 </head>
 <body>
@@ -461,6 +462,7 @@ def render_page(guide, others):
   <span>›</span>
   <span>{guide['h1']}</span>
 </div>
+<main>
 <div class="article-hero">
   <div class="article-meta">Teaching Guide · {guide['reading_time']}</div>
   <h1>{guide['h1']}</h1>
@@ -476,12 +478,13 @@ def render_page(guide, others):
     <a class="guide-link" href="/workshido-index.html">Browse the full worksheet catalog →</a>
   </div>
 </div>
+</main>
 <footer>
   <span>© 2026 Workshido — <a href="/workshido-index.html">Free English worksheets</a></span>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/guides-auth.js" defer></script>
-<script src="/js/analytics.js" defer></script>
+<script src="/js/analytics.js?v=20260908" defer></script>
 </body>
 </html>
 '''
@@ -527,9 +530,10 @@ def render_hub():
 <meta property="og:url" content="https://workshido.com/guides/">
 <meta name="theme-color" content="#042C53">
 <script type="application/ld+json">{{"@context":"https://schema.org","@type":"CollectionPage","name":"Teaching Guides","url":"https://workshido.com/guides/","isPartOf":{{"@type":"WebSite","name":"Workshido","url":"https://workshido.com/"}}}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 {ARTICLE_STYLE}
 {HUB_STYLE}
 </head>
@@ -541,6 +545,7 @@ def render_hub():
     <a href="/workshido-signup.html" class="btn-primary">Sign up free</a>
   </div>
 </nav>
+<main>
 <section class="hub-hero">
   <h1>Teaching Guides</h1>
   <p>Practical guides for ESL teachers — how to teach specific grammar points, understand CEFR levels, and run better classroom activities.</p>
@@ -548,12 +553,13 @@ def render_hub():
 <div class="hub-grid">
     {cards}
 </div>
+</main>
 <footer>
   <span>© 2026 Workshido — <a href="/workshido-index.html">Free English worksheets</a></span>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/guides-auth.js" defer></script>
-<script src="/js/analytics.js" defer></script>
+<script src="/js/analytics.js?v=20260908" defer></script>
 </body>
 </html>
 '''

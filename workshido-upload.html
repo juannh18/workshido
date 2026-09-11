@@ -11,9 +11,9 @@
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="#042C53">
 <title>Upload Worksheet — Workshido</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -295,9 +295,12 @@
     .form-row { grid-template-columns: 1fr; }
     .sidebar-tips { display: none; }
   }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 
 <!-- NAV -->
 <nav>
@@ -903,6 +906,6 @@ function hideMessages() {
 
 document.addEventListener('DOMContentLoaded', initPage);
 </script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 </body>
 </html>

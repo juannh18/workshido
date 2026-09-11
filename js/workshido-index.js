@@ -3,18 +3,21 @@ const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb
 // ── Auth state — updated instantly from localStorage via onAuthStateChange ──
 let wsCurrentUser = null;
 
-function updateNav2(user) {
+async function updateNav2(user) {
   const uploadLink = document.getElementById('navUploadLink');
   if (uploadLink) uploadLink.style.display = (user?.email === 'juanda.5790@hotmail.com') ? '' : 'none';
   const nav = document.getElementById('navActions');
   if (!nav) return;
   if (user) {
-    const name = user.user_metadata?.full_name || user.email;
-    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-    // full_name is free text the user set at signup — never trust it as safe
-    // HTML when it lands back in innerHTML.
+    let pa = {};
+    try { pa = (await sb2.from('profiles').select('avatar, display_name').eq('id', user.id).maybeSingle()).data || {}; } catch (e) {}
+    const name = (pa.display_name || user.user_metadata?.full_name || user.email || '').trim();
+    const initials = name.split(/\s+/).filter(Boolean).map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const pic = user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+    // free text — never trust as HTML in innerHTML.
     const escNav = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    nav.innerHTML = '<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;">'+escNav(initials)+'</div>'+escNav(name.split(' ')[0])+'</a><button onclick="logOut2()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>';
+    const inner = window.wsNavAvatar ? window.wsNavAvatar(pa.avatar, pic, initials) : escNav(initials);
+    nav.innerHTML = '<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;flex-shrink:0;">'+inner+'</div>'+escNav(name.split(/\s+/)[0])+'</a><button onclick="logOut2()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>';
   }
 }
 
@@ -30,6 +33,11 @@ async function logOut2(){await sb2.auth.signOut();window.location.reload();}
 const LEVEL_COLORS = { A1:'teal', A2:'blue', B1:'amber', B2:'purple', C1:'coral' };
 const LEVEL_CLASS  = { A1:'a1',   A2:'a2',   B1:'b1',   B2:'b2',   C1:'c1'   };
 const ACCENT       = { A1:'accent-teal', A2:'accent-blue', B1:'accent-amber', B2:'accent-purple', C1:'accent-amber' };
+
+// Catalog cards render thumbnails at ~210-280px — use the ~440px _sm
+// derivative (tools/make_thumb_sm.py), not the full 640px preview image.
+// onerror on the <img> falls back to the original if an _sm is missing.
+function smThumb(u) { return u && /\.webp(\?|$)/i.test(u) ? u.replace(/\.webp(\?|$)/i, '_sm.webp$1') : u; }
 
 let allWorksheets = [];
 const PAGE_SIZE = 24;
@@ -458,7 +466,7 @@ function buildCard(ws) {
     : `<a href="workshido-worksheet.html?id=${ws.id}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
   const tags   = (ws.tags || ws.category || '').split(',').slice(0,2).map(t=>`<span class="tag">${esc(t.trim())}</span>`).join('');
   const thumb = ws.thumbnail_url
-    ? `<img src="${ws.thumbnail_url}" alt="${esc(ws.title)}" loading="lazy">`
+    ? `<img src="${smThumb(ws.thumbnail_url)}" onerror="this.onerror=null;this.src='${ws.thumbnail_url}'" alt="${esc(ws.title)}" loading="lazy" decoding="async" width="440" height="622">`
     : `<div class="ws-preview"><div class="wl ${accent}"></div><div class="wl"></div><div class="wl short"></div><div class="wb"></div><div class="wb"></div><div class="wl short"></div></div>`;
   const overlay = !ws.thumbnail_url ? `<div class="card-thumb-overlay"><span class="overlay-logo">Work<span>shido</span></span><span class="overlay-level ${lvlCls}">${ws.level}</span></div>` : '';
   return `<div class="ws-card">
@@ -808,7 +816,11 @@ function setCategory(cat) {
 }
 
 async function loadWorksheets() {
-  const { data, error } = await sb2.from('worksheets').select('*').order('created_at', { ascending: false, nullsFirst: false }).limit(1000);
+  // Only the columns the catalog list/cards/search actually use — not select('*').
+  // Drops file_url, teacher_edition_url, topic_key, rating, uploader_* … which
+  // cut the payload for ~700 rows from ~690 KB to ~450 KB.
+  const COLS = 'id,title,level,category,tags,thumbnail_url,is_free,downloads,description,created_at';
+  const { data, error } = await sb2.from('worksheets').select(COLS).order('created_at', { ascending: false, nullsFirst: false }).limit(1000);
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;
@@ -819,13 +831,10 @@ async function loadWorksheets() {
   filterAndRender();
 }
 
-// ── Live numbers from the catalog. The count rounds down to marketing
-//    milestones (100+, 150+, 200+...), so it is never overstated past 100. ──
-const COUNT_MILESTONES = [100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000];
+// ── Live numbers from the catalog. Rounds down to the nearest 100 ("700+",
+//    "800+", …) — never overstated, steps up every 100 uploads. ──
 function milestoneCount(n) {
-  let best = COUNT_MILESTONES[0];
-  for (const m of COUNT_MILESTONES) if (n >= m) best = m;
-  return best.toLocaleString('en-US') + '+';
+  return Math.max(100, Math.floor(n / 100) * 100).toLocaleString('en-US') + '+';
 }
 function updateLiveStats() {
   const n = allWorksheets.length;

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Arial', sans-serif; font-size: 10.5px; color: #1a1a2e; background: #fff; padding: 16px 32px; }
+
+  /* ---------- Header ---------- */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 3px solid #3B160A; margin-bottom: 16px; }
+  .header-left .brand-row { display: flex; align-items: center; gap: 9px; }
+  .header-left .brand-logo { width: 30px; height: 30px; border-radius: 7px; }
+  .header-left .brand-mini { font-size: 25px; font-weight: 900; letter-spacing: 0.3px; color: #3B160A; }
+  .header-left .brand-mini .brand-accent { color: #CE6538; }
+  .header-left .edition { font-size: 13px; font-weight: 700; color: #e67e22; margin-top: 3px; letter-spacing: 0.5px; }
+  .header-right { text-align: right; max-width: 55%; }
+  .header-right .ws-title { font-size: 15px; font-weight: 800; color: #3B160A; line-height: 1.3; }
+  .header-right .ws-sub { font-size: 10.5px; color: #7a8699; margin-top: 4px; font-style: italic; }
+
+  /* ---------- Top panel: What's Included + Worksheet Information ---------- */
+  .top-panel { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 16px; margin-bottom: 12px; }
+  .panel-card { background: #f5f8fb; border: 1px solid #dbe4ee; border-radius: 9px; padding: 9px 16px; }
+  .panel-card h3 { font-size: 11px; font-weight: 800; color: #3B160A; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid #dbe4ee; }
+  .incl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; }
+  .incl-grid span { font-size: 10.5px; color: #33415c; }
+  .incl-grid span::before { content: "\2713"; color: #1e8449; font-weight: 800; margin-right: 5px; }
+  .wsinfo { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+  .wsinfo td { padding: 4px 2px; border-bottom: 1px solid #e6edf4; }
+  .wsinfo tr:last-child td { border-bottom: none; }
+  .wsinfo td:first-child { font-weight: 700; color: #3B160A; width: 42%; text-transform: uppercase; font-size: 9px; letter-spacing: 0.4px; }
+  .wsinfo td:last-child { color: #33415c; }
+
+  /* ---------- Section titles ---------- */
+  .section-title { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: #fff; background: #3B160A; padding: 3px 11px; border-radius: 6px; margin-bottom: 4px; }
+  .section-title.amber { background: #e67e22; }
+  .section-title.red { background: #c0392b; }
+  .section-title.green { background: #1e8449; }
+  .section-title.gray { background: #2c3e50; }
+  .section-title.teal { background: #0e7c66; }
+  .section-title.purple { background: #7b2d8b; }
+
+  /* ---------- Answer Key (full-width, flows into 2 balanced columns) ---------- */
+  .ak-flow { column-count: 2; column-gap: 26px; margin-top: 2px; }
+  .ak-item { break-inside: avoid; -webkit-column-break-inside: avoid; margin-bottom: 10px; }
+  .ex-title { font-size: 11px; font-weight: 700; color: #3B160A; margin: 0 0 5px; }
+  .ans-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin-bottom: 4px; }
+  .ans-item { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 4px 8px; font-size: 10.5px; line-height: 1.45; }
+  .ans-item .n { font-weight: 700; color: #3B160A; }
+  ul.ans { list-style: none; margin: 0 0 4px 0; padding: 0; }
+  ul.ans li { background: #f7f9fc; border: 1px solid #d0d8e4; border-radius: 4px; padding: 4px 8px; font-size: 10.5px; line-height: 1.45; margin-bottom: 4px; }
+  ul.ans li .n { font-weight: 700; color: #3B160A; margin-right: 4px; }
+  .flag { background: #fdf3e7; border: 1px solid #e8c79a; border-radius: 5px; padding: 6px 9px; font-size: 9.5px; color: #9a5b00; line-height: 1.5; margin: 5px 0 0; }
+
+  /* ---------- Teaching support: 3 cards ---------- */
+  .support-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 4px; }
+  .s-card { border: 1px solid #d0d8e4; border-radius: 8px; overflow: hidden; }
+  .s-head { color: #fff; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; padding: 7px 11px; }
+  .s-head.amber { background: #e67e22; }
+  .s-head.red { background: #c0392b; }
+  .s-head.green { background: #1e8449; }
+  .s-body { padding: 12px 13px; font-size: 10.5px; line-height: 1.65; color: #333; }
+  .mistake-row { margin-bottom: 6px; font-size: 10px; line-height: 1.45; }
+  .mistake-row:last-child { margin-bottom: 0; }
+  .wrong { color: #c0392b; }
+  .correct { color: #1e8449; }
+  .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #3B160A; }
+
+  /* ---------- Footer ---------- */
+  .footer { text-align: center; margin-top: 3px; padding-top: 3px; border-top: 1px solid #d0d8e4; font-size: 10px; color: #9aa5b4; letter-spacing: 0.6px; }
+
+  /* ---------- Page 2 ---------- */
+  .page2 { break-before: page; page-break-before: always; }
+  .page2-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 9px; border-bottom: 3px solid #3B160A; margin-bottom: 13px; }
+  .page2-header .brand-row { display: flex; align-items: center; gap: 8px; }
+  .page2-header .brand-logo { width: 22px; height: 22px; border-radius: 5px; }
+  .page2-header .brand-mini { font-size: 16px; font-weight: 900; color: #3B160A; letter-spacing: 0.5px; }
+  .page2-header .brand-mini .brand-accent { color: #CE6538; }
+  .page2-header .brand-mini span.edition-tag { color: #e67e22; font-weight: 700; font-size: 11px; margin-left: 9px; letter-spacing: 0; }
+  .page2-header .ws-title-mini { font-size: 11.5px; font-weight: 700; color: #3B160A; text-align: right; }
+  .lp-meta { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 12px; }
+  .lp-meta span { background: #eef3f8; border: 1px solid #dbe4ee; border-radius: 20px; padding: 4px 12px; font-size: 10px; color: #33415c; }
+  .lp-meta span b { color: #3B160A; }
+  .prep-box { background: #eaf6f2; border: 1px solid #b9dfd4; border-radius: 7px; padding: 4px 15px; margin-bottom: 4px; font-size: 10.5px; line-height: 1.32; color: #333; }
+  .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 22px; margin-top: 2px; }
+  .prep-grid span::before { content: "\2022 "; color: #0e7c66; font-weight: 700; }
+  .lp-table-lg { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 4px; }
+  .lp-table-lg th { background: #3B160A; color: #fff; padding: 5px 11px; text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .lp-table-lg td { border: 1px solid #d0d8e4; padding: 1.5px 10px; vertical-align: top; line-height: 1.12; }
+  .lp-table-lg tr:nth-child(even) td { background: #f7f9fc; }
+  .lp-table-lg td:first-child { font-weight: 800; color: #3B160A; white-space: nowrap; width: 12%; }
+  .lp-table-lg td:nth-child(2) { font-weight: 700; color: #3B160A; width: 20%; }
+  .followup-box { background: #f6effa; border: 1px solid #ddc2ea; border-radius: 7px; padding: 4px 15px; margin-top: 4px; font-size: 10.5px; line-height: 1.32; color: #333; }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #d0d8e4; border-radius: 7px; overflow: hidden; margin-top: 6px; }
+  .diff-col { padding: 4px 15px; font-size: 10.5px; line-height: 1.32; color: #333; }
+  .diff-col:first-child { border-right: 1px solid #d0d8e4; background: #fdfefe; }
+  .diff-col:last-child { background: #f7f9fc; }
+  .diff-col .diff-label { font-weight: 800; color: #3B160A; font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; display: block; }
+  .right-box { border: 1px solid #d0d8e4; border-radius: 7px; padding: 4px 15px; margin-top: 4px; font-size: 10.5px; line-height: 1.32; color: #333; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ PAGE 1 ═══════════════════════ -->
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand-row">
+      <div class="brand-mini">Spanish<span class="brand-accent">ido</span></div>
+    </div>
+    <div class="edition">Teacher Edition</div>
+  </div>
+  <div class="header-right">
+    <div class="ws-title">{{WS_TITLE}}</div>
+    <div class="ws-sub">Premium teacher support &mdash; answer key &amp; full lesson plan</div>
+  </div>
+</div>
+
+<div class="top-panel">
+  <div class="panel-card">
+    <h3>What's Included</h3>
+    <div class="incl-grid">
+      <span>Complete Answer Key</span>
+      <span>Full Lesson Plan</span>
+      <span>Common Student Mistakes</span>
+      <span>Teacher Tip</span>
+      <span>Extra Class Activity</span>
+      <span>Extension &amp; Exit Ticket</span>
+    </div>
+  </div>
+  <div class="panel-card">
+    <h3>Worksheet Information</h3>
+    <table class="wsinfo">
+{{INFO_ROWS}}
+    </table>
+  </div>
+</div>
+
+<div class="section-title">Answer Key</div>
+<div class="ak-flow">
+{{ANSWER_KEY}}
+</div>
+
+<div class="section-title" style="margin-top:16px;">Teaching Support</div>
+<div class="support-grid">
+  <div class="s-card">
+    <div class="s-head amber">Teacher Tip</div>
+    <div class="s-body">{{TEACHER_TIP}}</div>
+  </div>
+  <div class="s-card">
+    <div class="s-head red">Common Student Mistakes</div>
+    <div class="s-body">
+{{MISTAKES}}
+    </div>
+  </div>
+  <div class="s-card">
+    <div class="s-head green">Extra Class Activity</div>
+    <div class="s-body">
+      <div class="activity-title">{{ACTIVITY_TITLE}}</div>
+      {{ACTIVITY_BODY}}
+    </div>
+  </div>
+</div>
+
+<div class="footer">spanishido.com &nbsp;&bull;&nbsp; Teacher Edition</div>
+
+<!-- ═══════════════════════ PAGE 2 — LESSON PLAN ═══════════════════════ -->
+<div class="page2">
+
+  <div class="page2-header">
+    <div class="brand-row">
+      <div class="brand-mini">Spanish<span class="brand-accent">ido</span><span class="edition-tag">Teacher Edition</span></div>
+    </div>
+    <div class="ws-title-mini">{{WS_TITLE}}</div>
+  </div>
+
+  <div class="section-title">Learning Focus</div>
+  <div class="prep-box" style="background:#eef3f8; border-color:#dbe4ee;">
+    <div style="margin-bottom:5px;"><b>Objective:</b> {{OBJECTIVE}}</div>
+    <div style="margin-bottom:5px;"><b>Success Criteria:</b> {{SUCCESS_CRITERIA}}</div>
+    <div><b>Prior Knowledge:</b> {{PRIOR_KNOWLEDGE}}</div>
+  </div>
+
+  <div class="section-title" style="margin-top:5px;">{{LESSON_TITLE}}</div>
+  <div class="lp-meta">
+{{LP_META}}
+  </div>
+
+  <div class="section-title teal">Materials &amp; Prep</div>
+  <div class="prep-box">
+    <div class="prep-grid">
+{{MATERIALS}}
+    </div>
+  </div>
+
+  <table class="lp-table-lg">
+    <thead><tr><th style="width:12%">Time</th><th style="width:20%">Stage</th><th>Procedure</th></tr></thead>
+    <tbody>
+{{LESSON_ROWS}}
+    </tbody>
+  </table>
+
+  <div class="section-title purple" style="margin-top:5px;">Follow-Up / Homework Idea</div>
+  <div class="followup-box">
+    {{FOLLOWUP}}
+  </div>
+
+  <div class="section-title red" style="margin-top:5px;">Anticipated Problems &amp; Solutions</div>
+  <div class="s-body" style="border:1px solid #d0d8e4; border-radius:7px; padding:8px 15px;">
+{{ANTICIPATED}}
+  </div>
+
+  <div class="diff-grid">
+    <div class="diff-col">
+      <span class="diff-label">For Extra Support</span>
+      {{SUPPORT}}
+    </div>
+    <div class="diff-col">
+      <span class="diff-label">For an Extra Challenge</span>
+      {{CHALLENGE}}
+    </div>
+  </div>
+
+  <!--EXTENSION_START-->
+  <div class="section-title green" style="margin-top:5px;">Extension &amp; Fast-Finisher Ideas</div>
+  <div class="prep-box">
+    <div class="prep-grid">
+{{EXTENSION}}
+    </div>
+  </div>
+  <!--EXTENSION_END-->
+
+  <!--KEYLANG_START-->
+  <div class="section-title teal" style="margin-top:5px;">Language Focus &amp; Board Notes</div>
+  <div class="right-box" style="background:#eaf6f2; border-color:#b9dfd4;">
+    {{KEYLANG}}
+  </div>
+  <!--KEYLANG_END-->
+
+  <!--EXITTICKET_START-->
+  <div class="section-title amber" style="margin-top:5px;">Exit Ticket &mdash; Quick Check</div>
+  <div class="followup-box" style="background:#fdf3e7; border-color:#e8c79a; margin-bottom:5px;">
+    {{EXIT_TICKET}}
+  </div>
+  <!--EXITTICKET_END-->
+
+  <div class="right-box" style="padding:4px 15px; margin-top:3px; font-size:8.5px; display:flex; justify-content:space-between; align-items:center;">
+    <b style="color:#3B160A; text-transform:uppercase; letter-spacing:0.4px; white-space:nowrap; margin-right:10px;">Teacher Reflection:</b>
+    <span>&#9633; What worked well? &nbsp;&#9633; What didn't work? &nbsp;&#9633; Who needed extra support? &nbsp;&#9633; What will I change next time?</span>
+  </div>
+
+  <div class="footer">spanishido.com &nbsp;&bull;&nbsp; Teacher Edition</div>
+</div>
+
+</body>
+</html>

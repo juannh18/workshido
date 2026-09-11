@@ -104,6 +104,13 @@ def build(content):
 
     # --- Quiz del estudiante (sin respuestas) ---
     quiz_tpl = open(os.path.join(TOOLS, 'quiz_template_base.html'), encoding='utf-8').read()
+    # Ajuste fino por quiz para llenar la página sin desbordar (opcional, ver content['fit']).
+    # Claves: q_lh (line-height de las preguntas), ans_h / write_h (alto px de renglones), row_gap.
+    fit = content.get('fit', {})
+    fit_vars = ':root{' + ';'.join(
+        f'--{k.replace("_", "-")}:{v}{"px" if k in ("ans_h", "write_h", "row_gap") else ""}'
+        for k, v in fit.items()) + '}' if fit else ''
+
     quiz_repl = {
         '{{WS_TITLE}}': content['ws_title'],
         '{{LEARNING_OBJECTIVE}}': content['learning_objective'],
@@ -112,6 +119,7 @@ def build(content):
         '{{INFO_ROWS}}': info_rows,
         '{{SECTIONS}}': '\n'.join(sections_html),
         '{{TOTAL_POINTS}}': str(total_points),
+        '{{FIT_VARS}}': fit_vars,
     }
     for k, v in quiz_repl.items():
         quiz_tpl = quiz_tpl.replace(k, v)

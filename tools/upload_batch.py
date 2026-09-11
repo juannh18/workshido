@@ -21,8 +21,14 @@ Formato del manifiesto (rutas relativas: PDFs/PNGs contra Downloads):
   ]
 }
 
+Opcional en la raíz del manifiesto: "language": "en" (default) o "es". Con "es"
+las filas se insertan en el esquema `es.worksheets` (Spanishido) vía el header
+PostgREST `Content-Profile: es`, y los archivos van bajo el prefijo `es/` en R2
+(mismo bucket workshido-files / files.workshido.com). Workshido = `en` = `public`.
+
 Reglas fijas: is_free siempre True; tag 'worksheet' primero (se valida).
-Después de subir, correr tools/verify_uploads.py N para confirmar desde las URLs públicas.
+Después de subir, correr tools/verify_uploads.py N para confirmar desde las URLs
+públicas (con --es para worksheets en español).
 
 Requiere: pip install boto3
 Nota: R2_PUBLIC_BASE asume que files.workshido.com ya está apuntando al bucket R2
@@ -43,6 +49,11 @@ HEADERS_AUTH = {
     'apikey': SERVICE_KEY,
     'Authorization': f'Bearer {SERVICE_KEY}',
 }
+
+# Set from the manifest's "language" in main(). 'es' -> Spanishido: insert into
+# the `es` schema and store files under the `es/` prefix in R2.
+PROFILE_HEADERS = {}   # {'Content-Profile': 'es'} for Spanish
+KEY_PREFIX = ''        # 'es/' for Spanish
 
 R2_BUCKET = 'workshido-files'
 R2_PUBLIC_BASE = 'https://files.workshido.com'
@@ -84,23 +95,28 @@ def upload_pdf(local_path, storage_path):
         return None
     return f'{R2_PUBLIC_BASE}/{storage_path}'
 
-THUMB_MAX_WIDTH = 640  # catalog cards render thumbnails at ~217-320px wide;
-                        # 640px covers 2x/retina without shipping full A4-page
-                        # resolution (1055x1491) for a ~300px card image.
+THUMB_MAX_WIDTH = 640  # big preview (top of the worksheet page) — shown at
+                        # ~700px, so 640 without shipping full A4 resolution.
+THUMB_SM_WIDTH = 440   # catalog/home/related CARDS render at ~150-280px; the
+THUMB_SM_Q = 74        # JS points cards at this "<key>_sm.webp" derivative.
+
+def _put_webp(img, key, quality):
+    buf = io.BytesIO()
+    img.save(buf, 'WEBP', quality=quality, method=6)
+    s3.put_object(Bucket=R2_BUCKET, Key=key, Body=buf.getvalue(),
+                  ContentType='image/webp', CacheControl='public, max-age=31536000, immutable')
 
 def upload_thumb(local_path, storage_path):
     img = Image.open(local_path).convert('RGB')
     if img.width > THUMB_MAX_WIDTH:
-        ratio = THUMB_MAX_WIDTH / img.width
-        img = img.resize((THUMB_MAX_WIDTH, round(img.height * ratio)), Image.LANCZOS)
-    buf = io.BytesIO()
-    img.save(buf, 'WEBP', quality=88)
-    buf.seek(0)
+        img = img.resize((THUMB_MAX_WIDTH, round(img.height * THUMB_MAX_WIDTH / img.width)), Image.LANCZOS)
     try:
-        s3.put_object(
-            Bucket=R2_BUCKET, Key=storage_path, Body=buf.read(),
-            ContentType='image/webp', CacheControl='public, max-age=31536000, immutable',
-        )
+        _put_webp(img, storage_path, 88)
+        # Small card variant at "<name>_sm.webp" — see tools/make_thumb_sm.py
+        # (the one-off backfill) and smThumb() in the card-rendering JS.
+        sm = img if img.width <= THUMB_SM_WIDTH else img.resize(
+            (THUMB_SM_WIDTH, round(img.height * THUMB_SM_WIDTH / img.width)), Image.LANCZOS)
+        _put_webp(sm, storage_path[:-5] + '_sm.webp', THUMB_SM_Q)
     except Exception as e:
         print(f'  ERROR thumb upload: {e}')
         return None
@@ -109,14 +125,23 @@ def upload_thumb(local_path, storage_path):
 def insert_worksheet(record):
     res = requests.post(
         f'{SUPABASE_URL}/rest/v1/worksheets',
-        headers={**HEADERS_AUTH, 'Content-Type': 'application/json', 'Prefer': 'return=representation'},
+        headers={**HEADERS_AUTH, **PROFILE_HEADERS, 'Content-Type': 'application/json', 'Prefer': 'return=representation'},
         json=record
     )
     return res.status_code, res.text[:300]
 
 def main(manifest_path):
+    global PROFILE_HEADERS, KEY_PREFIX
     check_r2_domain()
     manifest = json.load(open(manifest_path, encoding='utf-8'))
+
+    lang = manifest.get('language', 'en')
+    assert lang in ('en', 'es'), f"language debe ser 'en' o 'es', no {lang!r}"
+    if lang == 'es':
+        PROFILE_HEADERS = {'Content-Profile': 'es'}
+        KEY_PREFIX = 'es/'
+        print('>> language=es -> esquema es.worksheets + prefijo es/ en R2')
+
     for ws in manifest['worksheets']:
         assert ws['tags'].startswith('worksheet'), f"{ws['slug']}: el tag 'worksheet' debe ir primero"
 
@@ -127,19 +152,19 @@ def main(manifest_path):
         print(f'\n{"="*60}')
         print(f'Uploading: {ws["title"]}')
 
-        pdf_url = upload_pdf(resolve(ws['pdf']), f'{lf}/{ts}-{ws["slug"]}.pdf')
+        pdf_url = upload_pdf(resolve(ws['pdf']), f'{KEY_PREFIX}{lf}/{ts}-{ws["slug"]}.pdf')
         if not pdf_url:
             continue
         print('  OK: PDF uploaded')
 
-        thumb_url = upload_thumb(resolve(ws['thumb']), f'thumbnails/{ts}-{ws["slug"]}.webp')
+        thumb_url = upload_thumb(resolve(ws['thumb']), f'{KEY_PREFIX}thumbnails/{ts}-{ws["slug"]}.webp')
         if not thumb_url:
             continue
         print('  OK: Thumbnail uploaded')
 
         te_url = None
         if ws.get('te_pdf'):
-            te_url = upload_pdf(resolve(ws['te_pdf']), f'teacher-editions/{lf}/{ts}-te_{ws["slug"]}.pdf')
+            te_url = upload_pdf(resolve(ws['te_pdf']), f'{KEY_PREFIX}teacher-editions/{lf}/{ts}-te_{ws["slug"]}.pdf')
             print('  OK: Teacher Edition uploaded' if te_url else '  WARNING: TE upload failed, continuing without it')
 
         record = {

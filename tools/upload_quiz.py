@@ -15,6 +15,10 @@ Formato del manifiesto (rutas relativas al repo, ver tools/te_output/):
   "worksheet_ids": ["4c739616-...", "af1d60b9-...", ...]   // filas de `worksheets` que reciben este topic_key
 }
 
+Opcional en la raíz del manifiesto: "language": "en" (default) o "es". Con "es"
+la fila va a `es.quizzes` (header PostgREST Content-Profile: es), los PDFs van
+bajo `es/` en R2, y el PATCH de topic_key va contra `es.worksheets`.
+
 Nota: is_free no aplica a quizzes (siempre son premium, gateados por
 get-quiz-url.js). Después de subir, verificar visualmente igual que un
 worksheet normal (render_pdf_pages.py) antes de correr esto.
@@ -73,9 +77,16 @@ if __name__ == '__main__':
     check_r2_domain()
     manifest = json.load(open(sys.argv[1], encoding='utf-8'))
 
+    lang = manifest.get('language', 'en')
+    assert lang in ('en', 'es'), f"language debe ser 'en' o 'es', no {lang!r}"
+    profile_headers = {'Content-Profile': 'es'} if lang == 'es' else {}
+    key_prefix = 'es/' if lang == 'es' else ''
+    if lang == 'es':
+        print('>> language=es -> esquema es.quizzes + prefijo es/ en R2')
+
     level_folder = manifest['level'].lower()
-    quiz_pdf_url = upload_pdf(resolve(manifest['quiz_pdf']), f'quizzes/{level_folder}/{manifest["topic_key"]}.pdf')
-    key_pdf_url = upload_pdf(resolve(manifest['key_pdf']), f'quizzes/teacher-editions/{level_folder}/{manifest["topic_key"]}.pdf')
+    quiz_pdf_url = upload_pdf(resolve(manifest['quiz_pdf']), f'{key_prefix}quizzes/{level_folder}/{manifest["topic_key"]}.pdf')
+    key_pdf_url = upload_pdf(resolve(manifest['key_pdf']), f'{key_prefix}quizzes/teacher-editions/{level_folder}/{manifest["topic_key"]}.pdf')
     print('quiz_pdf_url:', quiz_pdf_url)
     print('key_pdf_url:', key_pdf_url)
 
@@ -89,7 +100,7 @@ if __name__ == '__main__':
     }
     res = requests.post(
         f'{SUPABASE_URL}/rest/v1/quizzes',
-        headers={**HEADERS_AUTH, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation'},
+        headers={**HEADERS_AUTH, **profile_headers, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation'},
         json=row
     )
     if res.status_code not in (200, 201):
@@ -100,7 +111,7 @@ if __name__ == '__main__':
     for wid in manifest.get('worksheet_ids', []):
         r = requests.patch(
             f'{SUPABASE_URL}/rest/v1/worksheets?id=eq.{wid}',
-            headers={**HEADERS_AUTH, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
+            headers={**HEADERS_AUTH, **profile_headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
             json={'topic_key': manifest['topic_key']}
         )
         print(f'  worksheet {wid}: topic_key set ->', r.status_code)

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Nunito', 'Arial', sans-serif; font-size: 11.3px; color: #000; background: #fff; }
+
+  .page-wrap { padding: 2px 24px 0; }
+
+  /* HEADER — plain white, no color band (no brand name — that lives on the teacher's Answer Key) */
+  .header { text-align: center; margin-bottom: 0; }
+  .header .eyebrow { font-size: 9.5px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #1a3a5c; }
+  .header .ws-title { margin-top: 2px; font-size: 17px; font-weight: 900; color: #1a3a5c; }
+  .header .ws-subtitle { margin-top: 1px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #1a3a5c; }
+
+  .header-rule { border-bottom: 2px solid #1a3a5c; margin-bottom: 1px; }
+
+  /* STUDENT INFO CARD — the card border is the writing boundary, no inner line needed */
+  .student-card { display: grid; grid-template-columns: 2.2fr 0.7fr 1.3fr 1.1fr; border: 1px solid #1a3a5c; border-radius: 9px; overflow: hidden; margin-bottom: 1px; }
+  .student-card > div { padding: 2px 12px 4px; border-right: 1px solid #1a3a5c; }
+  .student-card > div:last-child { border-right: none; }
+  .student-card label { display: block; font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: #1a3a5c; }
+
+  /* LEARNING OBJECTIVE */
+  .obj-box { background: #fff; border: 1px solid #1a3a5c; border-left: 3px solid #1a3a5c; border-radius: 8px; padding: 0 12px; margin-bottom: 1px; font-size: 9.8px; line-height: 1.2; }
+  .obj-box b { text-transform: uppercase; letter-spacing: 0.4px; font-size: 8.8px; color: #1a3a5c; }
+
+  .info-line { font-size: 9.3px; color: #1a3a5c; margin-bottom: 1px; text-align: center; }
+  .info-line b { color: #1a3a5c; }
+
+  /* SECTION TITLES — circular letter badge like a premium test paper */
+  .section-title { display: flex; align-items: center; gap: 8px; border-bottom: 1.5px solid #1a3a5c; padding-bottom: 0; margin-bottom: 1px; }
+  .section-title .letter-badge { width: 17px; height: 17px; min-width: 17px; border-radius: 50%; background: #1a3a5c; color: #fff; font-size: 9.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .section-title .title-text { flex: 1; font-size: 11.5px; font-weight: 800; color: #1a3a5c; text-transform: uppercase; letter-spacing: 0.3px; }
+  .section-title .badge { font-size: 8.8px; font-weight: 700; color: #1a3a5c; white-space: nowrap; }
+  .section-title .badge .earn { display: inline-block; min-width: 24px; border-bottom: 1px solid #1a3a5c; margin: 0 2px; }
+
+  /* QUIZ SECTION WRAPPER */
+  .quiz-section { margin-bottom: 0; break-inside: avoid; page-break-inside: avoid; }
+  .quiz-body { padding: 0 2px 0 25px; }
+  .instructions { font-size: 9.3px; font-style: italic; color: #1a3a5c; margin-bottom: 0; }
+
+  /* COMMON QUESTION FORMATS */
+  .quiz-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--row-gap, 1px) 18px; }
+  .q-item { font-size: 10.6px; line-height: var(--q-lh, 1.28); }
+  .q-item .n { font-weight: 800; color: #1a3a5c; margin-right: 3px; }
+  .mc-options { display: inline-flex; gap: 10px; margin-left: 6px; }
+  .mc-options span { white-space: nowrap; }
+  .blank { display: inline-block; min-width: 100px; border-bottom: 1px solid #5d7a96; margin: 0 3px; }
+  .ans-line { border-bottom: 1px solid #5d7a96; height: var(--ans-h, 12px); margin: 1px 4px 2px 0; }
+  .write-lines div { border-bottom: 1px solid #5d7a96; height: var(--write-h, 15px); margin-bottom: 3px; }
+  .reading-box { border: 1px solid #1a3a5c; background: #fff; border-radius: 7px; padding: 2px 10px; margin-bottom: 1px; font-size: 9.5px; line-height: 1.16; }
+
+  /* TOTAL SCORE RECAP */
+  .total-score-box { display: flex; justify-content: space-between; align-items: center; border: 1.5px solid #1a3a5c; border-radius: 9px; padding: 1px 16px; margin: 1px 0 0; background: #fff; }
+  .total-score-box .label { font-size: 9.5px; font-weight: 900; letter-spacing: 1px; color: #1a3a5c; text-transform: uppercase; }
+  .total-score-box .value { font-size: 9px; font-weight: 700; color: #1a3a5c; }
+  .total-score-box .value b { font-size: 12px; }
+  .total-score-box .grade { font-size: 9px; font-weight: 700; color: #1a3a5c; margin-left: 18px; }
+  .total-score-box .grade .fill { display: inline-block; min-width: 45px; border-bottom: 1px solid #5d7a96; margin-left: 4px; }
+
+  /* FOOTER */
+  .footer { text-align: center; margin-top: 0; padding-top: 0; border-top: 1px solid #1a3a5c; font-size: 7px; color: #1a3a5c; letter-spacing: 0.5px; }
+
+  /* PER-QUIZ FIT OVERRIDES (build_quiz.py fills this from content['fit']; empty = defaults) */
+  :root{--q-lh:1.24;--ans-h:12px;--write-h:16px}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ STUDENT QUIZ (print-ready, no answers, no branding) ═══════════════════════ -->
+
+<div class="page-wrap">
+
+<div class="header">
+  <div class="eyebrow">Quiz</div>
+  <div class="ws-title">Superlative Adjectives</div>
+  <div class="ws-subtitle">Grammar, Reading &amp; Writing</div>
+</div>
+<div class="header-rule"></div>
+
+<div class="student-card">
+  <div><label>Name</label></div>
+  <div><label>Class</label></div>
+  <div><label>Date</label></div>
+  <div><label>Score</label></div>
+</div>
+
+<div class="obj-box">
+  <b>Learning Objective (A1)</b> &mdash; The student forms superlative adjectives correctly (the …-est for short adjectives, the most … for long ones, the best / the worst), never omits 'the', tells superlatives apart from comparatives, reads a short text for detail, and writes true superlative sentences about their own country and life.
+</div>
+
+<div class="info-line">
+<!--INFO_START-->
+  <span><b>Topic:</b> Superlative Adjectives</span>  <span><b>Est. Time:</b> 35–40 min</span>
+<!--INFO_END-->
+</div>
+
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">A</span>
+    <span class="title-text">Write the Superlative</span>
+    <span class="badge">(10 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write the superlative form of each adjective (with the).</div>
+    
+    <div class='quiz-grid-2'><div class='q-item'><span class='n'>1.</span> tall &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>6.</span> good &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>2.</span> big &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>7.</span> bad &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>3.</span> hot &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>8.</span> expensive &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>4.</span> happy &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>9.</span> interesting &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>5.</span> long &rarr; <span class='blank'></span></div><div class='q-item'><span class='n'>10.</span> beautiful &rarr; <span class='blank'></span></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">B</span>
+    <span class="title-text">Choose the Correct Form</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct words.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> Mount Everest is (the highest / the most high) mountain in the world.</div><div class='q-item'><span class='n'>2.</span> This is (the beautifulest / the most beautiful) beach here.</div><div class='q-item'><span class='n'>3.</span> July is (the hotter / the hottest) month of the year.</div><div class='q-item'><span class='n'>4.</span> It was (the best / the goodest) day of my life.</div><div class='q-item'><span class='n'>5.</span> She is (the most tall / the tallest) student in the class.</div><div class='q-item'><span class='n'>6.</span> That was (the worst / the baddest) film ever.</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">C</span>
+    <span class="title-text">Multiple Choice</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Circle the correct option.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> The Amazon is ___ river in South America. <span class='mc-options'><span>a. longest</span><span>b. the longest</span><span>c. the most long</span><span>d. longer</span></span></div><div class='q-item'><span class='n'>2.</span> My grandma is ___ person in the family. <span class='mc-options'><span>a. kindest</span><span>b. the most kind</span><span>c. the kindest</span><span>d. kinder</span></span></div><div class='q-item'><span class='n'>3.</span> This is ___ exercise I have ever done. <span class='mc-options'><span>a. the easiest</span><span>b. the most easy</span><span>c. easier</span><span>d. easiest</span></span></div><div class='q-item'><span class='n'>4.</span> This smartphone is ___ on the market. <span class='mc-options'><span>a. the expensivest</span><span>b. the most expensive</span><span>c. more expensive</span><span>d. most expensive</span></span></div><div class='q-item'><span class='n'>5.</span> Italian food is ___ food in the world, for me. <span class='mc-options'><span>a. the most delicious</span><span>b. the deliciousest</span><span>c. more delicious</span><span>d. deliciousest</span></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">D</span>
+    <span class="title-text">Complete the Sentences</span>
+    <span class="badge">(15 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Complete with the superlative form of the adjective in parentheses.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> Tokyo is <span class='blank'></span> (large) city in Japan.</div><div class='q-item'><span class='n'>2.</span> My sister is <span class='blank'></span> (tall) in my family.</div><div class='q-item'><span class='n'>3.</span> Summer is <span class='blank'></span> (good) season of the year, in my opinion.</div><div class='q-item'><span class='n'>4.</span> That was <span class='blank'></span> (bad) day of the week.</div><div class='q-item'><span class='n'>5.</span> This is <span class='blank'></span> (interesting) book in the library.</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">E</span>
+    <span class="title-text">Error Correction</span>
+    <span class="badge">(12 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Find the mistake in each sentence and write it correctly.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> It is highest mountain in the world. &rarr; <span class='blank' style='min-width:200px;'></span></div><div class='q-item'><span class='n'>2.</span> She is the most tall in my family. &rarr; <span class='blank' style='min-width:200px;'></span></div><div class='q-item'><span class='n'>3.</span> July is the most hot month. &rarr; <span class='blank' style='min-width:200px;'></span></div><div class='q-item'><span class='n'>4.</span> It was the goodest vacation ever. &rarr; <span class='blank' style='min-width:200px;'></span></div><div class='q-item'><span class='n'>5.</span> My grandma is the kindest person of the family. &rarr; <span class='blank' style='min-width:200px;'></span></div><div class='q-item'><span class='n'>6.</span> This is the most easy exercise. &rarr; <span class='blank' style='min-width:200px;'></span></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">F</span>
+    <span class="title-text">Comparative or Superlative?</span>
+    <span class="badge">(13 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Complete with the comparative OR the superlative of the adjective. The word 'than' means a comparative.</div>
+    
+    <div class='q-item'><span class='n'>1.</span> An elephant is <span class='blank'></span> (big) than a mouse.</div><div class='q-item'><span class='n'>2.</span> An elephant is <span class='blank'></span> (big) land animal.</div><div class='q-item'><span class='n'>3.</span> This exercise is <span class='blank'></span> (easy) than the last one.</div><div class='q-item'><span class='n'>4.</span> Burj Khalifa is <span class='blank'></span> (tall) building in the world.</div><div class='q-item'><span class='n'>5.</span> The weather today is <span class='blank'></span> (good) than yesterday.</div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">G</span>
+    <span class="title-text">Reading Comprehension</span>
+    <span class="badge">(10 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Read the text and answer the questions in complete sentences.</div>
+    <div class='reading-box'>My favourite country to visit is Peru. Cusco is one of the most beautiful cities in the world, and the people there are some of the friendliest I have ever met. The mountains near Cusco are the highest I have ever seen. The food is the best part of the trip for me, especially the local dishes. Machu Picchu is the most famous place in Peru, but it is also the most crowded. The quietest time to visit is early in the morning.</div>
+    <div class='q-item'><span class='n'>1.</span> What does the writer say about Cusco?<div class='ans-line'></div></div><div class='q-item'><span class='n'>2.</span> What is the best part of the trip for the writer?<div class='ans-line'></div></div><div class='q-item'><span class='n'>3.</span> What is the most famous place in Peru?<div class='ans-line'></div></div><div class='q-item'><span class='n'>4.</span> When is the quietest time to visit Machu Picchu?<div class='ans-line'></div></div>
+  </div>
+</div>
+
+<div class="quiz-section">
+  <div class="section-title">
+    <span class="letter-badge">H</span>
+    <span class="title-text">Short Writing</span>
+    <span class="badge">(8 points) &nbsp; Score: <span class="earn"></span></span>
+  </div>
+  <div class="quiz-body">
+    <div class="instructions">Write four true superlative sentences about your country or your life (for example: the biggest city, the best food, the most beautiful place). Start every sentence with a subject and use 'the'.</div>
+    
+    <div class='write-lines'><div></div><div></div><div></div><div></div></div>
+  </div>
+</div>
+
+<div class="total-score-box">
+  <span class="label">Total Score</span>
+  <span class="value">___ <b>/ 95</b></span>
+  <span class="grade">Grade:<span class="fill"></span></span>
+</div>
+
+<div class="footer">workshido.com</div>
+
+</div>
+
+</body>
+</html>

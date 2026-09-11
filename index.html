@@ -24,10 +24,10 @@
 <meta name="theme-color" content="#042C53">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Workshido","url":"https://workshido.com","logo":"https://workshido.com/favicon-192.png","description":"Free printable English worksheets for teachers and students worldwide.","sameAs":["https://co.pinterest.com/Workshido/","https://www.tiktok.com/@workshido","https://www.youtube.com/@Workshido"]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Workshido","url":"https://workshido.com/","potentialAction":{"@type":"SearchAction","target":"https://workshido.com/workshido-index.html?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -352,7 +352,7 @@
   .footer-social { display: flex; gap: 10px; margin-top: 16px; }
   .footer-social a { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); color: var(--blue-100); transition: background 0.15s, color 0.15s; }
   .footer-social a:hover { background: rgba(255,255,255,0.16); color: var(--white); }
-  .footer-col h4 {
+  .footer-col h3 {
     font-size: 12px;
     font-weight: 600;
     color: var(--white);
@@ -417,7 +417,7 @@
   .trending-inner { max-width: 1180px; margin: 0 auto; }
   .trending-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 6px; }
   .trending-title { font-size: 19px; font-weight: 800; color: var(--gray-900); }
-  .trending-sub { font-size: 12px; color: var(--gray-300); }
+  .trending-sub { font-size: 12px; color: var(--gray-600); }
   .trending-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
   .trending-card { position: relative; text-decoration: none; color: inherit; border: 1px solid var(--gray-100); border-radius: 12px; padding: 10px; transition: border-color 0.15s, transform 0.15s; display: block; }
   .trending-card:hover { border-color: var(--blue-200); transform: translateY(-2px); }
@@ -425,7 +425,7 @@
   .trending-thumb { width: 100%; aspect-ratio: 4/3; border-radius: 8px; overflow: hidden; margin-bottom: 8px; background: var(--gray-50); }
   .trending-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .trending-card-title { font-size: 12px; font-weight: 600; color: var(--gray-900); line-height: 1.35; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .trending-downloads { font-size: 11px; color: var(--gray-300); }
+  .trending-downloads { font-size: 11px; color: var(--gray-600); }
   @media (max-width: 768px) { .trending-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 769px) and (max-width: 1024px) { .trending-grid { grid-template-columns: repeat(3, 1fr); } }
 
@@ -450,7 +450,7 @@
   .email-capture-form button { background: var(--blue-600); color: var(--white); border: none; border-radius: var(--radius-sm); padding: 12px 20px; font-family: var(--font-body); font-weight: 700; font-size: 14px; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
   .email-capture-form button:hover { background: var(--blue-800); }
   .email-capture-form button:disabled { opacity: 0.6; cursor: default; }
-  .email-capture-consent { display: flex; align-items: flex-start; gap: 8px; font-size: 11.5px; color: var(--gray-300); text-align: left; cursor: pointer; }
+  .email-capture-consent { display: flex; align-items: flex-start; gap: 8px; font-size: 11.5px; color: var(--gray-600); text-align: left; cursor: pointer; }
   .email-capture-consent input { margin-top: 2px; flex-shrink: 0; }
   .email-capture-consent a { color: var(--blue-600); text-decoration: none; }
   .email-capture-consent a:hover { text-decoration: underline; }
@@ -485,9 +485,12 @@
     .search-box button { padding: 14px 18px; }
     .search-btn-text { display: none; }
   }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 
 <!-- NAV -->
 <nav>
@@ -532,6 +535,8 @@
     </div>
   </div>
 </div>
+
+<main id="main">
 
 <!-- HERO -->
 <section class="hero">
@@ -641,6 +646,8 @@
   </div>
 </section>
 
+</main>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
@@ -660,23 +667,23 @@
       </div>
     </div>
     <div class="footer-col">
-      <h4>Browse</h4>
-      <a href="/worksheets/grammar/">Grammar</a>
-      <a href="/worksheets/vocabulary/">Vocabulary</a>
-      <a href="/worksheets/reading/">Reading</a>
-      <a href="/worksheets/writing/">Writing</a>
-      <a href="workshido-index.html?topic=practice">Practice</a>
+      <h3>Browse</h3>
+      <a href="/worksheets/grammar/" aria-label="Browse grammar worksheets">Grammar</a>
+      <a href="/worksheets/vocabulary/" aria-label="Browse vocabulary worksheets">Vocabulary</a>
+      <a href="/worksheets/reading/" aria-label="Browse reading worksheets">Reading</a>
+      <a href="/worksheets/writing/" aria-label="Browse writing worksheets">Writing</a>
+      <a href="workshido-index.html?topic=practice" aria-label="Browse practice worksheets">Practice</a>
     </div>
     <div class="footer-col">
-      <h4>Levels</h4>
-      <a href="/worksheets/levels/a1/">A1 Beginner</a>
-      <a href="/worksheets/levels/a2/">A2 Elementary</a>
-      <a href="workshido-index.html?level=B1">B1 Intermediate</a>
-      <a href="workshido-index.html?level=B2">B2 Upper-intermediate</a>
+      <h3>Levels</h3>
+      <a href="/worksheets/levels/a1/" aria-label="Browse A1 beginner worksheets">A1 Beginner</a>
+      <a href="/worksheets/levels/a2/" aria-label="Browse A2 elementary worksheets">A2 Elementary</a>
+      <a href="workshido-index.html?level=B1" aria-label="Browse B1 intermediate worksheets">B1 Intermediate</a>
+      <a href="workshido-index.html?level=B2" aria-label="Browse B2 upper-intermediate worksheets">B2 Upper-intermediate</a>
       <span class="footer-link-soon" title="C1 worksheets are coming soon">C1 Advanced <small>(coming soon)</small></span>
     </div>
     <div class="footer-col">
-      <h4>Company</h4>
+      <h3>Company</h3>
       <a href="workshido-forteachers.html">For teachers</a>
       <a href="/guides/">Teaching guides</a>
       <a href="workshido-pricing.html">Premium</a>
@@ -693,10 +700,10 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/index.js?v=20260904" defer></script>
+<script src="js/index.js?v=20260908c" defer></script>
 
 <script src="mascot.js" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 <script src="js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>

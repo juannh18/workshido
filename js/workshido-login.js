@@ -25,11 +25,67 @@ function handleGoogle() {
   });
 }
 
+// Country from Netlify's edge geo (netlify/edge-functions/geo.js), reusing
+// analytics.js's sessionStorage cache when it already fetched it — mirrors
+// workshido-signup.js's copy of this (each page script is standalone).
+async function getCountryData() {
+  try {
+    const cached = sessionStorage.getItem('ws_country');
+    if (cached) return JSON.parse(cached);
+  } catch (e) { /* private mode, etc. — fall through to fetching fresh */ }
+  try {
+    const r = await fetch('/api/geo');
+    const geo = await r.json();
+    try { sessionStorage.setItem('ws_country', JSON.stringify(geo)); } catch (e) {}
+    return geo;
+  } catch (e) {
+    return { code: null, name: null };
+  }
+}
+function getUtmData() {
+  try {
+    const raw = localStorage.getItem('ws_utm');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+function getChannel() {
+  try {
+    return localStorage.getItem('ws_channel');
+  } catch (e) {
+    return null;
+  }
+}
+
 async function handleCredentialResponse(response) {
   try {
-    const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
+    const { data, error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
     if (error) throw error;
-    window.wsTrack?.('login_success', { method: 'google' });
+    // signInWithIdToken signs up AND logs in on a first-ever Google sign-in —
+    // GoTrue auto-creates the account. Without this check, someone clicking
+    // "Continue with Google" here (instead of on the signup page) silently
+    // gets a new profiles row with no country/utm/channel captured at all,
+    // and the event fires as login_success instead of signup_completed.
+    const isNewUser = data?.user && (Date.now() - new Date(data.user.created_at).getTime()) < 10000;
+    if (isNewUser) {
+      const utm = getUtmData();
+      const attribution = getCountryData()
+        .then((geo) => sb.rpc('set_signup_attribution', {
+          p_country_code: geo?.code || null,
+          p_country_name: geo?.name || null,
+          p_utm_source: utm?.source || null,
+          p_utm_medium: utm?.medium || null,
+          p_utm_campaign: utm?.campaign || null,
+          p_channel: getChannel(),
+        }))
+        .catch(() => {});
+      const timeout = new Promise((resolve) => setTimeout(resolve, 1500));
+      await Promise.race([attribution, timeout]);
+      window.wsTrack?.('signup_completed', { method: 'google' });
+    } else {
+      window.wsTrack?.('login_success', { method: 'google' });
+    }
     const params = new URLSearchParams(window.location.search);
     window.location.href = safeRedirect(params.get('redirect'));
   } catch (e) {

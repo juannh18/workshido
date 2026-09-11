@@ -6,6 +6,15 @@ const sb = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
+// The Lemon Squeezy store is shared with Spanishido, which registers its own
+// webhook on the same store — so this endpoint also receives Spanishido's
+// subscription events. Restrict this handler to Workshido's own subscription
+// variants; without it, a Spanishido purchase would flip is_premium here too.
+// Set LEMONSQUEEZY_VARIANT_IDS to the comma-separated Workshido Premium
+// monthly+yearly numeric variant ids. Unset => act on every variant (legacy).
+const WS_VARIANT_IDS = (process.env.LEMONSQUEEZY_VARIANT_IDS || '')
+  .split(',').map(s => s.trim()).filter(Boolean);
+
 function verifySignature(rawBody, signature, secret) {
   const hmac = crypto.createHmac('sha256', secret);
   hmac.update(rawBody);
@@ -39,6 +48,11 @@ exports.handler = async (event) => {
 
   const SUBSCRIPTION_EVENTS = ['subscription_created', 'subscription_updated', 'subscription_cancelled', 'subscription_expired'];
   if (SUBSCRIPTION_EVENTS.includes(eventName)) {
+    // Ignore Spanishido (or any other) product events on this shared store.
+    const variantId = payload.data?.attributes?.variant_id != null ? String(payload.data.attributes.variant_id) : null;
+    if (WS_VARIANT_IDS.length && !WS_VARIANT_IDS.includes(variantId)) {
+      return { statusCode: 200, body: JSON.stringify({ received: true, ignored: 'not a Workshido variant' }) };
+    }
     const status = payload.data?.attributes?.status;
     const endsAt = payload.data?.attributes?.ends_at;
     // Lemon Squeezy sets status='cancelled' the INSTANT the customer cancels —

@@ -1,6 +1,10 @@
 const sb = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 const LEVEL_CLASS = { A1:'a1', A2:'a2', B1:'b1', B2:'b2', C1:'c1' };
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// "More on this topic" cards render thumbnails at ~150-190px — use the
+// ~440px _sm derivative (tools/make_thumb_sm.py). The big preview image at
+// the top of the page keeps the full thumbnail_url. onerror falls back.
+function smThumb(u) { return u && /\.webp(\?|$)/i.test(u) ? u.replace(/\.webp(\?|$)/i, '_sm.webp$1') : u; }
 // "Comparative Adjectives – Practice" -> "comparative adjectives". Titles
 // with no " – "/" - " separator (standalone worksheets like "Articles",
 // "Body Parts") return their own full lowercased title, which only matches
@@ -57,28 +61,6 @@ let _wsTitle = 'worksheet';
 let _quizId = null;
 let _quizTitle = 'quiz';
 
-// Preview-then-paywall: instead of blurred skeleton bars (which read as
-// "broken / still loading" and plant doubt right before the ask), show a
-// concrete checklist of exactly what unlocking delivers, plus a full-width
-// CTA. No real answer-key/quiz content is stored server-side for non-premium
-// users, so the value has to be sold with specifics, not a fake mockup.
-function lockedPreviewCard(kind, colorClass, icon, headLabel, items, ctaLabel) {
-  const check = `<svg class="te-card-ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-  const body = items.map(s => `
-    <div class="te-card-feat">
-      ${check}
-      <div class="te-card-feat-txt"><span class="te-card-feat-t">${esc(s.t)}</span>${s.d ? `<span class="te-card-feat-d">${esc(s.d)}</span>` : ''}</div>
-    </div>`).join('');
-  const cta = ctaLabel || `Unlock ${headLabel}`;
-  return `<div class="te-card ${colorClass}" onclick="openPremiumModal('${kind}')" role="button" tabindex="0" aria-label="Unlock ${esc(headLabel)}" onkeydown="if(event.key==='Enter'){openPremiumModal('${kind}')}">
-    <div class="te-card-head">${icon} ${esc(headLabel)} <span class="te-card-tag">Preview</span></div>
-    <div class="te-card-body">
-      ${body}
-      <button class="te-card-cta" onclick="event.stopPropagation();openPremiumModal('${kind}')">🔓 ${esc(cta)}</button>
-    </div>
-  </div>`;
-}
-
 async function checkAuth() {
   const { data: { user } } = await sb.auth.getUser();
   const uploadLink = document.getElementById('navUploadLink');
@@ -98,12 +80,15 @@ async function checkAuth() {
     nav.querySelectorAll('a[href*="workshido-signup"]').forEach(a => a.href = a.getAttribute('href') + `?redirect=${redirect}`);
   }
   if (user && nav) {
-    const name = user.user_metadata?.full_name || user.email;
-    const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0,2);
-    // full_name is free text the user set at signup — never trust it as safe
-    // HTML when it lands back in innerHTML.
+    let pa = {};
+    try { pa = (await sb.from('profiles').select('avatar, display_name').eq('id', user.id).maybeSingle()).data || {}; } catch (e) {}
+    const name = (pa.display_name || user.user_metadata?.full_name || user.email || '').trim();
+    const initials = name.split(/\s+/).filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    const pic = user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+    // full_name / display_name are free text — never trust as HTML in innerHTML.
     const escNav = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    nav.innerHTML = `<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;">${escNav(initials)}</div>${escNav(name.split(' ')[0])}</a><button onclick="logOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>`;
+    const inner = window.wsNavAvatar ? window.wsNavAvatar(pa.avatar, pic, initials) : escNav(initials);
+    nav.innerHTML = `<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;flex-shrink:0;">${inner}</div>${escNav(name.split(/\s+/)[0])}</a><button onclick="logOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>`;
   }
 }
 async function logOut() { await sb.auth.signOut(); window.location.reload(); }
@@ -112,10 +97,22 @@ async function loadWorksheet() {
   const id = new URLSearchParams(window.location.search).get('id');
   if (!id) { renderError('No worksheet ID provided.'); return; }
 
-  const [{ data, error }, { data: { user: currentUser } }] = await Promise.all([
-    sb.from('worksheets').select('*').eq('id', id).single(),
-    sb.auth.getUser()
-  ]);
+  // The worksheet row is inlined into the page by
+  // netlify/functions/worksheet-page.js — use it and skip the round-trip.
+  // Fall back to fetching when it's absent (no-id path / function fallback)
+  // or stale (URL id changed via history navigation without a reload).
+  let seeded = null;
+  try {
+    const el = document.getElementById('wsData');
+    const p = el && el.textContent.trim() ? JSON.parse(el.textContent) : null;
+    if (p && p.id === id) seeded = p;
+  } catch (e) { /* malformed seed — just fetch */ }
+
+  const authPromise = sb.auth.getUser();
+  const rowPromise = seeded
+    ? Promise.resolve({ data: seeded, error: null })
+    : sb.from('worksheets').select('*').eq('id', id).single();
+  const [{ data, error }, { data: { user: currentUser } }] = await Promise.all([rowPromise, authPromise]);
   if (error || !data) { renderError('Worksheet not found.'); return; }
 
   if (currentUser) {
@@ -140,43 +137,16 @@ async function loadWorksheet() {
   const quizPromise = data.topic_key
     ? sb.from('quizzes').select('*').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle()
     : Promise.resolve({ data: null });
-  const base = titleBase(data.title);
-  const myTags = meaningfulTags(data.tags);
-  const [{ data: quizRow }, { data: allRows }] = await Promise.all([
-    quizPromise,
-    sb.from('worksheets').select('id,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id),
-  ]);
-  quiz = quizRow || null;
-  const rows = allRows || [];
+  quiz = (await quizPromise).data || null;
 
-  const byTopicKey = data.topic_key ? rows.filter(r => r.topic_key === data.topic_key) : [];
-  const byTitle = base ? rows.filter(r => titleBase(r.title) === base) : [];
-  let byTag = [];
-  if (myTags.length) {
-    const freq = new Map();
-    for (const r of rows) for (const t of meaningfulTags(r.tags)) freq.set(t, (freq.get(t) || 0) + 1);
-    const myTagsSpecific = specificTags(myTags, freq);
-    byTag = myTagsSpecific.length
-      ? rows.filter(r => specificTags(meaningfulTags(r.tags), freq).some(t => myTagsSpecific.includes(t)))
-      : [];
-  }
-  // byTopicKey/byTitle are the exact-same-topic "set" siblings (e.g. this
-  // worksheet's Reading/Writing/Practice counterparts) — flagged so
-  // renderRelated can list them first and style them as the featured set,
-  // vs. byTag matches which are merely thematically related. Restricted to
-  // the SAME level: the quiz itself is scoped per topic_key+level (a "set"
-  // is Grammar+Reading+Writing+Practice at one level, same as the quiz
-  // bundle), so a same-title worksheet at a different level is a topic
-  // continuation to explore, not literally part of this set.
-  const setMatchIds = isEasyWordSearch(data.title) ? new Set() : new Set(
-    [...byTopicKey, ...byTitle].filter(r => r.level === data.level && !isEasyWordSearch(r.title)).map(r => r.id)
-  );
-  const seen = new Set();
-  related = [...byTopicKey, ...byTitle, ...byTag]
-    .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
-    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id) }));
+  // The related-worksheets match needs ~700 rows. Fire the query now but DON'T
+  // block the main render on it — #pageWrap paints from the data we already
+  // have (inlined seed + quiz), and "More on this topic" fills in afterwards
+  // (see the block just before renderRelated below).
+  const relatedRowsP = sb.from('worksheets')
+    .select('id,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id);
 
-  document.title = `${esc(data.title)} — Workshido`;
+  document.title = data.title;  // brand suffix stays on OG/Twitter, not <title> (SERP length)
   const wsMetaDescription = data.description || `${data.level} ${data.category} worksheet. Free download.`;
   document.querySelector('meta[name="description"]')?.setAttribute('content', wsMetaDescription);
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${data.title} — Workshido`);
@@ -205,7 +175,7 @@ async function loadWorksheet() {
   const ext = (data.file_url || '').split('.').pop().split('?')[0].toUpperCase();
 
   const preview = data.thumbnail_url
-    ? `<img src="${data.thumbnail_url}" alt="${data.title}">`
+    ? `<img src="${data.thumbnail_url}" alt="${data.title}" decoding="async" width="640" height="904">`
     : `<div class="preview-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         <span>No preview available</span>
@@ -266,12 +236,13 @@ async function loadWorksheet() {
               <span>Teacher Edition <span class="ak-sub">⭐ Premium — Download</span></span>
             </span>
           </button>`
-        : `${lockedPreviewCard('teacher_edition', 'te-amber', '📘', 'Teacher Edition', [
-            { t: 'Complete answer key', d: 'every exercise, fully worked' },
-            { t: 'Learning objective & success criteria' },
-            { t: 'Lesson plan', d: 'I Do / We Do / You Do, ready to teach' },
-            { t: 'Common student mistakes', d: 'and how to correct them' },
-          ], 'Unlock Teacher Edition')}
+        : `<button class="btn-answer-key" onclick="openPremiumModal('teacher_edition')">
+            <span class="ak-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Teacher Edition <span class="ak-sub">⭐ Premium only</span></span>
+            </span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
           ${!currentUser ? '<p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>' : ''}`)
     : '';
 
@@ -291,11 +262,13 @@ async function loadWorksheet() {
             <div class="prep-steps"><span class="prep-step"><span class="num">1</span>Grammar</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">2</span>Reading</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">3</span>Writing</span><span class="prep-extra">(+ Practice if you want extra reps)</span></div>
             <div class="prep-line">Done with those? You're ready. <a href="workshido-how-quiz-works.html">Why this order →</a></div>
           </div>`
-        : `${lockedPreviewCard('quiz', 'te-pink', '📝', 'Full Quiz', [
-            { t: 'Grammar, Reading & Writing', d: 'one graded evaluation' },
-            { t: 'Score at the end', d: 'see exactly where the student stands' },
-            { t: 'Full answer key', d: 'model answers for every section' },
-          ], 'Unlock Full Quiz')}
+        : `<button class="btn-quiz" onclick="openPremiumModal('quiz')">
+            <span class="ak-left">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>Full Quiz <span class="ak-sub">⭐ Premium only</span></span>
+            </span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
           <p class="quiz-key-link">Covers ${esc(quiz.skills)}</p>
           <div class="quiz-prep-tip">
             <div class="prep-label">How to get there</div>
@@ -323,13 +296,66 @@ async function loadWorksheet() {
         </div>
         ${downloadBtn}
         <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
+        <button class="btn-save" id="saveWsBtn" onclick="toggleSaveWS()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Save to my library
+        </button>
         ${answerKeyBtn}
         ${quizBtn}
         ${starSection}
       </div>
     </div>`;
 
+  refreshSaveBtn();
+
+  // Now (after the worksheet itself is on screen) resolve the ~700-row query
+  // and build the "More on this topic" list — three signals: same topic_key,
+  // the "Topic – Type" title base, and shared specific topic tags. byTopicKey/
+  // byTitle at the SAME level are the "set" siblings (Grammar/Reading/Writing/
+  // Practice), flagged so renderRelated can feature them first.
+  const rows = (await relatedRowsP).data || [];
+  const base = titleBase(data.title);
+  const myTags = meaningfulTags(data.tags);
+  const byTopicKey = data.topic_key ? rows.filter(r => r.topic_key === data.topic_key) : [];
+  const byTitle = base ? rows.filter(r => titleBase(r.title) === base) : [];
+  let byTag = [];
+  if (myTags.length) {
+    const freq = new Map();
+    for (const r of rows) for (const t of meaningfulTags(r.tags)) freq.set(t, (freq.get(t) || 0) + 1);
+    const myTagsSpecific = specificTags(myTags, freq);
+    byTag = myTagsSpecific.length
+      ? rows.filter(r => specificTags(meaningfulTags(r.tags), freq).some(t => myTagsSpecific.includes(t)))
+      : [];
+  }
+  const setMatchIds = isEasyWordSearch(data.title) ? new Set() : new Set(
+    [...byTopicKey, ...byTitle].filter(r => r.level === data.level && !isEasyWordSearch(r.title)).map(r => r.id)
+  );
+  const seen = new Set();
+  related = [...byTopicKey, ...byTitle, ...byTag]
+    .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
+    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id) }));
+
   renderRelated(related, lvlCls, data.category, data.level);
+  renderSetProgress(data, related);
+}
+
+// "You've downloaded 2 of 4 in this set" — a light progress nudge under the
+// "More on this topic" heading, for signed-in users on a worksheet that
+// belongs to a real set.
+async function renderSetProgress(data, related) {
+  const anchor = document.querySelector('#relatedSection .related-intro');
+  if (!anchor || !data.topic_key || document.getElementById('setProgress')) return;
+  const setIds = related.filter(r => r._setMatch).map(r => r.id).concat(data.id);
+  if (setIds.length < 3) return;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    const { data: dl } = await sb.from('user_downloads').select('worksheet_id').in('worksheet_id', setIds);
+    const got = new Set((dl || []).map(d => d.worksheet_id)).size;
+    if (!got) return;
+    const done = got >= setIds.length;
+    anchor.insertAdjacentHTML('afterend',
+      `<p class="set-progress" id="setProgress">You've downloaded <b>${got} of ${setIds.length}</b> in this set${done ? ' — nice, that\'s the whole set. ✓' : ' — grab the rest below.'}</p>`);
+  } catch (e) {}
 }
 
 // Groups related worksheets first by level (A1 → C1, so a learner sees the
@@ -386,7 +412,7 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
   const cardHtml = r => {
     const rLvlCls = LEVEL_CLASS[r.level] || lvlCls;
     const thumb = r.thumbnail_url
-      ? `<img src="${r.thumbnail_url}" alt="${esc(r.title)}" loading="lazy">`
+      ? `<img src="${smThumb(r.thumbnail_url)}" onerror="this.onerror=null;this.src='${r.thumbnail_url}'" alt="${esc(r.title)}" loading="lazy" decoding="async" width="440" height="622">`
       : `<div class="related-thumb-placeholder">📄</div>`;
     // Same-topic "set" siblings (this worksheet's Reading/Writing/Practice
     // counterparts) get a distinct featured treatment so they read as "the
@@ -454,8 +480,50 @@ function openDlModal(action) {
   document.getElementById('dlModalTitle').textContent =
     action === 'print' ? 'Sign in to print for free' :
     action === 'rate'  ? 'Sign in to rate this worksheet' :
+    action === 'save'  ? 'Sign in to save worksheets to your library' :
     'Sign in to download for free';
   _openModal(document.getElementById('dlModal'));
+}
+
+// --- Save to library --------------------------------------------------------
+let _isSaved = false;
+async function refreshSaveBtn() {
+  const btn = document.getElementById('saveWsBtn');
+  if (!btn || !_wsId) return;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { _isSaved = false; paintSaveBtn(); return; }
+    const { data } = await sb.from('saved_worksheets').select('worksheet_id').eq('worksheet_id', _wsId).maybeSingle();
+    _isSaved = !!data;
+  } catch (e) { _isSaved = false; }
+  paintSaveBtn();
+}
+function paintSaveBtn() {
+  const btn = document.getElementById('saveWsBtn');
+  if (!btn) return;
+  btn.classList.toggle('saved', _isSaved);
+  btn.innerHTML = _isSaved
+    ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Saved to your library'
+    : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Save to my library';
+}
+async function toggleSaveWS() {
+  const btn = document.getElementById('saveWsBtn');
+  let session;
+  try { session = (await sb.auth.getSession()).data.session; } catch (e) {}
+  if (!session) { openDlModal('save'); return; }
+  if (btn) btn.disabled = true;
+  try {
+    if (_isSaved) {
+      await sb.from('saved_worksheets').delete().eq('worksheet_id', _wsId);
+      _isSaved = false;
+    } else {
+      await sb.from('saved_worksheets').insert({ user_id: session.user.id, worksheet_id: _wsId });
+      _isSaved = true;
+      window.wsTrack?.('worksheet_saved', { worksheet_id: _wsId });
+    }
+  } catch (e) { console.error('save toggle failed', e); }
+  if (btn) btn.disabled = false;
+  paintSaveBtn();
 }
 
 async function getSignedUrl(fileUrl) {

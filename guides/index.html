@@ -14,11 +14,15 @@
 <meta property="og:description" content="Practical, free teaching guides for ESL teachers.">
 <meta property="og:image" content="https://workshido.com/og-image.png">
 <meta property="og:url" content="https://workshido.com/guides/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Teaching Guides for English Teachers | Workshido">
+<meta name="twitter:description" content="Practical, free teaching guides for ESL teachers: grammar points, CEFR levels, and classroom warm-ups.">
+<meta name="twitter:image" content="https://workshido.com/og-image.png">
 <meta name="theme-color" content="#042C53">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Teaching Guides","url":"https://workshido.com/guides/","isPartOf":{"@type":"WebSite","name":"Workshido","url":"https://workshido.com/"}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -59,6 +63,8 @@
   footer { border-top: 1px solid var(--gray-100); padding: 32px; text-align: center; font-size: 13px; color: var(--gray-300); }
   footer a { color: var(--blue-600); text-decoration: none; }
   @media (max-width: 480px) { nav { padding: 0 16px; } .breadcrumb, .article-hero, article, .related-guides { padding-left: 16px; padding-right: 16px; } }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 <style>
   .hub-hero { text-align: center; padding: 56px 32px 40px; background: linear-gradient(160deg, var(--blue-900) 0%, var(--blue-800) 100%); }
@@ -81,6 +87,7 @@
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 <nav>
   <a href="/index.html" class="nav-logo">Work<span>shido</span></a>
   <div class="nav-actions" id="navActions">
@@ -88,11 +95,17 @@
     <a href="/workshido-signup.html" class="btn-primary">Sign up free</a>
   </div>
 </nav>
+<main>
 <section class="hub-hero">
   <h1>Teaching Guides</h1>
   <p>Practical guides for ESL teachers — how to teach specific grammar points, understand CEFR levels, and run better classroom activities.</p>
 </section>
 <div class="hub-grid">
+    <a class="hub-card" href="/guides/how-to-sequence-esl-lessons/">
+      <span class="hub-card-meta">6 min read</span>
+      <span class="hub-card-title">How to Sequence an English Topic: Grammar, Reading, Writing, Quiz</span>
+      <span class="hub-card-desc">A practical order for teaching any English topic across several lessons — one skill at a time — and how Workshido's worksheet "sets" are built to follow it.</span>
+    </a>
     <a class="hub-card" href="/guides/how-to-teach-present-simple/">
       <span class="hub-card-meta">7 min read</span>
       <span class="hub-card-title">How to Teach Present Simple: A Complete Guide for A1-A2 Classes</span>
@@ -167,12 +180,13 @@
     <a href="https://www.instagram.com/worldlanguagespage/" target="_blank" rel="noopener">World Languages on Instagram →</a>
   </div>
 </section>
+</main>
 <footer>
   <span>© 2026 Workshido — <a href="/workshido-index.html">Free English worksheets</a></span>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/guides-auth.js" defer></script>
-<script src="/js/analytics.js" defer></script>
+<script src="/js/analytics.js?v=20260908" defer></script>
 <script src="/js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>

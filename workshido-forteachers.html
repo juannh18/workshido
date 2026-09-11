@@ -18,14 +18,15 @@
 <meta property="og:description" content="Save hours of prep time. Free, print-ready English worksheets — new resources every week.">
 <meta property="og:image" content="https://workshido.com/og-image.png">
 <meta property="og:url" content="https://workshido.com/workshido-forteachers.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"For Teachers — Workshido","description":"Save hours of prep time. Free, print-ready English worksheets organized by CEFR level, with answer keys and Teacher Editions available — new resources every week.","url":"https://workshido.com/workshido-forteachers.html","isPartOf":{"@type":"WebSite","name":"Workshido","url":"https://workshido.com/"},"about":{"@type":"Organization","name":"Workshido","url":"https://workshido.com"}}</script>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="For Teachers — Workshido">
 <meta name="twitter:description" content="Save hours of prep time. Free, print-ready English worksheets by CEFR level.">
 <meta name="twitter:image" content="https://workshido.com/og-image.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -233,9 +234,12 @@
     nav { padding: 0 16px; }
     .nav-links { display: none; }
   }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 
 <!-- NAV -->
 <nav>
@@ -255,6 +259,7 @@
 </nav>
 
 <!-- HERO -->
+<main>
 <section class="hero">
   <div class="hero-eyebrow"><span class="dot"></span>Built for English teachers</div>
   <h1>Spend less time preparing,<br>more time <em>teaching</em></h1>
@@ -335,6 +340,10 @@
         <div class="step-desc">Click Download and get a clean PDF ready to print in seconds. Done.</div>
       </div>
     </div>
+    <p style="text-align:center; margin-top:28px; font-size:14px; color:var(--gray-600);">
+      Teaching a whole topic? Every topic is a <strong>set</strong> — grammar, reading, writing and a quiz you can teach in order.
+      <a href="guides/how-to-sequence-esl-lessons/" style="color:var(--blue-600); font-weight:600; white-space:nowrap;">How to sequence a topic →</a>
+    </p>
   </div>
 </div>
 
@@ -386,6 +395,7 @@
 </div>
 
 <!-- FOOTER -->
+</main>
 <footer>
   <span>© 2026 Workshido. Free English worksheets for teachers.</span>
   <div class="footer-links">
@@ -396,9 +406,10 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-forteachers.js?v=20260721" defer></script>
+<script src="/js/avatar-render.js" defer></script>
+<script src="js/workshido-forteachers.js?v=20260908c" defer></script>
 <script src="mascot.js" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 <script src="js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>

@@ -11,9 +11,9 @@
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="#042C53">
 <title>My Profile — Workshido</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -29,6 +29,48 @@
     --font-display: 'Sora', sans-serif; --font-body: 'Inter', sans-serif;
   }
   body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); -webkit-font-smoothing: antialiased; }
+
+  /* --- PROFILE CUSTOMIZATION (avatar + display name) --- */
+  .avatar-big img, .nav-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  .avatar-big.has-emoji { font-size: 38px; }
+  .nav-avatar.has-emoji { font-size: 18px; }
+  .profile-edit { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
+  .profile-edit h2 { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .profile-edit .pe-sub { font-size: 13px; color: var(--gray-600); margin-bottom: 18px; line-height: 1.5; }
+  .pe-row { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
+  .pe-preview { width: 88px; height: 88px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 44px; line-height: 1; flex-shrink: 0; border: 3px solid var(--gray-100); background: #DCEBFB; font-family: var(--font-display); font-weight: 700; color: var(--blue-800); }
+  .pe-fields { flex: 1; min-width: 250px; }
+  .pe-label { font-size: 12px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+  .pe-name-input { width: 100%; max-width: 340px; padding: 10px 12px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; color: var(--gray-900); margin-bottom: 18px; background: var(--white); }
+  .pe-name-input:focus { outline: none; border-color: var(--blue-400); }
+  .pe-emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, 40px); gap: 8px; margin-bottom: 16px; }
+  .pe-emoji { width: 40px; height: 40px; border-radius: var(--radius-sm); border: 1.5px solid var(--gray-100); background: var(--white); font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .12s, transform .12s; }
+  .pe-emoji:hover { transform: translateY(-1px); }
+  .pe-emoji.sel { border-color: var(--blue-600); box-shadow: 0 0 0 2px var(--blue-100); }
+  .pe-colors { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .pe-color { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid var(--white); box-shadow: 0 0 0 1.5px var(--gray-100); padding: 0; }
+  .pe-color.sel { box-shadow: 0 0 0 2px var(--blue-600); }
+  .pe-actions { display: flex; align-items: center; gap: 14px; }
+  .pe-save { font-family: var(--font-body); font-size: 13.5px; font-weight: 700; color: var(--white); background: var(--blue-600); border: none; border-radius: var(--radius-sm); padding: 9px 22px; cursor: pointer; }
+  .pe-save:hover { background: var(--blue-800); }
+  .pe-save:disabled { opacity: .6; cursor: default; }
+  .pe-saved { font-size: 12.5px; color: var(--teal-400); font-weight: 700; display: none; }
+  .pe-opt { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--gray-300); }
+  .pe-preview-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
+  .pe-preview { overflow: hidden; background: #DCEBFB; }
+  .pe-preview img { width: 100%; height: 100%; display: block; }
+  .pe-shuffle { font-family: var(--font-body); font-size: 12px; font-weight: 700; color: var(--blue-600); background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: var(--radius-sm); padding: 6px 12px; cursor: pointer; }
+  .pe-shuffle:hover { background: var(--blue-100); }
+  .pe-quick-toggle { font-family: var(--font-body); font-size: 11px; color: var(--gray-300); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+  .pe-quick-toggle:hover { color: var(--gray-600); }
+  .pe-studio { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+  .pe-cat-label { font-size: 11px; font-weight: 700; color: var(--gray-600); margin-bottom: 5px; }
+  .pe-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+  .pe-chip { flex-shrink: 0; font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--gray-600); background: var(--white); border: 1.5px solid var(--gray-100); border-radius: 16px; padding: 5px 12px; cursor: pointer; white-space: nowrap; transition: all .12s; }
+  .pe-chip:hover { border-color: var(--blue-200); }
+  .pe-chip.sel { background: var(--blue-600); border-color: var(--blue-600); color: var(--white); }
+  .pe-sw { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid var(--white); box-shadow: 0 0 0 1.5px var(--gray-100); padding: 0; }
+  .pe-sw.sel { box-shadow: 0 0 0 2px var(--blue-600); }
 
   nav { background: var(--blue-900); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; position: sticky; top: 0; z-index: 100; }
   .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); text-decoration: none; }
@@ -192,6 +234,42 @@
   <!-- MAIN -->
   <main class="main">
 
+    <!-- PROFILE CUSTOMIZATION -->
+    <div class="profile-edit" id="profileEdit">
+      <h2>Make it yours</h2>
+      <p class="pe-sub">Build your character and set the name other teachers see. Change it whenever you like.</p>
+      <div class="pe-row">
+        <div class="pe-preview-col">
+          <div class="pe-preview" id="pePreview">🙂</div>
+          <button class="pe-shuffle" id="peShuffle" type="button">🎲 Shuffle</button>
+          <button class="pe-quick-toggle" id="peQuickToggle" type="button">Use a simple icon instead</button>
+        </div>
+        <div class="pe-fields">
+          <div class="pe-label">Display name</div>
+          <input type="text" class="pe-name-input" id="peName" maxlength="40" placeholder="Your name" autocomplete="off">
+          <div class="pe-label">I teach <span class="pe-opt">(optional)</span></div>
+          <input type="text" class="pe-name-input" id="peTeaches" maxlength="80" placeholder="e.g. A1–B1, teens & adults" autocomplete="off">
+          <div class="pe-label">About me <span class="pe-opt">(optional)</span></div>
+          <input type="text" class="pe-name-input" id="peBio" maxlength="160" placeholder="One line about you" autocomplete="off">
+
+          <div id="peStudio">
+            <div class="pe-label">Avatar</div>
+            <div class="pe-studio" id="peStudioRows"></div>
+          </div>
+          <div id="peQuick" hidden>
+            <div class="pe-label">Icon</div>
+            <div class="pe-emoji-grid" id="peEmojiGrid"></div>
+            <div class="pe-colors" id="peColors"></div>
+          </div>
+
+          <div class="pe-actions">
+            <button class="pe-save" id="peSave" type="button">Save</button>
+            <span class="pe-saved" id="peSaved">Saved ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ACCOUNT OVERVIEW (regular subscribers — replaces the uploader stats, which are only meaningful for Juan) -->
     <div class="my-ws-section" id="subscriberOverview" style="display:none;">
       <div class="section-header">
@@ -262,6 +340,23 @@
       </div>
     </div>
 
+    <!-- SAVED WORKSHEETS -->
+    <div class="my-ws-section" id="savedSection" style="display:none;">
+      <div class="section-header">
+        <h2>Saved worksheets</h2>
+        <span id="savedCount" style="font-size:12px;color:var(--gray-300)"></span>
+      </div>
+      <div id="savedRows"></div>
+    </div>
+
+    <!-- RECENTLY DOWNLOADED -->
+    <div class="my-ws-section" id="dlHistorySection" style="display:none;">
+      <div class="section-header">
+        <h2>Recently downloaded</h2>
+      </div>
+      <div id="dlHistoryRows"></div>
+    </div>
+
     <!-- EMAIL PREFERENCES -->
     <div class="my-ws-section">
       <div class="section-header">
@@ -289,7 +384,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-profile.js?v=20260721" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/workshido-profile.js?v=20260908c" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 </body>
 </html>

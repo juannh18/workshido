@@ -23,10 +23,11 @@
 <meta name="twitter:description" content="All worksheets are free. Premium unlocks the Teacher Edition for most worksheets.">
 <meta name="twitter:image" content="https://workshido.com/og-image.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Workshido Premium","description":"Premium subscription that unlocks the Teacher Edition — full answer key, lesson plan and teacher tips — for most Workshido worksheets.","brand":{"@type":"Brand","name":"Workshido"},"offers":[{"@type":"Offer","name":"Monthly","price":"2.99","priceCurrency":"USD","url":"https://workshido.com/workshido-pricing.html","availability":"https://schema.org/InStock"},{"@type":"Offer","name":"Yearly","price":"24.99","priceCurrency":"USD","url":"https://workshido.com/workshido-pricing.html","availability":"https://schema.org/InStock"}]}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I cancel my subscription at any time?","acceptedAnswer":{"@type":"Answer","text":"Yes, absolutely. You can cancel anytime from your account settings. You'll keep access until the end of your billing period, and we won't charge you again."}},{"@type":"Question","name":"What exactly does Premium unlock?","acceptedAnswer":{"@type":"Answer","text":"Every worksheet on Workshido is free to download. Premium unlocks the Teacher Edition for almost every worksheet (new ones are added every week): a complete answer key, a ready-to-use lesson plan, teacher tips, common student mistakes, and an extra activity to do in the classroom."}},{"@type":"Question","name":"Do I need an account to download worksheets?","acceptedAnswer":{"@type":"Answer","text":"Yes — you need a free account to download. It only takes a few seconds with Google sign-in, and once you're in, every worksheet is free to download with no limits."}},{"@type":"Question","name":"Can I use Workshido worksheets in my classroom commercially?","acceptedAnswer":{"@type":"Answer","text":"Yes. All worksheets on Workshido are licensed for classroom use, including paid language schools and academies. You may not resell or redistribute them outside of your own teaching context."}}]}</script>
 <link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -122,16 +123,19 @@
   /* GUARANTEE */
   .guarantee { background: var(--teal-50); border: 1px solid var(--teal-100, #9FE1CB); border-radius: var(--radius-lg); padding: 28px 32px; max-width: 600px; margin: 0 auto 80px; text-align: center; }
   .guarantee-icon { font-size: 36px; margin-bottom: 10px; }
-  .guarantee h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--teal-600); margin-bottom: 8px; }
+  .guarantee h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--teal-600); margin-bottom: 8px; }
   .guarantee p { font-size: 13px; color: var(--teal-600); line-height: 1.6; }
 
   @media (max-width: 768px) {
     .plans-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
   }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 <nav>
   <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
@@ -148,6 +152,7 @@
   </div>
 </nav>
 
+<main>
 <div id="successBanner" class="success-banner" style="display:none;"></div>
 
 <div class="pricing-hero">
@@ -210,7 +215,7 @@
 
 <div class="guarantee">
   <div class="guarantee-icon">🛡️</div>
-  <h3>Cancel anytime, no questions asked</h3>
+  <h2>Cancel anytime, no questions asked</h2>
   <p>Manage or cancel your subscription in one click from your account settings. You'll keep full access until the end of your billing period — every time.</p>
 </div>
 
@@ -259,10 +264,12 @@
   </div>
 </div>
 
+</main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-pricing.js?v=20260721" defer></script>
+<script src="/js/avatar-render.js" defer></script>
+<script src="js/workshido-pricing.js?v=20260908" defer></script>
 <script src="mascot.js" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 <script src="js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>

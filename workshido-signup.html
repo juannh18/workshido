@@ -10,9 +10,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign up free — Workshido</title>
 <meta name="robots" content="noindex, follow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
@@ -41,8 +41,8 @@
   .left-eyebrow { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 500; color: var(--blue-100); margin-bottom: 28px; width: fit-content; }
   .dot { width: 6px; height: 6px; background: var(--teal-400); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(.8)} }
-  .left-panel h2 { font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--white); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 16px; }
-  .left-panel h2 em { font-style: normal; color: var(--blue-200); }
+  .left-panel .left-headline { font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--white); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 16px; }
+  .left-panel .left-headline em { font-style: normal; color: var(--blue-200); }
   .left-panel p { font-size: 15px; color: var(--blue-100); line-height: 1.7; margin-bottom: 36px; max-width: 360px; }
   .perks { display: flex; flex-direction: column; gap: 14px; margin-bottom: 48px; }
   .perk { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--blue-100); }
@@ -106,10 +106,10 @@
   <a href="index.html" class="nav-logo">Work<span>shido</span></a>
   <a href="workshido-login.html" class="nav-login">Already have an account? <strong>Log in</strong></a>
 </nav>
-<div class="page">
+<main class="page">
   <div class="left-panel">
     <div class="left-eyebrow"><span class="dot"></span>Built for English teachers</div>
-    <h2>Your classroom deserves<br><em>better worksheets</em></h2>
+    <p class="left-headline">Your classroom deserves<br><em>better worksheets</em></p>
     <p>Sign up free and get instant access to print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.</p>
     <div class="perks">
       <div class="perk"><div class="perk-icon">📥</div><div><strong>Unlimited free downloads</strong> — no daily limits on your account</div></div>
@@ -180,9 +180,9 @@
       <a href="workshido-index.html" class="btn-go" id="successGoLink">Browse worksheets →</a>
     </div>
   </div>
-</div>
+</main>
 
 <script src="js/workshido-signup.js?v=20260721" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 </body>
 </html>

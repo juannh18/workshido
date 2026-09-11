@@ -10,10 +10,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#042C53">
 <title>Workshido</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <link rel="canonical" href="https://workshido.com/workshido-worksheet.html">
 <meta name="description" content="Free English worksheet — download and print for class.">
 <meta property="og:site_name" content="Workshido">
@@ -27,6 +27,9 @@
 <meta name="twitter:description" content="Free English worksheet — download and print for class.">
 <meta name="twitter:image" content="https://workshido.com/og-image.png">
 <script type="application/ld+json" id="schemaLD"></script>
+<!-- Filled by netlify/functions/worksheet-page.js with the worksheet row so
+     the page renders without a client round-trip; empty on the no-id path. -->
+<script type="application/json" id="wsData"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -129,29 +132,6 @@
   .quiz-key-link a { color: #BE185D; cursor: pointer; text-decoration: none; font-weight: 600; }
   .quiz-key-link a:hover { text-decoration: underline; }
 
-  /* LOCKED VALUE CARD — a concrete checklist of what unlocking delivers,
-     with a full-width CTA. Beats blurred skeleton bars, which read as
-     "broken / still loading" and plant doubt right before the ask. */
-  .te-card { margin-top: 10px; border-radius: var(--radius-md); border: 1px solid var(--gray-100); overflow: hidden; cursor: pointer; transition: box-shadow 0.15s, transform 0.15s; }
-  .te-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.10); transform: translateY(-1px); }
-  .te-card-head { display: flex; align-items: center; gap: 6px; padding: 9px 14px; font-size: 12px; font-weight: 700; color: #fff; }
-  .te-card.te-amber .te-card-head { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); }
-  .te-card.te-pink .te-card-head { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); }
-  .te-card-tag { margin-left: auto; font-size: 9px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; background: rgba(255,255,255,0.25); padding: 2px 7px; border-radius: 10px; }
-  .te-card-body { padding: 12px 14px 14px; background: var(--white); }
-  .te-card-feat { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; }
-  .te-card-ic { flex-shrink: 0; margin-top: 2px; }
-  .te-card.te-amber .te-card-ic { color: #D97706; }
-  .te-card.te-pink .te-card-ic { color: #BE185D; }
-  .te-card-feat-txt { display: flex; flex-direction: column; line-height: 1.35; }
-  .te-card-feat-t { font-size: 12.5px; font-weight: 700; color: var(--gray-900); }
-  .te-card-feat-d { font-size: 11px; color: var(--gray-600); }
-  .te-card-cta { width: 100%; margin-top: 4px; border: none; cursor: pointer; font-size: 13px; font-weight: 800; color: #fff; padding: 11px 14px; border-radius: var(--radius-md); }
-  .te-card.te-amber .te-card-cta { background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); box-shadow: 0 2px 8px rgba(217,119,6,0.30); }
-  .te-card.te-amber .te-card-cta:hover { background: linear-gradient(135deg, #FBBF24 0%, #B45309 100%); }
-  .te-card.te-pink .te-card-cta { background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%); box-shadow: 0 2px 8px rgba(190,24,93,0.30); }
-  .te-card.te-pink .te-card-cta:hover { background: linear-gradient(135deg, #F472B6 0%, #9D174D 100%); }
-
   /* QUIZ PREP TIP — sits right where the user decides whether to take the
      quiz, so it can answer "am I ready for this?" at the moment it matters,
      instead of on a page nobody visits ahead of time. Steps as scannable
@@ -171,6 +151,11 @@
   /* PRINT BUTTON */
   .btn-print { width: 100%; padding: 10px; margin-top: 8px; background: transparent; border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--blue-600); cursor: pointer; transition: all 0.15s; }
   .btn-print:hover { background: var(--blue-50); }
+  .btn-save { width: 100%; padding: 10px; margin-top: 8px; background: transparent; border: 1.5px dashed var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--gray-600); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+  .btn-save:hover { border-color: var(--blue-200); color: var(--blue-600); }
+  .btn-save.saved { border-style: solid; border-color: var(--teal-100, #9FE1CB); color: var(--teal-600); background: var(--teal-50); }
+  .btn-save svg { flex-shrink: 0; }
+  .btn-save:disabled { opacity: .6; cursor: default; }
 
   /* STAR RATING */
   .star-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
@@ -209,7 +194,12 @@
 
   /* RELATED WORKSHEETS */
   .related-section { max-width: 1100px; margin: 0 auto; padding: 0 32px 64px; }
-  .related-heading { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 16px; }
+  .related-heading { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .related-intro { font-size: 13px; color: var(--gray-600); margin-bottom: 16px; }
+  .related-intro a { color: var(--blue-600); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .related-intro a:hover { text-decoration: underline; }
+  .set-progress { font-size: 13px; color: var(--teal-600); background: var(--teal-50); border: 1px solid var(--teal-100, #9FE1CB); border-radius: var(--radius-sm); padding: 8px 12px; margin: 0 0 16px; }
+  .set-progress b { font-weight: 700; }
   /* Each level is its own full-width row (A1 first, A2 below, …); within a
      level, cards flow left-to-right and wrap — no per-category sub-blocks —
      the category is still visible on each card's own badge. */
@@ -247,9 +237,12 @@
     .nav-links { display: none; }
     .related-section { padding: 0 16px 48px; }
   }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
 </head>
 <body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
 
 <nav>
   <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
@@ -276,16 +269,28 @@
 </div>
 
 <main class="page-wrap" id="pageWrap">
+  <!-- SSR fallback: netlify/functions/worksheet-page.js fills the real title
+       and description in here before any JS runs, so crawlers that don't
+       execute JS (AI assistants, Bing, SEO tools) get real page content
+       instead of an empty shell. js/workshido-worksheet.js then replaces the
+       whole #pageWrap with the full interactive layout — its own <h1 class="ws-title">
+       carries the same text, so there's never a duplicate in the final DOM. -->
+  <div class="ssr-head" style="grid-column:1/-1">
+    <h1 class="ws-title" id="ssrTitle">English worksheet</h1>
+    <p class="ws-desc" id="ssrDesc" hidden></p>
+  </div>
   <div class="loading">Loading worksheet...</div>
 </main>
 
 <section class="related-section" id="relatedSection" style="display:none;">
   <h2 class="related-heading">More on this topic</h2>
+  <p class="related-intro">These worksheets form a set. <a href="/guides/how-to-sequence-esl-lessons/">How to teach them in order →</a></p>
   <div class="related-groups" id="relatedGrid"></div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-worksheet.js?v=20260905b" defer></script>
+<script src="/js/avatar-render.js" defer></script>
+<script src="js/workshido-worksheet.js?v=20260908h" defer></script>
 
 <!-- Login modal -->
 <div class="modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">
@@ -318,7 +323,7 @@
   </div>
 </div>
 <script src="mascot.js" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 <script src="js/marketing-consent.js?v=20260813" defer></script>
 </body>
 </html>

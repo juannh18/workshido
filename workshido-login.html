@@ -11,9 +11,9 @@
 <meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="#042C53">
 <title>Log in — Workshido</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
@@ -38,8 +38,8 @@
   .nav-signup strong { color: var(--white); }
   .page { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: calc(100vh - 60px); }
   .left-panel { background: linear-gradient(160deg, var(--blue-900) 0%, var(--blue-800) 100%); padding: 60px 52px; display: flex; flex-direction: column; justify-content: center; }
-  .left-panel h2 { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 14px; }
-  .left-panel h2 em { font-style: normal; color: var(--blue-200); }
+  .left-panel .left-headline { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 14px; }
+  .left-panel .left-headline em { font-style: normal; color: var(--blue-200); }
   .left-panel p { font-size: 15px; color: var(--blue-100); line-height: 1.7; margin-bottom: 40px; }
   .ws-showcase { display: flex; flex-direction: column; gap: 10px; }
   .ws-card-mini { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 12px 14px; }
@@ -88,9 +88,9 @@
   <a href="index.html" class="nav-logo">Work<span>shido</span></a>
   <a href="workshido-signup.html" class="nav-signup">Don't have an account? <strong>Sign up free</strong></a>
 </nav>
-<div class="page">
+<main class="page">
   <div class="left-panel">
-    <h2>Welcome back.<br>Your worksheets<br>are <em>waiting</em>.</h2>
+    <p class="left-headline">Welcome back.<br>Your worksheets<br>are <em>waiting</em>.</p>
     <p>Log in to access your saved worksheets, favorites, and download history.</p>
     <div class="ws-showcase">
       <div class="ws-card-mini">
@@ -133,8 +133,8 @@
       <div class="signup-link">Don't have an account? <a href="workshido-signup.html">Sign up free</a></div>
     </form>
   </div>
-</div>
+</main>
 <script src="js/workshido-login.js?v=20260721" defer></script>
-<script src="js/analytics.js?v=20260721" defer></script>
+<script src="js/analytics.js?v=20260908" defer></script>
 </body>
 </html>
