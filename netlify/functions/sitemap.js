@@ -31,6 +31,7 @@ const STATIC_PAGES = [
   { loc: '/guides/how-to-teach-going-to-future-forms/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-conditionals/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-modal-verbs/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-learn-irregular-verbs/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/workshido-privacy.html', changefreq: 'yearly', priority: '0.3' },
   { loc: '/workshido-terms.html', changefreq: 'yearly', priority: '0.3' },
 ];
