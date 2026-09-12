@@ -235,6 +235,18 @@
   status = 200
   force = true
 
+[[redirects]]
+  from = "/worksheets/levels/b1/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/worksheets/levels/b2/"
+  to = "/.netlify/functions/category-page"
+  status = 200
+  force = true
+
 # Consolidate URL duplication: Netlify serves "/page" for "page.html" by
 # default (pretty URLs), so both forms returned 200 with identical content —
 # split ranking signals and wasted crawl budget. Every canonical tag on the
@@ -337,7 +349,7 @@
     # Fonts are now self-hosted (see /fonts/fonts.css), so fonts.googleapis.com
     # / fonts.gstatic.com are no longer allowed here — style-src stays only for
     # the site's inline <style> blocks, font-src is 'self' only.
-    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: https://*.supabase.co https://files.workshido.com https://api.dicebear.com https://lh3.googleusercontent.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.supabase.co https://files.workshido.com https://accounts.google.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+    Content-Security-Policy-Report-Only = "default-src 'self'; img-src 'self' data: https://*.supabase.co https://files.workshido.com https://api.dicebear.com https://lh3.googleusercontent.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.supabase.co https://files.workshido.com https://accounts.google.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
 
 [[headers]]
   for = "/*.html"

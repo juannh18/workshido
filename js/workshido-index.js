@@ -890,10 +890,14 @@ let searchTimer;
 const searchInput = document.querySelector('.search-box input');
 const miniSearchInput = document.getElementById('miniSearchInput');
 
-function runSearch(value) {
+// `source` = el input donde el usuario está escribiendo, si lo hay. Nunca se le
+// reasigna el .value: hacerlo manda el cursor al final y, como aquí se guarda la
+// versión con trim(), se comía el espacio recién tecleado — escribir
+// "present simple" terminaba como "presentsimple". El otro input sí se sincroniza.
+function runSearch(value, source) {
   searchQuery = value.trim();
-  if (searchInput.value !== searchQuery) searchInput.value = searchQuery;
-  if (miniSearchInput.value !== searchQuery) miniSearchInput.value = searchQuery;
+  if (source !== searchInput && searchInput.value !== searchQuery) searchInput.value = searchQuery;
+  if (source !== miniSearchInput && miniSearchInput.value !== searchQuery) miniSearchInput.value = searchQuery;
   // A search is an intent to look across the whole catalog — a leftover topic/category
   // filter from wherever the user was browsing (e.g. a "Present Simple" topic view) would
   // otherwise silently AND with the query and could hide every result (searching "present
@@ -911,11 +915,11 @@ function runSearch(value) {
 
 searchInput.addEventListener('input', () => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => runSearch(searchInput.value), 400);
+  searchTimer = setTimeout(() => runSearch(searchInput.value, searchInput), 400);
 });
 miniSearchInput.addEventListener('input', () => {
   clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => runSearch(miniSearchInput.value), 400);
+  searchTimer = setTimeout(() => runSearch(miniSearchInput.value, miniSearchInput), 400);
 });
 
 document.querySelector('.search-box button').addEventListener('click', () => {

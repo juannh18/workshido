@@ -41,6 +41,19 @@ async function getTemplate() {
 function escapeHtml(s) {
   return String(s).replace(/[<>&'"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
 }
+// Google cuts the SERP snippet around 160 chars. Slicing blindly left it
+// mid-word ("...writing ad"), so end on a sentence when one lands close to the
+// limit, otherwise on a whole word plus an ellipsis.
+function trimDesc(s, max = 160) {
+  s = String(s).replace(/\s+/g, ' ').trim();
+  if (s.length <= max) return s;
+  const cut = s.slice(0, max);
+  const sentence = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('; '), cut.lastIndexOf(': '));
+  if (sentence >= max * 0.75) return cut.slice(0, sentence + 1).trim();
+  const word = cut.lastIndexOf(' ');
+  return cut.slice(0, word > 0 ? word : max - 1).replace(/[,;:—–-]+$/, '').trim() + '…';
+}
+
 function escapeAttr(s) {
   return String(s).replace(/[&'"]/g, (c) => ({ '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
 }
@@ -75,13 +88,14 @@ exports.handler = async (event) => {
     const title = `${data.title} — Workshido`;
     const pageTitle = data.title;
     const desc = data.description
-      ? data.description.slice(0, 160)
+      ? trimDesc(data.description)
       : `Free ${data.level || ''} ${data.category || 'English'} worksheet — download and print for class.`.replace(/\s+/g, ' ').trim();
     const url = `${SITE}/workshido-worksheet.html?id=${encodeURIComponent(data.id)}`;
     const image = data.thumbnail_url || `${SITE}/og-image.png`;
-    // Visible body copy for no-JS crawlers — full description when there is
-    // one, otherwise the same generated line used for the meta description.
-    const bodyDesc = data.description || desc;
+    // Visible body copy for no-JS crawlers. description is capped at 160 so the
+    // meta description isn't truncated in the SERP; description_long keeps the
+    // fuller text, which is worth more here as indexable page content.
+    const bodyDesc = data.description_long || data.description || desc;
 
     // Mirrors the LearningResource JSON-LD that js/workshido-worksheet.js
     // builds client-side (kept in sync with that block). Stringified with < → <
@@ -90,7 +104,7 @@ exports.handler = async (event) => {
       '@context': 'https://schema.org',
       '@type': 'LearningResource',
       name: data.title,
-      description: data.description || '',
+      description: bodyDesc,
       educationalLevel: data.level,
       learningResourceType: 'Worksheet',
       inLanguage: 'en',

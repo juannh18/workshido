@@ -23,6 +23,8 @@ const PAGES = {
   '/worksheets/writing/':    { template: 'writing/index-app.html',    col: 'category', val: 'Writing',    label: 'Writing' },
   '/worksheets/levels/a1/':  { template: 'levels/a1/index-app.html',  col: 'level',    val: 'A1',         label: 'A1' },
   '/worksheets/levels/a2/':  { template: 'levels/a2/index-app.html',  col: 'level',    val: 'A2',         label: 'A2' },
+  '/worksheets/levels/b1/':  { template: 'levels/b1/index-app.html',  col: 'level',    val: 'B1',         label: 'B1' },
+  '/worksheets/levels/b2/':  { template: 'levels/b2/index-app.html',  col: 'level',    val: 'B2',         label: 'B2' },
 };
 
 const templateCache = {}; // path -> { html, fetchedAt }
@@ -47,7 +49,11 @@ exports.handler = async (event) => {
   try {
     const [template, { data, error }] = await Promise.all([
       getTemplate(page.template),
-      sb.from('worksheets').select('id, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).limit(60),
+      // Was 60, which made the "All X worksheets" heading a lie (A1 alone has
+      // 255) and left most of the level unlinked from its own landing page —
+      // the internal linking this block exists for. The list is plain <a>
+      // text, so the full set costs ~25KB even on the biggest level.
+      sb.from('worksheets').select('id, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).limit(500),
     ]);
 
     if (error || !data || !data.length) {
@@ -72,7 +78,9 @@ exports.handler = async (event) => {
       '@type': 'ItemList',
       name: `${page.label} worksheets`,
       numberOfItems: data.length,
-      itemListElement: data.map((ws, i) => ({
+      // Only the first 60 are enumerated: the crawlable <ul> above already
+      // carries every link, and a 255-entry ItemList is pure page weight.
+      itemListElement: data.slice(0, 60).map((ws, i) => ({
         '@type': 'ListItem',
         position: i + 1,
         url: `${SITE}/workshido-worksheet.html?id=${ws.id}`,
@@ -80,10 +88,12 @@ exports.handler = async (event) => {
       })),
     }).replace(/</g, '\\u003c');
 
-    // Inserted right before the JS-driven grid takes over — real crawlable
-    // links now exist in the raw HTML regardless of whether JS ever runs.
+    // After </main>, not before it: the point of this block is crawlable links
+    // in the raw HTML, which works just as well at the bottom — and putting a
+    // 255-item text list above the card grid buried the actual page under a
+    // wall of links for anyone who landed here from search.
     const html = template
-      .replace('<main class="content">', `${block}\n<main class="content">`)
+      .replace('</main>', `</main>\n${block}`)
       .replace('</head>', `<script type="application/ld+json">${itemListLD}</script>\n</head>`);
 
     return {

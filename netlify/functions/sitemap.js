@@ -14,6 +14,8 @@ const STATIC_PAGES = [
   { loc: '/worksheets/writing/', changefreq: 'weekly', priority: '0.8' },
   { loc: '/worksheets/levels/a1/', changefreq: 'weekly', priority: '0.8' },
   { loc: '/worksheets/levels/a2/', changefreq: 'weekly', priority: '0.8' },
+  { loc: '/worksheets/levels/b1/', changefreq: 'weekly', priority: '0.8' },
+  { loc: '/worksheets/levels/b2/', changefreq: 'weekly', priority: '0.8' },
   { loc: '/guides/', changefreq: 'monthly', priority: '0.7' },
   { loc: '/guides/how-to-sequence-esl-lessons/', changefreq: 'monthly', priority: '0.7' },
   { loc: '/guides/how-to-teach-present-simple/', changefreq: 'monthly', priority: '0.6' },

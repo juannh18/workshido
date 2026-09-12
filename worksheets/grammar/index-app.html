@@ -765,6 +765,14 @@
   }
 
 html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
+
+  /* Breadcrumb: no tenia ninguna regla, asi que salia con el azul/morado
+     subrayado por defecto del navegador. Mismo tono discreto que en /guides/. */
+  .breadcrumb { max-width: 1100px; margin: 0 auto; padding: 14px 32px 2px; font-size: 12.5px; color: var(--gray-300); display: flex; align-items: center; gap: 7px; }
+  .breadcrumb a { color: var(--gray-600); text-decoration: none; font-weight: 500; transition: color 0.15s; }
+  .breadcrumb a:hover { color: var(--blue-600); }
+  .breadcrumb span:last-child { color: var(--gray-900); font-weight: 600; }
+  @media (max-width: 480px) { .breadcrumb { padding-left: 16px; padding-right: 16px; } }
 </style>
 <style>
   .hero-lite { padding: 56px 32px 40px; }
@@ -895,7 +903,8 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
       <h4>Levels</h4>
       <a href="/worksheets/levels/a1/">A1 Beginner</a>
       <a href="/worksheets/levels/a2/">A2 Elementary</a>
-      <a href="/workshido-index.html?level=B1">B1 Intermediate</a>
+      <a href="/worksheets/levels/b1/">B1 Intermediate</a>
+      <a href="/worksheets/levels/b2/">B2 Upper-intermediate</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>

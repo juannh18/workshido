@@ -53,6 +53,19 @@ const TAG_FREQ_LIMIT = 45;
 function specificTags(tags, freq) {
   return tags.filter(t => (freq.get(t) || 0) <= TAG_FREQ_LIMIT);
 }
+// Format families ("word search", "label and learn"): deliberately NOT topic
+// matches — they stay in the stoplist above so they can't drown out the real
+// same-topic siblings, which is exactly what they used to do. They are still
+// worth surfacing, though: someone who came for one word search usually wants
+// to browse the others. So they're collected separately and sorted last,
+// after the set and after every real topic match.
+const FORMAT_FAMILIES = [
+  { tag: 'word search', test: t => /\bword\s*search\b/i.test(t || '') },
+  { tag: 'label and learn', test: t => /\blabel and learn\b/i.test(t || '') },
+];
+function formatFamily(title) {
+  return FORMAT_FAMILIES.find(f => f.test(title)) || null;
+}
 let _wsFileUrl = null;
 let _answerKeyUrl = null;
 let _isPremium = false;
@@ -147,7 +160,10 @@ async function loadWorksheet() {
     .select('id,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id);
 
   document.title = data.title;  // brand suffix stays on OG/Twitter, not <title> (SERP length)
+  // description is capped at 160 for the SERP snippet; description_long holds the
+  // fuller copy and is what the page body shows (and what JSON-LD describes).
   const wsMetaDescription = data.description || `${data.level} ${data.category} worksheet. Free download.`;
+  const wsBodyDescription = data.description_long || data.description || '';
   document.querySelector('meta[name="description"]')?.setAttribute('content', wsMetaDescription);
   document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${data.title} — Workshido`);
   document.querySelector('meta[property="og:description"]')?.setAttribute('content', wsMetaDescription);
@@ -164,18 +180,20 @@ async function loadWorksheet() {
   document.querySelector('link[rel="canonical"]')?.setAttribute('href', wsUrl);
   document.querySelector('meta[property="og:url"]')?.setAttribute('content', wsUrl);
   const schema = document.getElementById('schemaLD');
-  if (schema) schema.textContent = JSON.stringify({ "@context":"https://schema.org","@type":"LearningResource","name":data.title,"description":data.description||"","educationalLevel":data.level,"learningResourceType":"Worksheet","inLanguage":"en","isAccessibleForFree":data.is_free,"provider":{"@type":"Organization","name":"Workshido","url":"https://workshido.com"} });
+  if (schema) schema.textContent = JSON.stringify({ "@context":"https://schema.org","@type":"LearningResource","name":data.title,"description":wsBodyDescription,"educationalLevel":data.level,"learningResourceType":"Worksheet","inLanguage":"en","isAccessibleForFree":data.is_free,"provider":{"@type":"Organization","name":"Workshido","url":"https://workshido.com"} });
   document.getElementById('bcCategory').textContent = data.category || 'Worksheet';
   document.getElementById('bcTitle').textContent = data.title;
 
   const lvlCls = LEVEL_CLASS[data.level] || 'a1';
   const tags = (data.tags || '').split(',').filter(t => t.trim()).map(t => `<span class="tag">${esc(t.trim())}</span>`).join('');
   const freeBadge = data.is_free ? '<span class="badge-free">Free</span>' : '<span class="badge-premium">⭐ Premium</span>';
-  const desc = data.description ? `<p class="ws-desc">${esc(data.description)}</p>` : '';
+  const desc = wsBodyDescription ? `<p class="ws-desc">${esc(wsBodyDescription)}</p>` : '';
   const ext = (data.file_url || '').split('.').pop().split('?')[0].toUpperCase();
 
   const preview = data.thumbnail_url
-    ? `<img src="${data.thumbnail_url}" alt="${data.title}" decoding="async" width="640" height="904">`
+    // La vista previa es el LCP de esta pagina: fetchpriority alto para que el
+    // navegador no la encole detras del resto de imagenes.
+    ? `<img src="${data.thumbnail_url}" alt="${data.title}" fetchpriority="high" decoding="async" width="640" height="904">`
     : `<div class="preview-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         <span>No preview available</span>
@@ -287,7 +305,7 @@ async function loadWorksheet() {
           ${data.category ? `<span class="badge-cat ${catClass(data.category)}">${esc(data.category)}</span>` : ''}
           ${freeBadge}
         </div>
-        ${data.description ? `<p class="ws-desc">${esc(data.description)}</p>` : ''}
+        ${wsBodyDescription ? `<p class="ws-desc">${esc(wsBodyDescription)}</p>` : ''}
         ${tags ? `<div class="ws-tags">${tags}</div>` : ''}
         <div class="ws-meta">
           <div class="ws-meta-row"><span class="ws-meta-label">Format</span><span class="ws-meta-value">${ext || '—'}</span></div>
@@ -329,10 +347,16 @@ async function loadWorksheet() {
   const setMatchIds = isEasyWordSearch(data.title) ? new Set() : new Set(
     [...byTopicKey, ...byTitle].filter(r => r.level === data.level && !isEasyWordSearch(r.title)).map(r => r.id)
   );
+  // Same format family (word search → the other word searches), appended last
+  // so it never pushes a real same-topic match further down.
+  const fam = formatFamily(data.title);
+  const byFormat = fam ? rows.filter(r => fam.test(r.title)) : [];
+
   const seen = new Set();
-  related = [...byTopicKey, ...byTitle, ...byTag]
+  const topicIds = new Set([...byTopicKey, ...byTitle, ...byTag].map(r => r.id));
+  related = [...byTopicKey, ...byTitle, ...byTag, ...byFormat]
     .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
-    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id) }));
+    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id), _formatOnly: !topicIds.has(r.id) }));
 
   renderRelated(related, lvlCls, data.category, data.level);
   renderSetProgress(data, related);
@@ -440,6 +464,8 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
   // category trails last, and other levels use the plain topic order.
   const sortForLevel = (items, biasCurrentCategory) => [...items].sort((a, b) => {
     if (a._setMatch !== b._setMatch) return a._setMatch ? -1 : 1;
+    // same-format-only siblings trail every real topic match
+    if (a._formatOnly !== b._formatOnly) return a._formatOnly ? 1 : -1;
     const ca = displayCategory(a), cb = displayCategory(b);
     if (biasCurrentCategory) {
       if (ca === currentCategory && cb !== currentCategory) return 1;
