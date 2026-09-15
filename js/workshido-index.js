@@ -454,6 +454,13 @@ function cardCategory(ws) {
   return ws.category || '';
 }
 
+// Readable worksheet URL. Falls back to the legacy ?id= form if a row has no
+// slug, so a card can never render a broken "/worksheet/undefined/" link —
+// the old URL still resolves and canonicalises to the slug one.
+function wsHref(ws) {
+  return ws.slug ? `/worksheet/${ws.slug}/` : `workshido-worksheet.html?id=${ws.id}`;
+}
+
 function buildCard(ws) {
   const color  = LEVEL_COLORS[ws.level] || 'teal';
   const lvlCls = LEVEL_CLASS[ws.level]  || 'a1';
@@ -462,18 +469,18 @@ function buildCard(ws) {
   const cat    = cardCategory(ws);
   const catBadge = cat ? `<span class="badge-cat ${CARD_CAT_CLASS[cat] || ''}">${esc(cat)}</span>` : '';
   const btn    = ws.is_free
-    ? `<a href="workshido-worksheet.html?id=${ws.id}" class="btn-download" style="text-decoration:none;">↓ Download</a>`
-    : `<a href="workshido-worksheet.html?id=${ws.id}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
+    ? `<a href="${wsHref(ws)}" class="btn-download" style="text-decoration:none;">↓ Download</a>`
+    : `<a href="${wsHref(ws)}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
   const tags   = (ws.tags || ws.category || '').split(',').slice(0,2).map(t=>`<span class="tag">${esc(t.trim())}</span>`).join('');
   const thumb = ws.thumbnail_url
     ? `<img src="${smThumb(ws.thumbnail_url)}" onerror="this.onerror=null;this.src='${ws.thumbnail_url}'" alt="${esc(ws.title)}" loading="lazy" decoding="async" width="440" height="622">`
     : `<div class="ws-preview"><div class="wl ${accent}"></div><div class="wl"></div><div class="wl short"></div><div class="wb"></div><div class="wb"></div><div class="wl short"></div></div>`;
   const overlay = !ws.thumbnail_url ? `<div class="card-thumb-overlay"><span class="overlay-logo">Work<span>shido</span></span><span class="overlay-level ${lvlCls}">${ws.level}</span></div>` : '';
   return `<div class="ws-card">
-    <a href="workshido-worksheet.html?id=${ws.id}" class="card-thumb ${color}" style="display:block;text-decoration:none;">${thumb}${overlay}</a>
+    <a href="${wsHref(ws)}" class="card-thumb ${color}" style="display:block;text-decoration:none;">${thumb}${overlay}</a>
     <div class="card-body">
       <div class="card-meta"><span class="badge-level ${lvlCls}">${ws.level}</span>${badge}${catBadge}</div>
-      <a href="workshido-worksheet.html?id=${ws.id}" class="card-title" style="text-decoration:none;color:inherit;">${esc(ws.title)}</a>
+      <a href="${wsHref(ws)}" class="card-title" style="text-decoration:none;color:inherit;">${esc(ws.title)}</a>
       <div class="card-tags">${tags}</div>
       <div class="card-footer">
         <div class="card-rating">${catalogRatingHtml(ws)}</div>
@@ -663,10 +670,31 @@ function filterAndRender() {
     }
     return (b.downloads || 0) - (a.downloads || 0);
   };
+  // Relevance decides the TIER, the sort control decides the order inside it.
+  // Before, relevance was the whole comparator and the Newest/Most-downloaded
+  // control only broke exact score ties — which essentially never happen, so
+  // the control looked broken: switching it changed nothing during a search.
+  // Bucketing keeps a tag-only match from outranking a worksheet whose topic
+  // IS the query, while letting "Newest first" actually surface the newest of
+  // the genuinely on-topic results.
+  // Tier by the KIND of match, not by the raw score: thresholding the score
+  // buried worksheets whose title carries a subtopic after a colon. "Verb To
+  // Be: Personal Information" scores only 60 (the subtitle counts as two
+  // "extra words") against 200 for the plain "Verb To Be", a gap no sort can
+  // close — yet both are squarely about the searched topic and belong in the
+  // same tier, with the user's Newest/Most-downloaded choice deciding order.
+  const relevanceTier = (w, q) => {
+    const title = (w.title || '').toLowerCase();
+    const topic = wsCoreTopic(title);
+    if (topic === q || topic.startsWith(q) || title.startsWith(q)) return 0;
+    if (title.includes(q)) return 1;
+    return 2;
+  };
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
+    const tier = new Map(filtered.map(w => [w.id, relevanceTier(w, q)]));
     filtered = [...filtered].sort((a, b) => {
-      const diff = wsRelevanceScore(b, q) - wsRelevanceScore(a, q);
+      const diff = tier.get(a.id) - tier.get(b.id);
       return diff !== 0 ? diff : sortSecondary(a, b);
     });
   } else if (activeTopic !== 'all') {
@@ -678,8 +706,9 @@ function filterAndRender() {
     // match buries the actually-on-topic worksheet.
     const terms = (Array.isArray(activeTopic) ? activeTopic : [activeTopic]).map(t => t.toLowerCase());
     const topicScore = w => Math.max(...terms.map(t => wsRelevanceScore(w, t)));
+    const tier = new Map(filtered.map(w => [w.id, Math.min(...terms.map(t => relevanceTier(w, t)))]));
     filtered = [...filtered].sort((a, b) => {
-      const diff = topicScore(b) - topicScore(a);
+      const diff = tier.get(a.id) - tier.get(b.id);
       return diff !== 0 ? diff : sortSecondary(a, b);
     });
   } else {
@@ -819,7 +848,7 @@ async function loadWorksheets() {
   // Only the columns the catalog list/cards/search actually use — not select('*').
   // Drops file_url, teacher_edition_url, topic_key, rating, uploader_* … which
   // cut the payload for ~700 rows from ~690 KB to ~450 KB.
-  const COLS = 'id,title,level,category,tags,thumbnail_url,is_free,downloads,description,created_at';
+  const COLS = 'id,slug,title,level,category,tags,thumbnail_url,is_free,downloads,description,created_at';
   const { data, error } = await sb2.from('worksheets').select(COLS).order('created_at', { ascending: false, nullsFirst: false }).limit(1000);
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
