@@ -14,7 +14,9 @@ Formato del manifiesto (rutas relativas: PDFs/PNGs contra Downloads):
       "te_html": "te_pluralnouns_practice_a1.html",   // solo lo usa html_to_pdf_cdp.py
       "title": "Plural Nouns – Practice Worksheet",
       "level": "A1",
-      "category": "Grammar",
+      "category": "Grammar",                           // destreza (lo que ve el usuario)
+      "piece_type": "practice",                        // pieza del set (gating + armado de sets)
+      "is_free": true,                                 // solo lo lee language=es; en 'en' siempre True
       "tags": "worksheet, plural nouns, ...",          // 'worksheet' SIEMPRE primero
       "description": "..."
     }
@@ -26,7 +28,18 @@ las filas se insertan en el esquema `es.worksheets` (Spanishido) vía el header
 PostgREST `Content-Profile: es`, y los archivos van bajo el prefijo `es/` en R2
 (mismo bucket workshido-files / files.workshido.com). Workshido = `en` = `public`.
 
-Reglas fijas: is_free siempre True; tag 'worksheet' primero (se valida).
+`piece_type` es la PIEZA del set (grammar/reading/writing/practice/listening/
+vocabulary/speaking), y es cosa distinta de `category`, que es la destreza. Hasta
+el 13/09 la pieza vivia solo en el sufijo del titulo ("Tema - Practice"), asi que
+filtrar por tipo obligaba a hacer ilike '%practice%' y eso agarra falsos positivos
+("Earthquake Safety - Reading & Practice" es una pieza de reading). Obligatorio en
+'es'; opcional en 'en' hasta que se backfilleen las 739 filas viejas.
+
+Reglas fijas: tag 'worksheet' primero (se valida). is_free: en 'en' SIEMPRE True
+(regla del negocio: la worksheet es el imán, se cobra la TE y el Quiz). En 'es' el
+manifiesto puede ponerlo en false por pieza — pensado para listening premium.
+Ojo antes de cerrar una pieza: en Workshido las de practice son el 22% del
+catalogo pero el 33% de las 30 mas descargadas.
 Después de subir, correr tools/verify_uploads.py N para confirmar desde las URLs
 públicas (con --es para worksheets en español).
 
@@ -36,7 +49,7 @@ Nota: R2_PUBLIC_BASE asume que files.workshido.com ya está apuntando al bucket 
 que este script genera no van a cargar hasta que se complete ese paso.
 """
 import pip_system_certs.wrapt_requests  # noqa: usa el almacén de certificados de Windows en vez de desactivar la verificación TLS
-import requests, boto3, os, uuid, io, json, sys
+import requests, boto3, os, uuid, io, json, sys, re, unicodedata
 from datetime import datetime
 from botocore.config import Config
 from PIL import Image
@@ -54,6 +67,11 @@ HEADERS_AUTH = {
 # the `es` schema and store files under the `es/` prefix in R2.
 PROFILE_HEADERS = {}   # {'Content-Profile': 'es'} for Spanish
 KEY_PREFIX = ''        # 'es/' for Spanish
+
+# Debe coincidir con el CHECK de la columna piece_type en es.worksheets y
+# public.worksheets (migracion add_piece_type_to_worksheets, 13/09).
+PIECE_TYPES = {'grammar', 'reading', 'writing', 'practice',
+               'listening', 'vocabulary', 'speaking'}
 
 R2_BUCKET = 'workshido-files'
 R2_PUBLIC_BASE = 'https://files.workshido.com'
@@ -122,6 +140,45 @@ def upload_thumb(local_path, storage_path):
         return None
     return f'{R2_PUBLIC_BASE}/{storage_path}'
 
+def make_slug(title, level=None):
+    """Slug para la URL publica /worksheet/<slug>/.
+
+    Debe ser identico al backfill del 13/09 (NFKD -> ascii, minusculas, todo
+    lo que no sea [a-z0-9] pasa a guion). El slug es INMUTABLE una vez
+    publicado: si despues cambia el titulo, NO se regenera, o la URL viva
+    cambia y se rompe el 301 que sostiene el posicionamiento.
+
+    Si el slug base ya existe en la BD se desempata con el nivel y luego con
+    un contador, igual que el backfill. La columna tiene indice unico, asi
+    que una colision no detectada aqui falla ruidosamente en el insert en vez
+    de servir la ficha equivocada.
+    """
+    base = unicodedata.normalize('NFKD', title).encode('ascii', 'ignore').decode().lower()
+    base = re.sub(r'-+', '-', re.sub(r'[^a-z0-9]+', '-', base)).strip('-')
+    if not base:
+        sys.exit(f'ERROR: no se pudo derivar slug del titulo {title!r}')
+
+    def taken(s):
+        # PostgREST usa Accept-Profile para LEER y Content-Profile para ESCRIBIR.
+        # Con solo Content-Profile este GET consultaria public.worksheets aunque
+        # estemos subiendo a es.worksheets, y el desempate de slug miraria el
+        # catalogo equivocado.
+        read_profile = {'Accept-Profile': PROFILE_HEADERS['Content-Profile']} if PROFILE_HEADERS else {}
+        r = requests.get(f'{SUPABASE_URL}/rest/v1/worksheets',
+                         headers={**HEADERS_AUTH, **read_profile},
+                         params={'select': 'id', 'slug': f'eq.{s}', 'limit': '1'})
+        return bool(r.json())
+
+    cand = base
+    if taken(cand) and level:
+        cand = f'{base}-{level.lower()}'
+    n = 2
+    while taken(cand):
+        cand = f'{base}-{n}'
+        n += 1
+    return cand
+
+
 def insert_worksheet(record):
     res = requests.post(
         f'{SUPABASE_URL}/rest/v1/worksheets',
@@ -144,6 +201,17 @@ def main(manifest_path):
 
     for ws in manifest['worksheets']:
         assert ws['tags'].startswith('worksheet'), f"{ws['slug']}: el tag 'worksheet' debe ir primero"
+        pt = ws.get('piece_type')
+        if lang == 'es':
+            assert pt in PIECE_TYPES, (
+                f"{ws['slug']}: piece_type es obligatorio en espanol y debe ser uno de "
+                f"{sorted(PIECE_TYPES)} (recibido: {pt!r})")
+        else:
+            assert pt is None or pt in PIECE_TYPES, f"{ws['slug']}: piece_type invalido: {pt!r}"
+        if lang == 'en':
+            assert ws.get('is_free', True) is True, (
+                f"{ws['slug']}: en ingles is_free es siempre True (la worksheet es el iman; "
+                "se cobra la Teacher Edition y el Quiz)")
 
     level_folder_default = manifest.get('level_folder', 'a1')
     for ws in manifest['worksheets']:
@@ -169,15 +237,20 @@ def main(manifest_path):
 
         record = {
             'id': str(uuid.uuid4()),
+            'slug': make_slug(ws['title'], ws.get('level')),
             'title': ws['title'],
             'level': ws['level'],
             'category': ws['category'],
+            'piece_type': ws.get('piece_type'),
+            'topic_key': ws.get('topic_key'),
             'tags': ws['tags'],
             'description': ws['description'],
             'file_url': pdf_url,
             'thumbnail_url': thumb_url,
             'teacher_edition_url': te_url,
-            'is_free': True,   # regla fija: todas las worksheets son gratis
+            # En ingles la regla es dura (ya validada arriba). En espanol el
+            # manifiesto decide, con True por defecto.
+            'is_free': True if lang == 'en' else bool(ws.get('is_free', True)),
             'downloads': 0,
         }
         status, text = insert_worksheet(record)

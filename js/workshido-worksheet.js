@@ -108,23 +108,29 @@ async function logOut() { await sb.auth.signOut(); window.location.reload(); }
 
 async function loadWorksheet() {
   const id = new URLSearchParams(window.location.search).get('id');
-  if (!id) { renderError('No worksheet ID provided.'); return; }
+  // Readable URL: /worksheet/<slug>/. The legacy ?id= form still resolves,
+  // so in-app links, bookmarks and external inbound links all keep working.
+  const slugMatch = window.location.pathname.match(/^\/worksheet\/([^/]+)\/?$/);
+  const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : null;
+  if (!id && !slug) { renderError('No worksheet ID provided.'); return; }
 
   // The worksheet row is inlined into the page by
   // netlify/functions/worksheet-page.js — use it and skip the round-trip.
   // Fall back to fetching when it's absent (no-id path / function fallback)
-  // or stale (URL id changed via history navigation without a reload).
+  // or stale (URL changed via history navigation without a reload).
   let seeded = null;
   try {
     const el = document.getElementById('wsData');
     const p = el && el.textContent.trim() ? JSON.parse(el.textContent) : null;
-    if (p && p.id === id) seeded = p;
+    if (p && (slug ? p.slug === slug : p.id === id)) seeded = p;
   } catch (e) { /* malformed seed — just fetch */ }
 
   const authPromise = sb.auth.getUser();
   const rowPromise = seeded
     ? Promise.resolve({ data: seeded, error: null })
-    : sb.from('worksheets').select('*').eq('id', id).single();
+    : slug
+      ? sb.from('worksheets').select('*').eq('slug', slug).single()
+      : sb.from('worksheets').select('*').eq('id', id).single();
   const [{ data, error }, { data: { user: currentUser } }] = await Promise.all([rowPromise, authPromise]);
   if (error || !data) { renderError('Worksheet not found.'); return; }
 
@@ -157,7 +163,7 @@ async function loadWorksheet() {
   // have (inlined seed + quiz), and "More on this topic" fills in afterwards
   // (see the block just before renderRelated below).
   const relatedRowsP = sb.from('worksheets')
-    .select('id,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id);
+    .select('id,slug,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id);
 
   document.title = data.title;  // brand suffix stays on OG/Twitter, not <title> (SERP length)
   // description is capped at 160 for the SERP snippet; description_long holds the
@@ -176,11 +182,16 @@ async function loadWorksheet() {
   }
   twitterDesc.setAttribute('content', wsMetaDescription);
   if (data.thumbnail_url) document.querySelector('meta[property="og:image"]')?.setAttribute('content', data.thumbnail_url);
-  const wsUrl = `https://workshido.com/workshido-worksheet.html?id=${data.id}`;
+  // MUST match the canonical the SSR already wrote (the slug URL). This line
+  // runs after the server-rendered head, so building the legacy ?id= URL here
+  // would silently overwrite the canonical and undo the whole migration.
+  const wsUrl = data.slug
+    ? `https://workshido.com/worksheet/${data.slug}/`
+    : `https://workshido.com/workshido-worksheet.html?id=${data.id}`;
   document.querySelector('link[rel="canonical"]')?.setAttribute('href', wsUrl);
   document.querySelector('meta[property="og:url"]')?.setAttribute('content', wsUrl);
   const schema = document.getElementById('schemaLD');
-  if (schema) schema.textContent = JSON.stringify({ "@context":"https://schema.org","@type":"LearningResource","name":data.title,"description":wsBodyDescription,"educationalLevel":data.level,"learningResourceType":"Worksheet","inLanguage":"en","isAccessibleForFree":data.is_free,"provider":{"@type":"Organization","name":"Workshido","url":"https://workshido.com"} });
+  if (schema) schema.textContent = JSON.stringify({ "@context":"https://schema.org","@type":"LearningResource","name":data.title,"description":wsBodyDescription,"educationalLevel":data.level,"learningResourceType":"Worksheet","inLanguage":"en","isAccessibleForFree":data.is_free,"url":wsUrl,"mainEntityOfPage":wsUrl,"provider":{"@type":"Organization","name":"Workshido","url":"https://workshido.com"} });
   document.getElementById('bcCategory').textContent = data.category || 'Worksheet';
   document.getElementById('bcTitle').textContent = data.title;
 
@@ -411,6 +422,20 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
   const grid = document.getElementById('relatedGrid');
   if (!section || !grid || !related.length) return;
 
+  // "These worksheets form a set" is a real claim — it links to the guide on
+  // teaching a topic in order (Grammar → Reading → Writing → Practice). Only
+  // assert it when that sequence actually exists: 3+ same-level pieces of the
+  // same topic (_setMatch), spanning more than one category. Two vocabulary
+  // word searches share a title base and a format, not a teaching sequence,
+  // so they no longer claim to be a set.
+  const setSibs = related.filter(r => r._setMatch);
+  const setCats = new Set([currentCategory, ...setSibs.map(r => r.category)].filter(Boolean));
+  const intro = section.querySelector('.related-intro');
+  if (intro && setSibs.length >= 2 && setCats.size >= 2) {
+    intro.innerHTML = 'These worksheets form a set. <a href="/guides/how-to-sequence-esl-lessons/">How to teach them in order →</a>';
+    intro.hidden = false;
+  }
+
   const levelGroups = new Map();
   for (const r of related) {
     const lvl = r.level || 'Other';
@@ -444,7 +469,7 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
     // The strip sits above the thumbnail, never over it, so it never covers
     // the worksheet's own printed title in the preview image.
     const setBadge = r._setMatch ? `<div class="set-match-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Complete the set</div>` : '';
-    return `<a href="workshido-worksheet.html?id=${r.id}" class="related-card${r._setMatch ? ' set-match' : ''}">
+    return `<a href="${r.slug ? `/worksheet/${r.slug}/` : `workshido-worksheet.html?id=${r.id}`}" class="related-card${r._setMatch ? ' set-match' : ''}">
       ${setBadge}
       <div class="related-thumb">${thumb}</div>
       <div class="related-body">

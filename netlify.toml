@@ -196,6 +196,20 @@
   status = 200
   force = true
 
+# Readable worksheet URLs: /worksheet/<slug>/ — served by the SAME function,
+# which decides by path whether it got a slug or a legacy ?id=.
+#
+# Singular "/worksheet/" on purpose: the plural "/worksheets/" prefix already
+# belongs to the 8 category/level landing pages above, and a wildcard sharing
+# that prefix would silently swallow any landing page added there later.
+# force=true so routing is deterministic even if a directory of that name is
+# ever added to the repo.
+[[redirects]]
+  from = "/worksheet/*"
+  to = "/.netlify/functions/worksheet-page"
+  status = 200
+  force = true
+
 # Inject real <a href> links to individual worksheets into the 6 category/
 # level landing pages before their JS-driven card grid loads — see
 # netlify/functions/category-page.js. Same force=true reasoning as above.

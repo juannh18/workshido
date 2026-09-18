@@ -48,12 +48,12 @@ GUIDES = [
 <h2>Free worksheets for this lesson</h2>
 <p>These printable PDFs follow the same progression above — spelling focus, controlled practice, then freer production:</p>
 <ul>
-  <li><a href="/workshido-worksheet.html?id=8b8b6396-eff9-444f-87d5-9bd1db3ab2b7">Third Person Singular – Present Simple</a> (A1) — isolates the -s spelling rules.</li>
-  <li><a href="/workshido-worksheet.html?id=c1d21578-f780-426c-ac6a-cab091b70861">Third Person Singular – Grammar</a> (A1) — more controlled practice.</li>
-  <li><a href="/workshido-worksheet.html?id=4c739616-3d20-405a-a86c-7b4ec3b5f873">Present Simple – Grammar</a> (A2) — full reference and practice: affirmative, negative, questions, and a daily-routine text, with a complete Teacher Edition.</li>
-  <li><a href="/workshido-worksheet.html?id=e8639be1-b0f6-47b0-a7c0-f12235d5cbd3">Present Simple Tense – Practice</a> (A2) — 10 mixed exercises for extra practice, from controlled to freer production.</li>
-  <li><a href="/workshido-worksheet.html?id=af1d60b9-39fd-494b-bca5-d184bf3eac2e">Present Simple vs. Present Continuous</a> (A2) — for contrasting the two tenses once present simple is solid.</li>
-  <li><a href="/workshido-worksheet.html?id=ca2452e9-ed4f-4139-9093-4f09c3e6fa65">My Daily Routine – Present Simple Writing</a> (A2) — freer production to close the lesson.</li>
+  <li><a href="/worksheet/third-person-singular-present-simple/">Third Person Singular – Present Simple</a> (A1) — isolates the -s spelling rules.</li>
+  <li><a href="/worksheet/third-person-singular-grammar-variant-2/">Third Person Singular – Grammar</a> (A1) — more controlled practice.</li>
+  <li><a href="/worksheet/present-simple-grammar/">Present Simple – Grammar</a> (A2) — full reference and practice: affirmative, negative, questions, and a daily-routine text, with a complete Teacher Edition.</li>
+  <li><a href="/worksheet/present-simple-tense-practice/">Present Simple Tense – Practice</a> (A2) — 10 mixed exercises for extra practice, from controlled to freer production.</li>
+  <li><a href="/worksheet/present-simple-vs-present-continuous/">Present Simple vs. Present Continuous</a> (A2) — for contrasting the two tenses once present simple is solid.</li>
+  <li><a href="/worksheet/my-daily-routine-present-simple/">My Daily Routine – Present Simple Writing</a> (A2) — freer production to close the lesson.</li>
 </ul>
 <p>Browse the full set of <a href="/worksheets/grammar/">grammar worksheets</a> or filter by <a href="/worksheets/levels/a1/">A1</a> and <a href="/worksheets/levels/a2/">A2</a> level.</p>
 ''',
@@ -172,13 +172,13 @@ GUIDES = [
 
 <h2>Free worksheets for this lesson</h2>
 <ul>
-  <li><a href="/workshido-worksheet.html?id=a1b62051-77bf-481d-8244-d4d0ff3c35d8">Regular Verbs in the Past Simple</a> (A1) — isolates the -ed spelling and sound rules.</li>
-  <li><a href="/workshido-worksheet.html?id=5e9cfabd-bed3-411e-8516-5da083beea99">Irregular Verbs in the Past Simple</a> (A1) — closed-list drilling once regular forms are solid.</li>
-  <li><a href="/workshido-worksheet.html?id=00cc48bf-4e17-4e3c-8260-4bbe683f1fbf">Past Simple – Grammar Focus</a> (A1) — full reference combining both once each is separately secure.</li>
-  <li><a href="/workshido-worksheet.html?id=96fb9b61-cdbe-4abd-ae42-083e2d0f866d">Reading Comprehension – Past Simple</a> (A1) — receptive practice in context.</li>
-  <li><a href="/workshido-worksheet.html?id=1889ff4e-a6f8-49c2-a69c-2c189d31d10b">Past Simple Tense</a> (A2) — mixed controlled practice, both verb types.</li>
-  <li><a href="/workshido-worksheet.html?id=3f516e86-52a3-41aa-a8cf-17046310f48a">A Weekend Story – Past Simple Reading</a> (A2) — narrative context, good freer-stage lead-in.</li>
-  <li><a href="/workshido-worksheet.html?id=34d90bdd-3d9f-49dc-aab8-e1f7a314ae03">Write About Yesterday – Past Simple Writing</a> (A2) — freer production to close the lesson.</li>
+  <li><a href="/worksheet/regular-verbs-in-the-past-simple/">Regular Verbs in the Past Simple</a> (A1) — isolates the -ed spelling and sound rules.</li>
+  <li><a href="/worksheet/irregular-verbs-in-the-past-simple/">Irregular Verbs in the Past Simple</a> (A1) — closed-list drilling once regular forms are solid.</li>
+  <li><a href="/worksheet/past-simple-grammar-focus/">Past Simple – Grammar Focus</a> (A1) — full reference combining both once each is separately secure.</li>
+  <li><a href="/worksheet/reading-comprehension-past-simple/">Reading Comprehension – Past Simple</a> (A1) — receptive practice in context.</li>
+  <li><a href="/worksheet/past-simple-tense/">Past Simple Tense</a> (A2) — mixed controlled practice, both verb types.</li>
+  <li><a href="/worksheet/a-weekend-story-past-simple-reading/">A Weekend Story – Past Simple Reading</a> (A2) — narrative context, good freer-stage lead-in.</li>
+  <li><a href="/worksheet/write-about-yesterday-past-simple-writing/">Write About Yesterday – Past Simple Writing</a> (A2) — freer production to close the lesson.</li>
 </ul>
 <p>Browse the full set of <a href="/worksheets/grammar/">grammar worksheets</a> or filter by <a href="/worksheets/levels/a1/">A1</a> and <a href="/worksheets/levels/a2/">A2</a> level.</p>
 ''',
@@ -220,13 +220,13 @@ GUIDES = [
 
 <h2>Free worksheets for this lesson</h2>
 <ul>
-  <li><a href="/workshido-worksheet.html?id=7a65d22a-1db5-46b2-9966-ecdbaa5e3985">Present Perfect Tense (A2) – Grammar</a> — form introduction before the B1 sub-uses.</li>
-  <li><a href="/workshido-worksheet.html?id=d21f4012-17fc-4ce3-879b-18dea5f2ce72">Present Perfect: For and Since – Grammar</a> (B1) — the duration/starting-point mini-lesson.</li>
-  <li><a href="/workshido-worksheet.html?id=e4d1b1c0-56cb-4230-9c37-5efc7cb6dd35">Present Perfect: Just, Already &amp; Yet – Grammar</a> (B1) — the recency/completion mini-lesson.</li>
-  <li><a href="/workshido-worksheet.html?id=0a872f36-3940-49b9-a820-d0d1772634b4">Present Perfect: Life Experiences – Grammar</a> (B1) — "have you ever" experience questions.</li>
-  <li><a href="/workshido-worksheet.html?id=5ab381ef-b12e-472f-b8bb-31177f26acc2">Present Perfect vs. Past Simple – Grammar</a> (B1) — the minimal-pair contrast stage.</li>
-  <li><a href="/workshido-worksheet.html?id=360d3f7c-d5b3-477b-863f-17379c592bd9">Experiences to Remember – Present Perfect Reading</a> (B1) — receptive practice in context.</li>
-  <li><a href="/workshido-worksheet.html?id=7182f63f-c932-451f-8915-fea669f1aff6">Present Perfect: Life Experiences – Writing</a> (B1) — freer production to close the lesson.</li>
+  <li><a href="/worksheet/present-perfect-tense-a2-grammar/">Present Perfect Tense (A2) – Grammar</a> — form introduction before the B1 sub-uses.</li>
+  <li><a href="/worksheet/present-perfect-for-and-since-grammar/">Present Perfect: For and Since – Grammar</a> (B1) — the duration/starting-point mini-lesson.</li>
+  <li><a href="/worksheet/present-perfect-just-already-yet-grammar/">Present Perfect: Just, Already &amp; Yet – Grammar</a> (B1) — the recency/completion mini-lesson.</li>
+  <li><a href="/worksheet/present-perfect-life-experiences-grammar/">Present Perfect: Life Experiences – Grammar</a> (B1) — "have you ever" experience questions.</li>
+  <li><a href="/worksheet/present-perfect-vs-past-simple-grammar/">Present Perfect vs. Past Simple – Grammar</a> (B1) — the minimal-pair contrast stage.</li>
+  <li><a href="/worksheet/experiences-to-remember-present-perfect-reading/">Experiences to Remember – Present Perfect Reading</a> (B1) — receptive practice in context.</li>
+  <li><a href="/worksheet/present-perfect-life-experiences-writing/">Present Perfect: Life Experiences – Writing</a> (B1) — freer production to close the lesson.</li>
 </ul>
 <p>Browse the full set of <a href="/worksheets/grammar/">grammar worksheets</a> or filter by <a href="/worksheets/levels/a2/">A2</a> and B1 level.</p>
 ''',
@@ -267,13 +267,13 @@ GUIDES = [
 
 <h2>Free worksheets for this lesson</h2>
 <ul>
-  <li><a href="/workshido-worksheet.html?id=1d236bc0-38f9-4b46-bb30-95d018efbf73">Present Continuous – Grammar Focus</a> (A2) — form introduction.</li>
-  <li><a href="/workshido-worksheet.html?id=93b4f991-1635-45c0-b969-e077e42ac126">Present Continuous – Spelling &amp; Practice</a> (A2) — isolates the -ing spelling rules.</li>
-  <li><a href="/workshido-worksheet.html?id=af1d60b9-39fd-494b-bca5-d184bf3eac2e">Present Simple vs. Present Continuous</a> (A2) — the contrast stage.</li>
-  <li><a href="/workshido-worksheet.html?id=164fc5ec-ad00-4280-aa00-a6378b78f0cb">Present Continuous – Reading</a> (A2) — receptive practice in context.</li>
-  <li><a href="/workshido-worksheet.html?id=8076079b-de0b-4479-90c9-c1640e9e06cf">What's Happening Now? – Present Continuous Speaking Practice</a> (A2) — freer oral production.</li>
-  <li><a href="/workshido-worksheet.html?id=12e7fc47-238f-4919-bb4f-ba40f7a30d67">Present Continuous – Writing Practice</a> (A2) — freer written production.</li>
-  <li><a href="/workshido-worksheet.html?id=3e86ba78-2359-4574-aa39-c63964aea988">Present Simple &amp; Present Continuous Review – Grammar</a> (B1) — consolidation once both are solid.</li>
+  <li><a href="/worksheet/present-continuous-grammar-focus/">Present Continuous – Grammar Focus</a> (A2) — form introduction.</li>
+  <li><a href="/worksheet/present-continuous-spelling-practice/">Present Continuous – Spelling &amp; Practice</a> (A2) — isolates the -ing spelling rules.</li>
+  <li><a href="/worksheet/present-simple-vs-present-continuous/">Present Simple vs. Present Continuous</a> (A2) — the contrast stage.</li>
+  <li><a href="/worksheet/present-continuous-reading/">Present Continuous – Reading</a> (A2) — receptive practice in context.</li>
+  <li><a href="/worksheet/what-s-happening-now-present-continuous-speaking-practice/">What's Happening Now? – Present Continuous Speaking Practice</a> (A2) — freer oral production.</li>
+  <li><a href="/worksheet/present-continuous-writing-practice/">Present Continuous – Writing Practice</a> (A2) — freer written production.</li>
+  <li><a href="/worksheet/present-simple-present-continuous-review-grammar/">Present Simple &amp; Present Continuous Review – Grammar</a> (B1) — consolidation once both are solid.</li>
 </ul>
 <p>Browse the full set of <a href="/worksheets/grammar/">grammar worksheets</a> or filter by <a href="/worksheets/levels/a2/">A2</a> level.</p>
 ''',
@@ -314,12 +314,12 @@ GUIDES = [
 
 <h2>Free worksheets for this lesson</h2>
 <ul>
-  <li><a href="/workshido-worksheet.html?id=40a1d4f3-b043-4733-8e66-edc7e1345491">Comparative Adjectives – Grammar Focus</a> (A1) — the -er/more rule introduction.</li>
-  <li><a href="/workshido-worksheet.html?id=bbc629f9-935e-43a9-89ee-0b1e441abb9e">Superlative Adjectives – Grammar Focus</a> (A1) — the -est/most rule introduction.</li>
-  <li><a href="/workshido-worksheet.html?id=297173fd-0fe6-4fab-bc49-70cb5b154908">Comparative Adjectives – Practice</a> (A1) — controlled practice.</li>
-  <li><a href="/workshido-worksheet.html?id=82cbfaf6-ac46-4e9c-b84c-4208b473778c">Comparative Adjectives – Reading Practice</a> (A1) — receptive practice in context.</li>
-  <li><a href="/workshido-worksheet.html?id=e7dec3d9-b76e-4caf-bab4-f199e35f546d">Comparative and Superlative Review</a> (A2) — consolidation once both forms are solid.</li>
-  <li><a href="/workshido-worksheet.html?id=ad58c5ce-b960-45a1-ab69-cc69f19ffe4d">Comparative &amp; Superlative Adjectives – Practice</a> (A2) — mixed extra practice.</li>
+  <li><a href="/worksheet/comparative-adjectives-grammar-focus/">Comparative Adjectives – Grammar Focus</a> (A1) — the -er/more rule introduction.</li>
+  <li><a href="/worksheet/superlative-adjectives-grammar-focus/">Superlative Adjectives – Grammar Focus</a> (A1) — the -est/most rule introduction.</li>
+  <li><a href="/worksheet/comparative-adjectives-practice/">Comparative Adjectives – Practice</a> (A1) — controlled practice.</li>
+  <li><a href="/worksheet/comparative-adjectives-reading-practice/">Comparative Adjectives – Reading Practice</a> (A1) — receptive practice in context.</li>
+  <li><a href="/worksheet/comparative-and-superlative-review/">Comparative and Superlative Review</a> (A2) — consolidation once both forms are solid.</li>
+  <li><a href="/worksheet/comparative-superlative-adjectives-practice/">Comparative &amp; Superlative Adjectives – Practice</a> (A2) — mixed extra practice.</li>
 </ul>
 <p>Browse the full set of <a href="/worksheets/grammar/">grammar worksheets</a> or filter by <a href="/worksheets/levels/a1/">A1</a> and <a href="/worksheets/levels/a2/">A2</a> level.</p>
 ''',
@@ -361,12 +361,12 @@ GUIDES = [
 
 <h2>Free worksheets for this lesson</h2>
 <ul>
-  <li><a href="/workshido-worksheet.html?id=e463b99e-a776-42c0-b697-69b8794266a8">Reported Speech: Present Simple to Past Simple – Grammar</a> (B1) — isolates tense backshift with minimal pronoun changes.</li>
-  <li><a href="/workshido-worksheet.html?id=9b8e388f-1ea6-44e8-bded-f86f1dfb213e">Reported Speech: Present Simple to Past Simple – Practice</a> (B1) — controlled backshift practice.</li>
-  <li><a href="/workshido-worksheet.html?id=1230b2e8-2927-42da-9c2f-0411054b9887">Reported Questions and Commands (Reported Speech) – Grammar</a> (B1) — reported questions and told/asked + to-infinitive commands.</li>
-  <li><a href="/workshido-worksheet.html?id=71ce167d-ac63-4d51-82bd-6950c1732b35">Reported Questions and Commands (Reported Speech) Practice – Grammar</a> (B1) — word-order-focused practice for reported questions.</li>
-  <li><a href="/workshido-worksheet.html?id=83087583-ae8f-400e-9384-df99d1bd7ff7">Reported Questions and Commands (Reported Speech): Instructions from a School Trip Leader – Reading</a> (B1) — receptive practice in context.</li>
-  <li><a href="/workshido-worksheet.html?id=11f56a84-487e-404b-969a-4641069807f2">Reported Questions and Commands (Reported Speech) – Writing</a> (B1) — freer production to close the lesson.</li>
+  <li><a href="/worksheet/reported-speech-present-simple-to-past-simple-grammar/">Reported Speech: Present Simple to Past Simple – Grammar</a> (B1) — isolates tense backshift with minimal pronoun changes.</li>
+  <li><a href="/worksheet/reported-speech-present-simple-to-past-simple-practice/">Reported Speech: Present Simple to Past Simple – Practice</a> (B1) — controlled backshift practice.</li>
+  <li><a href="/worksheet/reported-questions-and-commands-reported-speech-grammar/">Reported Questions and Commands (Reported Speech) – Grammar</a> (B1) — reported questions and told/asked + to-infinitive commands.</li>
+  <li><a href="/worksheet/reported-questions-and-commands-reported-speech-practice/">Reported Questions and Commands (Reported Speech) Practice – Grammar</a> (B1) — word-order-focused practice for reported questions.</li>
+  <li><a href="/worksheet/reported-questions-commands-reading-b1/">Reported Questions and Commands (Reported Speech): Instructions from a School Trip Leader – Reading</a> (B1) — receptive practice in context.</li>
+  <li><a href="/worksheet/reported-questions-and-commands-reported-speech-writing/">Reported Questions and Commands (Reported Speech) – Writing</a> (B1) — freer production to close the lesson.</li>
 </ul>
 <p>Browse the full set of <a href="/worksheets/grammar/">grammar worksheets</a> or filter by B1 level in the <a href="/workshido-index.html">full catalog</a>.</p>
 ''',

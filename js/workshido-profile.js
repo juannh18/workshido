@@ -128,7 +128,7 @@ async function loadProfile() {
 
   const { data: worksheets } = await sb2
     .from('worksheets')
-    .select('id, title, level, category, downloads, created_at')
+    .select('id, slug, title, level, category, downloads, created_at')
     .eq('uploaded_by', user.id)
     .order('created_at', { ascending: false });
 
@@ -168,7 +168,7 @@ async function loadProfile() {
         <div class="ws-meta-row"><span class="ws-level ${lvlCls}">${w.level}</span><span class="ws-status">Published · ${date}</span></div>
       </div>
       <div class="ws-stats-mini"><div class="ws-stat">↓ <strong>${(w.downloads||0).toLocaleString()}</strong></div></div>
-      <div class="ws-actions"><a href="workshido-worksheet.html?id=${w.id}" class="btn-sm edit">View</a></div>
+      <div class="ws-actions"><a href="${w.slug ? `/worksheet/${w.slug}/` : `workshido-worksheet.html?id=${w.id}`}" class="btn-sm edit">View</a></div>
     </div>`;
   }).join('');
 }
@@ -454,7 +454,7 @@ function _wsRowHtml(w, opts) {
       <div class="ws-meta-row"><span class="ws-level ${lvlCls}">${esc(w.level || '')}</span><span class="ws-status">${esc(cat)}</span></div>
     </div>
     <div class="ws-actions">
-      <a href="workshido-worksheet.html?id=${w.id}" class="btn-sm edit">Open</a>${rm}
+      <a href="${w.slug ? `/worksheet/${w.slug}/` : `workshido-worksheet.html?id=${w.id}`}" class="btn-sm edit">Open</a>${rm}
     </div>
   </div>`;
 }
@@ -462,7 +462,7 @@ function _wsRowHtml(w, opts) {
 async function _fetchWorksheetsByIds(ids) {
   if (!ids.length) return [];
   const { data } = await sb2.from('worksheets')
-    .select('id,title,level,category')
+    .select('id,slug,title,level,category')
     .in('id', ids);
   const byId = {};
   (data || []).forEach(w => { byId[w.id] = w; });

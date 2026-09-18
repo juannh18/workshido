@@ -37,7 +37,7 @@ exports.handler = async () => {
 
     const { data: worksheets, error: wsErr } = await sb
       .from('worksheets')
-      .select('id, title, level, category, thumbnail_url')
+      .select('id, slug, title, level, category, thumbnail_url')
       .in('id', topIds);
     if (wsErr) throw wsErr;
 

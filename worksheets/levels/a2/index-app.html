@@ -891,7 +891,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <div class="footer-grid">
     <div>
       <div class="footer-logo">Work<span>shido</span></div>
-      <p class="footer-desc">Free, high-quality English worksheets for teachers and students worldwide. Download, print, and teach.</p>
+      <p class="footer-desc">Free, high-quality English worksheets for teachers and learners worldwide. Download, print, and teach.</p>
     </div>
     <div class="footer-col">
       <h4>Browse</h4>
@@ -953,18 +953,18 @@ function buildCard(ws) {
   const accent = ACCENT[ws.level]        || 'accent-teal';
   const badge  = ws.is_free ? '<span class="badge-type free">Free</span>' : '<span class="badge-type premium">Premium</span>';
   const btn    = ws.is_free
-    ? `<a href="/workshido-worksheet.html?id=${ws.id}" class="btn-download" style="text-decoration:none;">↓ Download</a>`
-    : `<a href="/workshido-worksheet.html?id=${ws.id}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
+    ? `<a href="${ws.slug ? `/worksheet/${ws.slug}/` : `/workshido-worksheet.html?id=${ws.id}`}" class="btn-download" style="text-decoration:none;">↓ Download</a>`
+    : `<a href="${ws.slug ? `/worksheet/${ws.slug}/` : `/workshido-worksheet.html?id=${ws.id}`}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
   const tags   = (ws.tags || ws.category || '').split(',').slice(0,2).map(t=>`<span class="tag">${esc(t.trim())}</span>`).join('');
   const thumb = ws.thumbnail_url
     ? `<img src="${ws.thumbnail_url}" alt="${esc(ws.title)}" loading="lazy">`
     : `<div class="ws-preview"><div class="wl ${accent}"></div><div class="wl"></div><div class="wl short"></div><div class="wb"></div><div class="wb"></div><div class="wl short"></div></div>`;
   const overlay = !ws.thumbnail_url ? `<div class="card-thumb-overlay"><span class="overlay-logo">Work<span>shido</span></span><span class="overlay-level ${lvlCls}">${ws.level}</span></div>` : '';
   return `<div class="ws-card">
-    <a href="/workshido-worksheet.html?id=${ws.id}" class="card-thumb ${color}" style="display:block;text-decoration:none;">${thumb}${overlay}</a>
+    <a href="${ws.slug ? `/worksheet/${ws.slug}/` : `/workshido-worksheet.html?id=${ws.id}`}" class="card-thumb ${color}" style="display:block;text-decoration:none;">${thumb}${overlay}</a>
     <div class="card-body">
       <div class="card-meta"><span class="badge-level ${lvlCls}">${ws.level}</span>${badge}</div>
-      <a href="/workshido-worksheet.html?id=${ws.id}" class="card-title" style="text-decoration:none;color:inherit;">${esc(ws.title)}</a>
+      <a href="${ws.slug ? `/worksheet/${ws.slug}/` : `/workshido-worksheet.html?id=${ws.id}`}" class="card-title" style="text-decoration:none;color:inherit;">${esc(ws.title)}</a>
       <div class="card-tags">${tags}</div>
       <div class="card-footer">
         <div class="card-rating">${catalogRatingHtml(ws)}</div>

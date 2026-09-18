@@ -21,20 +21,35 @@ const { createClient } = require('@supabase/supabase-js');
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const SITE = 'https://workshido.com';
+
 // The real SPA shell lives at this filename (not workshido-worksheet.html —
 // that public URL is now owned by this function via a netlify.toml redirect,
 // so fetching it here would recurse into this same function).
-const TEMPLATE_URL = `${SITE}/workshido-worksheet-app.html`;
+//
+// The origin is taken from the incoming request, NOT hardcoded to SITE: on a
+// draft/preview deploy this function must fetch THAT deploy's template, or a
+// pre-production test would silently validate the live production template
+// instead of the change being tested. Canonical/OG URLs below stay pinned to
+// SITE on purpose — a preview must never emit preview URLs as canonical.
+function templateUrlFor(event) {
+  const host = (event.headers && (event.headers['x-forwarded-host'] || event.headers.host)) || '';
+  const origin = host ? `https://${host}` : SITE;
+  return `${origin}/workshido-worksheet-app.html`;
+}
 
 // Cached across warm invocations of the same function container; refetched
 // after 5 minutes so a template edit + deploy shows up without a cold start.
-let templateCache = { html: null, fetchedAt: 0 };
-async function getTemplate() {
+// Keyed by origin so a container can never serve one deploy's template under
+// another deploy's host.
+const templateCache = new Map();
+async function getTemplate(event) {
+  const url = templateUrlFor(event);
   const now = Date.now();
-  if (templateCache.html && now - templateCache.fetchedAt < 5 * 60 * 1000) return templateCache.html;
-  const res = await fetch(TEMPLATE_URL);
+  const hit = templateCache.get(url);
+  if (hit && now - hit.fetchedAt < 5 * 60 * 1000) return hit.html;
+  const res = await fetch(url);
   const html = await res.text();
-  templateCache = { html, fetchedAt: now };
+  templateCache.set(url, { html, fetchedAt: now });
   return html;
 }
 
@@ -58,21 +73,50 @@ function escapeAttr(s) {
   return String(s).replace(/[&'"]/g, (c) => ({ '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
 }
 
+// SEO URL migration switch.
+//
+// false (phase 1–2): the legacy /workshido-worksheet.html?id=… URL still
+//   answers 200 with the full page, but its canonical already points at the
+//   new /worksheet/<slug>/ URL. Google starts consolidating on its own and
+//   NOTHING is destructive — every old link keeps working exactly as before.
+// true  (phase 3): the legacy URL answers 301 to the slug URL.
+//
+// Flip this to true ONLY after the slug route is verified live, because a
+// 301 is cached hard by browsers and is the one genuinely irreversible step
+// of this migration.
+const LEGACY_REDIRECTS_301 = false;
+
+// Matches /worksheet/<slug> and /worksheet/<slug>/ (the trailing-slash form
+// is canonical; the other 301s to it below).
+const SLUG_ROUTE = /^\/worksheet\/([^/]+)\/?$/;
+
+const slugUrl = (slug) => `${SITE}/worksheet/${slug}/`;
+
 exports.handler = async (event) => {
+  const path = event.path || '';
+  const slugMatch = path.match(SLUG_ROUTE);
+  const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : null;
   const id = event.queryStringParameters && event.queryStringParameters.id;
 
-  // No id (or malformed request) — serve the template untouched, same as
-  // the static file always did. Never block the page from loading.
-  if (!id) {
-    const template = await getTemplate();
+  // One canonical spelling per page: /worksheet/foo → /worksheet/foo/.
+  // Safe to 301 unconditionally — this namespace is brand new, so no
+  // already-indexed URL is affected.
+  if (slug && !path.endsWith('/')) {
+    return { statusCode: 301, headers: { Location: `/worksheet/${slugMatch[1]}/`, 'Cache-Control': 'public, max-age=0, must-revalidate' }, body: '' };
+  }
+
+  // Neither a slug nor an id (or a malformed request) — serve the template
+  // untouched, same as the static file always did. Never block the page.
+  if (!slug && !id) {
+    const template = await getTemplate(event);
     return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
   }
 
   try {
-    const [template, { data, error }] = await Promise.all([
-      getTemplate(),
-      sb.from('worksheets').select('*').eq('id', id).single(),
-    ]);
+    const query = slug
+      ? sb.from('worksheets').select('*').eq('slug', slug).single()
+      : sb.from('worksheets').select('*').eq('id', id).single();
+    const [template, { data, error }] = await Promise.all([getTemplate(event), query]);
 
     if (error || !data) {
       // A real, since-deleted/renamed worksheet id — this is the exact
@@ -80,6 +124,23 @@ exports.handler = async (event) => {
       // flags. Serve the shell but say so with the status code, so it's an
       // unambiguous 404 instead of looking like a valid empty page.
       return { statusCode: 404, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
+    }
+
+    // Legacy ?id= URL, once the migration is armed: send its accumulated
+    // ranking to the slug URL. max-age=0 keeps browsers revalidating rather
+    // than freezing the redirect locally while the rollout is being watched;
+    // Google still treats a 301 as permanent regardless of caching headers.
+    if (!slug && LEGACY_REDIRECTS_301 && data.slug) {
+      return {
+        statusCode: 301,
+        headers: {
+          Location: slugUrl(data.slug),
+          'Cache-Control': 'public, max-age=0, must-revalidate',
+          'Netlify-CDN-Cache-Control': 'public, s-maxage=300, durable',
+          'Netlify-Vary': 'query=id',
+        },
+        body: '',
+      };
     }
 
     // Brand suffix kept on OG/Twitter (social cards) but NOT on <title>: the
@@ -90,7 +151,13 @@ exports.handler = async (event) => {
     const desc = data.description
       ? trimDesc(data.description)
       : `Free ${data.level || ''} ${data.category || 'English'} worksheet — download and print for class.`.replace(/\s+/g, ' ').trim();
-    const url = `${SITE}/workshido-worksheet.html?id=${encodeURIComponent(data.id)}`;
+    // Canonical/OG always point at the slug URL — including when this request
+    // came in on the legacy ?id= path. That is what lets Google consolidate
+    // the two URLs onto the new one before any redirect exists. Falls back to
+    // the legacy shape if a row somehow has no slug, so the tag is never empty.
+    const url = data.slug
+      ? slugUrl(data.slug)
+      : `${SITE}/workshido-worksheet.html?id=${encodeURIComponent(data.id)}`;
     const image = data.thumbnail_url || `${SITE}/og-image.png`;
     // Visible body copy for no-JS crawlers. description is capped at 160 so the
     // meta description isn't truncated in the SERP; description_long keeps the
@@ -110,6 +177,11 @@ exports.handler = async (event) => {
       inLanguage: 'en',
       isAccessibleForFree: data.is_free !== false,
       image: image,
+      // Was missing entirely: without these, the structured data never told
+      // Google which URL it describes — exactly the ambiguity to avoid while
+      // two URLs serve the same worksheet.
+      url: url,
+      mainEntityOfPage: url,
       provider: { '@type': 'Organization', name: 'Workshido', url: 'https://workshido.com' },
     }).replace(/</g, '\\u003c');
 
@@ -173,7 +245,7 @@ exports.handler = async (event) => {
   } catch (err) {
     // Never let a Supabase hiccup take the page down — fall back to the
     // plain template, same as before this function existed.
-    const template = await getTemplate();
+    const template = await getTemplate(event);
     return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
   }
 };

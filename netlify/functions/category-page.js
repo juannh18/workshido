@@ -27,14 +27,24 @@ const PAGES = {
   '/worksheets/levels/b2/':  { template: 'levels/b2/index-app.html',  col: 'level',    val: 'B2',         label: 'B2' },
 };
 
-const templateCache = {}; // path -> { html, fetchedAt }
-async function getTemplate(templatePath) {
+// Origin taken from the incoming request, not hardcoded to SITE: on a draft
+// deploy this must fetch THAT deploy's landing template, or pre-production
+// testing silently validates the live production template instead of the
+// change being tested. (Emitted links below stay pinned to SITE on purpose.)
+function originFor(event) {
+  const host = (event.headers && (event.headers['x-forwarded-host'] || event.headers.host)) || '';
+  return host ? `https://${host}` : SITE;
+}
+
+const templateCache = {}; // origin + path -> { html, fetchedAt }
+async function getTemplate(templatePath, event) {
+  const url = `${originFor(event)}/worksheets/${templatePath}`;
   const now = Date.now();
-  const cached = templateCache[templatePath];
+  const cached = templateCache[url];
   if (cached && now - cached.fetchedAt < 5 * 60 * 1000) return cached.html;
-  const res = await fetch(`${SITE}/worksheets/${templatePath}`);
+  const res = await fetch(url);
   const html = await res.text();
-  templateCache[templatePath] = { html, fetchedAt: now };
+  templateCache[url] = { html, fetchedAt: now };
   return html;
 }
 
@@ -48,20 +58,26 @@ exports.handler = async (event) => {
 
   try {
     const [template, { data, error }] = await Promise.all([
-      getTemplate(page.template),
+      getTemplate(page.template, event),
       // Was 60, which made the "All X worksheets" heading a lie (A1 alone has
       // 255) and left most of the level unlinked from its own landing page —
       // the internal linking this block exists for. The list is plain <a>
       // text, so the full set costs ~25KB even on the biggest level.
-      sb.from('worksheets').select('id, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).limit(500),
+      sb.from('worksheets').select('id, slug, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).limit(500),
     ]);
 
     if (error || !data || !data.length) {
       return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
     }
 
+    // Readable URL when the row has a slug, legacy ?id= otherwise. The
+    // fallback is deliberate: a missing slug degrades to the old URL (which
+    // still resolves and canonicalises to the slug) instead of emitting a
+    // broken "/worksheet/undefined/" link.
+    const wsUrl = (ws) => (ws.slug ? `${SITE}/worksheet/${esc(ws.slug)}/` : `${SITE}/workshido-worksheet.html?id=${esc(ws.id)}`);
+
     const links = data
-      .map((ws) => `<li><a href="${SITE}/workshido-worksheet.html?id=${esc(ws.id)}">${esc(ws.title)} (${esc(ws.level)})</a></li>`)
+      .map((ws) => `<li><a href="${wsUrl(ws)}">${esc(ws.title)} (${esc(ws.level)})</a></li>`)
       .join('');
 
     const block = `
@@ -83,7 +99,7 @@ exports.handler = async (event) => {
       itemListElement: data.slice(0, 60).map((ws, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `${SITE}/workshido-worksheet.html?id=${ws.id}`,
+        url: ws.slug ? `${SITE}/worksheet/${ws.slug}/` : `${SITE}/workshido-worksheet.html?id=${ws.id}`,
         name: ws.title,
       })),
     }).replace(/</g, '\\u003c');
@@ -102,7 +118,7 @@ exports.handler = async (event) => {
       body: html,
     };
   } catch (err) {
-    const template = await getTemplate(page.template);
+    const template = await getTemplate(page.template, event);
     return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
   }
 };

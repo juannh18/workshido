@@ -1,9 +1,15 @@
 """Genera el HTML de una Teacher Edition (template v2, 2 páginas) desde un JSON de contenido.
 
 Uso:
-  python tools/build_te.py contenido.json salida.html [--es]
-  # salida relativa a la raíz del repo; --es usa el template de Spanishido
-  # (te_template_base_es.html: wordmark "Spanishido", spanishido.com, paleta terracota)
+  python tools/build_te.py contenido.json salida.html [--site spanishido]
+  # salida relativa a la raíz del repo. --site aplica la marca (logo, wordmark,
+  # dominio, paleta) sobre la MISMA plantilla inglesa, via tools/brand.py.
+  # --es se mantiene como alias de --site spanishido.
+  #
+  # El TEXTO de la TE va SIEMPRE en inglés, incluso en Spanishido: la lee un
+  # profesor de EE. UU. Solo cambia la marca. Por eso no hay plantilla aparte:
+  # te_template_base_es.html existia y ya se habia desviado (usaba #CE6538 como
+  # acento cuando el sitio real usa #EFAD86). Ver [[project_spanishido_pipeline]].
 
 Formato del JSON de contenido:
 {
@@ -54,6 +60,9 @@ ul.ans + li, .flag (notas ⚠), span.n (números).
 """
 import sys, os, json, re
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import brand
+
 TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
 
@@ -63,9 +72,9 @@ def _strip_block(tpl, name):
     return re.sub(rf'\s*<!--{name}_START-->.*?<!--{name}_END-->', '', tpl, flags=re.DOTALL)
 
 
-def build(content, es=False):
-    tpl_name = 'te_template_base_es.html' if es else 'te_template_base.html'
-    tpl = open(os.path.join(TOOLS, tpl_name), encoding='utf-8').read()
+def build(content, site='workshido'):
+    tpl = open(os.path.join(TOOLS, 'te_template_base.html'), encoding='utf-8').read()
+    tpl = brand.apply(tpl, site)
 
     mistakes = '\n'.join(
         f'      <div class="mistake-row"><span class="wrong">✗ {w}</span><br>'
@@ -119,6 +128,18 @@ def build(content, es=False):
         repl['{{EXTENSION}}'] = '\n'.join(f'      <span>{e}</span>' for e in content['extension'])
     else:
         tpl = _strip_block(tpl, 'EXTENSION')
+
+    # "What's Included" no puede prometer secciones que luego se eliminan.
+    _has_ext = bool(content.get('extension'))
+    _has_exit = bool(content.get('exit_ticket'))
+    if _has_ext and _has_exit:
+        tpl = tpl.replace('{{EXTRAS_LABEL}}', 'Extension &amp; Exit Ticket')
+    elif _has_ext:
+        tpl = tpl.replace('{{EXTRAS_LABEL}}', 'Extension Ideas')
+    elif _has_exit:
+        tpl = tpl.replace('{{EXTRAS_LABEL}}', 'Exit Ticket')
+    else:
+        tpl = _strip_block(tpl, 'EXTRASCHK')
     if content.get('key_language'):
         repl['{{KEYLANG}}'] = content['key_language']
     else:
@@ -136,14 +157,18 @@ def build(content, es=False):
 
 if __name__ == '__main__':
     args = [a for a in sys.argv[1:] if a != '--es']
-    es = '--es' in sys.argv
+    site = 'spanishido' if '--es' in sys.argv else 'workshido'
+    if '--site' in args:
+        i = args.index('--site')
+        site = args[i + 1]
+        del args[i:i + 2]
     if len(args) != 2:
         sys.exit(__doc__)
     content = json.load(open(args[0], encoding='utf-8'))
     out = args[1]
     if not os.path.isabs(out):
         out = os.path.join(REPO, out)
-    html = build(content, es)
+    html = build(content, site)
     with open(out, 'w', encoding='utf-8') as f:
         f.write(html)
-    print(f'OK: {out} ({len(html)} chars)')
+    print(f'OK [{site}]: {out} ({len(html)} chars)')

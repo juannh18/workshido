@@ -44,7 +44,7 @@ exports.handler = async () => {
   try {
     const { data: worksheets, error } = await sb
       .from('worksheets')
-      .select('id, created_at')
+      .select('id, slug, created_at')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -57,8 +57,15 @@ exports.handler = async () => {
 
     const worksheetEntries = (worksheets || []).map(ws => {
       const lastmod = ws.created_at ? new Date(ws.created_at).toISOString().slice(0, 10) : '';
+      // Only the readable URL is submitted. The legacy ?id= form still
+      // resolves for inbound links, but listing both would ask Google to
+      // index two URLs for one worksheet — the duplication this migration
+      // exists to remove. Falls back to ?id= only if a row has no slug yet.
+      const loc = ws.slug
+        ? `${SITE}/worksheet/${escapeXml(ws.slug)}/`
+        : `${SITE}/workshido-worksheet.html?id=${escapeXml(ws.id)}`;
       return `  <url>
-    <loc>${SITE}/workshido-worksheet.html?id=${escapeXml(ws.id)}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}
+    <loc>${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>`;

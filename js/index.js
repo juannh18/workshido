@@ -57,7 +57,7 @@ async function loadTrending() {
       const thumb = ws.thumbnail_url
         ? `<img src="${smThumb(ws.thumbnail_url)}" onerror="this.onerror=null;this.src='${ws.thumbnail_url}'" alt="${esc(ws.title)}" loading="lazy" decoding="async" width="440" height="622">`
         : '';
-      return `<a href="workshido-worksheet.html?id=${ws.id}" class="trending-card">
+      return `<a href="${ws.slug ? `/worksheet/${ws.slug}/` : `workshido-worksheet.html?id=${ws.id}`}" class="trending-card">
         <span class="trending-rank">${i + 1}</span>
         <div class="trending-thumb">${thumb}</div>
         <span class="badge-level ${lvlCls}">${ws.level}</span>
