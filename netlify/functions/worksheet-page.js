@@ -84,7 +84,7 @@ function escapeAttr(s) {
 // Flip this to true ONLY after the slug route is verified live, because a
 // 301 is cached hard by browsers and is the one genuinely irreversible step
 // of this migration.
-const LEGACY_REDIRECTS_301 = false;
+const LEGACY_REDIRECTS_301 = true;
 
 // Matches /worksheet/<slug> and /worksheet/<slug>/ (the trailing-slash form
 // is canonical; the other 301s to it below).

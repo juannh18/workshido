@@ -114,6 +114,17 @@ async function loadWorksheet() {
   const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : null;
   if (!id && !slug) { renderError('No worksheet ID provided.'); return; }
 
+  // Netlify re-appends the original query string to the Location of the
+  // function's legacy ?id= 301, so the redirect lands on /worksheet/<slug>/?id=…
+  // The page is correct (slug wins, canonical is clean); this only tidies the
+  // address bar. Other params (utm_*) are kept.
+  if (slug && id && window.history && history.replaceState) {
+    const params = new URLSearchParams(window.location.search);
+    params.delete('id');
+    const qs = params.toString();
+    history.replaceState(history.state, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+  }
+
   // The worksheet row is inlined into the page by
   // netlify/functions/worksheet-page.js — use it and skip the round-trip.
   // Fall back to fetching when it's absent (no-id path / function fallback)
