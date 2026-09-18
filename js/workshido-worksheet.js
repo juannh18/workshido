@@ -101,7 +101,7 @@ async function checkAuth() {
     // full_name / display_name are free text — never trust as HTML in innerHTML.
     const escNav = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     const inner = window.wsNavAvatar ? window.wsNavAvatar(pa.avatar, pic, initials) : escNav(initials);
-    nav.innerHTML = `<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;flex-shrink:0;">${inner}</div>${escNav(name.split(/\s+/)[0])}</a><button onclick="logOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>`;
+    nav.innerHTML = `<a href="/workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;flex-shrink:0;">${inner}</div>${escNav(name.split(/\s+/)[0])}</a><button onclick="logOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>`;
   }
 }
 async function logOut() { await sb.auth.signOut(); window.location.reload(); }
@@ -300,7 +300,7 @@ async function loadWorksheet() {
           <div class="quiz-prep-tip">
             <div class="prep-label">Your prep checklist</div>
             <div class="prep-steps"><span class="prep-step"><span class="num">1</span>Grammar</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">2</span>Reading</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">3</span>Writing</span><span class="prep-extra">(+ Practice if you want extra reps)</span></div>
-            <div class="prep-line">Done with those? You're ready. <a href="workshido-how-quiz-works.html">Why this order →</a></div>
+            <div class="prep-line">Done with those? You're ready. <a href="/workshido-how-quiz-works.html">Why this order →</a></div>
           </div>`
         : `<button class="btn-quiz" onclick="openPremiumModal('quiz')">
             <span class="ak-left">
@@ -313,7 +313,7 @@ async function loadWorksheet() {
           <div class="quiz-prep-tip">
             <div class="prep-label">How to get there</div>
             <div class="prep-steps"><span class="prep-step"><span class="num">1</span>Grammar</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">2</span>Reading</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">3</span>Writing</span><span class="prep-extra">(all free)</span></div>
-            <div class="prep-line">Then unlock the <b>only graded evaluation</b> on Workshido — full answer key included. <a href="workshido-how-quiz-works.html">Why this order →</a></div>
+            <div class="prep-line">Then unlock the <b>only graded evaluation</b> on Workshido — full answer key included. <a href="/workshido-how-quiz-works.html">Why this order →</a></div>
           </div>`)
     : '';
 
@@ -480,7 +480,7 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
     // The strip sits above the thumbnail, never over it, so it never covers
     // the worksheet's own printed title in the preview image.
     const setBadge = r._setMatch ? `<div class="set-match-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Complete the set</div>` : '';
-    return `<a href="${r.slug ? `/worksheet/${r.slug}/` : `workshido-worksheet.html?id=${r.id}`}" class="related-card${r._setMatch ? ' set-match' : ''}">
+    return `<a href="${r.slug ? `/worksheet/${r.slug}/` : `/workshido-worksheet.html?id=${r.id}`}" class="related-card${r._setMatch ? ' set-match' : ''}">
       ${setBadge}
       <div class="related-thumb">${thumb}</div>
       <div class="related-body">
@@ -815,11 +815,11 @@ async function startCheckout(plan) {
 }
 
 function googleLoginDl() {
-  window.location.href = 'workshido-login.html?redirect=' + encodeURIComponent(window.location.href);
+  window.location.href = '/workshido-login.html?redirect=' + encodeURIComponent(window.location.href);
 }
 
 function renderError(msg) {
-  document.getElementById('pageWrap').innerHTML = `<div class="loading">${msg} <a href="workshido-index.html" style="color:var(--blue-600)">← Back to catalog</a></div>`;
+  document.getElementById('pageWrap').innerHTML = `<div class="loading">${msg} <a href="/workshido-index.html" style="color:var(--blue-600)">← Back to catalog</a></div>`;
 }
 
 document.addEventListener('DOMContentLoaded', () => { checkAuth(); loadWorksheet(); });
