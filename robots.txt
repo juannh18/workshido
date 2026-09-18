@@ -5,5 +5,11 @@ Allow: /
 # Console, all noindex) and burned crawl budget on nothing. The bare
 # /workshido-login.html etc. stay crawlable so Google keeps seeing their noindex.
 Disallow: /*?redirect=
+# API endpoints (downloads, ratings, Teacher Edition, checkout) are user
+# actions, not pages: Googlebot hit them while rendering the JS and logged
+# them as "Blocked due to other 4xx issue". trending stays open because the
+# homepage renders its worksheet links from it.
+Allow: /.netlify/functions/trending
+Disallow: /.netlify/functions/
 
 Sitemap: https://workshido.com/sitemap.xml
