@@ -413,7 +413,7 @@ function syncUrl() {
   }
   if (searchQuery) params.set('q', searchQuery);
   const sort = document.getElementById('sortSelect')?.value;
-  if (sort && sort !== 'newest') params.set('sort', sort);
+  if (sort && sort !== 'best') params.set('sort', sort);
   if (currentPage > 1) params.set('page', currentPage);
   const qs = params.toString();
   history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
@@ -688,7 +688,8 @@ function filterAndRender() {
 
   const sort = document.getElementById('sortSelect')?.value || 'newest';
   const sortSecondary = (a, b) => {
-    if (sort === 'newest') {
+    if (sort === 'best' && (searchQuery || activeTopic !== 'all')) return wsBestCompare(a, b);
+    if (sort === 'newest' || sort === 'best') {
       const da = a.created_at ? new Date(a.created_at).getTime() : 0;
       const db = b.created_at ? new Date(b.created_at).getTime() : 0;
       return db - da;
@@ -708,13 +709,7 @@ function filterAndRender() {
   // "extra words") against 200 for the plain "Verb To Be", a gap no sort can
   // close — yet both are squarely about the searched topic and belong in the
   // same tier, with the user's Newest/Most-downloaded choice deciding order.
-  const relevanceTier = (w, q) => {
-    const title = (w.title || '').toLowerCase();
-    const topic = wsCoreTopic(title);
-    if (topic === q || topic.startsWith(q) || title.startsWith(q)) return 0;
-    if (title.includes(q)) return 1;
-    return 2;
-  };
+  const relevanceTier = (w, q) => wsTopicTier(w, q);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     const tier = new Map(filtered.map(w => [w.id, relevanceTier(w, q)]));
@@ -793,6 +788,93 @@ function wsCoreTopic(title) {
   const dash = title.search(/[–—-]/);
   const topic = dash >= 0 ? title.slice(0, dash) : title;
   return topic.replace(/[():,.&]/g, ' ').split(/\s+/).filter(w => w && !TOPIC_FILLER_WORDS.has(w)).join(' ').trim();
+}
+
+// ── Topic fidelity (27/09/2026). Tiers how faithfully a worksheet is ABOUT the
+// query, used by search, sidebar topics and the "Best match" sort:
+//   0  the title's topic IS the query ("Past Simple – Grammar Focus",
+//      "Past Simple Tense: Weekend Activities", "The Passive Voice")
+//   1  that topic with a subtopic, or stated after the dash / in its first
+//      tag ("Past Simple Regular Verbs", "Irregular Verbs in the Past Simple",
+//      "Write About Yesterday – Past Simple Writing")
+//   2  comparisons/reviews that include it ("Past Simple vs. Past Continuous",
+//      "Present Perfect vs. Past Simple", "Was or Were?" via its 2nd tag)
+//   3  another topic that mentions it ("The Passive Voice: Past Simple")
+//   4  tags/description only
+// Before, any title that merely STARTED with the query tied with tier 0, so on
+// "past simple" a newer "Past Simple vs. Past Continuous" came out first.
+const TIER_GENERIC_TAGS = new Set(['worksheet', 'language focus', 'esl', 'ele', 'spanish', 'spanish practice', 'grammar', 'reading', 'writing', 'practice', 'speaking', 'vocabulary', 'a1', 'a2', 'b1', 'b2', 'c1']);
+const wsIsGenericTag = t => TIER_GENERIC_TAGS.has(t) || /^(a1|a2|b1|b2|c1) spanish$/.test(t);
+// Multi-topic queries ("ser y estar", "some and any"): every content word
+// present counts as on-topic, whatever the connector the title uses (", " / &).
+const TIER_CONNECTORS = new Set(['and', 'or', 'y', 'o', 'vs', 'versus']);
+// Accent-folded like Spanishido's wsFold, so "pretérito" and "preterito" tier the same.
+const wsTierFold = s => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+// Filler ("tense") is dropped only at the END and only if 2+ words remain:
+// "Past Simple Tense" → "past simple", but "present tense" (Spanish presente)
+// stays as is instead of collapsing to "present" and matching Present Perfect.
+function wsTopicNorm(s) {
+  const words = wsTierFold(s).replace(/&/g, ' and ').replace(/[():,.?!/"'¿¡]/g, ' ').split(/\s+/).filter(Boolean);
+  while (words.length > 2 && TOPIC_FILLER_WORDS.has(words[words.length - 1])) words.pop();
+  return words.join(' ');
+}
+// Whole-word phrase test: "can" must not match inside "hurricane".
+const wsHasPhrase = (hay, q) => (' ' + hay + ' ').includes(' ' + q + ' ');
+const wsIsComparison = s => /\b(vs|versus|and|or|review|y|o|repaso)\b/.test(s);
+function wsTopicTier(w, rawQ) {
+  const q = wsTopicNorm(rawQ);
+  if (!q) return 4;
+  const title = wsTierFold(w.title);
+  const parts = title.split(/\s[–—-]\s/);
+  const beforeDash = parts[0];
+  const afterDash = wsTopicNorm(parts.slice(1).join(' '));
+  // Main topic: before any subtitle colon, without parentheticals or a leading
+  // "the" / "the verb" ("The Verb GUSTAR (Me Gusta…)" → "gustar").
+  const main0 = wsTopicNorm(beforeDash.split(':')[0].replace(/\([^)]*\)/g, ' '));
+  const mains = [main0, main0.replace(/^the /, ''), main0.replace(/^(the )?verb /, '')];
+  const full = wsTopicNorm(beforeDash);
+  const topical = wsTierFold(w.tags).split(',').map(t => t.trim())
+    .filter(t => t && !wsIsGenericTag(t)).map(wsTopicNorm);
+  if (mains.includes(q)) return 0;
+  const qWords = q.split(' ');
+  if (qWords.some(x => TIER_CONNECTORS.has(x))) {
+    const content = qWords.filter(x => !TIER_CONNECTORS.has(x));
+    const hasAll = hay => content.every(c => wsHasPhrase(hay, c));
+    if (mains.some(hasAll)) return 1;
+    if (hasAll(full)) return 2;
+  }
+  const longer = mains.find(m => m.startsWith(q + ' '));
+  if (longer) {
+    const rest = longer.slice(q.length).trim();
+    const other = rest.replace(/^(vs|versus|and|or|y|o)\s+/, '');
+    // "can and can t" pairs the query with its own negative/variant, not another topic.
+    return wsIsComparison(rest) && !other.startsWith(q) ? 2 : 1;
+  }
+  const inPhrase = wsHasPhrase(full, `in the ${q}`) || wsHasPhrase(full, `in ${q}`);
+  if (inPhrase && topical.slice(0, 2).includes(q)) return 1;
+  if (afterDash === q || afterDash.startsWith(q + ' ')) return 1;
+  if (topical[0] === q) return 1;
+  if (wsHasPhrase(full, q)) return wsIsComparison(full) ? 2 : 3;
+  if (topical.slice(0, 2).includes(q)) return 2;
+  if (topical.includes(q)) return 2;
+  if (topical.some(t => wsHasPhrase(t, q))) return 3;
+  if (wsHasPhrase(wsTopicNorm(title), q)) return 3;
+  return 4;
+}
+// "Best match" order inside a tier: teachers' real signal (ratings, then
+// downloads), then the set order a lesson follows, then the entry level.
+const BEST_TYPE_ORDER = ['Grammar', 'Reading', 'Writing', 'Practice', 'Speaking', 'Vocabulary'];
+function wsQuality(w) {
+  const rated = (w.ratings_count || 0) > 0 ? (w.rating || 0) * Math.min(w.ratings_count, 5) : 0;
+  return (w.downloads || 0) + rated;
+}
+function wsBestCompare(a, b) {
+  const qd = wsQuality(b) - wsQuality(a);
+  if (qd) return qd;
+  const ta = BEST_TYPE_ORDER.indexOf(a.category), tb = BEST_TYPE_ORDER.indexOf(b.category);
+  if (ta !== tb) return (ta < 0 ? 99 : ta) - (tb < 0 ? 99 : tb);
+  if (a.level !== b.level) return (a.level || 'Z').localeCompare(b.level || 'Z');
+  return new Date(b.created_at || 0) - new Date(a.created_at || 0);
 }
 
 // Ranks a worksheet's relevance to a search query: exact title match scores
@@ -874,7 +956,7 @@ async function loadWorksheets() {
   // Only the columns the catalog list/cards/search actually use — not select('*').
   // Drops file_url, teacher_edition_url, topic_key, rating, uploader_* … which
   // cut the payload for ~700 rows from ~690 KB to ~450 KB.
-  const COLS = 'id,slug,title,level,category,tags,thumbnail_url,is_free,downloads,description,created_at';
+  const COLS = 'id,slug,title,level,category,tags,thumbnail_url,is_free,downloads,rating,ratings_count,description,created_at';
   const { data, error } = await sb2.from('worksheets').select(COLS).order('created_at', { ascending: false, nullsFirst: false }).limit(1000);
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
