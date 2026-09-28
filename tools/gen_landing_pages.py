@@ -119,6 +119,7 @@ PAGE_TEMPLATE = '''<!DOCTYPE html>
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -165,9 +166,9 @@ __STYLE__
   <a href="/index.html" class="nav-logo">work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="/workshido-index.html">Browse</a></li>
-    <li><a href="/workshido-index.html?cat=Grammar">Grammar</a></li>
-    <li><a href="/workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
-    <li><a href="/workshido-index.html?cat=Reading">Skills</a></li>
+    <li><a href="/worksheets/grammar/">Grammar</a></li>
+    <li><a href="/worksheets/vocabulary/">Vocabulary</a></li>
+    <li><a href="/worksheets/reading/">Skills</a></li>
     <li><a href="/workshido-forteachers.html">For teachers</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
@@ -189,10 +190,10 @@ __STYLE__
     </div>
     <div class="mobile-menu-links">
       <a href="/workshido-index.html">Browse all</a>
-      <a href="/workshido-index.html?cat=Grammar">Grammar</a>
-      <a href="/workshido-index.html?cat=Vocabulary">Vocabulary</a>
-      <a href="/workshido-index.html?cat=Reading">Reading</a>
-      <a href="/workshido-index.html?cat=Writing">Writing</a>
+      <a href="/worksheets/grammar/">Grammar</a>
+      <a href="/worksheets/vocabulary/">Vocabulary</a>
+      <a href="/worksheets/reading/">Reading</a>
+      <a href="/worksheets/writing/">Writing</a>
       <a href="/workshido-forteachers.html">For teachers</a>
     </div>
     <div class="mobile-menu-footer">
@@ -267,7 +268,8 @@ __STYLE__
       <h4>Levels</h4>
       <a href="/worksheets/levels/a1/">A1 Beginner</a>
       <a href="/worksheets/levels/a2/">A2 Elementary</a>
-      <a href="/workshido-index.html?level=B1">B1 Intermediate</a>
+      <a href="/worksheets/levels/b1/">B1 Intermediate</a>
+      <a href="/worksheets/levels/b2/">B2 Upper-intermediate</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>

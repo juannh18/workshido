@@ -18,6 +18,7 @@
 // same text) — harmless, idempotent, and it keeps this a two-file change
 // instead of a full SSR rewrite.
 const { createClient } = require('@supabase/supabase-js');
+const { topicFor, seoTitle } = require('../lib/topics');
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const SITE = 'https://workshido.com';
@@ -92,6 +93,20 @@ const SLUG_ROUTE = /^\/worksheet\/([^/]+)\/?$/;
 
 const slugUrl = (slug) => `${SITE}/worksheet/${slug}/`;
 
+const CATEGORY_PAGES = { Grammar: 'grammar', Vocabulary: 'vocabulary', Reading: 'reading', Writing: 'writing' };
+
+// Home › A1 Worksheets › <topic hub, or category page> › <title>. Returned as
+// data so the visible trail, the BreadcrumbList JSON-LD and the client
+// re-render (via #wsSeo) are built from the same list.
+function breadcrumbFor(data, topic, url) {
+  const items = [{ name: 'Home', url: `${SITE}/` }];
+  if (data.level) items.push({ name: `${data.level} Worksheets`, url: `${SITE}/worksheets/levels/${data.level.toLowerCase()}/` });
+  if (topic && topic.hub) items.push({ name: topic.hub.name, url: `${SITE}/worksheets/topics/${topic.hub.slug}/` });
+  else if (CATEGORY_PAGES[data.category]) items.push({ name: data.category, url: `${SITE}/worksheets/${CATEGORY_PAGES[data.category]}/` });
+  items.push({ name: data.title, url });
+  return items;
+}
+
 exports.handler = async (event) => {
   const path = event.path || '';
   const slugMatch = path.match(SLUG_ROUTE);
@@ -107,9 +122,11 @@ exports.handler = async (event) => {
 
   // Neither a slug nor an id (or a malformed request) — serve the template
   // untouched, same as the static file always did. Never block the page.
+  // Bare /workshido-worksheet.html (no id, no slug) is an empty shell titled just
+  // "Workshido" with a self-canonical — a soft-404 in Search Console. Send it to
+  // the catalog instead.
   if (!slug && !id) {
-    const template = await getTemplate(event);
-    return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
+    return { statusCode: 301, headers: { Location: '/workshido-index.html', 'Cache-Control': 'public, max-age=3600' }, body: '' };
   }
 
   try {
@@ -147,7 +164,7 @@ exports.handler = async (event) => {
     // worksheet titles are already descriptive, and the extra " — Workshido"
     // just pushed them past Google's ~60-char SERP cutoff.
     const title = `${data.title} — Workshido`;
-    const pageTitle = data.title;
+    const pageTitle = seoTitle(data);
     const desc = data.description
       ? trimDesc(data.description)
       : `Free ${data.level || ''} ${data.category || 'English'} worksheet — download and print for class.`.replace(/\s+/g, ' ').trim();
@@ -163,6 +180,26 @@ exports.handler = async (event) => {
     // meta description isn't truncated in the SERP; description_long keeps the
     // fuller text, which is worth more here as indexable page content.
     const bodyDesc = data.description_long || data.description || desc;
+
+    const topic = topicFor(data);
+    const crumbs = breadcrumbFor(data, topic, url);
+    const crumbsHtml = crumbs
+      .map((c, i) => (i === crumbs.length - 1
+        ? `<span aria-current="page">${escapeHtml(c.name)}</span>`
+        : `<a href="${escapeAttr(c.url.replace(SITE, ''))}">${escapeHtml(c.name)}</a>`))
+      .join('<span>›</span>');
+    const breadcrumbLD = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: c.url })),
+    }).replace(/</g, '\\u003c');
+    const topicLinks = [];
+    if (topic && topic.guide) topicLinks.push({ href: `/guides/${topic.guide.slug}/`, text: `📘 ${topic.guide.label} →` });
+    if (topic && topic.hub) topicLinks.push({ href: `/worksheets/topics/${topic.hub.slug}/`, text: `All ${topic.hub.name} worksheets →` });
+    const topicLinksHtml = topicLinks.map((l) => `<a href="${escapeAttr(l.href)}">${escapeHtml(l.text)}</a>`).join('');
+    // Read by js/workshido-worksheet.js so its re-render keeps the same title,
+    // trail and links without duplicating the topic map client-side.
+    const seoData = JSON.stringify({ title: pageTitle, crumbs, links: topicLinks }).replace(/</g, '\\u003c');
 
     // Mirrors the LearningResource JSON-LD that js/workshido-worksheet.js
     // builds client-side (kept in sync with that block). Stringified with < → <
@@ -190,6 +227,40 @@ exports.handler = async (event) => {
       .replace(
         '<h1 class="ws-title" id="ssrTitle">English worksheet</h1>',
         `<h1 class="ws-title" id="ssrTitle">${escapeHtml(data.title)}</h1>`
+      )
+      .replace(
+        /<div class="breadcrumb" id="breadcrumb" role="navigation" aria-label="Breadcrumb">[\s\S]*?<\/div>/,
+        `<div class="breadcrumb" id="breadcrumb" role="navigation" aria-label="Breadcrumb">${crumbsHtml}</div>`
+      )
+      .replace(
+        '<div class="ws-topic-links" id="ssrTopicLinks" hidden></div>',
+        topicLinksHtml ? `<div class="ws-topic-links" id="ssrTopicLinks">${topicLinksHtml}</div>` : ''
+      )
+      .replace(
+        '<script type="application/ld+json" id="breadcrumbLD"></script>',
+        `<script type="application/ld+json" id="breadcrumbLD">${breadcrumbLD}</script>`
+      )
+      .replace(
+        '<script type="application/json" id="wsSeo"></script>',
+        `<script type="application/json" id="wsSeo">${seoData}</script>`
+      )
+      // Real preview image in the initial HTML: it is the LCP element, and
+      // with explicit width/height it reserves its box, so the client re-render
+      // of #pageWrap doesn't shift the page. Same attributes the client uses.
+      // Preload the LCP image from <head> so it starts downloading before the
+      // parser reaches the body (the inline CSS in <head> is large).
+      .replace(
+        '<link rel="preconnect" href="https://files.workshido.com">',
+        data.thumbnail_url
+          ? `<link rel="preconnect" href="https://files.workshido.com">
+<link rel="preload" as="image" href="${escapeAttr(data.thumbnail_url)}" fetchpriority="high">`
+          : '<link rel="preconnect" href="https://files.workshido.com">'
+      )
+      .replace(
+        '<div class="preview-box" id="ssrPreview"><div class="loading">Loading worksheet...</div></div>',
+        data.thumbnail_url
+          ? `<div class="preview-box" id="ssrPreview"><img src="${escapeAttr(data.thumbnail_url)}" alt="${escapeAttr(data.title)}" fetchpriority="high" decoding="async" width="640" height="904"></div>`
+          : '<div class="preview-box" id="ssrPreview"></div>'
       )
       .replace(
         '<p class="ws-desc" id="ssrDesc" hidden></p>',

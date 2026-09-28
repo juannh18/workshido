@@ -42,6 +42,12 @@ function smThumb(u) { return u && /\.webp(\?|$)/i.test(u) ? u.replace(/\.webp(\?
 let allWorksheets = [];
 const PAGE_SIZE = 24;
 let currentPage = 1;
+// Curated-rows views (default + level-only) page by ROW: page N shows the
+// N-th group of 5 in every row. rowPageCount is 0 whenever the flat grid is
+// showing instead.
+const ROW_SIZE = 5;
+let rowPageCount = 0;
+const sliceRow = items => items.slice((currentPage - 1) * ROW_SIZE, currentPage * ROW_SIZE);
 let _lastFiltered = [];
 let activeLevel = 'all';
 let activeCategory = 'all';
@@ -88,6 +94,7 @@ function renderLatestRows() {
   const container = document.getElementById('latestRows');
   if (!container) return;
   const sort = document.getElementById('sortSelect')?.value || 'newest';
+  let maxPages = 1;
   const rowsHtml = LATEST_ROWS_DEF.map(row => {
     // Level rows exclude Vocabulary — otherwise whenever a level's most
     // recent/downloaded uploads happen to also be its most recent/downloaded
@@ -102,7 +109,8 @@ function renderLatestRows() {
         ? w.level === row.value && (w.category || '').toLowerCase() !== 'vocabulary'
         : cardCategory(w) === row.value);
     if (sort === 'downloads') items = [...items].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
-    items = items.slice(0, 5);
+    maxPages = Math.max(maxPages, Math.ceil(items.length / ROW_SIZE));
+    items = sliceRow(items);
     if (!items.length) return '';
     return `<div class="latest-row">
       <div class="latest-row-header">
@@ -113,6 +121,8 @@ function renderLatestRows() {
     </div>`;
   }).filter(Boolean).join('');
   container.innerHTML = rowsHtml;
+  rowPageCount = maxPages;
+  renderPagination(maxPages, 1);
 }
 
 function latestRowSeeAll(type, value) {
@@ -143,10 +153,12 @@ function renderLevelRows(level) {
   const container = document.getElementById('latestRows');
   if (!container) return;
   const sort = document.getElementById('sortSelect')?.value || 'newest';
+  let maxPages = 1;
   const rowsHtml = LEVEL_ROW_LABELS.map(label => {
     let items = allWorksheets.filter(w => w.level === level && levelRowMatches(w, label));
     if (sort === 'downloads') items = [...items].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
-    items = items.slice(0, 5);
+    maxPages = Math.max(maxPages, Math.ceil(items.length / ROW_SIZE));
+    items = sliceRow(items);
     if (!items.length) return '';
     return `<div class="latest-row">
       <div class="latest-row-header">
@@ -157,6 +169,8 @@ function renderLevelRows(level) {
     </div>`;
   }).filter(Boolean).join('');
   container.innerHTML = rowsHtml;
+  rowPageCount = maxPages;
+  renderPagination(maxPages, 1);
 }
 
 function levelRowSeeAll(label) {
@@ -204,7 +218,7 @@ const SIDEBAR_SECTIONS = [
     { label: 'First vs second conditional', match: ['first vs. second conditional', 'first vs second conditional'] },
     { label: 'Passive voice',         match: ['passive voice'] },
     { label: 'Reported speech',       match: ['reported speech'] },
-    { label: 'Imperatives',           match: ['imperatives', 'commands'] },
+    { label: 'Imperatives',           match: ['imperative'] },
     { label: 'Demonstratives',        match: ['demonstratives', 'this that these those'] },
     { label: 'Articles a/an/the',     match: ['articles', 'a an the'] },
     { label: 'Possessive adjectives', match: ['possessive adjectives', 'possessiveadjectives', 'possessives'] },
@@ -239,7 +253,7 @@ const SIDEBAR_SECTIONS = [
     { label: 'Practice worksheets', match: ['practice'] },
   ]},
   { title: 'Topic', items: [
-    { label: 'Travel',        match: ['travel'] },
+    { label: 'Travel',        match: [', travel', 'travel and', 'travel vocabulary'] },
     { label: 'Daily routine', match: ['daily routine'] },
     { label: 'Food & drink',  match: ['food'] },
   ]},
@@ -520,10 +534,10 @@ function renderPage() {
   renderCards(pageData, _lastFiltered.length);
 }
 
-function renderPagination(total) {
+function renderPagination(total, size = PAGE_SIZE) {
   const el = document.getElementById('pagination');
   if (!el) return;
-  const pageCount = Math.ceil(total / PAGE_SIZE);
+  const pageCount = Math.ceil(total / size);
   if (pageCount <= 1) { el.style.display = 'none'; el.innerHTML = ''; return; }
   el.style.display = 'flex';
   const btn = (label, page, opts = {}) =>
@@ -541,16 +555,23 @@ function renderPagination(total) {
   el.innerHTML = html;
 }
 
+function renderCurrentView() {
+  if (isDefaultView()) renderLatestRows();
+  else if (isLevelOnlyView()) renderLevelRows(activeLevel);
+  else renderPage();
+}
+
 function goToPage(page) {
-  const pageCount = Math.ceil(_lastFiltered.length / PAGE_SIZE);
+  const rowMode = isDefaultView() || isLevelOnlyView();
+  const pageCount = rowMode ? rowPageCount : Math.ceil(_lastFiltered.length / PAGE_SIZE);
   if (page < 1 || page > pageCount || page === currentPage) return;
   currentPage = page;
   // Keep ?page= in sync so the Back button from a worksheet opened on page 4
   // returns to page 4, not page 1 — filters were already preserved this way,
   // the page number was the one thing missing.
   syncUrl();
-  renderPage();
-  document.getElementById('cardGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  renderCurrentView();
+  document.getElementById(rowMode ? 'latestRows' : 'cardGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // Edit distance between two short words, capped so a couple of typos (one
@@ -648,13 +669,17 @@ function filterAndRender() {
   // searching "reported speech"/"passive voice" while browsing A1 used to
   // say "No worksheets match your filters" even though those topics exist
   // (just starting at a higher level), which reads as "this doesn't exist
-  // on the site" rather than "not at A1". If a level-scoped search comes up
-  // empty, drop the level and search the whole catalog instead — each
-  // result card still shows its own level badge, so it's clear where it's
-  // actually found (e.g. B2).
+  // on the site" rather than "not at A1". That only fixed the ZERO-results
+  // case though: a topic that DOES exist at the current level too (e.g.
+  // "present simple" while browsing B2) still silently hid every other
+  // level's worksheets on the same topic, with no empty state to trigger
+  // the fallback. So a search always searches the whole catalog now,
+  // regardless of how many results the active level alone would have had —
+  // each result card still shows its own level badge, so it's clear where
+  // it's actually found.
   searchBroadenedFromLevel = '';
-  if (searchQuery && filtered.length === 0 && activeLevel !== 'all') {
-    searchBroadenedFromLevel = activeLevel;
+  if (searchQuery && activeLevel !== 'all') {
+    if (filtered.length === 0) searchBroadenedFromLevel = activeLevel;
     activeLevel = 'all';
     syncLevelChips();
     syncUrl();
@@ -742,6 +767,7 @@ function filterAndRender() {
     if (contentCount) contentCount.textContent = `${filtered.length} worksheet${filtered.length !== 1 ? 's' : ''}`;
     renderLevelRows(activeLevel);
   } else {
+    rowPageCount = 0;
     if (latestRows)  latestRows.style.display = 'none';
     if (cardGrid)     cardGrid.style.display = '';
     if (catalogLabel) catalogLabel.style.display = '';
@@ -1061,8 +1087,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // filterAndRender() always resets to page 1, so restore the saved page
     // afterward (e.g. returning via Back from a worksheet opened on page 4).
     if (page > 1) {
-      const pageCount = Math.ceil(_lastFiltered.length / PAGE_SIZE);
-      if (page <= pageCount) { currentPage = page; renderPage(); }
+      const rowMode = isDefaultView() || isLevelOnlyView();
+      const pageCount = rowMode ? rowPageCount : Math.ceil(_lastFiltered.length / PAGE_SIZE);
+      if (page <= pageCount) { currentPage = page; renderCurrentView(); }
     }
   });
 });

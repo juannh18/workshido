@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -787,6 +788,9 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   .content { padding: 32px; max-width: 1100px; margin: 0 auto; }
   @media (max-width: 480px) { .hero-lite { padding: 40px 16px 32px; } .related-section { padding: 8px 16px 32px; } }
 </style>
+<style>/* iOS zooms into any focused field under 16px and leaves the page zoomed and
+   shifted sideways; 16px on phones prevents it without disabling pinch-zoom. */
+@media (max-width:768px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
 <script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
@@ -797,9 +801,9 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <a href="/index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="/workshido-index.html">Browse Worksheets</a></li>
-    <li><a href="/workshido-index.html?cat=Grammar">Grammar</a></li>
-    <li><a href="/workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
-    <li><a href="/workshido-index.html?cat=Reading">Skills</a></li>
+    <li><a href="/worksheets/grammar/">Grammar</a></li>
+    <li><a href="/worksheets/vocabulary/">Vocabulary</a></li>
+    <li><a href="/worksheets/reading/">Skills</a></li>
     <li><a href="/workshido-forteachers.html">For teachers</a></li>
   </ul>
   <div class="nav-actions" id="navActions">
@@ -821,10 +825,10 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
     </div>
     <div class="mobile-menu-links">
       <a href="/workshido-index.html">Browse all</a>
-      <a href="/workshido-index.html?cat=Grammar">Grammar</a>
-      <a href="/workshido-index.html?cat=Vocabulary">Vocabulary</a>
-      <a href="/workshido-index.html?cat=Reading">Reading</a>
-      <a href="/workshido-index.html?cat=Writing">Writing</a>
+      <a href="/worksheets/grammar/">Grammar</a>
+      <a href="/worksheets/vocabulary/">Vocabulary</a>
+      <a href="/worksheets/reading/">Reading</a>
+      <a href="/worksheets/writing/">Writing</a>
       <a href="/workshido-forteachers.html">For teachers</a>
     </div>
     <div class="mobile-menu-footer">
@@ -861,7 +865,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
       <span class="content-title" id="contentTitle">Free B1 English Worksheets</span>
       <span class="content-count" id="contentCount"></span>
     </div>
-    <select class="sort-select" id="sortSelect">
+    <select class="sort-select" id="sortSelect" aria-label="Sort worksheets">
       <option value="newest">Newest first</option>
       <option value="downloads">Most downloaded</option>
     </select>
@@ -882,6 +886,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
       <a href="/worksheets/reading/" class="related-link">Reading</a>
       <a href="/worksheets/writing/" class="related-link">Writing</a>
       <a href="/worksheets/levels/a1/" class="related-link">A1 Beginner</a>
+    <a href="/worksheets/topics/" class="related-link">Grammar by topic</a>
     <a href="/workshido-index.html" class="related-link">Full catalog →</a>
   </div>
 </section>
@@ -933,6 +938,9 @@ const PAGE_SIZE = 24;
 let currentPage = 1;
 let _lastFiltered = [];
 
+// Cards render at ~210-280px: use the ~440px _sm derivative instead of the
+// 640px preview (≈660 KB less per page on A1). onerror falls back to the original.
+function smThumb(u) { return u && /\.webp(\?|$)/i.test(u) ? u.replace(/\.webp(\?|$)/i, '_sm.webp$1') : u; }
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function catalogStars(ws) {
@@ -957,7 +965,7 @@ function buildCard(ws) {
     : `<a href="${ws.slug ? `/worksheet/${ws.slug}/` : `/workshido-worksheet.html?id=${ws.id}`}" class="btn-download locked" style="text-decoration:none;">🔒 Unlock</a>`;
   const tags   = (ws.tags || ws.category || '').split(',').slice(0,2).map(t=>`<span class="tag">${esc(t.trim())}</span>`).join('');
   const thumb = ws.thumbnail_url
-    ? `<img src="${ws.thumbnail_url}" alt="${esc(ws.title)}" loading="lazy">`
+    ? `<img src="${smThumb(ws.thumbnail_url)}" onerror="this.onerror=null;this.src='${ws.thumbnail_url}'" alt="${esc(ws.title)}" loading="lazy" decoding="async">`
     : `<div class="ws-preview"><div class="wl ${accent}"></div><div class="wl"></div><div class="wl short"></div><div class="wb"></div><div class="wb"></div><div class="wl short"></div></div>`;
   const overlay = !ws.thumbnail_url ? `<div class="card-thumb-overlay"><span class="overlay-logo">Work<span>shido</span></span><span class="overlay-level ${lvlCls}">${ws.level}</span></div>` : '';
   return `<div class="ws-card">

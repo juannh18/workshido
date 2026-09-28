@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -298,6 +299,9 @@
 
 html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
+<style>/* iOS zooms into any focused field under 16px and leaves the page zoomed and
+   shifted sideways; 16px on phones prevents it without disabling pinch-zoom. */
+@media (max-width:768px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
 <script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
@@ -307,7 +311,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="workshido-index.html">Browse Worksheets</a></li>
-    <li><a href="workshido-index.html?cat=Grammar">Grammar</a></li>
+    <li><a href="/worksheets/grammar/">Grammar</a></li>
     <li><a href="workshido-index.html?cat=Skills">Skills</a></li>
     <li><a href="workshido-forteachers.html">For teachers</a></li>
     <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--white);">⬆ Upload</a></li>

@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const { HUBS } = require('../lib/topics');
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 const SITE = 'https://workshido.com';
@@ -16,11 +17,23 @@ const STATIC_PAGES = [
   { loc: '/worksheets/levels/a2/', changefreq: 'weekly', priority: '0.8' },
   { loc: '/worksheets/levels/b1/', changefreq: 'weekly', priority: '0.8' },
   { loc: '/worksheets/levels/b2/', changefreq: 'weekly', priority: '0.8' },
+  { loc: '/worksheets/topics/', changefreq: 'weekly', priority: '0.7' },
+  ...HUBS.map((t) => ({ loc: `/worksheets/topics/${t.hub.slug}/`, changefreq: 'weekly', priority: '0.7' })),
   { loc: '/guides/', changefreq: 'monthly', priority: '0.7' },
   { loc: '/guides/how-to-sequence-esl-lessons/', changefreq: 'monthly', priority: '0.7' },
   { loc: '/guides/how-to-teach-present-simple/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/cefr-levels-guide/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/esl-warm-up-activities/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/esl-warm-up-activities/board-race/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/category-race/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/chain-story/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/mime-the-verb/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/odd-one-out/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/picture-description-sprint/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/question-swap/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/two-truths-and-a-lie/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/would-you-rather/', changefreq: 'monthly', priority: '0.5' },
+  { loc: '/guides/esl-warm-up-activities/yesterday-i/', changefreq: 'monthly', priority: '0.5' },
   { loc: '/guides/how-to-teach-past-simple/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-present-perfect/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-present-continuous/', changefreq: 'monthly', priority: '0.6' },
@@ -32,6 +45,11 @@ const STATIC_PAGES = [
   { loc: '/guides/how-to-teach-conditionals/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-modal-verbs/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-learn-irregular-verbs/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-passive-voice/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-phrasal-verbs/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-used-to/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-past-perfect/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-linking-words/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/workshido-privacy.html', changefreq: 'yearly', priority: '0.3' },
   { loc: '/workshido-terms.html', changefreq: 'yearly', priority: '0.3' },
 ];

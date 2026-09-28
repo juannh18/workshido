@@ -18,8 +18,38 @@
 # real file exists at each path and would otherwise be served directly.
 # New internal scripts should live under tools/ (already blocked below),
 # never loose at the repo root.
+# Guides answered 200 on /guides/<slug>/index.html as well as /guides/<slug>/
+# (duplicate URL). Only the request path is matched, so /guides/<slug>/ itself
+# still resolves to its index.html without looping.
+[[redirects]]
+  from = "/guides/index.html"
+  to = "/guides/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/guides/:slug/index.html"
+  to = "/guides/:slug/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/guides/:section/:slug/index.html"
+  to = "/guides/:section/:slug/"
+  status = 301
+  force = true
+
 [[redirects]]
   from = "/tools/*"
+  to = "/"
+  status = 404
+  force = true
+
+# Function/edge-function source (netlify/functions, netlify/lib) was being
+# served as plain files at /netlify/... (no secrets — those are env vars — but
+# it exposes webhook and upload logic). /.netlify/functions/* is unaffected.
+[[redirects]]
+  from = "/netlify/*"
   to = "/"
   status = 404
   force = true
@@ -35,6 +65,197 @@
   to = "/"
   status = 404
   force = true
+
+# Internal files that were publicly downloadable (found 23/09/2026): Teacher
+# Edition HTML sources (paid content), internal notes, verification renders.
+# te_*.html is listed one by one — keep TE sources out of the repo root or add
+# them here before deploying.
+[[redirects]]
+  from = "/__pycache__/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_verify/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/UsersjuandDownloadsverify_batch3/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/UsersjuandDownloadsverify_fix/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/UsersjuandDownloadsverify_psc/*"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/teacher-edition-template.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/orphan_list.txt"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/all_tags_check.json"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/ids_check.txt"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/deno.lock"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/convert-thumbnail.js"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_christmas_vocabulary_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_classroom_objects_vocabulary_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_days_of_the_week_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_feelings_and_emotions_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_furniture_vocabulary_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_halloween_vocabulary_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_hobbies_and_free_time_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_home_and_rooms_vocabulary_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_months_and_seasons_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_numbers_1_20_vocabulary_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_numbers_20_100_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_school_vocabulary_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_summer_vacation_word_search_a2.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_thanksgiving_vocabulary_word_search_a2.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_travel_and_holidays_word_search_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_was_or_were_grammar_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_was_or_were_reading_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/te_was_or_were_writing_a1.html"
+  to = "/"
+  status = 404
+  force = true
+
 
 [[redirects]]
   from = "/create_pdf_worksheet.py"
@@ -213,6 +434,20 @@
 # Inject real <a href> links to individual worksheets into the 6 category/
 # level landing pages before their JS-driven card grid loads — see
 # netlify/functions/category-page.js. Same force=true reasoning as above.
+# Grammar-topic hubs (/worksheets/topics/ and /worksheets/topics/<slug>/),
+# fully server-rendered — see netlify/functions/topic-page.js.
+[[redirects]]
+  from = "/worksheets/topics/"
+  to = "/.netlify/functions/topic-page"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/worksheets/topics/*"
+  to = "/.netlify/functions/topic-page"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/worksheets/grammar/"
   to = "/.netlify/functions/category-page"
@@ -337,6 +572,34 @@
   to = "/workshido-terms.html"
   status = 301
   force = true
+
+# Internal templates that are publicly reachable but must never be indexed:
+# the category/level/worksheet functions fetch them over HTTP (so they can't
+# 404), and the functions set their own headers, so this noindex never reaches
+# the real pages.
+[[headers]]
+  for = "/worksheets/:section/index-app.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    X-Internal-Template = "1"
+
+[[headers]]
+  for = "/worksheets/levels/:level/index-app.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    X-Internal-Template = "1"
+
+[[headers]]
+  for = "/workshido-worksheet-app.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    X-Internal-Template = "1"
+
+[[headers]]
+  for = "/404.html"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    X-Internal-Template = "1"
 
 [[headers]]
   for = "/*"

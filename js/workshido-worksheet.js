@@ -26,32 +26,61 @@ function titleBase(t) {
 function isEasyWordSearch(t) {
   return /\(easy version\)/i.test(t || '');
 }
-// Vocabulary worksheets rarely share a title-base sibling ("Body Parts" has
-// no "Body Parts – Reading" counterpart) but do share topic tags with other
-// worksheets phrased differently ("Body Parts" / "Parts of the Face" both
-// tagged "body parts") — strip generic tags (format/level/category words)
-// so only real topic words are left to match on.
-// Format/activity-type tags (how a worksheet is exercised, not what it's
-// about) belong here too, or they masquerade as topic tags in byTag — e.g.
-// "word search" sat outside the list and matched EVERY "* – Word Search"
-// worksheet regardless of subject, drowning out the real same-topic matches
-// (Body Parts / Parts of the Face) with unrelated ones (Colors, Weather...)
-// that just happen to share the word-search format.
-const TAG_STOPLIST = new Set(['worksheet','vocabulary','grammar','reading','writing','practice','listening','speaking','esl','english','a1','a2','b1','b2','c1','reading comprehension','comprehension','labeling','label and learn','language focus','word search','matching','fill-in-the-blank','review']);
-function meaningfulTags(tagsStr) {
-  return (tagsStr || '').split(',').map(t => t.trim().toLowerCase()).filter(t => t.length > 2 && !TAG_STOPLIST.has(t));
+// "More on this topic" relevance: worksheets on the same topic are phrased
+// differently ("Contrast and Concession" vs. "Conjunctions", tags "despite"
+// vs. "linking words"), so exact tag matching missed most of them. Instead,
+// score shared words/phrases from the title and tags, weighted by how rare
+// each one is across the catalog (idf) — the title's own phrases ("present
+// simple") weigh most, generic words are ignored, and a short list of grammar
+// families links different wording for the same underlying point.
+const REL_STOP = new Set(('worksheet worksheets grammar reading writing practice vocabulary listening speaking esl english ' +
+  'the and of to an in on for with at by from or vs is are be your you my review comprehension language focus word search ' +
+  'matching fill blank label learn labeling exercise exercises activity activities use using level test quiz part new easy ' +
+  'version drill drills sentences sentence text texts short guided skills skill functional variant tense tenses structures structure').split(' '));
+const REL_FAMILIES = {
+  linking: 'contrast concession although despite whereas nevertheless linking connectors connector conjunctions conjunction cohesion cohesive',
+  comparison: 'comparative comparatives comparison superlative superlatives comparing equality',
+  conditional: 'conditional conditionals wish unless',
+  passive: 'passive', reported: 'reported speech indirect', relative: 'relative', future: 'future',
+  modal: 'modal modals must should might could obligation', perfect: 'perfect', past: 'past',
+  quantity: 'quantifiers quantifier countable uncountable', gerund: 'gerund gerunds infinitive infinitives',
+  articles: 'articles article', prepositions: 'prepositions preposition', adjectives: 'adjectives adjective',
+  adverbs: 'adverbs adverb', questions: 'questions question', pronouns: 'pronouns pronoun possessive possessives',
+};
+const REL_WORD2FAM = new Map();
+for (const [f, ws] of Object.entries(REL_FAMILIES)) for (const w of ws.split(' ')) REL_WORD2FAM.set(w, [...(REL_WORD2FAM.get(w) || []), f]);
+const REL_MIN = 5;    // below this, two worksheets only share incidental words
+const REL_MAX = 24;   // cap on non-set matches, keeps the section scannable
+function relWords(s) {
+  return ((s || '').toLowerCase().match(/[a-zà-ÿ']+/g) || []).filter(w => w.length > 2 && !REL_STOP.has(w));
 }
-// Safety net beyond the static stoplist above: a tag shared by an unusually
-// large slice of the WHOLE catalog (not one level) behaves like a category
-// label in disguise ("language focus" sat on 61/176 A1 worksheets alone —
-// now in the stoplist directly) rather than a real topic. The limit has to
-// stay generous, though: a genuinely popular grammar topic spanning 3+
-// levels at ~10-12 worksheets each (e.g. "present perfect": 32 across the
-// catalog) is completely normal and must NOT be filtered out as generic —
-// that silently broke A1↔A2 present-perfect matching until this was raised.
-const TAG_FREQ_LIMIT = 45;
-function specificTags(tags, freq) {
-  return tags.filter(t => (freq.get(t) || 0) <= TAG_FREQ_LIMIT);
+function relTerms(r) {
+  const t = new Map();
+  const add = (x, w) => { if ((t.get(x) || 0) < w) t.set(x, w); };
+  const tw = relWords((r.title || '').split(/\s[–-]\s/)[0]);
+  tw.forEach(w => add(w, 1));
+  for (let i = 1; i < tw.length; i++) add(tw[i - 1] + '_' + tw[i], 3);
+  for (const tag of (r.tags || '').split(',')) {
+    const ww = relWords(tag);
+    ww.forEach(w => add(w, 0.6));
+    if (ww.length > 1) add(ww.join('_'), 0.8);
+  }
+  for (const x of [...t.keys()]) for (const f of (REL_WORD2FAM.get(x) || [])) add('fam:' + f, 1.6);
+  return t;
+}
+function relevanceScores(data, rows) {
+  const termsById = new Map([data, ...rows].map(r => [r.id, relTerms(r)]));
+  const df = new Map();
+  for (const m of termsById.values()) for (const x of m.keys()) df.set(x, (df.get(x) || 0) + 1);
+  const n = termsById.size, q = termsById.get(data.id);
+  const scores = new Map();
+  for (const r of rows) {
+    const d = termsById.get(r.id);
+    let s = 0;
+    for (const [x, w] of q) if (d.has(x)) s += w * Math.log(n / df.get(x));
+    scores.set(r.id, s);
+  }
+  return scores;
 }
 // Format families ("word search", "label and learn"): deliberately NOT topic
 // matches — they stay in the stoplist above so they can't drown out the real
@@ -176,7 +205,12 @@ async function loadWorksheet() {
   const relatedRowsP = sb.from('worksheets')
     .select('id,slug,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id);
 
-  document.title = data.title;  // brand suffix stays on OG/Twitter, not <title> (SERP length)
+  // #wsSeo is written by netlify/functions/worksheet-page.js: SERP title,
+  // breadcrumb trail and guide/hub links from the shared topic map
+  // (netlify/lib/topics.js). Empty when the SSR fell back to the bare template.
+  let wsSeo = null;
+  try { wsSeo = JSON.parse(document.getElementById('wsSeo')?.textContent || 'null'); } catch (e) {}
+  document.title = wsSeo?.title || data.title;  // brand suffix stays on OG/Twitter, not <title> (SERP length)
   // description is capped at 160 for the SERP snippet; description_long holds the
   // fuller copy and is what the page body shows (and what JSON-LD describes).
   const wsMetaDescription = data.description || `${data.level} ${data.category} worksheet. Free download.`;
@@ -203,8 +237,13 @@ async function loadWorksheet() {
   document.querySelector('meta[property="og:url"]')?.setAttribute('content', wsUrl);
   const schema = document.getElementById('schemaLD');
   if (schema) schema.textContent = JSON.stringify({ "@context":"https://schema.org","@type":"LearningResource","name":data.title,"description":wsBodyDescription,"educationalLevel":data.level,"learningResourceType":"Worksheet","inLanguage":"en","isAccessibleForFree":data.is_free,"url":wsUrl,"mainEntityOfPage":wsUrl,"provider":{"@type":"Organization","name":"Workshido","url":"https://workshido.com"} });
-  document.getElementById('bcCategory').textContent = data.category || 'Worksheet';
-  document.getElementById('bcTitle').textContent = data.title;
+  const bc = document.getElementById('breadcrumb');
+  if (bc && !wsSeo?.crumbs) {
+    bc.innerHTML = `<a href="/">Home</a><span>›</span>` +
+      (data.level ? `<a href="/worksheets/levels/${esc(data.level.toLowerCase())}/">${esc(data.level)} Worksheets</a><span>›</span>` : '') +
+      `<span aria-current="page">${esc(data.title)}</span>`;
+  }
+  const topicLinksHtml = (wsSeo?.links || []).map(l => `<a href="${esc(l.href)}">${esc(l.text)}</a>`).join('');
 
   const lvlCls = LEVEL_CLASS[data.level] || 'a1';
   const tags = (data.tags || '').split(',').filter(t => t.trim()).map(t => `<span class="tag">${esc(t.trim())}</span>`).join('');
@@ -283,7 +322,8 @@ async function loadWorksheet() {
             </span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
-          ${!currentUser ? '<p class="premium-note">Already Premium? <a onclick="googleLoginDl()">Sign in</a></p>' : ''}`)
+          <p class="te-benefit"><b>Answer key + ready lesson plan</b> — save ~20 min of prep</p>
+          ${!currentUser ? '<p class="premium-note">Already Premium? <a href="/workshido-login.html" onclick="googleLoginDl();return false;">Sign in</a></p>' : ''}`)
     : '';
 
   _quizId = quiz?.id || null;
@@ -328,6 +368,7 @@ async function loadWorksheet() {
           ${freeBadge}
         </div>
         ${wsBodyDescription ? `<p class="ws-desc">${esc(wsBodyDescription)}</p>` : ''}
+        ${topicLinksHtml ? `<div class="ws-topic-links">${topicLinksHtml}</div>` : ''}
         ${tags ? `<div class="ws-tags">${tags}</div>` : ''}
         <div class="ws-meta">
           <div class="ws-meta-row"><span class="ws-meta-label">Format</span><span class="ws-meta-value">${ext || '—'}</span></div>
@@ -348,24 +389,19 @@ async function loadWorksheet() {
   refreshSaveBtn();
 
   // Now (after the worksheet itself is on screen) resolve the ~700-row query
-  // and build the "More on this topic" list — three signals: same topic_key,
-  // the "Topic – Type" title base, and shared specific topic tags. byTopicKey/
+  // and build the "More on this topic" list — same topic_key, the "Topic – Type"
+  // title base, and a relevance score over title/tag wording (relevanceScores). byTopicKey/
   // byTitle at the SAME level are the "set" siblings (Grammar/Reading/Writing/
   // Practice), flagged so renderRelated can feature them first.
   const rows = (await relatedRowsP).data || [];
   const base = titleBase(data.title);
-  const myTags = meaningfulTags(data.tags);
   const byTopicKey = data.topic_key ? rows.filter(r => r.topic_key === data.topic_key) : [];
   const byTitle = base ? rows.filter(r => titleBase(r.title) === base) : [];
-  let byTag = [];
-  if (myTags.length) {
-    const freq = new Map();
-    for (const r of rows) for (const t of meaningfulTags(r.tags)) freq.set(t, (freq.get(t) || 0) + 1);
-    const myTagsSpecific = specificTags(myTags, freq);
-    byTag = myTagsSpecific.length
-      ? rows.filter(r => specificTags(meaningfulTags(r.tags), freq).some(t => myTagsSpecific.includes(t)))
-      : [];
-  }
+  const scores = relevanceScores(data, rows);
+  const byRelevance = rows
+    .filter(r => scores.get(r.id) >= REL_MIN)
+    .sort((a, b) => scores.get(b.id) - scores.get(a.id))
+    .slice(0, REL_MAX);
   const setMatchIds = isEasyWordSearch(data.title) ? new Set() : new Set(
     [...byTopicKey, ...byTitle].filter(r => r.level === data.level && !isEasyWordSearch(r.title)).map(r => r.id)
   );
@@ -375,10 +411,10 @@ async function loadWorksheet() {
   const byFormat = fam ? rows.filter(r => fam.test(r.title)) : [];
 
   const seen = new Set();
-  const topicIds = new Set([...byTopicKey, ...byTitle, ...byTag].map(r => r.id));
-  related = [...byTopicKey, ...byTitle, ...byTag, ...byFormat]
+  const topicIds = new Set([...byTopicKey, ...byTitle, ...byRelevance].map(r => r.id));
+  related = [...byTopicKey, ...byTitle, ...byRelevance, ...byFormat]
     .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
-    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id), _formatOnly: !topicIds.has(r.id) }));
+    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id), _formatOnly: !topicIds.has(r.id), _score: scores.get(r.id) || 0 }));
 
   renderRelated(related, lvlCls, data.category, data.level);
   renderSetProgress(data, related);
@@ -502,6 +538,7 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
     if (a._setMatch !== b._setMatch) return a._setMatch ? -1 : 1;
     // same-format-only siblings trail every real topic match
     if (a._formatOnly !== b._formatOnly) return a._formatOnly ? 1 : -1;
+    if ((b._score || 0) !== (a._score || 0)) return (b._score || 0) - (a._score || 0);
     const ca = displayCategory(a), cb = displayCategory(b);
     if (biasCurrentCategory) {
       if (ca === currentCategory && cb !== currentCategory) return 1;

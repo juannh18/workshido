@@ -128,7 +128,12 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
     window.wsTrack?.('login_failure', { method: 'password' });
-    showError('Incorrect email or password. Please try again.');
+    // "Incorrect password" for an unconfirmed email sends people hunting for a
+    // password problem that doesn't exist — tell them what's actually missing.
+    const notConfirmed = error.code === 'email_not_confirmed' || /not confirmed/i.test(error.message || '');
+    showError(notConfirmed
+      ? 'Please confirm your email first — open the link we sent you (check spam too), then log in.'
+      : 'Incorrect email or password. If you signed up with Google, use "Continue with Google" above.');
     btn.disabled = false;
     btn.textContent = 'Log in';
   } else {

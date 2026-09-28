@@ -13,8 +13,12 @@ de Bloom repartidos en secciones con dificultad progresiva. Distribución típic
 de puntos: Remember/Understand ~25%, Apply ~50%, Analyze/Evaluate/Create ~25%.
 
 Uso:
-  python tools/build_quiz.py contenido.json quiz_salida.html key_salida.html
+  python tools/build_quiz.py contenido.json quiz_salida.html key_salida.html [--site spanishido]
   (rutas relativas a la raíz del repo)
+
+--site aplica los dos ejes de i18n.py / brand.py sobre las MISMAS plantillas:
+el quiz del alumno va en el idioma `student` del sitio y el answer key en el
+idioma `teacher` (Spanishido: quiz en español, key en inglés), con la marca del sitio.
 
 Formato del JSON de contenido:
 {
@@ -41,10 +45,15 @@ Formato del JSON de contenido:
 Clases CSS útiles: .quiz-grid-2 + .q-item + .n (numeración), .mc-options (opción
 inline "a. ... b. ... c. ... d. ..."), .blank (línea de espacio para completar),
 .write-lines (líneas para escritura, usar <div></div> por cada renglón),
-.reading-box (texto de lectura). Dentro de answer_key_html: .ex-title, .ans-grid-2
+.reading-box (texto de lectura).
+Formatos visuales (tablas, relojes, chat, relacionar, fichas...): tools/quiz_helpers.py.
+Regla: elegirlos según el tema y el nivel (ver docstring de ese módulo). Dentro de answer_key_html: .ex-title, .ans-grid-2
 + .ans-item, ul.ans + li, span.n, .flag (notas ⚠).
 """
 import sys, os, json, re, string
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import i18n, brand
 
 TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
@@ -68,7 +77,8 @@ def _wrap_answer_key(answer_key_html):
     return wrapped
 
 
-def build(content):
+def build(content, site='workshido'):
+    student_lang, teacher_lang = i18n.langs_for(site)
     total_points = sum(s['points'] for s in content['sections'])
 
     sections_html = []
@@ -76,12 +86,14 @@ def build(content):
     for i, s in enumerate(content['sections'], start=1):
         letter = LETTERS[i - 1] if i <= len(LETTERS) else str(i)
         reading = f"<div class='reading-box'>{s['reading_html']}</div>" if s.get('reading_html') else ''
+        # Solo el chrome de la barra se traduce; el título y las preguntas ya vienen en el idioma del alumno.
+        badge = i18n.translate(f'<span class="badge">({s["points"]} points) &nbsp; Score: <span class="earn"></span></span>', student_lang)
         sections_html.append(f'''
 <div class="quiz-section">
   <div class="section-title">
     <span class="letter-badge">{letter}</span>
     <span class="title-text">{s['title']}</span>
-    <span class="badge">({s['points']} points) &nbsp; Score: <span class="earn"></span></span>
+    {badge}
   </div>
   <div class="quiz-body">
     <div class="instructions">{s['instructions']}</div>
@@ -93,17 +105,19 @@ def build(content):
             f"<tr><td>{letter}. {s['title']}</td><td>{s['bloom']}</td><td>{s['points']}</td></tr>")
 
     # Level ya se muestra como pill junto al título; no repetirlo en la línea de info.
-    info_rows = '  '.join(f'<span><b>{k}:</b> {v}</span>' for k, v in content['info_rows'] if k != 'Level')
+    info_rows = ' &nbsp;&bull;&nbsp; '.join(f'<span><b>{k}:</b> {v}</span>' for k, v in content['info_rows'] if k != 'Level')
 
     info_map = dict(content['info_rows'])
     skills = content.get('skills', [])
     if len(skills) > 1:
-        skills_text = ', '.join(skills[:-1]) + ' &amp; ' + skills[-1]
+        conj = ' y ' if student_lang == 'es' else ' &amp; '
+        skills_text = ', '.join(skills[:-1]) + conj + skills[-1]
     else:
         skills_text = ''.join(skills)
 
     # --- Quiz del estudiante (sin respuestas) ---
     quiz_tpl = open(os.path.join(TOOLS, 'quiz_template_base.html'), encoding='utf-8').read()
+    quiz_tpl = brand.apply(i18n.translate(quiz_tpl, student_lang), site)
     # Ajuste fino por quiz para llenar la página sin desbordar (opcional, ver content['fit']).
     # Claves: q_lh (line-height de las preguntas), ans_h / write_h (alto px de renglones), row_gap.
     fit = content.get('fit', {})
@@ -127,6 +141,7 @@ def build(content):
 
     # --- Answer Key del profesor ---
     key_tpl = open(os.path.join(TOOLS, 'quiz_key_template_base.html'), encoding='utf-8').read()
+    key_tpl = brand.apply(i18n.translate(key_tpl, teacher_lang), site)
     key_repl = {
         '{{WS_TITLE}}': content['ws_title'],
         '{{LEVEL}}': info_map.get('Level', ''),
@@ -142,22 +157,31 @@ def build(content):
         key_tpl = key_tpl.replace(k, v)
     assert '{{' not in key_tpl, 'Quedaron placeholders sin reemplazar en el answer key'
 
-    return quiz_tpl, key_tpl
+    # Segunda pasada de marca sobre el documento YA con contenido: los formatos visuales de
+    # tools/quiz_helpers.py (tablas, relojes, chat...) se escriben con la paleta de Workshido y
+    # así toman solos los colores de Spanishido. Idempotente: los valores destino no son claves.
+    return brand.apply(quiz_tpl, site), brand.apply(key_tpl, site)
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 4:
+    args = sys.argv[1:]
+    site = 'workshido'
+    if '--site' in args:
+        i = args.index('--site')
+        site = args[i + 1]
+        del args[i:i + 2]
+    if len(args) != 3:
         sys.exit(__doc__)
-    content = json.load(open(sys.argv[1], encoding='utf-8'))
-    quiz_out, key_out = sys.argv[2], sys.argv[3]
+    content = json.load(open(args[0], encoding='utf-8'))
+    quiz_out, key_out = args[1], args[2]
     if not os.path.isabs(quiz_out):
         quiz_out = os.path.join(REPO, quiz_out)
     if not os.path.isabs(key_out):
         key_out = os.path.join(REPO, key_out)
-    quiz_html, key_html = build(content)
+    quiz_html, key_html = build(content, site)
     with open(quiz_out, 'w', encoding='utf-8') as f:
         f.write(quiz_html)
     with open(key_out, 'w', encoding='utf-8') as f:
         f.write(key_html)
-    print(f'OK: {quiz_out} ({len(quiz_html)} chars)')
+    print(f'OK [{site}]: {quiz_out} ({len(quiz_html)} chars)')
     print(f'OK: {key_out} ({len(key_html)} chars)')

@@ -48,12 +48,24 @@ async function getTemplate(templatePath, event) {
   return html;
 }
 
+// Some titles already contain "(A2)" (the level is part of the stored title);
+// appending it blindly produced "… – Grammar (A2) (A2)" in 43 list items.
+function withLevel(ws) {
+  if (!ws.level) return ws.title;
+  return String(ws.title).includes(`(${ws.level})`) ? ws.title : `${ws.title} (${ws.level})`;
+}
+
 function esc(s) {
   return String(s).replace(/[<>&'"]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c]));
 }
 
 exports.handler = async (event) => {
   const page = PAGES[event.path];
+  // Netlify matches the redirect rule with or without the trailing slash, so
+  // /worksheets/levels/a1 reached this function and 404'd. 301 it instead.
+  if (!page && PAGES[`${event.path}/`]) {
+    return { statusCode: 301, headers: { Location: `${event.path}/`, 'Cache-Control': 'public, max-age=3600' }, body: '' };
+  }
   if (!page) return { statusCode: 404, body: 'Not found' };
 
   try {
@@ -77,7 +89,7 @@ exports.handler = async (event) => {
     const wsUrl = (ws) => (ws.slug ? `${SITE}/worksheet/${esc(ws.slug)}/` : `${SITE}/workshido-worksheet.html?id=${esc(ws.id)}`);
 
     const links = data
-      .map((ws) => `<li><a href="${wsUrl(ws)}">${esc(ws.title)} (${esc(ws.level)})</a></li>`)
+      .map((ws) => `<li><a href="${wsUrl(ws)}">${esc(withLevel(ws))}</a></li>`)
       .join('');
 
     const block = `

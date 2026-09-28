@@ -1,0 +1,20 @@
+{
+  "name": "Workshido",
+  "short_name": "Workshido",
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#042C53",
+  "background_color": "#042C53",
+  "display": "browser",
+  "start_url": "/"
+}

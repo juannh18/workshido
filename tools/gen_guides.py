@@ -60,9 +60,9 @@ GUIDES = [
     },
     {
         'slug': 'guides/cefr-levels-guide',
-        'title': 'CEFR Levels Explained: A1 to B1 for Teachers | Workshido',
-        'description': 'A plain-English guide to the CEFR levels (A1, A2, B1) for English teachers: what students can actually do at each level, and how to pick the right worksheet.',
-        'h1': 'CEFR Levels Explained: A1 to B1 — Which Worksheets to Use',
+        'title': 'CEFR Levels Explained: A1 to B2 for Teachers | Workshido',
+        'description': 'A plain-English guide to the CEFR levels A1, A2, B1 and B2 for English teachers: what students can do at each level and how to pick the right worksheet.',
+        'h1': 'CEFR Levels Explained: A1 to B2 — Which Worksheets to Use',
         'reading_time': '6 min read',
         'body': '''
 <p>The CEFR (Common European Framework of Reference for Languages) is the standard most English course books, worksheets, and placement tests use to describe how much a student can actually do in the language — not how many grammar points they've "covered." That distinction matters more than it sounds: a student can technically have "learned" the present perfect and still be solidly A2, because CEFR levels are about real communicative ability, not a checklist of tenses.</p>
@@ -186,7 +186,7 @@ GUIDES = [
     {
         'slug': 'guides/how-to-teach-present-perfect',
         'title': 'How to Teach Present Perfect to A2-B1 Classes | Workshido',
-        'description': 'A practical guide to teaching present perfect — why it confuses students, how to sequence for/since and just/already/yet, and how to contrast it with past simple.',
+        'description': 'How to teach the present perfect: why it confuses students, how to sequence for/since and just/already/yet, and how to contrast it with past simple.',
         'h1': 'How to Teach Present Perfect: A Practical Guide for A2-B1 Classes',
         'reading_time': '8 min read',
         'body': '''
@@ -327,7 +327,7 @@ GUIDES = [
     {
         'slug': 'guides/how-to-teach-reported-speech',
         'title': 'How to Teach Reported Speech for B1 Classes | Workshido',
-        'description': 'A practical guide to teaching reported speech — how to isolate tense backshift, pronoun changes, and reported questions/commands instead of teaching them all at once.',
+        'description': 'How to teach reported speech step by step: tense backshift, then pronoun changes, then reported questions and commands, instead of all at once.',
         'h1': 'How to Teach Reported Speech for B1 Classes',
         'reading_time': '7 min read',
         'body': '''
@@ -417,6 +417,18 @@ ARTICLE_STYLE = '''<style>
 </style>'''
 
 
+# Guide slug -> (hub slug, name); mirrors the hubs in netlify/lib/topics.js.
+TOPIC_HUBS = {"guides/how-to-teach-present-perfect": ["present-perfect", "Present Perfect"], "guides/how-to-teach-conditionals": ["conditionals", "Conditionals"], "guides/how-to-teach-reported-speech": ["reported-speech", "Reported Speech"], "guides/how-to-teach-passive-voice": ["passive-voice", "Passive Voice"], "guides/how-to-teach-comparatives-superlatives": ["comparatives-superlatives", "Comparatives & Superlatives"], "guides/how-to-teach-modal-verbs": ["modal-verbs", "Modal Verbs"], "guides/how-to-teach-going-to-future-forms": ["future-forms", "Future Forms"], "guides/how-to-teach-past-simple": ["past-simple", "Past Simple"], "guides/how-to-teach-present-continuous": ["present-continuous", "Present Continuous"], "guides/how-to-teach-verb-to-be": ["verb-to-be", "Verb To Be"], "guides/how-to-teach-present-simple": ["present-simple", "Present Simple"]}
+
+
+def topic_hub_link(guide):
+    h = TOPIC_HUBS.get(guide['slug'])
+    if not h:
+        return ''
+    return (f'<p class="topic-hub-link">📚 <a href="/worksheets/topics/{h[0]}/"><strong>See all {h[1]} worksheets</strong></a>'
+            ' — every grammar, reading, writing and practice sheet on this point, grouped by CEFR level.</p>\n')
+
+
 def render_page(guide, others):
     related = '\n    '.join(
         f'<a class="guide-link" href="/{o["slug"]}/">{o["h1"]}</a>' for o in others
@@ -427,6 +439,8 @@ def render_page(guide, others):
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{guide['title']}</title>
 <meta name="description" content="{guide['description']}">
@@ -470,7 +484,7 @@ def render_page(guide, others):
 </div>
 <article>
 {guide['body']}
-</article>
+{topic_hub_link(guide)}</article>
 <div class="related-guides">
   <h2>More teaching guides</h2>
   <div class="guide-links">
@@ -518,6 +532,8 @@ def render_hub():
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teaching Guides for English Teachers | Workshido</title>
 <meta name="description" content="Practical, free teaching guides for ESL teachers: how to teach specific grammar points, understand CEFR levels, and run better classroom warm-ups.">
@@ -585,3 +601,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+    # Fechas (datePublished/dateModified + 'Updated' visible) — ver tools/guide_dates.py
+    import guide_dates
+    guide_dates.stamp_site(REPO)

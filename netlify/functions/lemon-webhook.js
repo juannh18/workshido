@@ -6,14 +6,18 @@ const sb = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-// The Lemon Squeezy store is shared with Spanishido, which registers its own
-// webhook on the same store — so this endpoint also receives Spanishido's
-// subscription events. Restrict this handler to Workshido's own subscription
-// variants; without it, a Spanishido purchase would flip is_premium here too.
+// The Lemon Squeezy store is shared with Spanishido, and this is the store's
+// only registered webhook — so Spanishido's subscription events arrive here
+// too. Restrict this handler to Workshido's own subscription variants; without
+// it, a Spanishido purchase would flip is_premium here too.
 // Set LEMONSQUEEZY_VARIANT_IDS to the comma-separated Workshido Premium
 // monthly+yearly numeric variant ids. Unset => act on every variant (legacy).
 const WS_VARIANT_IDS = (process.env.LEMONSQUEEZY_VARIANT_IDS || '')
   .split(',').map(s => s.trim()).filter(Boolean);
+// Everything that isn't a Workshido variant is relayed untouched (same body
+// and signature) to Spanishido's webhook, which verifies the signature with
+// the same secret and applies its own variant filter.
+const SPANISHIDO_WEBHOOK = 'https://spanishido.com/.netlify/functions/lemon-webhook';
 
 function verifySignature(rawBody, signature, secret) {
   const hmac = crypto.createHmac('sha256', secret);
@@ -51,7 +55,19 @@ exports.handler = async (event) => {
     // Ignore Spanishido (or any other) product events on this shared store.
     const variantId = payload.data?.attributes?.variant_id != null ? String(payload.data.attributes.variant_id) : null;
     if (WS_VARIANT_IDS.length && !WS_VARIANT_IDS.includes(variantId)) {
-      return { statusCode: 200, body: JSON.stringify({ received: true, ignored: 'not a Workshido variant' }) };
+      try {
+        const res = await fetch(SPANISHIDO_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Signature': signature, 'X-Event-Name': eventName || '' },
+          body: event.body,
+        });
+        const text = await res.text();
+        // Non-2xx makes Lemon Squeezy retry the delivery, so a Spanishido
+        // outage doesn't silently lose the customer's Premium activation.
+        return { statusCode: res.ok ? 200 : 502, body: JSON.stringify({ received: true, relayed: 'spanishido', status: res.status, response: text.slice(0, 200) }) };
+      } catch (err) {
+        return { statusCode: 502, body: JSON.stringify({ received: true, relayed: 'spanishido', error: String(err).slice(0, 200) }) };
+      }
     }
     const status = payload.data?.attributes?.status;
     const endsAt = payload.data?.attributes?.ends_at;

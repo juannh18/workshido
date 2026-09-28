@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, follow">
@@ -45,6 +46,9 @@
   .back-link { display: block; text-align: center; margin-top: 20px; font-size: 13px; color: var(--blue-600); text-decoration: none; }
   .back-link:hover { text-decoration: underline; }
 </style>
+<style>/* iOS zooms into any focused field under 16px and leaves the page zoomed and
+   shifted sideways; 16px on phones prevents it without disabling pinch-zoom. */
+@media (max-width:768px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
 <nav>

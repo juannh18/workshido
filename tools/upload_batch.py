@@ -24,9 +24,9 @@ Formato del manifiesto (rutas relativas: PDFs/PNGs contra Downloads):
 }
 
 Opcional en la raíz del manifiesto: "language": "en" (default) o "es". Con "es"
-las filas se insertan en el esquema `es.worksheets` (Spanishido) vía el header
-PostgREST `Content-Profile: es`, y los archivos van bajo el prefijo `es/` en R2
-(mismo bucket workshido-files / files.workshido.com). Workshido = `en` = `public`.
+las filas se insertan en el proyecto Supabase de Spanishido (ES_SUPABASE_URL /
+ES_SUPABASE_SERVICE_KEY en .env), y los archivos van bajo el prefijo `es/` en R2
+(mismo bucket workshido-files / files.workshido.com).
 
 `piece_type` es la PIEZA del set (grammar/reading/writing/practice/listening/
 vocabulary/speaking), y es cosa distinta de `category`, que es la destreza. Hasta
@@ -56,19 +56,18 @@ from PIL import Image
 
 import sys as _sys, os as _os
 _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
-from env_secrets import SUPABASE_URL, SERVICE_KEY, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+from env_secrets import SUPABASE_URL, SERVICE_KEY, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, supabase_creds
 
 HEADERS_AUTH = {
     'apikey': SERVICE_KEY,
     'Authorization': f'Bearer {SERVICE_KEY}',
 }
 
-# Set from the manifest's "language" in main(). 'es' -> Spanishido: insert into
-# the `es` schema and store files under the `es/` prefix in R2.
-PROFILE_HEADERS = {}   # {'Content-Profile': 'es'} for Spanish
+# Set from the manifest's "language" in main(). 'es' -> Spanishido's own
+# Supabase project and the `es/` prefix in R2.
 KEY_PREFIX = ''        # 'es/' for Spanish
 
-# Debe coincidir con el CHECK de la columna piece_type en es.worksheets y
+# Debe coincidir con el CHECK de la columna piece_type en worksheets de Spanishido y
 # public.worksheets (migracion add_piece_type_to_worksheets, 13/09).
 PIECE_TYPES = {'grammar', 'reading', 'writing', 'practice',
                'listening', 'vocabulary', 'speaking'}
@@ -159,13 +158,8 @@ def make_slug(title, level=None):
         sys.exit(f'ERROR: no se pudo derivar slug del titulo {title!r}')
 
     def taken(s):
-        # PostgREST usa Accept-Profile para LEER y Content-Profile para ESCRIBIR.
-        # Con solo Content-Profile este GET consultaria public.worksheets aunque
-        # estemos subiendo a es.worksheets, y el desempate de slug miraria el
-        # catalogo equivocado.
-        read_profile = {'Accept-Profile': PROFILE_HEADERS['Content-Profile']} if PROFILE_HEADERS else {}
         r = requests.get(f'{SUPABASE_URL}/rest/v1/worksheets',
-                         headers={**HEADERS_AUTH, **read_profile},
+                         headers=HEADERS_AUTH,
                          params={'select': 'id', 'slug': f'eq.{s}', 'limit': '1'})
         return bool(r.json())
 
@@ -182,22 +176,23 @@ def make_slug(title, level=None):
 def insert_worksheet(record):
     res = requests.post(
         f'{SUPABASE_URL}/rest/v1/worksheets',
-        headers={**HEADERS_AUTH, **PROFILE_HEADERS, 'Content-Type': 'application/json', 'Prefer': 'return=representation'},
+        headers={**HEADERS_AUTH, 'Content-Type': 'application/json', 'Prefer': 'return=representation'},
         json=record
     )
     return res.status_code, res.text[:300]
 
 def main(manifest_path):
-    global PROFILE_HEADERS, KEY_PREFIX
+    global SUPABASE_URL, HEADERS_AUTH, KEY_PREFIX
     check_r2_domain()
     manifest = json.load(open(manifest_path, encoding='utf-8'))
 
     lang = manifest.get('language', 'en')
     assert lang in ('en', 'es'), f"language debe ser 'en' o 'es', no {lang!r}"
     if lang == 'es':
-        PROFILE_HEADERS = {'Content-Profile': 'es'}
+        SUPABASE_URL, key = supabase_creds('es')
+        HEADERS_AUTH = {'apikey': key, 'Authorization': f'Bearer {key}'}
         KEY_PREFIX = 'es/'
-        print('>> language=es -> esquema es.worksheets + prefijo es/ en R2')
+        print(f'>> language=es -> proyecto Spanishido ({SUPABASE_URL}) + prefijo es/ en R2')
 
     for ws in manifest['worksheets']:
         assert ws['tags'].startswith('worksheet'), f"{ws['slug']}: el tag 'worksheet' debe ir primero"

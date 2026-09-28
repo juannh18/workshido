@@ -1,7 +1,7 @@
 """Verifica los últimos N worksheets subidos re-descargándolos desde las URLs públicas.
 
 Uso:
-  python tools/verify_uploads.py [N] [--es]     # default N=6; --es = esquema es (Spanishido)
+  python tools/verify_uploads.py [N] [--es]     # default N=6; --es = proyecto Spanishido
 
 Chequea por cada fila: status 200 de PDF/thumb/TE, tag 'worksheet' primero,
 páginas del PDF (imagen presente) y del TE (2 páginas, marca WORKSHIDO/SPANISHIDO).
@@ -13,14 +13,13 @@ import requests, fitz
 
 import sys as _sys, os as _os
 _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
-from env_secrets import SUPABASE_URL, SERVICE_KEY
-
-H = {'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
+from env_secrets import supabase_creds
 
 def main(n, es=False):
-    headers = {**H, 'Accept-Profile': 'es'} if es else H
+    url, key = supabase_creds('es' if es else 'en')
+    headers = {'apikey': key, 'Authorization': f'Bearer {key}'}
     res = requests.get(
-        f'{SUPABASE_URL}/rest/v1/worksheets',
+        f'{url}/rest/v1/worksheets',
         headers=headers,
         params={'select': 'title,file_url,thumbnail_url,teacher_edition_url,is_free,category,tags',
                 'order': 'created_at.desc', 'limit': str(n)})

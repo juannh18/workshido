@@ -6,7 +6,7 @@ Workshido is built for English teachers who need classroom-ready material fast: 
 
 ## Catalog
 
-- [Browse all worksheets](https://workshido.com/workshido-index.html): searchable catalog of 700+ worksheets, filterable by level and category.
+- [Browse all worksheets](https://workshido.com/workshido-index.html): searchable catalog of 800+ worksheets, filterable by level and category.
 - [Grammar worksheets](https://workshido.com/worksheets/grammar/)
 - [Vocabulary worksheets](https://workshido.com/worksheets/vocabulary/)
 - [Reading worksheets](https://workshido.com/worksheets/reading/)
@@ -30,7 +30,12 @@ Practical, classroom-tested guides on how to teach specific grammar topics and C
 - [How to Teach Future Forms (Going To vs. Will)](https://workshido.com/guides/how-to-teach-going-to-future-forms/)
 - [How to Teach Conditionals (Zero, First, Second)](https://workshido.com/guides/how-to-teach-conditionals/)
 - [How to Teach Modal Verbs (Must, Have To, Should)](https://workshido.com/guides/how-to-teach-modal-verbs/)
-- [CEFR Levels Explained (A1-B1)](https://workshido.com/guides/cefr-levels-guide/)
+- [How to Teach the Passive Voice (B1)](https://workshido.com/guides/how-to-teach-passive-voice/)
+- [How to Teach Phrasal Verbs (B1)](https://workshido.com/guides/how-to-teach-phrasal-verbs/)
+- [How to Teach Used To (Past Habits)](https://workshido.com/guides/how-to-teach-used-to/)
+- [How to Teach the Past Perfect (B1)](https://workshido.com/guides/how-to-teach-past-perfect/)
+- [How to Teach Linking Words (B1)](https://workshido.com/guides/how-to-teach-linking-words/)
+- [CEFR Levels Explained (A1-B2)](https://workshido.com/guides/cefr-levels-guide/)
 - [10 Quick ESL Warm-Up Activities](https://workshido.com/guides/esl-warm-up-activities/)
 - [How to Sequence ESL Lessons (Grammar, Reading, Writing, Practice)](https://workshido.com/guides/how-to-sequence-esl-lessons/)
 

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -100,6 +101,9 @@
   .btn-go { background: var(--blue-600); color: var(--white); border: none; border-radius: var(--radius-md); padding: 12px 28px; font-family: var(--font-display); font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
   @media (max-width: 768px) { .page { grid-template-columns: 1fr; } .left-panel { display: none; } .right-panel { padding: 40px 24px; } .form-row { grid-template-columns: 1fr; } }
 </style>
+<style>/* iOS zooms into any focused field under 16px and leaves the page zoomed and
+   shifted sideways; 16px on phones prevents it without disabling pinch-zoom. */
+@media (max-width:768px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
 <nav>
@@ -182,7 +186,7 @@
   </div>
 </main>
 
-<script src="js/workshido-signup.js?v=20260721" defer></script>
+<script src="js/workshido-signup.js?v=20260927" defer></script>
 <script src="js/analytics.js?v=20260908" defer></script>
 </body>
 </html>

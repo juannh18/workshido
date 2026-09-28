@@ -118,9 +118,12 @@ function getChannel() {
 
 async function handleCredentialResponse(response) {
   try {
-    const { error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
+    const { data, error } = await sb.auth.signInWithIdToken({ provider: 'google', token: response.credential });
     if (error) throw error;
-    window.wsTrack?.('signup_completed', { method: 'google' });
+    // An existing user clicking "Continue with Google" here is simply logged
+    // in (no duplicate account) — count it as a login, not a new signup.
+    const isNewUser = data?.user && (Date.now() - new Date(data.user.created_at).getTime()) < 10000;
+    window.wsTrack?.(isNewUser ? 'signup_completed' : 'login_success', { method: 'google' });
     // signInWithIdToken doesn't accept custom options.data like signUp does
     // (see handle_new_user() trigger), so country/utm/channel are filled in
     // via a single best-effort RPC right after sign-in instead. Raced against
@@ -150,6 +153,19 @@ async function handleCredentialResponse(response) {
 function showError(msg) {
   const el = document.getElementById('errorBanner');
   el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function showExistingAccount(redirectParam) {
+  const el = document.getElementById('errorBanner');
+  const loginHref = 'workshido-login.html' + (redirectParam ? '?redirect=' + encodeURIComponent(redirectParam) : '');
+  el.textContent = 'You already have a Workshido account with this email. ';
+  const a = document.createElement('a');
+  a.href = loginHref;
+  a.textContent = 'Log in instead';
+  a.style.cssText = 'color:inherit;font-weight:700;text-decoration:underline';
+  el.appendChild(a);
+  el.appendChild(document.createTextNode(' — or use "Continue with Google" if that is how you signed up.'));
   el.style.display = 'block';
 }
 
@@ -208,7 +224,16 @@ document.getElementById('signupForm').addEventListener('submit', async function(
     }
   });
 
-  if (error) {
+  // With email confirmation on, Supabase answers a signup for an email that
+  // ALREADY has an account with a fake success (no error, identities: []) and
+  // sends no email — the user would wait forever for a confirmation link.
+  const alreadyRegistered = !error && Array.isArray(data?.user?.identities) && data.user.identities.length === 0;
+  if (alreadyRegistered) {
+    window.wsTrack?.('validation_error', { form: 'signup', message: 'email already registered' });
+    showExistingAccount(redirectParam);
+    btn.disabled = false;
+    btn.textContent = 'Create free account';
+  } else if (error) {
     window.wsTrack?.('validation_error', { form: 'signup', message: error.message });
     showError(error.message);
     btn.disabled = false;

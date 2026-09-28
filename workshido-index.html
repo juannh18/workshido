@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Browse Free English Worksheets by Level & Topic | Workshido</title>
-<meta name="description" content="Browse 700+ free printable English worksheets by CEFR level (A1–B2) and topic — grammar, vocabulary, reading and writing PDFs with answer keys and Teacher Editions.">
+<meta name="description" content="Browse 800+ free printable English worksheets by CEFR level (A1–B2) and topic: grammar, vocabulary, reading and writing PDFs with answer keys.">
 <!-- Self-canonical: this is the functional catalog (topic sidebar, filters,
      search, pagination), a distinct page from the marketing homepage at "/".
      The ?level=/?cat=/?topic=/?q= filter variants all canonical here so they
@@ -18,12 +19,12 @@
 <meta property="og:site_name" content="Workshido">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Browse Free English Worksheets by Level & Topic">
-<meta property="og:description" content="700+ free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
+<meta property="og:description" content="800+ free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
 <meta property="og:image" content="https://workshido.com/og-image.png">
 <meta property="og:url" content="https://workshido.com/workshido-index.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Browse Free English Worksheets by Level & Topic">
-<meta name="twitter:description" content="700+ free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
+<meta name="twitter:description" content="800+ free, print-ready English worksheets organized by CEFR level and topic — with answer keys and Teacher Editions available.">
 <meta name="twitter:image" content="https://workshido.com/og-image.png">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Browse English Worksheets","description":"Free printable English worksheets by CEFR level (A1–B2) and topic — grammar, vocabulary, reading and writing PDFs with answer keys and Teacher Editions.","url":"https://workshido.com/workshido-index.html","isPartOf":{"@type":"WebSite","name":"Workshido","url":"https://workshido.com/"}}</script>
 <meta name="theme-color" content="#042C53">
@@ -914,6 +915,9 @@
 
 html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
+<style>/* iOS zooms into any focused field under 16px and leaves the page zoomed and
+   shifted sideways; 16px on phones prevents it without disabling pinch-zoom. */
+@media (max-width:768px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
 <script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
@@ -923,9 +927,9 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <a href="index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="workshido-index.html">Browse Worksheets</a></li>
-    <li><a href="workshido-index.html?cat=Grammar" onclick="setCategory('Grammar');return false;">Grammar</a></li>
-    <li><a href="workshido-index.html?cat=Vocabulary" onclick="setCategory('Vocabulary');return false;">Vocabulary</a></li>
-    <li><a href="workshido-index.html?cat=Reading" onclick="setCategory(['Reading','Writing','Speaking']);return false;">Skills</a></li>
+    <li><a href="/worksheets/grammar/" onclick="setCategory('Grammar');return false;">Grammar</a></li>
+    <li><a href="/worksheets/vocabulary/" onclick="setCategory('Vocabulary');return false;">Vocabulary</a></li>
+    <li><a href="/worksheets/reading/" onclick="setCategory(['Reading','Writing','Speaking']);return false;">Skills</a></li>
     <li><a href="workshido-forteachers.html">For teachers</a></li>
     <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
   </ul>
@@ -948,10 +952,10 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
     </div>
     <div class="mobile-menu-links">
       <a href="workshido-index.html">Browse all</a>
-      <a href="workshido-index.html?cat=Grammar">Grammar</a>
-      <a href="workshido-index.html?cat=Vocabulary">Vocabulary</a>
-      <a href="workshido-index.html?cat=Reading">Reading</a>
-      <a href="workshido-index.html?cat=Writing">Writing</a>
+      <a href="/worksheets/grammar/">Grammar</a>
+      <a href="/worksheets/vocabulary/">Vocabulary</a>
+      <a href="/worksheets/reading/">Reading</a>
+      <a href="/worksheets/writing/">Writing</a>
       <a href="workshido-forteachers.html">For teachers</a>
       <a href="workshido-upload.html">⬆ Upload</a>
     </div>
@@ -966,7 +970,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 <section class="hero">
   <div class="hero-eyebrow">
     <span class="dot"></span>
-    <span id="heroEyebrowText">100+ free worksheets · Print-ready PDFs · New resources every week</span>
+    <span id="heroEyebrowText">800+ free worksheets · Print-ready PDFs · New resources every week</span>
   </div>
   <h1>English worksheets that make<br>teaching <em>effortless</em></h1>
   <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs designed for real English classes — with answer keys and Teacher Editions available.</p>
@@ -998,8 +1002,8 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 
 <!-- STATS -->
 <div class="stats-bar">
-  <div class="stat"><span class="stat-num" id="statWorksheets">100+</span><span class="stat-label">Free worksheets</span></div>
-  <div class="stat"><span class="stat-num" id="statLevels">A1–B1</span><span class="stat-label">CEFR levels · growing</span></div>
+  <div class="stat"><span class="stat-num" id="statWorksheets">800+</span><span class="stat-label">Free worksheets</span></div>
+  <div class="stat"><span class="stat-num" id="statLevels">A1–B2</span><span class="stat-label">CEFR levels · growing</span></div>
   <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free downloads</span></div>
   <div class="stat"><span class="stat-num">Weekly</span><span class="stat-label">New worksheets added</span></div>
 </div>
@@ -1149,7 +1153,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/avatar-render.js" defer></script>
-<script src="js/workshido-index.js?v=20260911" defer></script>
+<script src="js/workshido-index.js?v=20260927a" defer></script>
 
 <script src="mascot.js" defer></script>
 <script src="js/analytics.js?v=20260908" defer></script>

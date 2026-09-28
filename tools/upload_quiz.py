@@ -16,8 +16,8 @@ Formato del manifiesto (rutas relativas al repo, ver tools/te_output/):
 }
 
 Opcional en la raíz del manifiesto: "language": "en" (default) o "es". Con "es"
-la fila va a `es.quizzes` (header PostgREST Content-Profile: es), los PDFs van
-bajo `es/` en R2, y el PATCH de topic_key va contra `es.worksheets`.
+la fila va al proyecto Supabase de Spanishido (ES_SUPABASE_URL en .env), los
+PDFs van bajo `es/` en R2, y el PATCH de topic_key va contra sus worksheets.
 
 Nota: is_free no aplica a quizzes (siempre son premium, gateados por
 get-quiz-url.js). Después de subir, verificar visualmente igual que un
@@ -29,7 +29,7 @@ from botocore.config import Config
 
 import sys as _sys, os as _os
 _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
-from env_secrets import SUPABASE_URL, SERVICE_KEY, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+from env_secrets import SUPABASE_URL, SERVICE_KEY, R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, supabase_creds
 
 HEADERS_AUTH = {'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
 
@@ -79,10 +79,11 @@ if __name__ == '__main__':
 
     lang = manifest.get('language', 'en')
     assert lang in ('en', 'es'), f"language debe ser 'en' o 'es', no {lang!r}"
-    profile_headers = {'Content-Profile': 'es'} if lang == 'es' else {}
+    url, key = supabase_creds(lang)
+    auth = {'apikey': key, 'Authorization': f'Bearer {key}'}
     key_prefix = 'es/' if lang == 'es' else ''
     if lang == 'es':
-        print('>> language=es -> esquema es.quizzes + prefijo es/ en R2')
+        print(f'>> language=es -> proyecto Spanishido ({url}) + prefijo es/ en R2')
 
     level_folder = manifest['level'].lower()
     quiz_pdf_url = upload_pdf(resolve(manifest['quiz_pdf']), f'{key_prefix}quizzes/{level_folder}/{manifest["topic_key"]}.pdf')
@@ -99,8 +100,8 @@ if __name__ == '__main__':
         'key_pdf_url': key_pdf_url,
     }
     res = requests.post(
-        f'{SUPABASE_URL}/rest/v1/quizzes',
-        headers={**HEADERS_AUTH, **profile_headers, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation'},
+        f'{url}/rest/v1/quizzes',
+        headers={**auth, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=representation'},
         json=row
     )
     if res.status_code not in (200, 201):
@@ -110,8 +111,8 @@ if __name__ == '__main__':
 
     for wid in manifest.get('worksheet_ids', []):
         r = requests.patch(
-            f'{SUPABASE_URL}/rest/v1/worksheets?id=eq.{wid}',
-            headers={**HEADERS_AUTH, **profile_headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
+            f'{url}/rest/v1/worksheets?id=eq.{wid}',
+            headers={**auth, 'Content-Type': 'application/json', 'Prefer': 'return=minimal'},
             json={'topic_key': manifest['topic_key']}
         )
         print(f'  worksheet {wid}: topic_key set ->', r.status_code)

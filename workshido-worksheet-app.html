@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -11,6 +12,7 @@
 <meta name="theme-color" content="#042C53">
 <title>Workshido</title>
 <link rel="preconnect" href="https://mhbgxdsdaalvtgobnvbh.supabase.co" crossorigin>
+<link rel="preconnect" href="https://files.workshido.com">
 <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
@@ -27,6 +29,8 @@
 <meta name="twitter:description" content="Free English worksheet — download and print for class.">
 <meta name="twitter:image" content="https://workshido.com/og-image.png">
 <script type="application/ld+json" id="schemaLD"></script>
+<script type="application/ld+json" id="breadcrumbLD"></script>
+<script type="application/json" id="wsSeo"></script>
 <!-- Filled by netlify/functions/worksheet-page.js with the worksheet row so
      the page renders without a client round-trip; empty on the no-id path. -->
 <script type="application/json" id="wsData"></script>
@@ -66,6 +70,7 @@
   .breadcrumb a { color: var(--gray-600); text-decoration: none; }
   .breadcrumb a:hover { color: var(--blue-600); }
   .breadcrumb span { margin: 0 6px; }
+  .breadcrumb [aria-current] { color: var(--gray-600); }
 
   /* MAIN */
   .page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px 64px; display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; }
@@ -100,12 +105,15 @@
   .badge-free { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--teal-50); color: var(--teal-600); }
 
   .ws-desc { font-size: 14px; color: var(--gray-600); line-height: 1.65; margin-bottom: 16px; }
+  .ws-topic-links { display: flex; flex-direction: column; gap: 6px; margin: -4px 0 16px; font-size: 13px; }
+  .ws-topic-links a { color: var(--blue-600); text-decoration: none; font-weight: 500; }
+  .ws-topic-links a:hover { text-decoration: underline; }
   .ws-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
   .tag { font-size: 12px; color: var(--blue-600); background: var(--blue-50); border-radius: 20px; padding: 3px 10px; }
 
   .ws-meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
   .ws-meta-row { display: flex; justify-content: space-between; font-size: 13px; }
-  .ws-meta-label { color: var(--gray-300); }
+  .ws-meta-label { color: var(--gray-600); }
   .ws-meta-value { color: var(--gray-900); font-weight: 500; }
 
   /* DOWNLOAD BUTTONS */
@@ -118,6 +126,8 @@
   .btn-answer-key.unlocked:hover { background: linear-gradient(135deg, #34D399 0%, #047857 100%); box-shadow: 0 4px 14px rgba(5,150,105,0.36); }
   .btn-answer-key .ak-left { display: flex; align-items: center; gap: 8px; }
   .btn-answer-key .ak-sub { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.85); display: block; text-align: left; }
+  .te-benefit { font-size: 12px; color: var(--gray-600); text-align: center; margin-top: 8px; line-height: 1.5; }
+  .te-benefit b { color: var(--gray-900); }
   .premium-note { font-size: 11px; color: var(--gray-300); text-align: center; margin-top: 8px; line-height: 1.6; }
   .premium-note a { color: var(--blue-600); cursor: pointer; text-decoration: none; }
   .premium-note a:hover { text-decoration: underline; }
@@ -266,8 +276,8 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <a href="/workshido-index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="/workshido-index.html">Browse Worksheets</a></li>
-    <li><a href="/workshido-index.html?cat=Grammar">Grammar</a></li>
-    <li><a href="/workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
+    <li><a href="/worksheets/grammar/">Grammar</a></li>
+    <li><a href="/worksheets/vocabulary/">Vocabulary</a></li>
     <li><a href="/workshido-index.html?cat=Skills">Skills</a></li>
     <li><a href="/workshido-forteachers.html">For teachers</a></li>
     <li id="navUploadLink" style="display:none;"><a href="/workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
@@ -278,13 +288,9 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   </div>
 </nav>
 
-<div class="breadcrumb" role="navigation" aria-label="Breadcrumb">
-  <a href="/workshido-index.html">Browse</a>
-  <span>›</span>
-  <span id="bcCategory">—</span>
-  <span>›</span>
-  <span id="bcTitle">Loading...</span>
-</div>
+<!-- Filled server-side by netlify/functions/worksheet-page.js (Home › Level ›
+     Topic/Category › Title) and re-filled by js/workshido-worksheet.js. -->
+<div class="breadcrumb" id="breadcrumb" role="navigation" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><a href="/workshido-index.html">Worksheets</a></div>
 
 <main class="page-wrap" id="pageWrap">
   <!-- SSR fallback: netlify/functions/worksheet-page.js fills the real title
@@ -293,11 +299,17 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
        instead of an empty shell. js/workshido-worksheet.js then replaces the
        whole #pageWrap with the full interactive layout — its own <h1 class="ws-title">
        carries the same text, so there's never a duplicate in the final DOM. -->
-  <div class="ssr-head" style="grid-column:1/-1">
-    <h1 class="ws-title" id="ssrTitle">English worksheet</h1>
-    <p class="ws-desc" id="ssrDesc" hidden></p>
+  <!-- Same grid as the final layout (preview-box + detail-sidebar), so when the
+       client JS swaps #pageWrap in nothing moves: the old full-width title block
+       caused a 0.88 CLS on every worksheet page (Lighthouse, 27/09/2026). -->
+  <div class="preview-box" id="ssrPreview"><div class="loading">Loading worksheet...</div></div>
+  <div class="detail-sidebar">
+    <div class="detail-card">
+      <h1 class="ws-title" id="ssrTitle">English worksheet</h1>
+      <p class="ws-desc" id="ssrDesc" hidden></p>
+      <div class="ws-topic-links" id="ssrTopicLinks" hidden></div>
+    </div>
   </div>
-  <div class="loading">Loading worksheet...</div>
 </main>
 
 <section class="related-section" id="relatedSection" style="display:none;">
@@ -363,7 +375,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/avatar-render.js" defer></script>
-<script src="/js/workshido-worksheet.js?v=20260918b" defer></script>
+<script src="/js/workshido-worksheet.js?v=20260927" defer></script>
 
 <!-- Login modal -->
 <div class="modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">

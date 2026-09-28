@@ -42,6 +42,7 @@ BRANDS = {
             '#e67e22': '#A6401D',   # naranja "FICHA GRATUITA" + barra ambar
             '#f5f8fb': '#FBEDE5',   # fondo de las tarjetas del panel
             '#dbe4ee': '#F6CBB0',   # borde de esas tarjetas
+            '#5d7a96': '#5F5E5A',   # renglones de respuesta del quiz (gris-azul) -> --gray-600 del fork
         },
         # Barras de seccion. Solo hex de la paleta del fork, y elegidos para que
         # dos barras CONSECUTIVAS nunca queden casi iguales: la paleta de

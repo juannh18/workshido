@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Workshido — Free English Worksheets for Teachers</title>
-<meta name="description" content="Download free printable ESL worksheets. Grammar, vocabulary, reading and writing PDFs organized by CEFR level, with answer keys and Teacher Editions available. New worksheets every week.">
+<meta name="description" content="Free printable ESL worksheets for A1–B2: grammar, vocabulary, reading and writing PDFs by CEFR level, with answer keys. New worksheets every week.">
 <link rel="canonical" href="https://workshido.com/">
 <meta property="og:site_name" content="Workshido">
 <meta property="og:type" content="website">
@@ -488,6 +489,9 @@
 
 html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
 </style>
+<style>/* iOS zooms into any focused field under 16px and leaves the page zoomed and
+   shifted sideways; 16px on phones prevents it without disabling pinch-zoom. */
+@media (max-width:768px){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),select,textarea{font-size:16px!important}}</style>
 </head>
 <body>
 <script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
@@ -497,9 +501,9 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <a href="index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
     <li><a href="workshido-index.html">Browse Worksheets</a></li>
-    <li><a href="workshido-index.html?cat=Grammar">Grammar</a></li>
-    <li><a href="workshido-index.html?cat=Vocabulary">Vocabulary</a></li>
-    <li><a href="workshido-index.html?cat=Reading">Skills</a></li>
+    <li><a href="/worksheets/grammar/">Grammar</a></li>
+    <li><a href="/worksheets/vocabulary/">Vocabulary</a></li>
+    <li><a href="/worksheets/reading/">Skills</a></li>
     <li><a href="workshido-forteachers.html">For teachers</a></li>
     <li id="navUploadLink" style="display:none;"><a href="workshido-upload.html" style="color:var(--teal-100);">⬆ Upload</a></li>
   </ul>
@@ -522,10 +526,10 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
     </div>
     <div class="mobile-menu-links">
       <a href="workshido-index.html">Browse all</a>
-      <a href="workshido-index.html?cat=Grammar">Grammar</a>
-      <a href="workshido-index.html?cat=Vocabulary">Vocabulary</a>
-      <a href="workshido-index.html?cat=Reading">Reading</a>
-      <a href="workshido-index.html?cat=Writing">Writing</a>
+      <a href="/worksheets/grammar/">Grammar</a>
+      <a href="/worksheets/vocabulary/">Vocabulary</a>
+      <a href="/worksheets/reading/">Reading</a>
+      <a href="/worksheets/writing/">Writing</a>
       <a href="workshido-forteachers.html">For teachers</a>
       <a href="workshido-upload.html">⬆ Upload</a>
     </div>
@@ -542,7 +546,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 <section class="hero">
   <div class="hero-eyebrow">
     <span class="dot"></span>
-    <span id="heroEyebrowText">100+ free worksheets · Print-ready PDFs · New resources every week</span>
+    <span id="heroEyebrowText">800+ free worksheets · Print-ready PDFs · New resources every week</span>
   </div>
   <h1>English worksheets that make<br>teaching <em>effortless</em></h1>
   <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs designed for real English classes — with answer keys and Teacher Editions available.</p>
@@ -574,8 +578,8 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 
 <!-- STATS -->
 <div class="stats-bar">
-  <div class="stat"><span class="stat-num" id="statWorksheets">100+</span><span class="stat-label">Free worksheets</span></div>
-  <div class="stat"><span class="stat-num" id="statLevels">A1–B1</span><span class="stat-label">CEFR levels · growing</span></div>
+  <div class="stat"><span class="stat-num" id="statWorksheets">800+</span><span class="stat-label">Free worksheets</span></div>
+  <div class="stat"><span class="stat-num" id="statLevels">A1–B2</span><span class="stat-label">CEFR levels · growing</span></div>
   <div class="stat"><span class="stat-num">Free</span><span class="stat-label">Free account, no card</span></div>
   <div class="stat"><span class="stat-num">Weekly</span><span class="stat-label">New worksheets added</span></div>
 </div>
@@ -624,7 +628,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 <section class="browse-cta">
   <div class="browse-cta-inner">
     <h2>Explore the full catalog</h2>
-    <p id="browseCtaCount">514 worksheets and growing — filter by grammar topic, CEFR level, or skill.</p>
+    <p id="browseCtaCount">800+ worksheets and growing — filter by grammar topic, CEFR level, or skill.</p>
     <a href="workshido-index.html" class="browse-cta-btn">Browse all worksheets →</a>
   </div>
 </section>
