@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Workshido Worksheets Are Made — Editorial Standards</title>
+<meta name="description" content="Who makes Workshido worksheets and how: CEFR-levelled topic sets, line-by-line answer checks, Teacher Editions, and how we fix errors teachers report.">
+<link rel="canonical" href="https://workshido.com/about/">
+<meta property="og:site_name" content="Workshido">
+<meta property="og:type" content="website">
+<meta property="og:title" content="How Workshido Worksheets Are Made — Editorial Standards">
+<meta property="og:description" content="Who makes Workshido worksheets and how: CEFR-levelled topic sets, line-by-line answer checks, Teacher Editions, and how we fix errors teachers report.">
+<meta property="og:image" content="https://workshido.com/og-image.png">
+<meta property="og:url" content="https://workshido.com/about/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How Workshido Worksheets Are Made — Editorial Standards">
+<meta name="twitter:description" content="Who makes Workshido worksheets and how: CEFR-levelled topic sets, line-by-line answer checks, Teacher Editions, and how we fix errors teachers report.">
+<meta name="theme-color" content="#042C53">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css?v=20260908">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-900: #042C53; --blue-800: #0C447C; --blue-600: #185FA5; --blue-400: #378ADD;
+    --blue-200: #85B7EB; --blue-100: #B5D4F4; --blue-50: #E6F1FB;
+    --teal-600: #0F6E56; --teal-400: #1D9E75; --teal-50: #E1F5EE;
+    --gray-900: #2C2C2A; --gray-600: #5F5E5A; --gray-300: #B4B2A9; --gray-100: #D3D1C7; --gray-50: #F1EFE8;
+    --white: #ffffff; --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px;
+    --font-display: 'Sora', sans-serif; --font-body: 'Inter', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--white); color: var(--gray-900); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  nav { position: sticky; top: 0; z-index: 100; background: var(--blue-900); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; }
+  .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); text-decoration: none; }
+  .nav-logo span { color: var(--blue-200); }
+  .nav-actions { display: flex; gap: 10px; align-items: center; }
+  .btn-ghost { font-family: var(--font-body); font-size: 13px; font-weight: 500; color: var(--blue-100); background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-sm); padding: 7px 16px; cursor: pointer; text-decoration: none; }
+  .btn-primary { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--blue-900); background: var(--white); border: none; border-radius: var(--radius-sm); padding: 7px 18px; cursor: pointer; text-decoration: none; }
+  .breadcrumb { padding: 16px 32px; font-size: 13px; color: var(--gray-300); max-width: 760px; margin: 0 auto; }
+  .breadcrumb a { color: var(--gray-600); text-decoration: none; }
+  .breadcrumb span { margin: 0 6px; }
+  .article-hero { padding: 24px 32px 8px; max-width: 760px; margin: 0 auto; }
+  .article-meta { font-size: 12px; font-weight: 600; color: var(--teal-600); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+  .article-hero h1 { font-family: var(--font-display); font-size: clamp(26px, 4vw, 38px); font-weight: 700; color: var(--gray-900); line-height: 1.25; margin-bottom: 10px; }
+  .article-desc { font-size: 16px; color: var(--gray-600); line-height: 1.6; }
+  article { max-width: 760px; margin: 24px auto 0; padding: 0 32px 60px; font-size: 16px; line-height: 1.75; color: #333; }
+  article h2 { font-family: var(--font-display); font-size: 21px; font-weight: 700; color: var(--blue-900); margin: 32px 0 12px; }
+  article p { margin-bottom: 16px; }
+  article ul, article ol { margin: 0 0 16px 22px; }
+  article li { margin-bottom: 8px; }
+  article a { color: var(--blue-600); }
+  article strong { color: var(--gray-900); }
+  .related-guides { max-width: 760px; margin: 0 auto 60px; padding: 0 32px; }
+  .related-guides h2 { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 14px; }
+  .guide-links { display: flex; flex-direction: column; gap: 10px; }
+  .guide-link { display: block; padding: 14px 18px; border: 1px solid var(--gray-100); border-radius: var(--radius-md); text-decoration: none; color: var(--blue-900); font-weight: 600; font-size: 14px; transition: border-color 0.15s, background 0.15s; }
+  .guide-link:hover { border-color: var(--blue-200); background: var(--blue-50); }
+  footer a { color: var(--blue-600); text-decoration: none; }
+  @media (max-width: 480px) { nav { padding: 0 16px; } .breadcrumb, .article-hero, article, .related-guides { padding-left: 16px; padding-right: 16px; } }
+
+html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
+
+  /* Footer completo (Browse/Levels/Company) unificado 12/09/2026 */
+  footer { background: var(--blue-900); color: var(--blue-100); padding: 48px 32px 32px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+  .footer-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+  .footer-logo span { color: var(--blue-200); }
+  .footer-desc { font-size: 13px; color: var(--blue-100); line-height: 1.7; max-width: 260px; }
+  .footer-social { display: flex; gap: 10px; margin-top: 16px; }
+  .footer-social a { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); color: var(--blue-100); transition: background 0.15s, color 0.15s; }
+  .footer-social a:hover { background: rgba(255,255,255,0.16); color: var(--white); }
+  .footer-col h4 { font-size: 12px; font-weight: 600; color: var(--white); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+  .footer-col a { display: block; font-size: 13px; color: var(--blue-100); text-decoration: none; margin-bottom: 8px; transition: color 0.12s; }
+  .footer-col a:hover { color: var(--white); }
+  .footer-link-soon { display: block; font-size: 13px; color: rgba(181,212,244,0.45); margin-bottom: 8px; cursor: default; }
+  .footer-link-soon small { font-size: 10px; opacity: 0.85; }
+  .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 24px; display: flex; justify-content: space-between; font-size: 12px; color: var(--blue-200); }
+  @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr; } .footer-bottom { flex-direction: column; gap: 6px; text-align: center; } }
+  .article-byline { font-size: 13px; color: var(--gray-600); margin-top: 10px; }
+  .article-byline a { color: inherit; }
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "AboutPage", "name": "How Workshido Worksheets Are Made — Editorial Standards", "description": "Who makes Workshido worksheets and how: CEFR-levelled topic sets, line-by-line answer checks, Teacher Editions, and how we fix errors teachers report.", "url": "https://workshido.com/about/", "author": {"@type": "Organization", "name": "Workshido Editorial Team", "url": "https://workshido.com/about/"}, "about": {"@type": "Organization", "name": "Workshido", "url": "https://workshido.com/", "email": "hello@workshido.com", "logo": "https://workshido.com/favicon-192.png"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://workshido.com/"}, {"@type": "ListItem", "position": 2, "name": "About", "item": "https://workshido.com/about/"}]}</script>
+</head>
+<body>
+<script>/* auth-flash guard: hide logged-out nav instantly for signed-in users */(function(){try{var now=Date.now()/1000;for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!k||k.indexOf("-auth-token")<0)continue;var v=JSON.parse(localStorage.getItem(k)||"null")||{};var s=v.currentSession||v;var exp=s.expires_at||v.expires_at;if(s.access_token&&(!exp||exp>now)){document.documentElement.classList.add("ws-authed");setTimeout(function(){var n=document.getElementById("navActions");if(n&&!/profile|avatar|Log ?out/i.test(n.innerHTML))document.documentElement.classList.remove("ws-authed");},4500);break;}}}catch(e){}})();</script>
+<nav>
+  <a href="/index.html" class="nav-logo">Work<span>shido</span></a>
+  <div class="nav-actions" id="navActions">
+    <a href="/workshido-login.html" class="btn-ghost">Log in</a>
+    <a href="/workshido-signup.html" class="btn-primary">Sign up free</a>
+  </div>
+</nav>
+<div class="breadcrumb" role="navigation" aria-label="Breadcrumb">
+  <a href="/">Home</a>
+  <span>›</span>
+  <span>About</span>
+</div>
+<main>
+<div class="article-hero">
+  <div class="article-meta">About Workshido · Editorial standards</div>
+  <h1>How Workshido Worksheets Are Made</h1>
+  <p class="article-desc">Who makes Workshido worksheets, how each one is levelled and checked before it goes live, and what we do when a teacher finds a mistake.</p>
+  <p class="article-byline">By the Workshido Editorial Team</p>
+</div>
+<article>
+
+<p>Workshido is an independent library of free, printable English worksheets for teachers of A1–B2 English (ESL/EFL) classes. It is built and maintained by a small team — the Workshido Editorial Team — with one goal: a teacher should be able to print a worksheet and teach it the same day, without fixing anything first.</p>
+
+<h2>1. Every topic is a set, not a single sheet</h2>
+<p>Most free worksheet sites give you one isolated page. We build each topic as a <strong>set</strong> you can teach in order: a <strong>Grammar</strong> sheet that presents the form, a <strong>Reading</strong> that shows it in context, a <strong>Writing</strong> task where students produce it, and a <strong>Practice</strong> sheet for extra controlled work — closed by a graded <strong>Quiz</strong>. The <a href="/guides/how-to-sequence-esl-lessons/">sequencing guide</a> explains why that order works.</p>
+
+<h2>2. Levelled against the CEFR</h2>
+<p>Every topic is placed at A1, A2, B1 or B2 using the Common European Framework of Reference (CEFR) descriptors, and every worksheet is tagged by level, skill and language focus, so the catalog filters match what you actually need for your class. Our <a href="/guides/cefr-levels-guide/">CEFR levels guide</a> explains what each level means in class.</p>
+
+<h2>3. What we check before a worksheet goes live</h2>
+<p>Each worksheet is read in full, line by line, before publishing. A sheet that fails any of these checks is corrected or discarded — never published as it is:</p>
+<ul>
+  <li><strong>Every word is legible.</strong> Garbled or unreadable text is a hard stop.</li>
+  <li><strong>Closed items have exactly one correct answer.</strong> Multiple choice, word-bank gap-fills and matching items are checked one by one; if two answers could fit (a missing subject, a missing time or detail), the item is rewritten.</li>
+  <li><strong>Matching exercises balance.</strong> Every option on the right has exactly one partner on the left — no spare options and no two items competing for the same answer.</li>
+  <li><strong>Facts stay consistent.</strong> A price, time or quantity that appears in two activities must match in both.</li>
+  <li><strong>Puzzles are solvable.</strong> Word searches and crosswords are checked letter by letter so every listed word is really in the grid.</li>
+  <li><strong>It prints cleanly.</strong> Each worksheet is rendered and checked as a single A4 page before upload.</li>
+</ul>
+
+<h2>4. Answer keys and Teacher Editions</h2>
+<p>Answer keys are written from the finished worksheet, item by item — never from a summary. Most worksheets also have a two-page <strong>Teacher Edition</strong> with the complete answer key, a ready lesson plan (presentation, guided practice and independent practice), the mistakes students typically make, and ideas for fast finishers.</p>
+
+<h2>5. The tools behind the page</h2>
+<p>Like most publishers today, we use a mix of digital tools to design our pages, including some AI-assisted tools for illustrations and layout. The topics, the level and the structure of every set are planned by the editorial team, and every exercise and answer is checked by hand before publishing, using the checks above.</p>
+
+<h2>6. When we get something wrong</h2>
+<p>If you find an error, email us at <a href="mailto:hello@workshido.com">hello@workshido.com</a>. We correct the worksheet itself — not just a note in the answer key — and then update its Teacher Edition and the topic quiz, so every piece of the set stays consistent.</p>
+
+<h2>7. What is free and what is Premium</h2>
+<p>Every worksheet is free to download and print. Teacher Editions and the graded quizzes are part of <a href="/workshido-pricing.html">Premium</a>, which keeps the free library growing.</p>
+
+<p><a href="/workshido-index.html"><strong>Browse the worksheet catalog →</strong></a></p>
+
+</article>
+</main>
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">Work<span>shido</span></div>
+      <p class="footer-desc">Free, high-quality English worksheets for teachers and learners worldwide. Download, print, and teach.</p>
+      <div class="footer-social">
+        <a href="https://co.pinterest.com/Workshido/" target="_blank" rel="noopener" aria-label="Workshido on Pinterest">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.171-2.911 1.023 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.056-4.869-4.992-4.869-3.401 0-5.399 2.552-5.399 5.199 0 1.03.397 2.132.893 2.732.099.12.112.225.083.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.163-1.495-.699-2.433-2.895-2.433-4.657 0-3.793 2.756-7.276 7.949-7.276 4.174 0 7.42 2.976 7.42 6.947 0 4.146-2.615 7.485-6.245 7.485-1.219 0-2.365-.634-2.756-1.383l-.749 2.853c-.271 1.043-1.004 2.35-1.495 3.146 1.126.348 2.318.535 3.554.535 6.62 0 11.987-5.367 11.987-11.987C23.987 5.367 18.62.001 12 .001Z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@workshido" target="_blank" rel="noopener" aria-label="Workshido on TikTok">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0 1 15.54 3h-3.09v12.4a2.592 2.592 0 0 1-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3s-1.88.09-3.24-1.48Z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@Workshido" target="_blank" rel="noopener" aria-label="Workshido on YouTube">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Browse</h4>
+      <a href="/worksheets/grammar/">Grammar</a>
+      <a href="/worksheets/vocabulary/">Vocabulary</a>
+      <a href="/worksheets/reading/">Reading</a>
+      <a href="/worksheets/writing/">Writing</a>
+      <a href="/workshido-index.html?topic=practice">Practice</a>
+    </div>
+    <div class="footer-col">
+      <h4>Levels</h4>
+      <a href="/worksheets/levels/a1/">A1 Beginner</a>
+      <a href="/worksheets/levels/a2/">A2 Elementary</a>
+      <a href="/worksheets/levels/b1/">B1 Intermediate</a>
+      <a href="/worksheets/levels/b2/">B2 Upper-intermediate</a>
+      <span class="footer-link-soon" title="C1 worksheets are coming soon">C1 Advanced <small>(coming soon)</small></span>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="/workshido-forteachers.html">For teachers</a>
+      <a href="/guides/">Teaching guides</a>
+      <a href="/about/">About</a>
+      <a href="/workshido-pricing.html">Premium</a>
+      <a href="mailto:hello@workshido.com">Contact</a>
+      <a href="/workshido-privacy.html">Privacy</a>
+      <a href="/workshido-terms.html">Terms</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; <span id="yr"></span> Workshido. All rights reserved.</span>
+    <span>Made with &hearts; for teachers worldwide</span>
+  </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
+<script src="/js/guides-auth.js" defer></script>
+<script src="/js/analytics.js?v=20260908" defer></script>
+<script src="/js/marketing-consent.js?v=20260813" defer></script>
+<script>var __y=document.getElementById('yr');if(__y)__y.textContent=new Date().getFullYear();</script>
+</body>
+</html>

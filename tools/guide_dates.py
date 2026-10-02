@@ -35,6 +35,28 @@ def _day(ts):
     return dt.date.fromtimestamp(ts).isoformat()
 
 
+def _byline(s):
+    """Firma "<Marca> Editorial Team" → /about/ (visible + author del Article).
+    Auditoría 02/10/2026: las guías firmaban solo "Organization: Workshido", sin
+    autoría editorial ni página que la respalde. Idempotente. Va dentro de
+    stamp() a propósito: así no toca el mtime y no infla dateModified."""
+    m = re.search(r'<meta property="og:site_name" content="([^"]+)">', s)
+    brand = m.group(1) if m else 'Workshido'
+    m = re.search(r'<link rel="canonical" href="(https://[^/]+)/', s)
+    domain = m.group(1) if m else 'https://workshido.com'
+    team = f'{brand} Editorial Team'
+    s = re.sub(r'"author":\s*\{[^{}]*\}',
+               f'"author":{{"@type":"Organization","name":"{team}","url":"{domain}/about/"}}', s, count=1)
+    if 'class="article-byline"' not in s:
+        s = re.sub(r'(<p class="article-desc">.*?</p>)',
+                   lambda m: m.group(1) + f'\n  <p class="article-byline">By the <a href="/about/">{team}</a></p>',
+                   s, count=1, flags=re.S)
+    if '.article-byline' not in s.split('</style>')[0]:
+        s = s.replace('</style>', '  .article-byline { font-size: 13px; color: var(--gray-600); margin-top: 10px; }\n'
+                      '  .article-byline a { color: inherit; }\n</style>', 1)
+    return s
+
+
 def stamp(path):
     s = open(path, encoding='utf-8').read()
     m_art = re.search(r'"@type":\s*"Article",\s*', s)
@@ -59,6 +81,7 @@ def stamp(path):
     s = re.sub(r'(<div class="article-meta">[^<]*?)(?:\s*(?:·|&middot;)\s*Updated <time[^>]*>[^<]*</time>)+', r'\1', s)
     s = re.sub(r'(<div class="article-meta">)([^<]*?)(</div>)',
                lambda m: f'{m.group(1)}{m.group(2)} &middot; Updated <time datetime="{mod}">{human}</time>{m.group(3)}', s, count=1)
+    s = _byline(s)
     with open(path, 'w', encoding='utf-8', newline='') as f:
         f.write(s)
     # Keep the file's mtime at "mod" so a re-run doesn't bump dateModified by itself.

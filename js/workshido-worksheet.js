@@ -50,7 +50,7 @@ const REL_FAMILIES = {
 const REL_WORD2FAM = new Map();
 for (const [f, ws] of Object.entries(REL_FAMILIES)) for (const w of ws.split(' ')) REL_WORD2FAM.set(w, [...(REL_WORD2FAM.get(w) || []), f]);
 const REL_MIN = 5;    // below this, two worksheets only share incidental words
-const REL_MAX = 24;   // cap on non-set matches, keeps the section scannable
+const REL_MAX = 16;   // cap on non-set matches, keeps the section scannable
 function relWords(s) {
   return ((s || '').toLowerCase().match(/[a-zà-ÿ']+/g) || []).filter(w => w.length > 2 && !REL_STOP.has(w));
 }
@@ -95,6 +95,12 @@ const FORMAT_FAMILIES = [
 function formatFamily(title) {
   return FORMAT_FAMILIES.find(f => f.test(title)) || null;
 }
+// Social proof only when it is proof: "Downloads 0" / "No ratings yet" on a
+// new worksheet tells a first-time visitor nobody uses it (02/10/2026: 201
+// worksheets showed 0 downloads, 742 had no ratings). Below these the row is
+// simply not shown.
+const SOCIAL_MIN_DOWNLOADS = 20;
+const SOCIAL_MIN_RATINGS = 3;
 let _wsFileUrl = null;
 let _answerKeyUrl = null;
 let _isPremium = false;
@@ -243,10 +249,23 @@ async function loadWorksheet() {
       (data.level ? `<a href="/worksheets/levels/${esc(data.level.toLowerCase())}/">${esc(data.level)} Worksheets</a><span>›</span>` : '') +
       `<span aria-current="page">${esc(data.title)}</span>`;
   }
+  // "Complete the set" nav (Grammar → Reading → Writing → Practice) is built
+  // once, server-side, by netlify/functions/worksheet-page.js — so crawlers
+  // get the sibling links too — and reused here verbatim instead of keeping a
+  // second renderer in sync. Captured before #pageWrap is replaced.
+  const ssrSetEl = document.getElementById('ssrSet');
+  let ssrSetHtml = ssrSetEl && !ssrSetEl.hidden ? ssrSetEl.outerHTML : '';
+  // The quiz closes the sequence; the SSR doesn't look quizzes up, so the row
+  // is appended here (the Full Quiz button itself sits just below).
+  if (ssrSetHtml && quiz) {
+    ssrSetHtml = ssrSetHtml.replace('</ol>', `<li class="ws-set-quiz"><span class="ws-set-dot">★</span><span class="ws-set-cat">Quiz</span><span class="ws-set-name">${_isPremium ? 'Graded check — download below' : 'Graded check · Premium'}</span></li></ol>`);
+  }
   const topicLinksHtml = (wsSeo?.links || []).map(l => `<a href="${esc(l.href)}">${esc(l.text)}</a>`).join('');
 
   const lvlCls = LEVEL_CLASS[data.level] || 'a1';
-  const tags = (data.tags || '').split(',').filter(t => t.trim()).map(t => `<span class="tag">${esc(t.trim())}</span>`).join('');
+  // Tags are search metadata (catalog search, "More on this topic" scoring),
+  // not page copy: shown as chips they read as a keyword string ("worksheet ·
+  // language focus · B2 · ESL") and say nothing a teacher needs. Not rendered.
   const freeBadge = data.is_free ? '<span class="badge-free">Free</span>' : '<span class="badge-premium">⭐ Premium</span>';
   const desc = wsBodyDescription ? `<p class="ws-desc">${esc(wsBodyDescription)}</p>` : '';
   const ext = (data.file_url || '').split('.').pop().split('?')[0].toUpperCase();
@@ -254,7 +273,7 @@ async function loadWorksheet() {
   const preview = data.thumbnail_url
     // La vista previa es el LCP de esta pagina: fetchpriority alto para que el
     // navegador no la encole detras del resto de imagenes.
-    ? `<img src="${data.thumbnail_url}" alt="${data.title}" fetchpriority="high" decoding="async" width="640" height="904">`
+    ? `<img src="${data.thumbnail_url}" alt="${esc((/worksheet/i.test(data.title || '') ? `${data.title} – preview` : `${(data.title || '').replace(/\s*\((?:A1|A2|B1|B2|C1)\)\s*$/i, '')} – ${data.level || ''} ${data.category || 'English'} worksheet preview`).replace(/\s+/g, ' '))}" fetchpriority="high" decoding="async" width="640" height="904">`
     : `<div class="preview-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         <span>No preview available</span>
@@ -293,7 +312,7 @@ async function loadWorksheet() {
 
   const starSection = `
     <div class="star-section">
-      <div class="star-avg-row" id="starAvgRow">${starsDisplay(_rating, _ratingsCount)}</div>
+      <div class="star-avg-row" id="starAvgRow"${_ratingsCount < SOCIAL_MIN_RATINGS ? ' hidden' : ''}>${starsDisplay(_rating, _ratingsCount)}</div>
       ${starInteractive}
     </div>`;
 
@@ -337,11 +356,11 @@ async function loadWorksheet() {
             </span>
           </button>
           <p class="quiz-key-link">Covers ${esc(quiz.skills)} · <a onclick="downloadQuiz('key')">Download answer key</a></p>
-          <div class="quiz-prep-tip">
+          ${ssrSetHtml ? '' : `<div class="quiz-prep-tip">
             <div class="prep-label">Your prep checklist</div>
             <div class="prep-steps"><span class="prep-step"><span class="num">1</span>Grammar</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">2</span>Reading</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">3</span>Writing</span><span class="prep-extra">(+ Practice if you want extra reps)</span></div>
             <div class="prep-line">Done with those? You're ready. <a href="/workshido-how-quiz-works.html">Why this order →</a></div>
-          </div>`
+          </div>`}`
         : `<button class="btn-quiz" onclick="openPremiumModal('quiz')">
             <span class="ak-left">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -350,11 +369,11 @@ async function loadWorksheet() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gray-300)"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
           <p class="quiz-key-link">Covers ${esc(quiz.skills)}</p>
-          <div class="quiz-prep-tip">
+          ${ssrSetHtml ? '' : `<div class="quiz-prep-tip">
             <div class="prep-label">How to get there</div>
             <div class="prep-steps"><span class="prep-step"><span class="num">1</span>Grammar</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">2</span>Reading</span><span class="prep-arrow">→</span><span class="prep-step"><span class="num">3</span>Writing</span><span class="prep-extra">(all free)</span></div>
             <div class="prep-line">Then unlock the <b>only graded evaluation</b> on Workshido — full answer key included. <a href="/workshido-how-quiz-works.html">Why this order →</a></div>
-          </div>`)
+          </div>`}`)
     : '';
 
   document.getElementById('pageWrap').innerHTML = `
@@ -369,17 +388,17 @@ async function loadWorksheet() {
         </div>
         ${wsBodyDescription ? `<p class="ws-desc">${esc(wsBodyDescription)}</p>` : ''}
         ${topicLinksHtml ? `<div class="ws-topic-links">${topicLinksHtml}</div>` : ''}
-        ${tags ? `<div class="ws-tags">${tags}</div>` : ''}
         <div class="ws-meta">
           <div class="ws-meta-row"><span class="ws-meta-label">Format</span><span class="ws-meta-value">${ext || '—'}</span></div>
           <div class="ws-meta-row"><span class="ws-meta-label">Level</span><span class="ws-meta-value">${data.level || '—'}</span></div>
-          <div class="ws-meta-row"><span class="ws-meta-label">Downloads</span><span class="ws-meta-value" id="dlCount">${data.downloads || 0}</span></div>
+          ${(data.downloads || 0) >= SOCIAL_MIN_DOWNLOADS ? `<div class="ws-meta-row"><span class="ws-meta-label">Downloads</span><span class="ws-meta-value" id="dlCount">${data.downloads}</span></div>` : ''}
         </div>
         ${downloadBtn}
         <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
         <button class="btn-save" id="saveWsBtn" onclick="toggleSaveWS()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Save to my library
         </button>
+        ${ssrSetHtml}
         ${answerKeyBtn}
         ${quizBtn}
         ${starSection}
@@ -387,6 +406,7 @@ async function loadWorksheet() {
     </div>`;
 
   refreshSaveBtn();
+  markSetDone();
 
   // Now (after the worksheet itself is on screen) resolve the ~700-row query
   // and build the "More on this topic" list — same topic_key, the "Topic – Type"
@@ -398,8 +418,13 @@ async function loadWorksheet() {
   const byTopicKey = data.topic_key ? rows.filter(r => r.topic_key === data.topic_key) : [];
   const byTitle = base ? rows.filter(r => titleBase(r.title) === base) : [];
   const scores = relevanceScores(data, rows);
+  // A wording-only match two or more CEFR steps away needs a much stronger
+  // score: on a B2 Future Perfect page, A1 "Daily Routines" and "What Time Is
+  // It?" got in on a shared "time expressions" tag alone (02/10/2026 audit).
+  const curLvl = LEVEL_ORDER.indexOf(data.level);
+  const lvlGap = r => (curLvl < 0 || LEVEL_ORDER.indexOf(r.level) < 0) ? 0 : Math.abs(LEVEL_ORDER.indexOf(r.level) - curLvl);
   const byRelevance = rows
-    .filter(r => scores.get(r.id) >= REL_MIN)
+    .filter(r => scores.get(r.id) >= (lvlGap(r) >= 2 ? REL_MIN * 2 : REL_MIN))
     .sort((a, b) => scores.get(b.id) - scores.get(a.id))
     .slice(0, REL_MAX);
   const setMatchIds = isEasyWordSearch(data.title) ? new Set() : new Set(
@@ -418,6 +443,24 @@ async function loadWorksheet() {
 
   renderRelated(related, lvlCls, data.category, data.level);
   renderSetProgress(data, related);
+}
+
+// Signed-in teachers see which set worksheets they already downloaded: only the
+// dot changes (number → ✓), so nothing shifts.
+async function markSetDone() {
+  const items = [...document.querySelectorAll('#ssrSet li[data-id]')];
+  if (!items.length) return;
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    const { data: dl } = await sb.from('user_downloads').select('worksheet_id').in('worksheet_id', items.map(li => li.dataset.id));
+    const got = new Set((dl || []).map(d => d.worksheet_id));
+    for (const li of items) if (got.has(li.dataset.id)) {
+      li.classList.add('done');
+      const dot = li.querySelector('.ws-set-dot');
+      if (dot) dot.textContent = '✓';
+    }
+  } catch (e) {}
 }
 
 // "You've downloaded 2 of 4 in this set" — a light progress nudge under the
@@ -756,6 +799,7 @@ async function rateWS(v) {
             else s += '<span class="star-char">★</span>';
           }
           avgRow.innerHTML = `<div class="stars-display">${s}</div><span>${r.toFixed(1)} (${c} rating${c !== 1 ? 's' : ''})</span>`;
+          avgRow.hidden = c < SOCIAL_MIN_RATINGS;
         }
       }
     }

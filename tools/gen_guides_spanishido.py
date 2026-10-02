@@ -518,6 +518,7 @@ FOOTER = '''<footer>
       <h4>Company</h4>
       <a href="/spanishido-forteachers.html">For teachers</a>
       <a href="/guides/">Teaching guides</a>
+      <a href="/about/">About</a>
       <a href="/spanishido-pricing.html">Premium</a>
       <a href="mailto:hello@spanishido.com">Contact</a>
       <a href="/spanishido-privacy.html">Privacy</a>

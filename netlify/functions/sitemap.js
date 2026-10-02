@@ -8,6 +8,7 @@ const STATIC_PAGES = [
   { loc: '/', changefreq: 'daily', priority: '1.0' },
   { loc: '/workshido-index.html', changefreq: 'daily', priority: '0.9' },
   { loc: '/workshido-forteachers.html', changefreq: 'weekly', priority: '0.8' },
+  { loc: '/about/', changefreq: 'monthly', priority: '0.5' },
   { loc: '/workshido-pricing.html', changefreq: 'monthly', priority: '0.7' },
   { loc: '/worksheets/grammar/', changefreq: 'weekly', priority: '0.8' },
   { loc: '/worksheets/vocabulary/', changefreq: 'weekly', priority: '0.8' },
@@ -62,7 +63,7 @@ exports.handler = async () => {
   try {
     const { data: worksheets, error } = await sb
       .from('worksheets')
-      .select('id, slug, created_at')
+      .select('id, slug, created_at, thumbnail_url')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -85,12 +86,13 @@ exports.handler = async () => {
       return `  <url>
     <loc>${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.8</priority>${ws.thumbnail_url ? `
+    <image:image><image:loc>${escapeXml(ws.thumbnail_url)}</image:loc></image:image>` : ''}
   </url>`;
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${[...staticEntries, ...worksheetEntries].join('\n')}
 </urlset>
 `;

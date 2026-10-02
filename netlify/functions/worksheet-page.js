@@ -107,6 +107,50 @@ function breadcrumbFor(data, topic, url) {
   return items;
 }
 
+// "Complete the set" — this worksheet's same-level siblings on the same topic
+// (same topic_key, or the same "Topic – Type" title base), in teaching order.
+// Same membership rule as the client's "These worksheets form a set" line in
+// js/workshido-worksheet.js (titleBase / isEasyWordSearch / displayCategory are
+// copies of the client's): 2+ siblings spanning 2+ categories, otherwise it's
+// not a teaching sequence and nothing is shown. Rendered here so no-JS
+// crawlers get the sibling links; the client reuses this markup verbatim.
+const SET_ORDER = ['Grammar', 'Reading', 'Writing', 'Practice', 'Vocabulary', 'Speaking', 'Listening'];
+const titleBase = (t) => (t || '').split(/\s[–-]\s/)[0].replace(/\s*\((?:a1|a2|b1|b2|c1)\)\s*$/i, '').trim().toLowerCase();
+const isEasyWordSearch = (t) => /\(easy version\)/i.test(t || '');
+const displayCategory = (r) => (r.category === 'Grammar' && /\bpractice\b/i.test(r.title || '')) ? 'Practice' : (r.category || 'Other');
+
+function setFor(data, rows) {
+  if (!data.level || isEasyWordSearch(data.title)) return [];
+  const base = titleBase(data.title);
+  const sibs = rows.filter((r) => r.id !== data.id && r.level === data.level && !isEasyWordSearch(r.title)
+    && ((data.topic_key && r.topic_key === data.topic_key) || (base && titleBase(r.title) === base)));
+  const all = [data, ...sibs];
+  if (sibs.length < 2 || new Set(all.map(displayCategory)).size < 2) return [];
+  const rank = (r) => { const i = SET_ORDER.indexOf(displayCategory(r)); return i < 0 ? 99 : i; };
+  // Max 6 rows: this worksheet + one per category first, so a set with two
+  // Grammar variants never loses its Practice row to the cap; extras after.
+  const picked = [data], cats = new Set([displayCategory(data)]);
+  for (const r of sibs) if (!cats.has(displayCategory(r))) { cats.add(displayCategory(r)); picked.push(r); }
+  for (const r of sibs) if (picked.length < 6 && !picked.includes(r)) picked.push(r);
+  return picked.slice(0, 6)
+    .sort((a, b) => rank(a) - rank(b) || (a.id === data.id ? -1 : b.id === data.id ? 1 : 0))
+    .map((r) => ({ id: r.id, slug: r.slug, title: r.title, cat: displayCategory(r), current: r.id === data.id }));
+}
+
+function setHtml(set) {
+  if (!set.length) return '<div class="ws-set" id="ssrSet" hidden></div>';
+  const items = set.map((r, i) => {
+    const inner = `<span class="ws-set-dot">${i + 1}</span><span class="ws-set-cat">${escapeHtml(r.cat)}</span>`
+      + `<span class="ws-set-name">${r.current ? 'You&apos;re here' : escapeHtml(r.title)}</span>`;
+    return r.current
+      ? `<li class="cur" data-id="${escapeAttr(r.id)}" aria-current="page">${inner}</li>`
+      : `<li data-id="${escapeAttr(r.id)}"><a href="/worksheet/${escapeAttr(r.slug)}/" title="${escapeAttr(r.title)}">${inner}</a></li>`;
+  }).join('');
+  return `<div class="ws-set" id="ssrSet" role="navigation" aria-label="Worksheets in this set">`
+    + `<div class="ws-set-head"><span>Complete the set</span><a href="/guides/how-to-sequence-esl-lessons/">Teach it in order →</a></div>`
+    + `<ol class="ws-set-list">${items}</ol></div>`;
+}
+
 exports.handler = async (event) => {
   const path = event.path || '';
   const slugMatch = path.match(SLUG_ROUTE);
@@ -181,6 +225,14 @@ exports.handler = async (event) => {
     // fuller text, which is worth more here as indexable page content.
     const bodyDesc = data.description_long || data.description || desc;
 
+    // Same-level rows only (~250, light columns) for the set nav. Not the whole
+    // catalog: PostgREST caps a response at 1000 rows, which the catalog will
+    // pass. Only runs on a CDN cache miss (s-maxage below).
+    const { data: levelRows } = data.level
+      ? await sb.from('worksheets').select('id,slug,title,level,category,topic_key').eq('level', data.level).not('slug', 'is', null)
+      : { data: [] };
+    const set = setFor(data, levelRows || []);
+    const previewAlt = (/worksheet/i.test(data.title || '') ? `${data.title} – preview` : `${(data.title || '').replace(/\s*\((?:A1|A2|B1|B2|C1)\)\s*$/i, '')} – ${data.level || ''} ${data.category || 'English'} worksheet preview`).replace(/\s+/g, ' ');
     const topic = topicFor(data);
     const crumbs = breadcrumbFor(data, topic, url);
     const crumbsHtml = crumbs
@@ -236,6 +288,7 @@ exports.handler = async (event) => {
         '<div class="ws-topic-links" id="ssrTopicLinks" hidden></div>',
         topicLinksHtml ? `<div class="ws-topic-links" id="ssrTopicLinks">${topicLinksHtml}</div>` : ''
       )
+      .replace('<div class="ws-set" id="ssrSet" hidden></div>', () => setHtml(set))  // fn: titles may contain "$"
       .replace(
         '<script type="application/ld+json" id="breadcrumbLD"></script>',
         `<script type="application/ld+json" id="breadcrumbLD">${breadcrumbLD}</script>`
@@ -259,7 +312,7 @@ exports.handler = async (event) => {
       .replace(
         '<div class="preview-box" id="ssrPreview"><div class="loading">Loading worksheet...</div></div>',
         data.thumbnail_url
-          ? `<div class="preview-box" id="ssrPreview"><img src="${escapeAttr(data.thumbnail_url)}" alt="${escapeAttr(data.title)}" fetchpriority="high" decoding="async" width="640" height="904"></div>`
+          ? `<div class="preview-box" id="ssrPreview"><img src="${escapeAttr(data.thumbnail_url)}" alt="${escapeAttr(previewAlt)}" fetchpriority="high" decoding="async" width="640" height="904"></div>`
           : '<div class="preview-box" id="ssrPreview"></div>'
       )
       .replace(
@@ -308,7 +361,11 @@ exports.handler = async (event) => {
         // ?id (Netlify-Vary below). stale-while-revalidate keeps it instant
         // even past the 5-min TTL while a fresh copy is fetched in the
         // background; the client JS re-hydrates live data regardless.
-        'Netlify-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600, durable',
+        // s-maxage raised 300 → 3600 (02/10/2026): with ~800 pages and a 5-min
+        // TTL most views missed the cache — worksheet TTFB p75 was ~950ms in
+        // our own web_vitals. Content only changes on upload (≤1h stale is
+        // fine; the client re-reads the live row) and every deploy purges it.
+        'Netlify-CDN-Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400, durable',
         'Netlify-Vary': 'query=id',
       },
       body: html,

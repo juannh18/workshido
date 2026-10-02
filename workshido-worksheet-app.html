@@ -108,8 +108,25 @@
   .ws-topic-links { display: flex; flex-direction: column; gap: 6px; margin: -4px 0 16px; font-size: 13px; }
   .ws-topic-links a { color: var(--blue-600); text-decoration: none; font-weight: 500; }
   .ws-topic-links a:hover { text-decoration: underline; }
-  .ws-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
-  .tag { font-size: 12px; color: var(--blue-600); background: var(--blue-50); border-radius: 20px; padding: 3px 10px; }
+
+  /* "Complete the set" — Grammar → Reading → Writing → Practice (+ Quiz), built
+     by netlify/functions/worksheet-page.js. Navigation, not a sales card. */
+  .ws-set { margin: 14px 0 4px; border: 1px solid var(--gray-100); border-radius: var(--radius-md); padding: 10px 12px; background: var(--white); }
+  .ws-set[hidden] { display: none; }
+  .ws-set-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: var(--gray-900); margin-bottom: 6px; }
+  .ws-set-head a { font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--blue-600); text-decoration: none; white-space: nowrap; }
+  .ws-set-head a:hover { text-decoration: underline; }
+  .ws-set-list { list-style: none; margin: 0; padding: 0; }
+  .ws-set-list li > a, .ws-set-list li.cur, .ws-set-list li.ws-set-quiz { display: flex; align-items: center; gap: 8px; padding: 6px 4px; font-size: 13px; color: var(--gray-900); text-decoration: none; border-radius: var(--radius-sm); min-width: 0; }
+  .ws-set-list li > a:hover { background: var(--blue-50); }
+  .ws-set-list li + li { border-top: 1px dashed var(--gray-100); }
+  .ws-set-dot { flex: 0 0 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: var(--gray-50); color: var(--gray-600); border: 1px solid var(--gray-100); }
+  .ws-set-cat { flex: 0 0 auto; font-weight: 700; }
+  .ws-set-name { flex: 1 1 auto; min-width: 0; color: var(--gray-600); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
+  .ws-set-list li.cur .ws-set-dot { background: var(--blue-600); color: var(--white); border-color: var(--blue-600); }
+  .ws-set-list li.cur .ws-set-name { color: var(--blue-600); font-weight: 600; }
+  .ws-set-list li.done .ws-set-dot { background: var(--teal-50); color: var(--teal-600); border-color: var(--teal-100, #9FE1CB); }
+  .ws-set-list li.ws-set-quiz .ws-set-dot { background: #FDF2F8; color: #BE185D; border-color: #FBCFE8; }
 
   .ws-meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
   .ws-meta-row { display: flex; justify-content: space-between; font-size: 13px; }
@@ -169,6 +186,7 @@
 
   /* STAR RATING */
   .star-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
+  .star-avg-row[hidden] { display: none; }
   .star-avg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 13px; color: var(--gray-600); }
   .stars-display { display: flex; gap: 2px; }
   .star-char { font-size: 16px; line-height: 1; color: var(--gray-100); }
@@ -308,6 +326,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
       <h1 class="ws-title" id="ssrTitle">English worksheet</h1>
       <p class="ws-desc" id="ssrDesc" hidden></p>
       <div class="ws-topic-links" id="ssrTopicLinks" hidden></div>
+      <div class="ws-set" id="ssrSet" hidden></div>
     </div>
   </div>
 </main>
@@ -361,6 +380,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
       <h4>Company</h4>
       <a href="/workshido-forteachers.html">For teachers</a>
       <a href="/guides/">Teaching guides</a>
+      <a href="/about/">About</a>
       <a href="/workshido-pricing.html">Premium</a>
       <a href="mailto:hello@workshido.com">Contact</a>
       <a href="/workshido-privacy.html">Privacy</a>
@@ -375,7 +395,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/avatar-render.js" defer></script>
-<script src="/js/workshido-worksheet.js?v=20260927" defer></script>
+<script src="/js/workshido-worksheet.js?v=20261002" defer></script>
 
 <!-- Login modal -->
 <div class="modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">

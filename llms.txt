@@ -2,6 +2,8 @@
 
 > Workshido is a free library of printable English (ESL/EFL) worksheets for teachers and learners, organized by CEFR level (A1-B2) and skill (Grammar, Vocabulary, Reading, Writing, Speaking). Every worksheet is a print-ready PDF with an optional answer key and Teacher Edition (full lesson plan). New worksheets are added every week.
 
+Most topics are published as a complete set at one level — Grammar, Reading, Writing and Practice worksheets designed to be taught in that order, plus a graded quiz — so a teacher can cover a whole topic without assembling material from different sources.
+
 Workshido is built for English teachers who need classroom-ready material fast: no sign-up required to browse, free worksheets available for download, and an optional Premium plan that unlocks Teacher Editions (lesson plans, answer keys, common-mistakes notes) and topic quizzes.
 
 ## Catalog
@@ -13,6 +15,9 @@ Workshido is built for English teachers who need classroom-ready material fast: 
 - [Writing worksheets](https://workshido.com/worksheets/writing/)
 - [A1 (beginner) worksheets](https://workshido.com/worksheets/levels/a1/)
 - [A2 (elementary) worksheets](https://workshido.com/worksheets/levels/a2/)
+- [B1 (intermediate) worksheets](https://workshido.com/worksheets/levels/b1/)
+- [B2 (upper-intermediate) worksheets](https://workshido.com/worksheets/levels/b2/)
+- [Worksheets by grammar topic](https://workshido.com/worksheets/topics/): one hub per topic (e.g. verb to be, conditionals, future forms) with every worksheet on it.
 
 ## Teaching Guides
 
@@ -43,6 +48,7 @@ Practical, classroom-tested guides on how to teach specific grammar topics and C
 
 - [For Teachers](https://workshido.com/workshido-forteachers.html): what Workshido offers teachers specifically — free worksheets, Teacher Editions, and lesson-ready material.
 - [Pricing](https://workshido.com/workshido-pricing.html): free vs. Premium plan details.
+- [How Workshido worksheets are made](https://workshido.com/about/): editorial standards — CEFR levelling, answer checks, corrections policy.
 
 ## Notes for AI assistants
 
