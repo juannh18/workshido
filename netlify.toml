@@ -21,6 +21,15 @@
 # Guides answered 200 on /guides/<slug>/index.html as well as /guides/<slug>/
 # (duplicate URL). Only the request path is matched, so /guides/<slug>/ itself
 # still resolves to its index.html without looping.
+# Pinterest auto-publish: one RSS feed per board, served by pin-feed.js, which
+# only lists pins whose scheduled day has come (netlify/lib/pin-schedule.json,
+# built by tools/pinterest/build_schedule.js). Pinterest reads each feed daily.
+[[redirects]]
+  from = "/pinterest/feed/:board"
+  to = "/.netlify/functions/pin-feed?board=:board"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/guides/index.html"
   to = "/guides/"

@@ -9,22 +9,23 @@
   @font-face { font-family: Inter; src: url('../../fonts/inter-latin.woff2') format('woff2'); font-weight: 100 900; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: 1000px; height: 1500px; overflow: hidden; }
-  body { background: #042C53; font-family: Inter, Arial, sans-serif; color: #fff; position: relative; }
-  .glow { position: absolute; inset: 0; background: radial-gradient(900px 600px at 50% 62%, rgba(55,138,221,.28), transparent 70%); }
+  :root { --bg: #042C53; --glow: rgba(55,138,221,.28); --label: #85B7EB; --sub: #E6F1FB; --skills: #B5D4F4; --cta: #534AB7; --siteB: #85B7EB; }
+  body { background: var(--bg); font-family: Inter, Arial, sans-serif; color: #fff; position: relative; }
+  .glow { position: absolute; inset: 0; background: radial-gradient(900px 600px at 50% 62%, var(--glow), transparent 70%); }
   .head { position: absolute; top: 70px; left: 80px; right: 80px; }
-  .label { font-weight: 800; font-size: 30px; letter-spacing: 4px; color: #85B7EB; text-transform: uppercase; }
+  .label { font-weight: 800; font-size: 30px; letter-spacing: 4px; color: var(--label); text-transform: uppercase; }
   .title { font-family: Sora, Inter, sans-serif; font-weight: 800; line-height: 1.02; text-transform: uppercase; margin-top: 18px; font-size: 92px; letter-spacing: -1px; }
-  .sub { font-weight: 600; font-size: 36px; color: #E6F1FB; margin-top: 16px; line-height: 1.25; }
+  .sub { font-weight: 600; font-size: 36px; color: var(--sub); margin-top: 16px; line-height: 1.25; }
   .stage { position: absolute; left: 0; right: 0; display: flex; justify-content: center; align-items: center; }
   .sheet { background: #fff; border-radius: 10px; box-shadow: 0 30px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.15); overflow: hidden; }
   .sheet img { display: block; width: 100%; height: auto; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
   .grid .sheet { width: 330px; }
   .badge { position: absolute; background: #EF9F27; color: #2C2C2A; font-weight: 900; font-size: 30px; line-height: 1.05; text-align: center; padding: 18px 22px; border-radius: 14px; transform: rotate(6deg); box-shadow: 0 10px 24px rgba(0,0,0,.35); letter-spacing: .5px; }
-  .skills { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; font-size: 32px; color: #B5D4F4; letter-spacing: 1px; }
-  .cta { position: absolute; left: 110px; right: 110px; bottom: 130px; height: 110px; border-radius: 22px; background: #534AB7; display: flex; align-items: center; justify-content: center; font-family: Sora, Inter, sans-serif; font-weight: 800; font-size: 40px; letter-spacing: 1px; box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+  .skills { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; font-size: 32px; color: var(--skills); letter-spacing: 1px; }
+  .cta { position: absolute; left: 110px; right: 110px; bottom: 130px; height: 110px; border-radius: 22px; background: var(--cta); display: flex; align-items: center; justify-content: center; font-family: Sora, Inter, sans-serif; font-weight: 800; font-size: 40px; letter-spacing: 1px; box-shadow: 0 12px 30px rgba(0,0,0,.35); }
   .site { position: absolute; left: 0; right: 0; bottom: 52px; text-align: center; font-weight: 800; font-size: 38px; letter-spacing: 1px; }
-  .site span { color: #85B7EB; }
+  .site span { color: var(--siteB); }
 </style></head>
 <body>
 <div class="glow"></div>
@@ -36,11 +37,17 @@
 <div class="stage" id="stage"></div>
 <div class="skills" id="skills"></div>
 <div class="cta" id="cta"></div>
-<div class="site">work<span>shido</span>.com</div>
+<div class="site" id="site">work<span>shido</span>.com</div>
 <script>
 // Params: {type:'WORKSHEET'|'SET', label, title, sub, cta, thumbs:[url...], skills}
 const p = JSON.parse(decodeURIComponent(location.hash.slice(1)));
 const $ = (id) => document.getElementById(id);
+// Brand axis (Spanishido): colors + wordmark come in p.theme; Workshido = CSS defaults.
+if (p.theme) {
+  const t = p.theme, r = document.documentElement.style;
+  for (const [k, v] of Object.entries({ bg: t.bg, glow: t.glow, label: t.label, sub: t.sub, skills: t.skills, cta: t.cta, siteB: t.siteBColor })) if (v) r.setProperty('--' + k, v);
+  $('site').innerHTML = `${t.siteA}<span>${t.siteB}</span>.com`;
+}
 $('label').textContent = p.label;
 $('title').textContent = p.title;
 $('sub').textContent = p.sub || '';

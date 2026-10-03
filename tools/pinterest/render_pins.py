@@ -6,7 +6,7 @@ datos de cada pin en el hash, captura la pantalla y sube el resultado a
 files.workshido.com/pins/<key>.jpg (la "Media URL" de los CSV de Pinterest).
 
 Uso:
-  python tools/pinterest/render_pins.py --out <carpeta> [--from 0 --to 811] [--no-upload] [--force]
+  python tools/pinterest/render_pins.py --out <carpeta> [--site spanishido] [--from 0 --to 811] [--no-upload] [--force]
 Sin --force, se salta los pines que ya están en R2 (se puede relanzar sin repetir).
 """
 import argparse, base64, json, os, subprocess, sys, tempfile, time, urllib.parse, urllib.request
@@ -75,8 +75,11 @@ def main():
     ap.add_argument('--to', dest='end', type=int, default=10**6)
     ap.add_argument('--no-upload', action='store_true')
     ap.add_argument('--force', action='store_true')
+    ap.add_argument('--site', default='workshido', choices=['workshido', 'spanishido'])
     a = ap.parse_args()
-    pins = json.load(open(os.path.join(HERE, 'pins.json'), encoding='utf-8'))[a.start:a.end]
+    es = a.site == 'spanishido'
+    pins = json.load(open(os.path.join(HERE, 'pins_es.json' if es else 'pins.json'), encoding='utf-8'))[a.start:a.end]
+    prefix = 'es/pins/' if es else 'pins/'  # must match MEDIA() in gen_pinterest_csv.js
     os.makedirs(a.out, exist_ok=True)
 
     s3 = None
@@ -97,7 +100,7 @@ def main():
     done = skipped = failed = 0
     try:
         for i, p in enumerate(pins):
-            key = f"pins/{p['key']}.jpg"
+            key = f"{prefix}{p['key']}.jpg"
             if s3 and not a.force and exists(key):
                 skipped += 1
                 continue
