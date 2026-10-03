@@ -18,6 +18,7 @@
 // same text) — harmless, idempotent, and it keeps this a two-file change
 // instead of a full SSR rewrite.
 const { createClient } = require('@supabase/supabase-js');
+const { fetchAllRows } = require('../lib/fetch-all');
 const { topicFor, seoTitle } = require('../lib/topics');
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
@@ -229,7 +230,7 @@ exports.handler = async (event) => {
     // catalog: PostgREST caps a response at 1000 rows, which the catalog will
     // pass. Only runs on a CDN cache miss (s-maxage below).
     const { data: levelRows } = data.level
-      ? await sb.from('worksheets').select('id,slug,title,level,category,topic_key').eq('level', data.level).not('slug', 'is', null)
+      ? await fetchAllRows(() => sb.from('worksheets').select('id,slug,title,level,category,topic_key').eq('level', data.level).not('slug', 'is', null).order('id'))
       : { data: [] };
     const set = setFor(data, levelRows || []);
     const previewAlt = (/worksheet/i.test(data.title || '') ? `${data.title} – preview` : `${(data.title || '').replace(/\s*\((?:A1|A2|B1|B2|C1)\)\s*$/i, '')} – ${data.level || ''} ${data.category || 'English'} worksheet preview`).replace(/\s+/g, ' ');

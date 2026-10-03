@@ -13,6 +13,7 @@
 // runtime from the A1 level template, so it can never drift from the rest of
 // the catalog pages.
 const { createClient } = require('@supabase/supabase-js');
+const { fetchAllRows } = require('../lib/fetch-all');
 const { HUBS, hubBySlug, topicFor } = require('../lib/topics');
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
@@ -211,7 +212,7 @@ exports.handler = async (event) => {
   try {
     const [chrome, { data, error }] = await Promise.all([
       getChrome(event),
-      sb.from('worksheets').select('id,slug,title,level,category,thumbnail_url,topic_key').order('created_at', { ascending: false }).limit(3000),
+      fetchAllRows(() => sb.from('worksheets').select('id,slug,title,level,category,thumbnail_url,topic_key').order('created_at', { ascending: false }).order('id')),
     ]);
     if (error || !data) throw error || new Error('no data');
 

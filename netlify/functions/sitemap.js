@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const { fetchAllRows } = require('../lib/fetch-all');
 const { HUBS } = require('../lib/topics');
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
@@ -61,10 +62,11 @@ function escapeXml(s) {
 
 exports.handler = async () => {
   try {
-    const { data: worksheets, error } = await sb
+    const { data: worksheets, error } = await fetchAllRows(() => sb
       .from('worksheets')
       .select('id, slug, created_at, thumbnail_url')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .order('id'));
 
     if (error) throw error;
 

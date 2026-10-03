@@ -1052,8 +1052,21 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 function openMobileMenu()  { document.getElementById('mobileMenu').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow = ''; }
 
+// Supabase/PostgREST returns at most 1000 rows per request (API "max rows"),
+// so whole-catalog reads page through with .range() instead of silently
+// stopping at row 1000. build() must return a fresh query ordered
+// deterministically (id as tie-breaker) so pages don't overlap or skip.
+async function fetchAllRows(build) {
+  const rows = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await build().range(from, from + 999);
+    if (error) return { data: rows.length ? rows : null, error };
+    rows.push(...(data || []));
+    if (!data || data.length < 1000) return { data: rows, error: null };
+  }
+}
 async function loadWorksheets() {
-  const { data, error } = await sb2.from('worksheets').select('*').eq('level', 'B1').order('created_at', { ascending: false, nullsFirst: false }).limit(500);
+  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('*').eq('level', 'B1').order('created_at', { ascending: false, nullsFirst: false }).order('id'));
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;

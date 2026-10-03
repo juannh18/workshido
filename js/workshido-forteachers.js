@@ -18,8 +18,21 @@ async function checkAuth() {
 async function logOut() { await sb.auth.signOut(); window.location.reload(); }
 
 // Honest, live numbers from the real catalog
+// Supabase/PostgREST returns at most 1000 rows per request (API "max rows"),
+// so whole-catalog reads page through with .range() instead of silently
+// stopping at row 1000. build() must return a fresh query ordered
+// deterministically (id as tie-breaker) so pages don't overlap or skip.
+async function fetchAllRows(build) {
+  const rows = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await build().range(from, from + 999);
+    if (error) return { data: rows.length ? rows : null, error };
+    rows.push(...(data || []));
+    if (!data || data.length < 1000) return { data: rows, error: null };
+  }
+}
 async function loadLiveStats() {
-  const { data, error } = await sb.from('worksheets').select('level');
+  const { data, error } = await fetchAllRows(() => sb.from('worksheets').select('level').order('id'));
   if (error || !data || !data.length) return;
   // Rounds down to the nearest 100 ("700+", "800+", …) — never overstated,
   // steps up every 100 uploads.

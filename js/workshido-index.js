@@ -952,12 +952,25 @@ function setCategory(cat) {
   filterAndRender();
 }
 
+// Supabase/PostgREST returns at most 1000 rows per request (API "max rows"),
+// so whole-catalog reads page through with .range() instead of silently
+// stopping at row 1000. build() must return a fresh query ordered
+// deterministically (id as tie-breaker) so pages don't overlap or skip.
+async function fetchAllRows(build) {
+  const rows = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await build().range(from, from + 999);
+    if (error) return { data: rows.length ? rows : null, error };
+    rows.push(...(data || []));
+    if (!data || data.length < 1000) return { data: rows, error: null };
+  }
+}
 async function loadWorksheets() {
   // Only the columns the catalog list/cards/search actually use — not select('*').
   // Drops file_url, teacher_edition_url, topic_key, rating, uploader_* … which
   // cut the payload for ~700 rows from ~690 KB to ~450 KB.
   const COLS = 'id,slug,title,level,category,tags,thumbnail_url,is_free,downloads,rating,ratings_count,description,created_at';
-  const { data, error } = await sb2.from('worksheets').select(COLS).order('created_at', { ascending: false, nullsFirst: false }).limit(1000);
+  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select(COLS).order('created_at', { ascending: false, nullsFirst: false }).order('id'));
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;

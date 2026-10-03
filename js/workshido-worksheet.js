@@ -141,6 +141,19 @@ async function checkAuth() {
 }
 async function logOut() { await sb.auth.signOut(); window.location.reload(); }
 
+// Supabase/PostgREST returns at most 1000 rows per request (API "max rows"),
+// so whole-catalog reads page through with .range() instead of silently
+// stopping at row 1000. build() must return a fresh query ordered
+// deterministically (id as tie-breaker) so pages don't overlap or skip.
+async function fetchAllRows(build) {
+  const rows = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await build().range(from, from + 999);
+    if (error) return { data: rows.length ? rows : null, error };
+    rows.push(...(data || []));
+    if (!data || data.length < 1000) return { data: rows, error: null };
+  }
+}
 async function loadWorksheet() {
   const id = new URLSearchParams(window.location.search).get('id');
   // Readable URL: /worksheet/<slug>/. The legacy ?id= form still resolves,
@@ -208,8 +221,8 @@ async function loadWorksheet() {
   // block the main render on it — #pageWrap paints from the data we already
   // have (inlined seed + quiz), and "More on this topic" fills in afterwards
   // (see the block just before renderRelated below).
-  const relatedRowsP = sb.from('worksheets')
-    .select('id,slug,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id);
+  const relatedRowsP = fetchAllRows(() => sb.from('worksheets')
+    .select('id,slug,title,level,category,thumbnail_url,tags,topic_key').neq('id', data.id).order('id'));
 
   // #wsSeo is written by netlify/functions/worksheet-page.js: SERP title,
   // breadcrumb trail and guide/hub links from the shared topic map

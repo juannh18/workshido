@@ -77,8 +77,22 @@ async function loadTrending() {
 function milestoneCount(n) {
   return Math.max(100, Math.floor(n / 100) * 100).toLocaleString('en-US') + '+';
 }
+// Supabase/PostgREST returns at most 1000 rows per request (API "max rows"),
+// so whole-catalog reads page through with .range() instead of silently
+// stopping at row 1000. build() must return a fresh query ordered
+// deterministically (id as tie-breaker) so pages don't overlap or skip.
+async function fetchAllRows(build) {
+  const rows = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await build().range(from, from + 999);
+    if (error) return { data: rows.length ? rows : null, error };
+    rows.push(...(data || []));
+    if (!data || data.length < 1000) return { data: rows, error: null };
+  }
+}
 async function loadStats() {
-  const { data, count, error } = await sb2.from('worksheets').select('level', { count: 'exact' });
+  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('level').order('id'));
+  const count = data ? data.length : null;
   if (error || !data) return;
   const n = count ?? data.length;
   if (!n) return;

@@ -11,6 +11,7 @@
 // static HTML before the JS-driven grid ever loads, using the same
 // self-fetch + string-replace pattern as worksheet-page.js.
 const { createClient } = require('@supabase/supabase-js');
+const { fetchAllRows } = require('../lib/fetch-all');
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const SITE = 'https://workshido.com';
@@ -75,7 +76,7 @@ exports.handler = async (event) => {
       // 255) and left most of the level unlinked from its own landing page —
       // the internal linking this block exists for. The list is plain <a>
       // text, so the full set costs ~25KB even on the biggest level.
-      sb.from('worksheets').select('id, slug, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).limit(500),
+      fetchAllRows(() => sb.from('worksheets').select('id, slug, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).order('id')),
     ]);
 
     if (error || !data || !data.length) {
