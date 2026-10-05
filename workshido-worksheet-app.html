@@ -73,7 +73,9 @@
   .breadcrumb [aria-current] { color: var(--gray-600); }
 
   /* MAIN */
-  .page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px 64px; display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; }
+  .page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px 64px; display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; }
+  /* minmax(0,…) + min-width:0: los nombres nowrap del set ("Complete the set") ensanchaban la columna en móvil (página corrida, 05/10/2026) */
+  .page-wrap > * { min-width: 0; }
 
   /* PREVIEW */
   .preview-box { background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--gray-100); overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 480px; }
@@ -259,7 +261,7 @@
   .related-name { font-size: 13px; font-weight: 600; color: var(--gray-900); line-height: 1.35; }
 
   @media (max-width: 768px) {
-    .page-wrap { grid-template-columns: 1fr; padding: 0 16px 48px; }
+    .page-wrap { grid-template-columns: minmax(0, 1fr); padding: 0 16px 48px; }
     .breadcrumb { padding: 16px; }
     nav { padding: 0 16px; }
     .nav-links { display: none; }

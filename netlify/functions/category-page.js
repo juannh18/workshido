@@ -94,9 +94,10 @@ exports.handler = async (event) => {
       .join('');
 
     const block = `
-<section aria-label="All ${esc(page.label)} worksheets" style="max-width:1100px;margin:0 auto;padding:0 32px 8px;">
+<section class="ws-seo-sec" aria-label="All ${esc(page.label)} worksheets" style="max-width:1100px;margin:0 auto;padding:0 32px 8px;">
   <h2 style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#5F5E5A;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;">All ${esc(page.label)} worksheets (${data.length})</h2>
-  <ul style="columns:3;column-gap:24px;list-style:none;padding:0;margin:0 0 8px;font-size:13px;line-height:1.9;">${links}</ul>
+  <ul class="ws-seo-links" style="columns:3;column-gap:24px;list-style:none;padding:0;margin:0 0 8px;font-size:13px;line-height:1.9;">${links}</ul>
+  <style>.ws-seo-links a{overflow-wrap:anywhere}@media (max-width:768px){.ws-seo-links{columns:1!important}.ws-seo-sec{padding-left:16px!important;padding-right:16px!important}}</style>
 </section>`;
 
     // ItemList mirrors the injected <ul> above — gives crawlers/AI assistants

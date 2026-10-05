@@ -47,6 +47,7 @@ const STATIC_PAGES = [
   { loc: '/guides/how-to-teach-conditionals/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-modal-verbs/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-learn-irregular-verbs/', changefreq: 'monthly', priority: '0.6' },
+  { loc: '/guides/how-to-teach-functional-english/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-passive-voice/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-phrasal-verbs/', changefreq: 'monthly', priority: '0.6' },
   { loc: '/guides/how-to-teach-used-to/', changefreq: 'monthly', priority: '0.6' },

@@ -259,16 +259,177 @@ const SIDEBAR_SECTIONS = [
   ]},
 ];
 
+// ── Level view sidebar: when a level is active (A1 chip, ?level=A1) the
+//    "Grammar topics" section is replaced by THAT level's core topics, in the
+//    order of the Workshido curriculum roadmap, counted only against that
+//    level's worksheets. `key:<topic_key>` matches a set exactly (no substring
+//    collisions); plain terms cover older worksheets without a topic_key.
+//    The general view (All levels) keeps SIDEBAR_SECTIONS untouched.
+const K = (...keys) => keys.map(k => 'key:' + k);
+const LEVEL_TOPICS = {
+  A1: [
+    { label: 'Verb to be',             match: [...K('verb-to-be-a1', 'verb-to-be-personal-information-a1')] },
+    { label: 'Present simple',         match: [...K('third-person-singular-a1'), 'do & does', 'present simple – writing'] },
+    { label: "Can / can't",            match: ['can & can', 'modalcan'] },
+    { label: 'There is / are',         match: [...K('there-is-there-are-a1'), 'there is there are'] },
+    { label: 'Have got / Has got',     match: [...K('have-got-a1')] },
+    { label: 'Present continuous',     match: ['present continuous'] },
+    { label: 'Going to',               match: [...K('going-to-a1')] },
+    { label: 'Imperatives',            match: [...K('imperatives-a1')] },
+    { label: 'Demonstratives',         match: [...K('demonstratives-a1')] },
+    { label: 'Prepositions of place',  match: [...K('prepositions-of-place-a1'), 'prepositions of place'] },
+    { label: 'Articles a/an/the',      match: [...K('articles-a-an-the-a1'), 'idefinitearticles'] },
+    { label: 'Possessive adjectives',  match: [...K('possessive-adjectives-a1'), 'possessive adjectives &'] },
+    { label: 'Possessive pronouns',    match: [...K('possessive-pronouns-a1')] },
+    { label: "Possessive 's",          match: [...K('possessive-s-a1')] },
+    { label: 'Plural nouns',           match: ['plural nouns'] },
+    { label: 'Countable nouns', match: [...K('countable-uncountable-nouns-a1'), 'countable/uncountable'] },
+    { label: 'Some & any',             match: [...K('some-any-a1'), 'some and any', 'some, any'] },
+    { label: 'Much & many', match: ['much many a lot of'] },
+    { label: 'Adverbs of frequency',   match: [...K('adverbs-frequency-a1')] },
+    { label: 'Question words',         match: [...K('question-words-a1'), 'wh-questions'] },
+    { label: 'Pronouns', match: [...K('object-pronouns-a1'), 'subjectpronouns'] },
+    { label: 'Conjunctions',           match: [...K('conjunctions-and-but-a1', 'conjunctions-if-before-a1')] },
+    { label: 'Sequencing words',       match: [...K('sequencing-words-a1')] },
+    { label: 'Comparatives',           match: [...K('comparative-adjectives-a1')] },
+    { label: 'Superlatives',           match: [...K('superlative-adjectives-a1')] },
+    { label: 'Likes & dislikes',       match: [...K('likes-and-dislikes-a1')] },
+    { label: 'Past simple',            match: [...K('past-simple-a1', 'past-simple-a2')] },
+    { label: 'Was / were',             match: [...K('was-or-were-a1'), 'past of verb to be'] },
+    { label: 'Present perfect',        match: [...K('present-perfect-a1')] },
+  ],
+  A2: [
+    { label: 'Present simple',         match: [...K('present-simple-a2', 'present-simple-daily-routines-a2')] },
+    { label: 'Present continuous',     match: [...K('present-continuous-a2')] },
+    { label: 'Present simple vs continuous', match: [...K('present-simple-vs-present-continuous-a2')] },
+    { label: 'Past simple',            match: [...K('past-simple-a2', 'past-simple-weekend-activities-a2', 'top30-irregular-verbs'), 'past simple grammar', 'past simple regular', 'past simple –', 'time expressions in the past', 'irregular verbs', 'past simple speaking'] },
+    { label: 'Past continuous',        match: [...K('past-continuous-a2')] },
+    { label: 'Past simple vs continuous', match: [...K('past-simple-vs-past-continuous-a2'), 'when and while'] },
+    { label: 'Will & going to',        match: [...K('future-simple-a2'), 'will vs. going to'] },
+    { label: 'A few / a little',       match: [...K('a-few-a-little-a2')] },
+    { label: 'How much / how many',    match: [...K('how-much-how-many-a2')] },
+    { label: 'There was / were', match: [...K('there-was-there-were-a2')] },
+    { label: 'Can / could',            match: [...K('can-could-a2'), 'modalcan'] },
+    { label: 'Must / have to',         match: [...K('must-have-to-a2'), "must, mustn't"] },
+    { label: "Should / shouldn't",     match: [...K('should-shouldnt-a2')] },
+    { label: 'Prepositions of place', match: [...K('prepositions-place-movement-a2')] },
+    { label: 'Prepositions of time',   match: [...K('prepositions-of-time-a2')] },
+    { label: 'Question words',         match: ['question words'] },
+    { label: 'Adverbs of manner',      match: [...K('adverbs-of-manner-a2')] },
+    { label: 'Like / would like',      match: ['would like'] },
+    { label: 'Verb patterns',          match: [...K('verb-patterns-a2')] },
+    { label: 'Too & enough',           match: [...K('too-and-enough-a2')] },
+    { label: 'So & such',              match: [...K('so-such-a2')] },
+    { label: 'Comparatives', match: ['comparative'] },
+    { label: 'Reflexive pronouns',     match: [...K('reflexive-pronouns-a2')] },
+    { label: 'Zero conditional',       match: [...K('zero-conditional-a2')] },
+    { label: 'First conditional',      match: [...K('first-conditional-a2')] },
+    { label: 'Present perfect',        match: [...K('present-perfect-a2')] },
+    { label: 'Functional English',     match: ['functional english'] },
+  ],
+  B1: [
+    { label: 'Present tenses', match: [...K('present-simple-b1'), 'present simple & present continuous', 'stative verbs', 'present progressive', 'present simple, present continuous'] },
+    { label: 'Past simple & continuous', match: [...K('past-simple-past-continuous-review-b1')] },
+    { label: 'Used to',                match: [...K('used-to-b1')] },
+    { label: 'Present perfect',        match: [...K('present-perfect-b1', 'present-perfect-just-already-yet-b1', 'present-perfect-for-and-since-b1'), 'life experiences', 'ever, never'] },
+    { label: 'Present perfect vs past simple', match: [...K('present-perfect-vs-past-simple-b1')] },
+    { label: 'Present perfect continuous', match: [...K('present-perfect-continuous-b1', 'present-perfect-simple-vs-continuous-b1')] },
+    { label: 'Past perfect',           match: [...K('past-perfect-b1')] },
+    { label: 'Narrative tenses',       match: [...K('narrative-tenses-story-organization-b1')] },
+    { label: 'Future forms',           match: [...K('future-forms-b1', 'present-continuous-future-arrangements-b1')] },
+    { label: 'Future time clauses',    match: [...K('future-time-clauses-b1')] },
+    { label: 'Second conditional',     match: [...K('second-conditional-b1')] },
+    { label: 'First vs second conditional', match: [...K('first-vs-second-conditional-b1')] },
+    { label: 'Modals: obligation',     match: [...K('modal-obligation-necessity-b1')] },
+    { label: 'Modals: advice',         match: [...K('modal-advice-b1')] },
+    { label: 'Modals: possibility',    match: [...K('modal-possibility-b1')] },
+    { label: 'Modals: deduction',      match: [...K('modal-deduction-b1')] },
+    { label: 'Passive voice',          match: ['passive'] },
+    { label: 'Relative clauses',       match: ['relative clauses'] },
+    { label: 'Reported speech',        match: [...K('reported-speech-b1', 'reported-questions-commands-b1')] },
+    { label: 'Gerunds & infinitives',  match: ['gerund'] },
+    { label: 'Adjective + preposition', match: [...K('adjective-preposition-combinations-b1')] },
+    { label: 'Verb + preposition',     match: [...K('verb-preposition-combinations-b1')] },
+    { label: 'Phrasal verbs',          match: [...K('phrasal-verbs-everyday-life-b1')] },
+    { label: 'Comparatives',           match: [...K('comparatives-of-equality-b1'), 'comparatives'] },
+    { label: 'Too, enough, so & such', match: [...K('too-enough-so-such-b1')] },
+    { label: 'Quantifiers & determiners', match: [...K('quantifiers-determiners-b1')] },
+    { label: 'Question tags',          match: [...K('question-tags-b1')] },
+    { label: 'Linking words',          match: [...K('linking-words-paragraph-cohesion-b1')] },
+    { label: 'Irregular verbs',        match: [...K('top30-irregular-verbs')] },
+    { label: 'Functional English',     match: ['functional english'] },
+  ],
+  B2: [
+    { label: 'Tense & aspect review',  match: [...K('tense-and-aspect-review-b2')] },
+    { label: 'Past perfect', match: [...K('past-perfect-simple-and-past-perfect-continuous-b2')] },
+    { label: 'Advanced narrative tenses', match: [...K('advanced-narrative-tenses-b2')] },
+    { label: 'Future forms review',    match: [...K('future-forms-advanced-review-b2', 'present-continuous-for-future-arrangements-b2')] },
+    { label: 'Future continuous',      match: ['future continuous'] },
+    { label: 'Future perfect',         match: ['future perfect –', 'future perfect:', 'future perfect and time'] },
+    { label: 'Future perfect continuous', match: [...K('future-perfect-continuous-b2')] },
+    { label: 'Conditionals review',    match: [...K('conditionals-review-zero-first-second-third-b2')] },
+    { label: 'Third conditional',      match: ['third conditional –', 'third conditional:'] },
+    { label: 'Mixed conditionals',     match: [...K('mixed-conditionals-b2')] },
+    { label: 'Wish & if only',         match: ['if only'] },
+    { label: 'Modals: past deduction', match: [...K('past-modals-of-deduction-must-have-b2')] },
+    { label: 'Modals: regret', match: [...K('modals-of-criticism-regret-should-have-b2')] },
+    { label: 'Modals of possibility',  match: [...K('advanced-modals-of-possibility-b2')] },
+    { label: 'Obligation & permission', match: [...K('obligation-permission-and-necessity-across-time-b2')] },
+    { label: 'Passive voice',          match: [...K('passive-voice-advanced-structures-across-tenses-b2')] },
+    { label: 'Reporting passive',      match: [...K('reporting-passive-it-is-said-that-b2')] },
+    { label: 'Causative have / get', match: [...K('have-get-something-done-causative-structures-b2')] },
+    { label: 'Reported speech',        match: [...K('reported-speech-all-tenses-modals-b2', 'reported-speech-statements-questions-commands-b2')] },
+    { label: 'Reporting verbs',        match: [...K('reporting-verbs-b2')] },
+    { label: 'Relative clauses',       match: [...K('defining-and-non-defining-relative-clauses-b2')] },
+    { label: 'Participle clauses',     match: [...K('reduced-relative-and-participle-clauses-b2')] },
+    { label: 'Gerunds & infinitives',  match: [...K('gerunds-and-infinitives-meaning-changes-b2')] },
+    { label: 'Complex verb patterns',  match: [...K('complex-verb-patterns-b2')] },
+    { label: 'Articles & determiners', match: [...K('advanced-articles-and-determiners-b2')] },
+    { label: 'Quantifiers',            match: [...K('advanced-quantifiers-b2')] },
+    { label: 'Contrast & concession',  match: [...K('contrast-and-concession-b2')] },
+    { label: 'Cause, purpose & result', match: [...K('cause-reason-purpose-and-result-b2')] },
+    { label: 'Advanced comparison',    match: [...K('advanced-comparison-b2')] },
+    { label: 'Gradable adjectives',    match: [...K('gradable-non-gradable-adjectives-b2')] },
+    { label: 'Adverbs & stance',       match: [...K('adverbs-and-stance-b2')] },
+    { label: 'Phrasal verbs',          match: [...K('phrasal-multi-word-verbs-b2')] },
+    { label: 'Word formation',         match: [...K('word-formation-nominalisation-b2')] },
+    { label: 'Cohesion & reference',   match: [...K('cohesion-reference-text-organisation-b2')] },
+    { label: 'Functional English',     match: ['functional english'] },
+  ],
+};
+
+// Sets uploaded after LEVEL_TOPICS was written still get an entry: every
+// topic_key at this level that no listed item covers (and that isn't a pure
+// vocabulary set) is appended, labelled from its worksheets' titles. Adding it
+// to LEVEL_TOPICS later just gives it a hand-picked label and position.
+function wsSetLabel(set) {
+  // "Future Plans & Intentions (Ir A…) – Spanish Grammar Worksheet (A2)" → "Future Plans & Intentions"
+  const bases = set.map(w => String(w.title || '').split(/\s[–—-]\s/)[0].replace(/\([^)]*\)/g, ' ').split(':')[0].replace(/\s+/g, ' ').trim()).filter(Boolean);
+  return bases.sort((a, b) => a.length - b.length)[0] || set[0].topic_key;
+}
+function withNewLevelSets(items, pool) {
+  const coveredKeys = new Set(pool.filter(w => w.topic_key && items.some(it => wsMatchesTerms(w, it.match))).map(w => w.topic_key));
+  const extra = new Map();
+  for (const w of pool) {
+    const k = w.topic_key;
+    if (!k || coveredKeys.has(k) || extra.has(k)) continue;
+    const set = pool.filter(x => x.topic_key === k);
+    if (set.every(x => x.category === 'Vocabulary')) continue;
+    extra.set(k, { label: wsSetLabel(set), match: ['key:' + k] });
+  }
+  return extra.size ? [...items, ...extra.values()] : items;
+}
+
 function wsMatchesTerms(w, terms) {
   const hay = ((w.title || '') + ' ' + (w.tags || '') + ' ' + (w.category || '')).toLowerCase();
-  return terms.some(t => hay.includes(t.toLowerCase()));
+  return terms.some(t => String(t).startsWith('key:') ? w.topic_key === t.slice(4) : hay.includes(t.toLowerCase()));
 }
 
 // Picking a topic/category from the sidebar, chips, or top nav is a fresh browse
 // action — any leftover free-text search (especially one that matched nothing)
 // must not keep silently filtering out the new selection.
 function resetSearch() {
-  searchQuery = '';
+  searchQuery = ''; searchTypedQuery = '';
   const input = document.querySelector('.search-box input');
   if (input) input.value = '';
   const mini = document.getElementById('miniSearchInput');
@@ -279,14 +440,51 @@ function resetSearch() {
 // (the rest still render in the DOM, just hidden — so they stay real,
 // crawlable <a href> links for SEO, not lost until a click reveals them).
 const SIDEBAR_TOP_N = 14;
+let sidebarBuiltFor = null;  // level the sidebar was last built for
 const SIDEBAR_SECTION_ICONS = { 'Grammar topics': '📘', 'Skills': '🎯', 'Topic': '🏷️' };
 const CHEVRON_SVG = '<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>';
+
+// Level view: the topic item matching the current filter after a rebuild
+// (switching level re-renders the sidebar, so the highlight must be restored;
+// a ?topic=key:… URL also gets its human label back from the item here).
+function markActiveSidebarItem() {
+  const items = [...document.querySelectorAll('#sidebar .sidebar-item')];
+  items.forEach(s => s.classList.remove('active'));
+  let hit = null;
+  if (activeTopic !== 'all') {
+    const terms = (Array.isArray(activeTopic) ? activeTopic : [activeTopic]).map(t => String(t).toLowerCase());
+    hit = items.find(s => s.dataset.match && s.dataset.match.toLowerCase().split('|').some(t => terms.includes(t)));
+    if (!hit) {
+      // Same topic under another level's list (e.g. "Present perfect" picked
+      // in B1, then All levels): adopt that item's terms so the results match
+      // its count; a level-only topic with no equivalent is cleared.
+      hit = items.find(s => s.dataset.match && s.dataset.label === activeTopicLabel);
+      if (hit) activeTopic = hit.dataset.match.split('|');
+      else if (terms.some(t => t.startsWith('key:'))) { activeTopic = 'all'; activeTopicLabel = ''; }
+      syncUrl();
+    }
+    if (hit) activeTopicLabel = hit.dataset.label;
+  } else if (activeCategory !== 'all' && activeTopicLabel) {
+    hit = items.find(s => s.dataset.cat && s.dataset.label === activeTopicLabel);
+  }
+  if (hit) hit.classList.add('active');
+}
 
 function buildSidebar() {
   const aside = document.getElementById('sidebar');
   if (!aside) return;
   let html = `<div class="sidebar-mobile-header"><span>Browse topics</span><button type="button" class="sidebar-mobile-close" aria-label="Close">✕</button></div>`;
-  for (const section of SIDEBAR_SECTIONS) {
+  // Level view (A1 chip / ?level=A1): "Grammar topics" becomes that level's
+  // own topics (LEVEL_TOPICS) and every count is for that level only. The
+  // All-levels view is unchanged.
+  const levelView = activeLevel !== 'all';
+  const pool = levelView ? allWorksheets.filter(w => w.level === activeLevel) : allWorksheets;
+  sidebarBuiltFor = activeLevel;
+  for (const base of SIDEBAR_SECTIONS) {
+    const lvItems = levelView && base.title === 'Grammar topics' && LEVEL_TOPICS[activeLevel]
+      ? withNewLevelSets(LEVEL_TOPICS[activeLevel], pool) : null;
+    const section = lvItems ? { ...base, items: lvItems } : base;
+    const sectionTitle = lvItems ? `${activeLevel} topics` : base.title;
     // Score every item by real demand (total downloads across its matched
     // worksheets), not just whether it has any — a flat 40+ item list is
     // choice paralysis, so only "Grammar topics" (the section big enough to
@@ -294,8 +492,8 @@ function buildSidebar() {
     // the long tail behind a toggle instead of dumping it all inline.
     let scored = section.items.map(item => {
       const matched = item.cat
-        ? allWorksheets.filter(w => (w.category || '').toLowerCase() === item.cat.toLowerCase())
-        : allWorksheets.filter(w => wsMatchesTerms(w, item.match));
+        ? pool.filter(w => (w.category || '').toLowerCase() === item.cat.toLowerCase())
+        : pool.filter(w => wsMatchesTerms(w, item.match));
       const downloads = matched.reduce((sum, w) => sum + (w.downloads || 0), 0);
       return { item, count: matched.length, downloads };
     }).filter(s => s.count > 0);
@@ -316,8 +514,8 @@ function buildSidebar() {
       const href = item.cat
         ? `workshido-index.html?cat=${encodeURIComponent(item.cat)}`
         : `workshido-index.html?topic=${encodeURIComponent(item.match.join('|'))}`;
-      const popular = curate && i < 3;
-      return `<a href="${href}" class="sidebar-item${popular ? ' is-popular' : ''}" ${payload} data-label="${item.label}">
+      const popular = curate && i < 3 && (!levelView || s.downloads > 0);
+      return `<a href="${href}" class="sidebar-item${popular ? ' is-popular' : ''}" ${payload} data-label="${item.label}" title="${item.label}">
         <span class="sidebar-item-label">${item.label}</span>
         ${popular ? '<span class="sidebar-popular-mark">🔥</span>' : ''}
         <span class="sidebar-count">${s.count}</span>
@@ -327,10 +525,10 @@ function buildSidebar() {
     let itemsHtml = visible.map(renderItem).join('');
     if (hidden.length) {
       itemsHtml += `<div class="sidebar-more" hidden>${hidden.map(renderItem).join('')}</div>
-        <button type="button" class="sidebar-toggle-more"><span class="sidebar-toggle-label">See all topics (${scored.length})</span>${CHEVRON_SVG}</button>`;
+        <button type="button" class="sidebar-toggle-more"><span class="sidebar-toggle-label">See all ${levelView ? activeLevel + ' ' : ''}topics (${scored.length})</span>${CHEVRON_SVG}</button>`;
     }
     const icon = SIDEBAR_SECTION_ICONS[section.title] || '';
-    if (itemsHtml) html += `<div class="sidebar-section"><div class="sidebar-title">${icon ? `<span class="sidebar-title-icon">${icon}</span>` : ''}${section.title}</div>${itemsHtml}</div>`;
+    if (itemsHtml) html += `<div class="sidebar-section"><div class="sidebar-title">${icon ? `<span class="sidebar-title-icon">${icon}</span>` : ''}${sectionTitle}</div>${itemsHtml}</div>`;
   }
   aside.innerHTML = html || '<div class="sidebar-section"><div class="sidebar-title">No topics yet</div></div>';
 
@@ -433,7 +631,7 @@ function composeTitle() {
 }
 
 function clearFilters() {
-  activeLevel = 'all'; activeCategory = 'all'; activeTopic = 'all'; activeTopicLabel = ''; searchQuery = '';
+  activeLevel = 'all'; activeCategory = 'all'; activeTopic = 'all'; activeTopicLabel = ''; searchQuery = ''; searchTypedQuery = '';
   const input = document.querySelector('.search-box input');
   if (input) input.value = '';
   const mini = document.getElementById('miniSearchInput');
@@ -519,7 +717,7 @@ function renderCards(pageData, total) {
   const txt = `${total} worksheet${total !== 1 ? 's' : ''}`;
   label.textContent = searchBroadenedFromLevel
     ? `No ${searchBroadenedFromLevel} results for "${searchQuery}" — showing ${txt} from all levels`
-    : txt + ' available';
+    : searchTypedQuery ? `Showing ${txt} for "${searchQuery}"` : txt + ' available';
   if (count) count.textContent = txt;
   grid.innerHTML = pageData.map(buildCard).join('');
   renderPagination(total);
@@ -615,6 +813,83 @@ function wsFuzzyIncludes(hay, token) {
   return hay.split(/[\s,/–—-]+/).some(w => wsWordMatches(w, token));
 }
 
+// ── Spelling correction for the search box (05/10/2026) ──
+// The fuzzy word match above tolerates small typos for FILTERING, but the
+// ranking (wsTopicTier) compares the query as a phrase, so "adverbs of
+// frequenci" found the right worksheets and then buried them among ~100
+// loose matches, and "past simpel" (swapped letters = 2 edits) found nothing.
+// Each query word that doesn't exist anywhere in the catalog is replaced by
+// the closest real word from titles/tags BEFORE searching, so a misspelled
+// search behaves exactly like the correctly spelled one.
+let _wsVocab = null;   // folded word -> frequency, built from the loaded catalog
+const wsVocabFold = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+function wsVocab() {
+  if (_wsVocab && _wsVocab.size) return _wsVocab;
+  _wsVocab = new Map();
+  for (const w of allWorksheets) {
+    for (const word of wsVocabFold(`${w.title || ''} ${w.tags || ''} ${w.category || ''}`).split(/[^a-z0-9]+/)) {
+      if (word.length >= 2) _wsVocab.set(word, (_wsVocab.get(word) || 0) + 1);
+    }
+  }
+  return _wsVocab;
+}
+
+// Optimal-string-alignment distance: like levenshtein, but two swapped
+// neighbours ("simpel"/"simple") cost 1 edit instead of 2.
+function wsEditDistance(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    let rowMin = Infinity;
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+      rowMin = Math.min(rowMin, d[i][j]);
+    }
+    if (rowMin > max) return max + 1;
+  }
+  return d[a.length][b.length];
+}
+
+function wsCorrectWord(token) {
+  const vocab = wsVocab();
+  if (token.length < 3 || vocab.has(token)) return token;
+  // A word still being typed ("freq", "adver") is a prefix of a real one —
+  // the root match already handles it; don't "correct" it into something else.
+  for (const word of vocab.keys()) if (word.startsWith(token)) return token;
+  const max = token.length >= 7 ? 2 : 1;
+  let best = null, bestDist = max + 1, bestFreq = 0;
+  for (const [word, freq] of vocab) {
+    if (word.length < (token.length <= 3 ? 2 : 3)) continue;
+    if (token.length <= 4 && word[0] !== token[0]) continue;  // short words: "zoo" must not become "too"
+    const dist = wsEditDistance(token, word, max);
+    if (dist < bestDist || (dist === bestDist && dist <= max && freq > bestFreq)) { best = word; bestDist = dist; bestFreq = freq; }
+  }
+  return best && bestDist <= max ? best : token;
+}
+
+// Returns the query with each misspelled word replaced (spacing and
+// punctuation kept); identical to the input when nothing needed fixing.
+function wsCorrectQuery(query) {
+  if (!query || !allWorksheets.length) return query;
+  return query.split(/(\s+)/).map(part => {
+    const f = wsVocabFold(part);
+    return /^[a-z]+$/.test(f) ? (wsCorrectWord(f) === f ? part : wsCorrectWord(f)) : part;
+  }).join('');
+}
+
+// What the user actually typed when the search ran on a corrected query
+// (shown as 'Showing results for "…"'); '' when no correction happened.
+let searchTypedQuery = '';
+function setSearchQuery(value) {
+  const typed = (value || '').trim();
+  const corrected = wsCorrectQuery(typed);
+  searchQuery = corrected;
+  searchTypedQuery = corrected.toLowerCase() !== typed.toLowerCase() ? typed : '';
+}
+
 // Every filter except level — factored out so a level-scoped search that
 // comes up empty (see filterAndRender) can be retried against the whole
 // catalog with the same category/topic/search logic, level just dropped.
@@ -661,6 +936,7 @@ function applyNonLevelFilters(base) {
 }
 
 function filterAndRender() {
+  if (sidebarBuiltFor !== activeLevel) { buildSidebar(); markActiveSidebarItem(); }
   let filtered = activeLevel !== 'all' ? allWorksheets.filter(w => w.level === activeLevel) : allWorksheets;
   filtered = applyNonLevelFilters(filtered);
 
@@ -726,7 +1002,7 @@ function filterAndRender() {
     // match buries the actually-on-topic worksheet.
     const terms = (Array.isArray(activeTopic) ? activeTopic : [activeTopic]).map(t => t.toLowerCase());
     const topicScore = w => Math.max(...terms.map(t => wsRelevanceScore(w, t)));
-    const tier = new Map(filtered.map(w => [w.id, Math.min(...terms.map(t => relevanceTier(w, t)))]));
+    const tier = new Map(filtered.map(w => [w.id, Math.min(...terms.map(t => t.startsWith('key:') ? (w.topic_key === t.slice(4) ? 0 : 99) : relevanceTier(w, t)))]));
     filtered = [...filtered].sort((a, b) => {
       const diff = tier.get(a.id) - tier.get(b.id);
       return diff !== 0 ? diff : sortSecondary(a, b);
@@ -734,6 +1010,7 @@ function filterAndRender() {
   } else {
     filtered = [...filtered].sort(sortSecondary);
   }
+  if (sidebarBuiltFor !== activeLevel) { buildSidebar(); markActiveSidebarItem(); }
   composeTitle();
   _lastFiltered = filtered;
   currentPage = 1;
@@ -821,7 +1098,24 @@ function wsTopicNorm(s) {
 // Whole-word phrase test: "can" must not match inside "hurricane".
 const wsHasPhrase = (hay, q) => (' ' + hay + ' ').includes(' ' + q + ' ');
 const wsIsComparison = s => /\b(vs|versus|and|or|review|y|o|repaso)\b/.test(s);
+// Singular/plural tolerance for ranking: "adverb of frequency" should tier
+// like "adverbs of frequency". Only tried when the query as typed isn't
+// already a perfect match, and the best tier wins — so rankings that already
+// worked are never changed, only rescued.
 function wsTopicTier(w, rawQ) {
+  const base = wsTopicTierRaw(w, rawQ);
+  if (base === 0) return base;
+  const words = wsTopicNorm(rawQ).split(' ');
+  let best = base;
+  words.forEach((word, i) => {
+    if (word.length <= 3 || TIER_CONNECTORS.has(word) || /(ss|us)$/.test(word)) return;
+    const alt = words.slice();
+    alt[i] = word.endsWith('s') ? word.slice(0, -1) : word + 's';
+    best = Math.min(best, wsTopicTierRaw(w, alt.join(' ')));
+  });
+  return best;
+}
+function wsTopicTierRaw(w, rawQ) {
   const q = wsTopicNorm(rawQ);
   if (!q) return 4;
   const title = wsTierFold(w.title);
@@ -969,7 +1263,7 @@ async function loadWorksheets() {
   // Only the columns the catalog list/cards/search actually use — not select('*').
   // Drops file_url, teacher_edition_url, topic_key, rating, uploader_* … which
   // cut the payload for ~700 rows from ~690 KB to ~450 KB.
-  const COLS = 'id,slug,title,level,category,tags,thumbnail_url,is_free,downloads,rating,ratings_count,description,created_at';
+  const COLS = 'id,slug,title,level,category,tags,thumbnail_url,is_free,downloads,rating,ratings_count,description,created_at,topic_key';
   const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select(COLS).order('created_at', { ascending: false, nullsFirst: false }).order('id'));
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
@@ -1045,9 +1339,10 @@ const miniSearchInput = document.getElementById('miniSearchInput');
 // versión con trim(), se comía el espacio recién tecleado — escribir
 // "present simple" terminaba como "presentsimple". El otro input sí se sincroniza.
 function runSearch(value, source) {
-  searchQuery = value.trim();
-  if (source !== searchInput && searchInput.value !== searchQuery) searchInput.value = searchQuery;
-  if (source !== miniSearchInput && miniSearchInput.value !== searchQuery) miniSearchInput.value = searchQuery;
+  setSearchQuery(value);
+  const shown = searchTypedQuery || searchQuery;
+  if (source !== searchInput && searchInput.value !== shown) searchInput.value = shown;
+  if (source !== miniSearchInput && miniSearchInput.value !== shown) miniSearchInput.value = shown;
   // A search is an intent to look across the whole catalog — a leftover topic/category
   // filter from wherever the user was browsing (e.g. a "Present Simple" topic view) would
   // otherwise silently AND with the query and could hide every result (searching "present
@@ -1165,7 +1460,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
     if (q) {
-      searchQuery = q;
+      setSearchQuery(q);
       const input = document.querySelector('.search-box input');
       if (input) input.value = q;
       const mini = document.getElementById('miniSearchInput');
