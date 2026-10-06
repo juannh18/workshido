@@ -454,7 +454,7 @@ async function loadWorksheet() {
     .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
     .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id), _formatOnly: !topicIds.has(r.id), _score: scores.get(r.id) || 0 }));
 
-  renderRelated(related, lvlCls, data.category, data.level);
+  renderRelated(related, lvlCls, data.category, data.level, /functional english/i.test(data.tags || ''));
   renderSetProgress(data, related);
 }
 
@@ -520,7 +520,7 @@ function displayCategory(r) {
 // cards by color instead of reading every label.
 const CAT_CLASS = { Grammar: 'cat-grammar', Reading: 'cat-reading', Writing: 'cat-writing', Vocabulary: 'cat-vocabulary', Speaking: 'cat-speaking', Practice: 'cat-practice' };
 function catClass(name) { return CAT_CLASS[name] || 'cat-other'; }
-function renderRelated(related, lvlCls, currentCategory, currentLevel) {
+function renderRelated(related, lvlCls, currentCategory, currentLevel, isFunctional) {
   const section = document.getElementById('relatedSection');
   const grid = document.getElementById('relatedGrid');
   if (!section || !grid || !related.length) return;
@@ -535,7 +535,9 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel) {
   const setCats = new Set([currentCategory, ...setSibs.map(r => r.category)].filter(Boolean));
   const intro = section.querySelector('.related-intro');
   if (intro && setSibs.length >= 2 && setCats.size >= 2) {
-    intro.innerHTML = 'These worksheets form a set. <a href="/guides/how-to-sequence-esl-lessons/">How to teach them in order →</a>';
+    intro.innerHTML = isFunctional
+      ? 'These worksheets form a Functional English set. <a href="/guides/how-to-teach-functional-english/">How to teach functional English →</a>'
+      : 'These worksheets form a set. <a href="/guides/how-to-sequence-esl-lessons/">How to teach them in order →</a>';
     intro.hidden = false;
   }
 

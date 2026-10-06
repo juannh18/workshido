@@ -144,8 +144,16 @@ const TOPICS = [
   },
 ];
 
+// Functional English sets (Reading / Practice / Writing, no Grammar sheet —
+// see the guide) are matched by their tag BEFORE the grammar regexes: titles
+// like "Health Problems – … Advice" or "Making Complaints – … Could you…?"
+// would otherwise land on the modal-verbs guide.
+const FUNCTIONAL = { guide: { slug: 'how-to-teach-functional-english', label: 'How to Teach Functional English' }, hub: null };
+const isFunctional = (ws) => /functional english/i.test((ws && ws.tags) || '');
+
 function topicFor(ws) {
   if (!ws) return null;
+  if (isFunctional(ws)) return FUNCTIONAL;
   const text = `${ws.title || ''} ${(ws.topic_key || '').replace(/-/g, ' ')}`;
   return TOPICS.find((t) => t.re.test(text)) || null;
 }
@@ -180,4 +188,4 @@ function seoTitle(ws) {
   return candidates.find((c) => c.length <= MAX) || String(ws.title || '');
 }
 
-module.exports = { TOPICS, HUBS, topicFor, hubBySlug, seoTitle };
+module.exports = { TOPICS, HUBS, topicFor, hubBySlug, seoTitle, isFunctional };

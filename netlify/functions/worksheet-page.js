@@ -19,7 +19,7 @@
 // instead of a full SSR rewrite.
 const { createClient } = require('@supabase/supabase-js');
 const { fetchAllRows } = require('../lib/fetch-all');
-const { topicFor, seoTitle } = require('../lib/topics');
+const { topicFor, seoTitle, isFunctional } = require('../lib/topics');
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 const SITE = 'https://workshido.com';
@@ -138,7 +138,7 @@ function setFor(data, rows) {
     .map((r) => ({ id: r.id, slug: r.slug, title: r.title, cat: displayCategory(r), current: r.id === data.id }));
 }
 
-function setHtml(set) {
+function setHtml(set, ws) {
   if (!set.length) return '<div class="ws-set" id="ssrSet" hidden></div>';
   const items = set.map((r, i) => {
     const inner = `<span class="ws-set-dot">${i + 1}</span><span class="ws-set-cat">${escapeHtml(r.cat)}</span>`
@@ -148,7 +148,11 @@ function setHtml(set) {
       : `<li data-id="${escapeAttr(r.id)}"><a href="/worksheet/${escapeAttr(r.slug)}/" title="${escapeAttr(r.title)}">${inner}</a></li>`;
   }).join('');
   return `<div class="ws-set" id="ssrSet" role="navigation" aria-label="Worksheets in this set">`
-    + `<div class="ws-set-head"><span>Complete the set</span><a href="/guides/how-to-sequence-esl-lessons/">Teach it in order →</a></div>`
+    // Functional English sets have no Grammar sheet and their own order
+    // (Reading → Practice → Writing), explained in their own guide.
+    + (isFunctional(ws)
+      ? `<div class="ws-set-head"><span>Complete the set</span><a href="/guides/how-to-teach-functional-english/">How to teach functional English →</a></div>`
+      : `<div class="ws-set-head"><span>Complete the set</span><a href="/guides/how-to-sequence-esl-lessons/">Teach it in order →</a></div>`)
     + `<ol class="ws-set-list">${items}</ol></div>`;
 }
 
@@ -289,7 +293,7 @@ exports.handler = async (event) => {
         '<div class="ws-topic-links" id="ssrTopicLinks" hidden></div>',
         topicLinksHtml ? `<div class="ws-topic-links" id="ssrTopicLinks">${topicLinksHtml}</div>` : ''
       )
-      .replace('<div class="ws-set" id="ssrSet" hidden></div>', () => setHtml(set))  // fn: titles may contain "$"
+      .replace('<div class="ws-set" id="ssrSet" hidden></div>', () => setHtml(set, data))  // fn: titles may contain "$"
       .replace(
         '<script type="application/ld+json" id="breadcrumbLD"></script>',
         `<script type="application/ld+json" id="breadcrumbLD">${breadcrumbLD}</script>`
