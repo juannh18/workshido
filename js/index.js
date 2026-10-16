@@ -69,6 +69,47 @@ async function loadTrending() {
   } catch { /* trending is a nice-to-have — fail silently */ }
 }
 
+// ── Seasonal row (Halloween, 15 Oct – 1 Nov). Runs only while the <head>
+//    script has put theme-halloween on <html>. Matches title OR tags, so every
+//    Halloween worksheet uploaded joins the row with no code change. Newest
+//    first: a sheet uploaded this week leads. Fewer than 5 sheets before the
+//    31st → a "more coming" card fills the row instead of leaving gaps. ──
+async function loadSeason() {
+  if (!document.documentElement.classList.contains('theme-halloween')) return;
+  const section = document.getElementById('halloween');
+  const grid = document.getElementById('seasonGrid');
+  if (!section || !grid) return;
+  try {
+    const { data, error } = await sb2.from('worksheets')
+      .select('id, title, slug, level, thumbnail_url, downloads, created_at')
+      .or('title.ilike.*halloween*,tags.ilike.*halloween*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+    if (error || !data || !data.length) return;
+    const fresh = Date.now() - 14 * 864e5;
+    let html = data.map(ws => {
+      const lvlCls = LEVEL_CLASS[ws.level] || 'a1';
+      const thumb = ws.thumbnail_url
+        ? `<img src="${smThumb(ws.thumbnail_url)}" onerror="this.onerror=null;this.src='${ws.thumbnail_url}'" alt="${esc(ws.title)}" loading="lazy" decoding="async" width="440" height="622">`
+        : '';
+      const isNew = new Date(ws.created_at).getTime() > fresh;
+      return `<a href="${ws.slug ? `/worksheet/${ws.slug}/` : `workshido-worksheet.html?id=${ws.id}`}" class="trending-card">
+        ${isNew ? '<span class="trending-rank">NEW</span>' : ''}
+        <div class="trending-thumb">${thumb}</div>
+        <span class="badge-level ${lvlCls}">${esc(ws.level)}</span>
+        <div class="trending-card-title">${esc(ws.title)}</div>
+        <div class="trending-downloads">${ws.downloads > 0 ? `↓ ${ws.downloads} downloads` : 'Free PDF'}</div>
+      </a>`;
+    }).join('');
+    const d = new Date();
+    if (data.length < 5 && d.getMonth() === 9) {
+      html += `<div class="season-soon"><span class="ico">👻</span><b>More Halloween worksheets this week</b>Reading, grammar and games for every level. Subscribe below to get them first.</div>`;
+    }
+    grid.innerHTML = html;
+    section.hidden = false;
+  } catch { /* seasonal row is a nice-to-have — fail silently */ }
+}
+
 // ── Live numbers for the hero/stats-bar. The full catalog (browse, filter,
 //    search) lives only on workshido-index.html now — this page only needs
 //    the count and which levels exist, not every worksheet's full row. ──
@@ -195,6 +236,7 @@ function initEmailCapture() {
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth2();
   loadTrending();
+  loadSeason();
   loadStats();
   initEmailCapture();
 });

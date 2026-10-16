@@ -1,0 +1,185 @@
+/* Seasonal theme — Halloween (15 Oct – 1 Nov).
+   Every rule is scoped to html.theme-halloween, which the inline <head> script
+   on index.html / workshido-index.html adds only inside the date window (or
+   with ?theme=halloween to preview it). Outside the window this file changes
+   nothing, so there is no cleanup to remember on 2 November.
+   Visual layer only: no titles, H1s, URLs or copy change, so SEO is untouched. */
+
+/* Hidden unless the theme is on */
+.season-deco, .season-pill-wrap, .season-section { display: none; }
+
+html.theme-halloween {
+  --hw-night-900: #1B0F2E;
+  --hw-night-800: #2A1747;
+  --hw-night-700: #3D1F63;
+  --hw-pumpkin:   #FF9A3C;   /* accents on the dark night background */
+  --hw-pumpkin-600: #B84E00; /* buttons with white text (5:1 contrast) */
+  --hw-pumpkin-700: #933E00;
+  --hw-moon:      #FFE7A8;
+  --hw-lavender:  #E2D5F5;   /* soft text on night, replaces blue-100 */
+  --hw-purple:    #5B2A86;   /* accents on white */
+}
+
+/* NAV, FOOTER, MOBILE MENU, BROWSE CTA → night sky */
+html.theme-halloween nav:not(.pagination),
+html.theme-halloween .mobile-menu-panel,
+html.theme-halloween footer,
+html.theme-halloween .browse-cta { background: var(--hw-night-900); }
+html.theme-halloween .nav-logo span,
+html.theme-halloween .footer-logo span,
+html.theme-halloween .mobile-menu-logo span { color: var(--hw-pumpkin); }
+html.theme-halloween .nav-links a,
+html.theme-halloween .footer-col a,
+html.theme-halloween .footer-desc,
+html.theme-halloween .browse-cta p { color: var(--hw-lavender); }
+html.theme-halloween .btn-primary,
+html.theme-halloween .browse-cta-btn { color: var(--hw-night-900); }
+
+/* HERO */
+html.theme-halloween .hero {
+  background:
+    radial-gradient(ellipse at 85% 0%, rgba(255,231,168,0.14) 0%, transparent 45%),
+    linear-gradient(160deg, var(--hw-night-900) 0%, var(--hw-night-800) 55%, var(--hw-night-700) 100%);
+  border-bottom: 4px solid transparent;
+  border-image: repeating-linear-gradient(90deg, var(--hw-pumpkin) 0 24px, var(--hw-night-700) 24px 48px) 4;
+}
+html.theme-halloween .hero::before { background: radial-gradient(circle, rgba(255,154,60,0.10) 0%, transparent 70%); }
+html.theme-halloween .hero > *:not(.season-deco) { position: relative; z-index: 1; }
+html.theme-halloween .hero h1 em { color: var(--hw-pumpkin); }
+html.theme-halloween .hero-sub,
+html.theme-halloween .hero-eyebrow,
+html.theme-halloween .chip { color: var(--hw-lavender); }
+html.theme-halloween .hero-eyebrow .dot { background: var(--hw-pumpkin); }
+html.theme-halloween .search-box button { background: var(--hw-pumpkin-600); }
+html.theme-halloween .search-box button:hover { background: var(--hw-pumpkin-700); }
+html.theme-halloween .chip:not(.soon):hover,
+html.theme-halloween .chip.active {
+  background: var(--hw-pumpkin-600);
+  border-color: var(--hw-pumpkin-600);
+  color: #fff;
+}
+
+/* The pill takes the eyebrow's place while the theme is on (the stats bar
+   right below the hero still shows the worksheet count). */
+html.theme-halloween .hero-eyebrow { display: none; }
+html.theme-halloween .season-pill-wrap { display: block; }
+html.theme-halloween .season-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto 24px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  background: rgba(255,154,60,0.14);
+  border: 1px solid rgba(255,154,60,0.45);
+  color: #FFD3A8;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+html.theme-halloween .season-pill:hover { background: rgba(255,154,60,0.24); border-color: var(--hw-pumpkin); color: #fff; }
+
+/* DECORATIONS: moon, bats, cobweb — pure CSS/SVG, no image requests */
+html.theme-halloween .season-deco {
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.hw-moon {
+  position: absolute;
+  top: 34px;
+  right: 7%;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 62% 38%, rgba(214,180,110,0.55) 0 7px, transparent 8px),
+    radial-gradient(circle at 38% 64%, rgba(214,180,110,0.45) 0 10px, transparent 11px),
+    radial-gradient(circle at 70% 70%, rgba(214,180,110,0.40) 0 5px, transparent 6px),
+    radial-gradient(circle at 35% 35%, #FFF6D6, var(--hw-moon) 60%, #F2C86B);
+  box-shadow: 0 0 48px 12px rgba(255,231,168,0.22);
+}
+.hw-web {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 130px;
+  height: 130px;
+  color: rgba(226,213,245,0.22);
+}
+.hw-bat {
+  position: absolute;
+  width: 46px;
+  height: 23px;
+  fill: #0D0718;
+  animation: hw-float 6s ease-in-out infinite;
+}
+.hw-bat.b1 { top: 58px;  right: 17%; width: 40px; }
+.hw-bat.b2 { top: 112px; right: 4%;  width: 30px; animation-delay: -2s; }
+.hw-bat.b3 { top: 70px;  left: 9%;   width: 34px; animation-delay: -4s; }
+.hw-bat.b4 { bottom: 44px; left: 4%; width: 26px; animation-delay: -1s; }
+@keyframes hw-float {
+  0%, 100% { transform: translate(0, 0) rotate(-4deg); }
+  50%      { transform: translate(6px, -10px) rotate(4deg); }
+}
+@media (prefers-reduced-motion: reduce) { .hw-bat { animation: none; } }
+@media (max-width: 768px) {
+  .hw-moon { width: 44px; height: 44px; top: 12px; right: 5%; box-shadow: 0 0 28px 6px rgba(255,231,168,0.2); }
+  .hw-web { width: 90px; height: 90px; }
+  .hw-bat.b1 { right: 22%; top: 18px; width: 28px; }
+  .hw-bat.b2 { top: auto; bottom: 36px; right: 6%; }
+  .hw-bat.b3, .hw-bat.b4 { display: none; }
+}
+
+/* HOME: Halloween worksheets row (cards reuse the trending-card styles) */
+html.theme-halloween .season-section {
+  display: block;
+  background: linear-gradient(180deg, #FFF5EC 0%, var(--white, #fff) 100%);
+  padding: 36px 32px;
+  border-bottom: 1px solid #f1e3d6;
+}
+.season-section[hidden] { display: none !important; }
+.season-inner { max-width: 1180px; margin: 0 auto; }
+.season-header { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 6px; }
+.season-title { font-family: var(--font-display); font-size: 21px; font-weight: 800; color: var(--hw-night-900); }
+.season-all { font-size: 13px; font-weight: 700; color: var(--hw-pumpkin-600); text-decoration: none; white-space: nowrap; }
+.season-all:hover { text-decoration: underline; }
+.season-sub { font-size: 13.5px; color: var(--gray-600); margin-bottom: 18px; max-width: 640px; }
+.season-section .trending-card:hover { border-color: var(--hw-pumpkin); }
+.season-section .trending-rank { background: var(--hw-pumpkin-600); width: auto; padding: 0 7px; border-radius: 9px; }
+.season-soon {
+  border: 1.5px dashed #E8C6A6;
+  border-radius: 12px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+  color: var(--gray-600);
+  font-size: 12.5px;
+  line-height: 1.45;
+  min-height: 160px;
+}
+.season-soon b { color: var(--hw-night-900); font-size: 13px; }
+.season-soon .ico { font-size: 26px; }
+
+/* Small accents in the rest of the page */
+html.theme-halloween .stat-num { color: var(--hw-purple); }
+html.theme-halloween .trending-rank { background: var(--hw-night-800); }
+html.theme-halloween .email-capture-form button { background: var(--hw-pumpkin-600); }
+html.theme-halloween .email-capture-form button:hover { background: var(--hw-pumpkin-700); }
+
+@media (max-width: 480px) {
+  html.theme-halloween .season-section { padding: 28px 16px; }
+  html.theme-halloween .season-pill { font-size: 12.5px; padding: 8px 14px; }
+  .pill-long { display: none; }
+}
+
+/* The sticky 60px nav would cover the title when the hero pill jumps here */
+.season-section { scroll-margin-top: 72px; }
