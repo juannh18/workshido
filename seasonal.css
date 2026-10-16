@@ -111,28 +111,42 @@ html.theme-halloween .season-deco {
   height: 130px;
   color: rgba(226,213,245,0.22);
 }
-.hw-bat {
+/* Bat swarm (seasonal.js): one burst out of the moon per visit, ~4 s, then
+   the layer removes itself. Fixed over the viewport, above the sticky nav
+   (z 100) and below the mobile menu (z 200); never catches clicks. */
+.hw-swarm { position: fixed; inset: 0; pointer-events: none; z-index: 150; overflow: hidden; }
+.hw-flyer {
   position: absolute;
-  width: 46px;
-  height: 23px;
-  fill: #0D0718;
-  animation: hw-float 6s ease-in-out infinite;
+  left: 0;
+  top: 0;
+  width: var(--s);
+  animation: hw-swarm var(--t) cubic-bezier(.4,.1,.6,1) var(--d) both;
 }
-.hw-bat.b1 { top: 58px;  right: 17%; width: 40px; }
-.hw-bat.b2 { top: 112px; right: 4%;  width: 30px; animation-delay: -2s; }
-.hw-bat.b3 { top: 70px;  left: 9%;   width: 34px; animation-delay: -4s; }
-.hw-bat.b4 { bottom: 44px; left: 4%; width: 26px; animation-delay: -1s; }
-@keyframes hw-float {
-  0%, 100% { transform: translate(0, 0) rotate(-4deg); }
-  50%      { transform: translate(6px, -10px) rotate(4deg); }
+.hw-flyer svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  fill: #140B24;
+  filter: drop-shadow(0 0 3px rgba(255,170,90,0.7));
 }
-@media (prefers-reduced-motion: reduce) { .hw-bat { animation: none; } }
+.hw-wings {
+  transform-origin: 32px 14px;
+  animation: hw-flap var(--flap, .2s) ease-in-out infinite alternate;
+}
+@keyframes hw-swarm {
+  0%   { transform: translate(var(--x0), var(--y0)) scale(.15); opacity: 0; }
+  10%  { opacity: 1; }
+  50%  { transform: translate(var(--mx), var(--my)) scale(1); }
+  100% { transform: translate(var(--x1), var(--y1)) scale(1.15); opacity: 1; }
+}
+@keyframes hw-flap {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(-.4); }
+}
 @media (max-width: 768px) {
   .hw-moon { width: 44px; height: 44px; top: 12px; right: 5%; box-shadow: 0 0 28px 6px rgba(255,231,168,0.2); }
   .hw-web { width: 90px; height: 90px; }
-  .hw-bat.b1 { right: 22%; top: 18px; width: 28px; }
-  .hw-bat.b2 { top: auto; bottom: 36px; right: 6%; }
-  .hw-bat.b3, .hw-bat.b4 { display: none; }
 }
 
 /* HOME: Halloween worksheets row (cards reuse the trending-card styles) */
