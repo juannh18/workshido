@@ -1,16 +1,12 @@
 // Halloween bats — a swarm bursts out of the hero moon, crosses the screen
-// and is gone in ~4 s. Once per visit (sessionStorage), so moving between the
-// home page and the catalog doesn't replay it. Only while the <head> script
-// has put theme-halloween on <html>; skipped for prefers-reduced-motion.
+// and is gone in ~4 s, on every load of the home page and the catalog (the
+// catalog's filters/search don't reload the page, so they don't replay it).
+// Only while the <head> script has put theme-halloween on <html>; skipped for
+// prefers-reduced-motion.
 // Styles: .hw-swarm / .hw-flyer in /seasonal.css.
 (function () {
   if (!document.documentElement.classList.contains('theme-halloween')) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const replay = /[?&]bats=1\b/.test(location.search);   // ?bats=1 forces it, for previewing
-  try {
-    if (!replay && sessionStorage.getItem('hwBatsSeen')) return;
-    sessionStorage.setItem('hwBatsSeen', '1');
-  } catch (e) { /* storage blocked: just show it */ }
 
   const BAT = '<svg viewBox="0 0 64 28"><g class="hw-wings">'
     + '<path d="M29 13C24 5 14 1 2 4c3 4 5 8 4 13 4-3 8-2 10 2 3-3 7-3 9 1 2-3 3-4 4-3z"/>'
