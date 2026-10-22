@@ -445,6 +445,14 @@
 # netlify/functions/category-page.js. Same force=true reasoning as above.
 # Grammar-topic hubs (/worksheets/topics/ and /worksheets/topics/<slug>/),
 # fully server-rendered — see netlify/functions/topic-page.js.
+# Opt-in public teacher profiles, fully server-rendered — see
+# netlify/functions/teacher-page.js.
+[[redirects]]
+  from = "/teacher/*"
+  to = "/.netlify/functions/teacher-page"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/worksheets/topics/"
   to = "/.netlify/functions/topic-page"

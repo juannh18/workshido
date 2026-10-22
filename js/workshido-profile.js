@@ -32,16 +32,20 @@ async function loadProfile() {
   const emailChip = document.querySelector('.profile-email');
   if (emailChip) { emailChip.textContent = user.email; emailChip.title = user.email; }
 
-  const { data: profile } = await sb2
+  const { data } = await sb2
     .from('profiles')
-    .select('marketing_consent, is_premium, lemon_portal_url, avatar, display_name, bio, teaches, created_at')
+    .select('marketing_consent, is_premium, lemon_portal_url, avatar, display_name, bio, teaches, created_at, is_public, public_slug')
     .eq('id', user.id)
     .maybeSingle();
+  // One shared object: the editor's save mutates it, so the public-profile
+  // toggle always sees the current display name.
+  const profile = data || {};
 
   setupProfileCustomization(user, profile);
   setupEditorToggle();
   paintPlan(profile);
   setupMarketingToggle(profile);
+  setupPublicToggle(user, profile);
   setupTabs();
 
   const [saved, dl] = await Promise.all([loadSavedWorksheets(), loadDownloadHistory()]);
@@ -74,6 +78,7 @@ function paintHero(user, profile) {
     [!!p.avatar, 'a custom avatar'],
     [!!teaches, 'what you teach'],
     [!!bio, 'a short bio'],
+    [!!(p.is_public && p.public_slug), 'turn on your public profile'],
   ];
   const done = steps.filter(s => s[0]).length;
   const pct = Math.round(done / steps.length * 100);
@@ -86,16 +91,94 @@ function paintHero(user, profile) {
   _setText('completionMissing', 'Add ' + steps.filter(s => !s[0]).map(s => s[1]).join(' · '));
 }
 
+function openEditor() {
+  const editor = document.getElementById('profileEdit');
+  if (!editor) return;
+  editor.hidden = false;
+  editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 function setupEditorToggle() {
   const editor = document.getElementById('profileEdit');
   if (!editor) return;
-  const open = () => { editor.hidden = false; editor.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  const open = openEditor;
+  // /teacher/<slug>/ "Edit profile" links here with #edit.
+  if (location.hash === '#edit') setTimeout(openEditor, 300);
   document.getElementById('editProfileBtn')?.addEventListener('click', open);
   document.getElementById('completionBtn')?.addEventListener('click', open);
   document.getElementById('peClose')?.addEventListener('click', () => { editor.hidden = true; });
 }
 function closeEditorSoon() {
   setTimeout(() => { const ed = document.getElementById('profileEdit'); if (ed) ed.hidden = true; }, 900);
+}
+
+// --- Public profile (/teacher/<slug>/, netlify/functions/teacher-page.js) ---
+// Opt-in, private by default. set_profile_public() creates the slug the first
+// time and keeps it, so a shared link survives later name changes.
+function setupPublicToggle(user, profile) {
+  const toggle = document.getElementById('publicToggle');
+  if (!toggle) return;
+  const box = document.getElementById('publicLinkBox');
+  const link = document.getElementById('publicLink');
+  const copy = document.getElementById('publicCopy');
+  const err = document.getElementById('publicError');
+  const viewBtn = document.getElementById('viewPublicBtn');
+  const goBtn = document.getElementById('goPublicBtn');
+  const showErr = (msg) => { err.textContent = msg; err.hidden = !msg; };
+  const urlNow = () => `${location.origin}/teacher/${profile.public_slug}/`;
+
+  const paint = () => {
+    const on = !!(profile.is_public && profile.public_slug);
+    toggle.checked = on;
+    box.hidden = !on;
+    const tip = document.getElementById('publicTip');
+    if (tip) tip.hidden = !on;
+    if (viewBtn) viewBtn.hidden = !on;
+    if (goBtn) goBtn.hidden = on;
+    if (on) {
+      const url = urlNow();
+      link.href = url; link.textContent = url.replace(/^https?:\/\//, '');
+      if (viewBtn) viewBtn.href = url;
+    }
+  };
+  paint();
+
+  toggle.addEventListener('change', async () => {
+    const desired = toggle.checked;
+    showErr('');
+    // Most accounts never saved a display name — the one on screen comes from
+    // Google. Send it along; the RPC saves it when the profile has none.
+    const shownName = (profile.display_name || user.user_metadata?.full_name || '').trim();
+    if (desired && !shownName) {
+      toggle.checked = false;
+      showErr('Add a display name first — it’s the name shown on your public page.');
+      openEditor();
+      return;
+    }
+    toggle.disabled = true;
+    const { data, error } = await sb2.rpc('set_profile_public', { p_public: desired, p_display_name: shownName });
+    toggle.disabled = false;
+    if (error) {
+      console.error('set_profile_public failed', error);
+      toggle.checked = !desired;
+      showErr('Could not save right now. Please try again.');
+      return;
+    }
+    profile.is_public = desired;
+    if (data) profile.public_slug = data;
+    if (desired && !(profile.display_name || '').trim()) profile.display_name = shownName.slice(0, 40);
+    paint();
+    paintHero(user, profile);
+    window.wsTrack?.(desired ? 'profile_made_public' : 'profile_made_private', {});
+    const saved = document.getElementById('publicSaved');
+    saved.style.display = 'inline';
+    setTimeout(() => { saved.style.display = 'none'; }, 2000);
+  });
+
+  copy?.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(urlNow()); copy.textContent = 'Copied ✓'; }
+    catch (e) { prompt('Copy this link:', urlNow()); }
+    setTimeout(() => { copy.textContent = 'Copy link'; }, 2000);
+  });
 }
 
 // --- Plan / billing --------------------------------------------------------
@@ -173,7 +256,10 @@ function setupTabs() {
     });
     // Bottom of the page: the last section may be too short to reach the top.
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) current = tabs.filter(t => !t.hidden).pop();
-    tabs.forEach(t => t.classList.toggle('active', t === current));
+    tabs.forEach(t => {
+      t.classList.toggle('active', t === current);
+      if (t === current) t.setAttribute('aria-current', 'true'); else t.removeAttribute('aria-current');
+    });
   };
   window.addEventListener('scroll', update, { passive: true });
   update();

@@ -466,6 +466,9 @@ STYLE = '''<style>
   .footer-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
   .footer-logo span { color: var(--blue-200); }
   .footer-desc { font-size: 13px; color: var(--blue-100); line-height: 1.7; max-width: 260px; }
+  .footer-social { display: flex; gap: 10px; margin-top: 16px; }
+  .footer-social a { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); color: var(--blue-100); transition: background 0.15s, color 0.15s; }
+  .footer-social a:hover { background: rgba(255,255,255,0.16); color: var(--white); }
   .footer-col h4 { font-size: 12px; font-weight: 600; color: var(--white); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
   .footer-col a { display: block; font-size: 13px; color: var(--blue-100); text-decoration: none; margin-bottom: 8px; transition: color 0.12s; }
   .footer-col a:hover { color: var(--white); }
@@ -497,6 +500,11 @@ FOOTER = '''<footer>
     <div>
       <div class="footer-logo">Spanish<span>ido</span></div>
       <p class="footer-desc">Free, high-quality Spanish worksheets for teachers and learners worldwide. Download, print, and teach.</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/spanishido.teachers/" target="_blank" rel="noopener" aria-label="Spanishido on Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
     </div>
     <div class="footer-col">
       <h4>Browse</h4>

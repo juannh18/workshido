@@ -87,6 +87,8 @@
   .nav-links a { font-size: 13px; color: var(--blue-100); text-decoration: none; font-weight: 500; }
   .nav-links a:hover { color: var(--white); }
   .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-browse { display: none; font-size: 13px; font-weight: 600; color: var(--white); text-decoration: none; border: 1px solid rgba(255,255,255,.25); border-radius: var(--radius-sm); padding: 6px 12px; }
+  .nav-browse:hover { background: rgba(255,255,255,.08); }
   .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; border: 2px solid var(--blue-200); overflow: hidden; }
 
   .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
@@ -167,7 +169,7 @@
   .plan-perks li::before { content: '✓'; color: var(--teal-400); font-weight: 800; margin-right: 6px; }
   .plan-card.free { background: linear-gradient(120deg, var(--blue-50), var(--white) 70%); margin: -24px; padding: 24px; border-radius: var(--radius-lg); }
 
-  .quick-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .quick-links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
   .quick-link-card { display: block; text-decoration: none; border: 1px solid var(--gray-100); border-radius: var(--radius-md); padding: 16px; transition: all 0.15s; }
   .quick-link-card:hover { border-color: var(--blue-200); background: var(--blue-50); }
   .quick-link-icon { font-size: 20px; margin-bottom: 8px; }
@@ -241,13 +243,29 @@
   .switch input:checked + .knob::before { transform: translateX(20px); }
   .switch input:focus-visible + .knob { box-shadow: 0 0 0 3px var(--blue-100); }
   .saved-note { font-size: 12px; color: var(--teal-400); font-weight: 700; display: none; }
+  .public-link { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: var(--radius-sm); padding: 8px 12px; }
+  .public-link a { font-size: 12.5px; font-weight: 600; color: var(--blue-800); overflow-wrap: anywhere; }
+  .setting-error { font-size: 12.5px; color: var(--red-600); font-weight: 600; margin-top: 8px; }
+  .public-tip { margin-top: 8px; }
   .btn-danger { background: var(--white); color: var(--red-600); border-color: #F5C6C2; }
   .btn-danger:hover { background: var(--red-50); }
+
+  /* FOOTER — keeps the rest of the site one tap away */
+  .site-footer { background: var(--blue-900); color: var(--blue-100); padding: 28px 0; }
+  .footer-in { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+  .footer-in > div { display: flex; align-items: center; gap: 14px; }
+  .footer-ig { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); color: var(--blue-100); }
+  .footer-ig:hover { background: rgba(255,255,255,0.16); color: var(--white); }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .footer-links a { font-size: 12.5px; color: var(--blue-100); text-decoration: none; }
+  .footer-links a:hover { color: var(--white); }
+  .site-footer .nav-logo { font-size: 18px; }
 
   @media (max-width: 900px) {
     .stats-overview { grid-template-columns: 1fr 1fr; }
     .quick-links-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
+    .nav-browse { display: inline-block; }
     .search-box { flex-basis: 100%; }
   }
   @media (max-width: 640px) {
@@ -281,6 +299,7 @@
     <li><a href="workshido-how-quiz-works.html">How the Quiz works</a></li>
   </ul>
   <div class="nav-right">
+    <a href="workshido-index.html" class="nav-browse">Browse</a>
     <div class="nav-avatar"></div>
   </div>
 </nav>
@@ -304,7 +323,8 @@
       </div>
       <div class="hero-actions">
         <button class="btn btn-primary" id="editProfileBtn" type="button">✏️ Edit profile</button>
-        <a href="workshido-index.html" class="btn btn-ghost">Browse worksheets</a>
+        <a href="#" class="btn btn-ghost" id="viewPublicBtn" target="_blank" rel="noopener" hidden>👁 View public profile</a>
+        <a href="#settings" class="btn btn-ghost" id="goPublicBtn">🌐 Make profile public</a>
       </div>
     </div>
   </div>
@@ -473,6 +493,11 @@
         <div class="quick-link-title">For teachers</div>
         <div class="quick-link-desc">Tips, guides and lesson ideas</div>
       </a>
+      <a href="https://www.instagram.com/workshido/" class="quick-link-card" target="_blank" rel="noopener">
+        <div class="quick-link-icon">📸</div>
+        <div class="quick-link-title">Follow us on Instagram</div>
+        <div class="quick-link-desc">New worksheets and class ideas at @workshido</div>
+      </a>
     </div>
   </section>
 
@@ -485,6 +510,19 @@
         <div class="setting-desc">I want to receive new worksheets, teacher resources and offers from Workshido by email. Unsubscribe anytime.</div>
       </div>
       <label class="switch"><input type="checkbox" id="marketingToggle" aria-label="Email updates"><span class="knob"></span></label>
+    </div>
+    <div class="setting-row" id="publicRow">
+      <div class="setting-text">
+        <div class="setting-title">Public profile <span class="saved-note" id="publicSaved">Saved ✓</span></div>
+        <div class="setting-desc">Share a public page with your name, avatar, what you teach, your bio and your saved worksheets. Your email and downloads always stay private.</div>
+        <div class="public-link" id="publicLinkBox" hidden>
+          <a href="#" id="publicLink" target="_blank" rel="noopener"></a>
+          <button class="btn-link" type="button" id="publicCopy">Copy link</button>
+        </div>
+        <div class="setting-desc public-tip" id="publicTip" hidden>💡 Add a bio and save at least 3 worksheets so your page can appear on Google.</div>
+        <div class="setting-error" id="publicError" hidden></div>
+      </div>
+      <label class="switch"><input type="checkbox" id="publicToggle" aria-label="Public profile"><span class="knob"></span></label>
     </div>
     <div class="setting-row">
       <div class="setting-text">
@@ -504,8 +542,29 @@
 
 </main>
 
+<footer class="site-footer">
+  <div class="wrap footer-in">
+    <div>
+      <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
+      <a href="https://www.instagram.com/workshido/" class="footer-ig" target="_blank" rel="noopener" aria-label="Workshido on Instagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+      </a>
+    </div>
+    <div class="footer-links" role="navigation" aria-label="Footer">
+      <a href="workshido-index.html">Browse worksheets</a>
+      <a href="/worksheets/topics/">Grammar by topic</a>
+      <a href="/guides/">Teaching guides</a>
+      <a href="workshido-forteachers.html">For teachers</a>
+      <a href="workshido-pricing.html">Premium</a>
+      <a href="mailto:hello@workshido.com">Contact</a>
+      <a href="workshido-privacy.html">Privacy</a>
+      <a href="workshido-terms.html">Terms</a>
+    </div>
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-profile.js?v=20261022" defer></script>
+<script src="js/workshido-profile.js?v=20261022e" defer></script>
 <script src="js/analytics.js?v=20260908" defer></script>
 </body>
 </html>

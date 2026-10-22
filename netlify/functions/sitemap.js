@@ -1,6 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const { fetchAllRows } = require('../lib/fetch-all');
 const { HUBS } = require('../lib/topics');
+const { isIndexable } = require('../lib/teacher-rules');
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
 
 const SITE = 'https://workshido.com';
@@ -71,6 +72,23 @@ exports.handler = async () => {
 
     if (error) throw error;
 
+    // Public teacher profiles with enough content to index (see teacher-page.js).
+    const { data: teachers } = await sb.from('profiles')
+      .select('id, public_slug, bio, teaches, display_name')
+      .eq('is_public', true).not('public_slug', 'is', null);
+    const pub = (teachers || []).filter((p) => (p.display_name || '').trim());
+    const favCount = {};
+    if (pub.length) {
+      const { data: saved } = await fetchAllRows(() => sb.from('saved_worksheets').select('user_id, worksheet_id')
+        .in('user_id', pub.map((p) => p.id)).order('user_id').order('worksheet_id'));
+      (saved || []).forEach((s) => { favCount[s.user_id] = (favCount[s.user_id] || 0) + 1; });
+    }
+    const teacherEntries = pub.filter((p) => isIndexable(p, favCount[p.id] || 0)).map((p) => `  <url>
+    <loc>${SITE}/teacher/${escapeXml(p.public_slug)}/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>`);
+
     const staticEntries = STATIC_PAGES.map(p => `  <url>
     <loc>${SITE}${p.loc}</loc>
     <changefreq>${p.changefreq}</changefreq>
@@ -96,7 +114,7 @@ exports.handler = async () => {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${[...staticEntries, ...worksheetEntries].join('\n')}
+${[...staticEntries, ...worksheetEntries, ...teacherEntries].join('\n')}
 </urlset>
 `;
 
