@@ -1,176 +1,328 @@
 const sb2 = supabase.createClient('https://mhbgxdsdaalvtgobnvbh.supabase.co','sb_publishable_SnvJUMzhWFsSBHJZyCAjTA_nH0-F9jo');
 const LEVEL_COLOR = { A1:'teal', A2:'blue', B1:'amber', B2:'purple', C1:'coral' };
 const LEVEL_CLS   = { A1:'a1',   A2:'a2',  B1:'b1',   B2:'b2',    C1:'c1'    };
-const THUMB_ACCENT = { teal:'t', blue:'b', amber:'am', purple:'b', coral:'t' };
+const LEVELS = ['A1','A2','B1','B2','C1'];
+const WS_COLS = 'id,slug,title,level,category,thumbnail_url,downloads,rating,ratings_count,is_free,created_at';
+const GRID_PAGE = 24;   // "My worksheets" cards per "Show more"
+const GRID_PREVIEW = 8; // saved / downloads cards before "Show all"
 
 async function logOut(){ await sb2.auth.signOut(); window.location.href='workshido-index.html'; }
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// Same ~440px _sm thumbnail derivative the catalog cards use.
+function smThumb(u) { return u && /\.webp(\?|$)/i.test(u) ? u.replace(/\.webp(\?|$)/i, '_sm.webp$1') : u; }
+function wsHref(w) { return w.slug ? `/worksheet/${w.slug}/` : `/workshido-worksheet.html?id=${w.id}`; }
+function fmtNum(n) { return (n || 0).toLocaleString('en-US'); }
+function _norm(s) { return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function _topKey(counts) { return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || '—'; }
+function _setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+let _isJuan = false;
 
 async function loadProfile() {
   const { data: { user } } = await sb2.auth.getUser();
   if (!user) { window.location.href = 'workshido-login.html'; return; }
 
-  const isJuan = user.email === 'juanda.5790@hotmail.com';
-  const uploadSection = document.getElementById('uploadSection');
-  if (uploadSection) uploadSection.style.display = isJuan ? '' : 'none';
+  // The uploader dashboard (catalog stats + "my worksheets") is Juan-only —
+  // uploading is admin-only. Everyone else gets their own activity + plan.
+  _isJuan = user.email === 'juanda.5790@hotmail.com';
+  ['my-worksheets', 'tabMyWs', 'levelMixSection'].forEach(id => { const el = document.getElementById(id); if (el) el.hidden = !_isJuan; });
+  ['subscriberOverview', 'exploreSection'].forEach(id => { const el = document.getElementById(id); if (el) el.hidden = _isJuan; });
 
-  // The uploader dashboard (stats + "my worksheets") only makes sense for
-  // Juan — uploading is admin-only, so everyone else's would always be
-  // empty. Regular subscribers get an account/plan overview instead.
-  const statsOverview = document.getElementById('statsOverview');
-  const myWsSection = document.getElementById('my-worksheets');
-  const subscriberOverview = document.getElementById('subscriberOverview');
-  const navMyWsLink = document.getElementById('navMyWsLink');
-  const sidebarMyWsLink = document.getElementById('sidebarMyWsLink');
-  if (statsOverview) statsOverview.style.display = isJuan ? '' : 'none';
-  if (myWsSection) myWsSection.style.display = isJuan ? '' : 'none';
-  if (subscriberOverview) subscriberOverview.style.display = isJuan ? 'none' : '';
-  if (navMyWsLink) navMyWsLink.style.display = isJuan ? '' : 'none';
-  if (sidebarMyWsLink) sidebarMyWsLink.style.display = isJuan ? '' : 'none';
-
-  const name = user.user_metadata?.full_name || user.email;
-  const initials0 = name.split(/\s+/).map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  document.querySelector('.avatar-big').textContent    = initials0;
-  document.querySelector('.profile-name').textContent  = name;
-  document.querySelector('.profile-email').textContent = user.email;
-  document.querySelector('.nav-avatar').textContent    = initials0;
+  const emailChip = document.querySelector('.profile-email');
+  if (emailChip) { emailChip.textContent = user.email; emailChip.title = user.email; }
 
   const { data: profile } = await sb2
     .from('profiles')
-    .select('marketing_consent, is_premium, lemon_portal_url, avatar, display_name')
+    .select('marketing_consent, is_premium, lemon_portal_url, avatar, display_name, bio, teaches, created_at')
     .eq('id', user.id)
     .maybeSingle();
 
   setupProfileCustomization(user, profile);
-  loadSavedWorksheets();
-  loadDownloadHistory();
+  setupEditorToggle();
+  paintPlan(profile);
+  setupMarketingToggle(profile);
+  setupTabs();
 
-  const planBadge = document.querySelector('.plan-badge');
-  if (profile?.is_premium) {
-    planBadge.textContent = '⭐ Premium';
-    planBadge.classList.add('premium');
-  } else {
-    planBadge.textContent = '✓ Free';
+  const [saved, dl] = await Promise.all([loadSavedWorksheets(), loadDownloadHistory()]);
+  if (_isJuan) loadMyWorksheets();
+  else paintSubscriberStats(saved, dl, profile);
+}
+
+// --- Hero: teaches / bio / member since / profile completion ---------------
+function paintHero(user, profile) {
+  const p = profile || {};
+  const teaches = (p.teaches || '').trim();
+  const bio = (p.bio || '').trim();
+  const t = document.getElementById('heroTeaches');
+  const b = document.getElementById('heroBio');
+  if (t) { t.textContent = teaches ? `Teaches ${teaches}` : ''; t.hidden = !teaches; }
+  if (b) { b.textContent = bio; b.hidden = !bio; }
+  const since = p.created_at || user.created_at;
+  const sinceEl = document.getElementById('heroSince');
+  if (sinceEl && since) {
+    sinceEl.textContent = '📅 Member since ' + new Date(since).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    sinceEl.hidden = false;
   }
+  const first = (p.display_name || user.user_metadata?.full_name || '').trim().split(/\s+/)[0];
+  _setText('heroHello', first ? `Hi, ${first}! 👋` : 'Welcome back 👋');
+
+  // Profile completion — nudges teachers to finish the profile other
+  // teachers see. Hidden once everything is filled in.
+  const steps = [
+    [!!(p.display_name || '').trim(), 'a display name'],
+    [!!p.avatar, 'a custom avatar'],
+    [!!teaches, 'what you teach'],
+    [!!bio, 'a short bio'],
+  ];
+  const done = steps.filter(s => s[0]).length;
+  const pct = Math.round(done / steps.length * 100);
+  const box = document.getElementById('completion');
+  if (!box) return;
+  box.hidden = pct === 100;
+  _setText('completionTitle', `Your profile is ${pct}% complete`);
+  const bar = document.getElementById('completionBar');
+  if (bar) bar.style.width = pct + '%';
+  _setText('completionMissing', 'Add ' + steps.filter(s => !s[0]).map(s => s[1]).join(' · '));
+}
+
+function setupEditorToggle() {
+  const editor = document.getElementById('profileEdit');
+  if (!editor) return;
+  const open = () => { editor.hidden = false; editor.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  document.getElementById('editProfileBtn')?.addEventListener('click', open);
+  document.getElementById('completionBtn')?.addEventListener('click', open);
+  document.getElementById('peClose')?.addEventListener('click', () => { editor.hidden = true; });
+}
+function closeEditorSoon() {
+  setTimeout(() => { const ed = document.getElementById('profileEdit'); if (ed) ed.hidden = true; }, 900);
+}
+
+// --- Plan / billing --------------------------------------------------------
+function paintPlan(profile) {
+  const premium = !!profile?.is_premium;
+  const portal = profile?.lemon_portal_url || '';
+  const planBadge = document.querySelector('.plan-badge');
+  if (planBadge) { planBadge.textContent = premium ? '⭐ Premium' : '✓ Free'; planBadge.classList.toggle('premium', premium); }
 
   // "Billing & plan" only becomes a real "manage subscription" link once we
   // have this user's Lemon Squeezy portal URL (arrives on their first
   // webhook event after this field was added — see lemon-webhook.js). Until
   // then it falls back to the pricing page rather than a dead end.
-  const billingLink = document.getElementById('billingLink');
-  const billingLabel = document.getElementById('billingLinkLabel');
-  if (profile?.is_premium && profile?.lemon_portal_url) {
-    billingLink.href = profile.lemon_portal_url;
-    billingLink.target = '_blank';
-    billingLink.rel = 'noopener';
-    billingLabel.textContent = 'Manage subscription';
-  } else if (profile?.is_premium) {
-    billingLabel.textContent = 'Billing & plan';
-  }
+  const setLink = (a, label) => {
+    if (!a) return;
+    a.removeAttribute('target'); a.removeAttribute('rel');
+    if (premium && portal) { a.href = portal; a.target = '_blank'; a.rel = 'noopener'; }
+    else a.href = 'workshido-pricing.html';
+    if (label) label.textContent = premium && portal ? 'Manage subscription' : premium ? 'Billing & plan' : 'See plans';
+  };
+  setLink(document.getElementById('billingLink'), document.getElementById('billingLinkLabel'));
+  _setText('billingDesc', premium ? 'Your Premium plan is active. Update payment details or cancel any time.' : 'You are on the Free plan. Upgrade any time to unlock everything.');
 
-  // Same plan state, rendered as the main "Your account" card for regular
-  // (non-Juan) subscribers — see subscriberOverview in the HTML.
-  const acctPlanTitle = document.getElementById('acctPlanTitle');
-  const acctPlanDesc = document.getElementById('acctPlanDesc');
-  const acctPlanCta = document.getElementById('acctPlanCta');
-  if (acctPlanTitle && acctPlanDesc && acctPlanCta) {
-    if (profile?.is_premium) {
-      acctPlanTitle.textContent = '⭐ Premium plan — active';
-      acctPlanDesc.textContent = 'You have full access to the Teacher Edition and the graded Quiz for every worksheet.';
-      acctPlanCta.removeAttribute('target');
-      acctPlanCta.removeAttribute('rel');
-      if (profile?.lemon_portal_url) {
-        acctPlanCta.textContent = 'Manage subscription';
-        acctPlanCta.href = profile.lemon_portal_url;
-        acctPlanCta.target = '_blank';
-        acctPlanCta.rel = 'noopener';
-      } else {
-        acctPlanCta.textContent = 'Billing & plan';
-        acctPlanCta.href = 'workshido-pricing.html';
-      }
-    } else {
-      acctPlanTitle.textContent = 'Free plan';
-      acctPlanDesc.textContent = 'Upgrade to Premium to unlock the Teacher Edition and the full Quiz for every worksheet.';
-      acctPlanCta.textContent = 'Upgrade to Premium';
-      acctPlanCta.href = 'workshido-pricing.html';
-      acctPlanCta.removeAttribute('target');
-      acctPlanCta.removeAttribute('rel');
-    }
+  const cta = document.getElementById('acctPlanCta');
+  const card = document.getElementById('planCard');
+  const perks = document.getElementById('planPerks');
+  if (card) card.classList.toggle('free', !premium);
+  if (perks) perks.hidden = premium;
+  if (premium) {
+    _setText('acctPlanTitle', '⭐ Premium plan — active');
+    _setText('acctPlanDesc', 'You have full access to the Teacher Edition and the graded Quiz for every worksheet.');
+    setLink(cta);
+    if (cta) cta.textContent = portal ? 'Manage subscription' : 'Billing & plan';
+  } else {
+    _setText('acctPlanTitle', 'Unlock everything with Premium');
+    _setText('acctPlanDesc', 'Save hours of prep: every worksheet comes with a ready-to-teach Teacher Edition and a graded Quiz.');
+    setLink(cta);
+    if (cta) { cta.className = 'btn btn-primary'; cta.textContent = 'Upgrade to Premium →'; }
   }
+}
 
+function setupMarketingToggle(profile) {
   const marketingToggle = document.getElementById('marketingToggle');
-  if (marketingToggle) {
-    marketingToggle.checked = !!profile?.marketing_consent;
-    marketingToggle.addEventListener('change', async () => {
-      const desired = marketingToggle.checked;
-      marketingToggle.disabled = true;
-      const { error } = await sb2.rpc('set_marketing_consent', {
-        p_consent: desired,
-        p_version: 'v1',
-        p_source: 'profile_settings',
-      });
-      marketingToggle.disabled = false;
-      if (error) {
-        console.error('set_marketing_consent failed', error);
-        marketingToggle.checked = !desired; // revert — the save didn't actually happen
-        return;
-      }
-      const saved = document.getElementById('marketingSaved');
-      saved.style.display = 'inline';
-      setTimeout(() => { saved.style.display = 'none'; }, 2000);
+  if (!marketingToggle) return;
+  marketingToggle.checked = !!profile?.marketing_consent;
+  marketingToggle.addEventListener('change', async () => {
+    const desired = marketingToggle.checked;
+    marketingToggle.disabled = true;
+    const { error } = await sb2.rpc('set_marketing_consent', {
+      p_consent: desired,
+      p_version: 'v1',
+      p_source: 'profile_settings',
+    });
+    marketingToggle.disabled = false;
+    if (error) {
+      console.error('set_marketing_consent failed', error);
+      marketingToggle.checked = !desired; // revert — the save didn't actually happen
+      return;
+    }
+    const saved = document.getElementById('marketingSaved');
+    saved.style.display = 'inline';
+    setTimeout(() => { saved.style.display = 'none'; }, 2000);
+  });
+}
+
+// --- Tab bar: highlight the section in view --------------------------------
+function setupTabs() {
+  const tabs = [...document.querySelectorAll('#tabbar .tab')];
+  const update = () => {
+    let current = tabs[0];
+    tabs.forEach(t => {
+      if (t.hidden) return;
+      const sec = document.querySelector(t.getAttribute('href'));
+      if (sec && !sec.hidden && sec.getBoundingClientRect().top <= 140) current = t;
+    });
+    // Bottom of the page: the last section may be too short to reach the top.
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) current = tabs.filter(t => !t.hidden).pop();
+    tabs.forEach(t => t.classList.toggle('active', t === current));
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  update();
+}
+
+// --- Worksheet card (real thumbnail) ---------------------------------------
+function cardHtml(w, opts = {}) {
+  const color = LEVEL_COLOR[w.level] || 'teal';
+  const lvl = LEVEL_CLS[w.level] || 'a1';
+  const thumb = w.thumbnail_url
+    ? `<img src="${esc(smThumb(w.thumbnail_url))}" onerror="this.onerror=null;this.src='${esc(w.thumbnail_url)}'" alt="${esc(w.title)}" loading="lazy" decoding="async" width="440" height="622">`
+    : '';
+  const rank = opts.rank ? `<span class="pcard-rank">#${opts.rank}</span>` : '';
+  const foot = [];
+  if (opts.stats) {
+    foot.push(`<span>↓ <strong>${fmtNum(w.downloads)}</strong></span>`);
+    if (w.ratings_count) foot.push(`<span><span class="star">★</span> <strong>${Number(w.rating).toFixed(1)}</strong> (${w.ratings_count})</span>`);
+  }
+  if (opts.date) foot.push(`<span>${esc(opts.date)}</span>`);
+  const free = opts.stats && w.is_free ? '<span class="ws-free">Free</span>' : '';
+  const rm = opts.removable
+    ? `<button class="pcard-remove" type="button" title="Remove from saved" aria-label="Remove from saved" onclick="unsaveWs('${w.id}')">♥</button>` : '';
+  return `<div class="pcard" data-id="${w.id}">
+    <a class="pcard-link" href="${wsHref(w)}">
+      <div class="pcard-thumb ${color}">${thumb}${rank}</div>
+      <div class="pcard-body">
+        <div class="pcard-meta"><span class="ws-level ${lvl}">${esc(w.level || '')}</span>${free}${w.category ? `<span class="pcard-cat">${esc(w.category)}</span>` : ''}</div>
+        <div class="pcard-title">${esc(w.title)}</div>
+        ${foot.length ? `<div class="pcard-foot">${foot.join('')}</div>` : ''}
+      </div>
+    </a>${rm}
+  </div>`;
+}
+
+function emptyHtml(icon, title, desc, ctaLabel, ctaHref) {
+  return `<div class="empty" style="grid-column:1/-1">
+    <div class="empty-icon">${icon}</div>
+    <div class="empty-title">${title}</div>
+    <div class="empty-desc">${desc}</div>
+    <a href="${ctaHref}" class="btn btn-primary">${ctaLabel}</a>
+  </div>`;
+}
+
+// --- My worksheets (Juan) --------------------------------------------------
+// Juan is the only uploader, but the batch pipeline (tools/upload_batch.py)
+// inserts rows without uploaded_by — filtering on it hid ~98% of the catalog.
+// So the admin dashboard lists every worksheet.
+async function fetchAllWorksheets() {
+  const rows = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await sb2.from('worksheets').select(WS_COLS)
+      .order('created_at', { ascending: false, nullsFirst: false }).order('id')
+      .range(from, from + 999);
+    if (error) { console.error(error); break; }
+    rows.push(...(data || []));
+    if (!data || data.length < 1000) break;
+  }
+  return rows;
+}
+
+const _grid = { all: [], q: '', level: 'all', sort: 'new', shown: GRID_PAGE };
+
+async function loadMyWorksheets() {
+  const ws = await fetchAllWorksheets();
+  _grid.all = ws;
+  const totalDl = ws.reduce((s, w) => s + (w.downloads || 0), 0);
+  const rated = ws.filter(w => w.ratings_count > 0);
+  const nRatings = rated.reduce((s, w) => s + w.ratings_count, 0);
+  const avgRating = nRatings ? rated.reduce((s, w) => s + Number(w.rating) * w.ratings_count, 0) / nRatings : 0;
+
+  _setText('stat1Icon', '📚'); _setText('stat1', fmtNum(ws.length)); _setText('stat1Label', 'Worksheets published');
+  _setText('stat2Icon', '📥'); _setText('stat2', fmtNum(totalDl)); _setText('stat2Label', 'Total downloads');
+  _setText('stat3Icon', '⭐'); _setText('stat3', nRatings ? avgRating.toFixed(1) + ' ★' : '—'); _setText('stat3Label', nRatings ? `Average rating · ${fmtNum(nRatings)} reviews` : 'Average rating');
+  _setText('stat4Icon', '📈'); _setText('stat4', ws.length ? (totalDl / ws.length).toFixed(1) : '—'); _setText('stat4Label', 'Downloads per worksheet');
+  _setText('wsCount', `${fmtNum(ws.length)} published · ${fmtNum(totalDl)} downloads`);
+  _setText('tabMyWsCount', fmtNum(ws.length));
+
+  // Level mix bar
+  const byLevel = {};
+  ws.forEach(w => { byLevel[w.level] = (byLevel[w.level] || 0) + 1; });
+  const present = LEVELS.filter(l => byLevel[l]);
+  const bar = document.getElementById('levelBar');
+  const legend = document.getElementById('levelLegend');
+  if (bar && ws.length) {
+    bar.innerHTML = present.map(l => `<span class="lv-${l}" style="width:${byLevel[l] / ws.length * 100}%" title="${l}: ${byLevel[l]}"></span>`).join('');
+    legend.innerHTML = present.map(l => `<span><i class="lv-${l}"></i><strong>${l}</strong> · ${fmtNum(byLevel[l])} (${Math.round(byLevel[l] / ws.length * 100)}%)</span>`).join('');
+    _setText('levelMixSub', `Most of your catalog is ${_topKey(byLevel)} — ${fmtNum(ws.length)} worksheets in total`);
+  }
+
+  // Toolbar
+  const filters = document.getElementById('wsLevelFilters');
+  if (filters) {
+    filters.innerHTML = [`<button class="lvl-chip sel" type="button" data-level="all">All</button>`]
+      .concat(present.map(l => `<button class="lvl-chip" type="button" data-level="${l}">${l}</button>`)).join('');
+    filters.addEventListener('click', e => {
+      const b = e.target.closest('.lvl-chip'); if (!b) return;
+      _grid.level = b.dataset.level; _grid.shown = GRID_PAGE;
+      filters.querySelectorAll('.lvl-chip').forEach(x => x.classList.toggle('sel', x === b));
+      renderMyWs();
     });
   }
-
-  // Uploading is Juan-only, so the "my worksheets" query/render below only
-  // applies to his account — everyone else already saw subscriberOverview.
-  if (!isJuan) return;
-
-  const { data: worksheets } = await sb2
-    .from('worksheets')
-    .select('id, slug, title, level, category, downloads, created_at')
-    .eq('uploaded_by', user.id)
-    .order('created_at', { ascending: false });
-
-  const ws = worksheets || [];
-  const totalDl = ws.reduce((s, w) => s + (w.downloads || 0), 0);
-
-  const levelCount = {};
-  const catCount   = {};
-  ws.forEach(w => {
-    levelCount[w.level]    = (levelCount[w.level]    || 0) + 1;
-    catCount[w.category]   = (catCount[w.category]   || 0) + 1;
+  let t;
+  document.getElementById('wsSearch')?.addEventListener('input', e => {
+    clearTimeout(t);
+    t = setTimeout(() => { _grid.q = _norm(e.target.value.trim()); _grid.shown = GRID_PAGE; renderMyWs(); }, 150);
   });
-  const topLevel = Object.entries(levelCount).sort((a,b) => b[1]-a[1])[0]?.[0] || '—';
-  const topCat   = Object.entries(catCount).sort((a,b)   => b[1]-a[1])[0]?.[0] || '—';
+  document.getElementById('wsSort')?.addEventListener('change', e => { _grid.sort = e.target.value; _grid.shown = GRID_PAGE; renderMyWs(); });
+  document.getElementById('myWsMoreBtn')?.addEventListener('click', () => { _grid.shown += GRID_PAGE; renderMyWs(); });
 
-  document.getElementById('statUploaded').textContent = ws.length;
-  document.getElementById('statDownloads').textContent = totalDl.toLocaleString();
-  document.getElementById('statLevel').textContent    = topLevel;
-  document.getElementById('statCategory').textContent = topCat;
-  document.getElementById('wsCount').textContent      = `${ws.length} published`;
+  renderMyWs();
+}
 
+function renderMyWs() {
   const container = document.getElementById('myWsRows');
-  if (ws.length === 0) {
-    container.innerHTML = `<div style="padding:40px;text-align:center;color:var(--gray-300);font-size:14px;">You haven't uploaded any worksheets yet. <a href="workshido-upload.html" style="color:var(--blue-600)">Upload your first one →</a></div>`;
+  if (!container) return;
+  if (!_grid.all.length) {
+    container.innerHTML = emptyHtml('📄', 'No worksheets yet', 'Upload your first worksheet and it will appear here with its downloads and ratings.', 'Upload a worksheet', 'workshido-upload.html');
+    document.getElementById('myWsMore').hidden = true;
     return;
   }
+  let list = _grid.all.filter(w =>
+    (_grid.level === 'all' || w.level === _grid.level) &&
+    (!_grid.q || _norm(w.title + ' ' + (w.category || '')).includes(_grid.q)));
+  const sorters = {
+    new: null, // already newest-first from the query
+    dl: (a, b) => (b.downloads || 0) - (a.downloads || 0),
+    rating: (a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0) || (b.ratings_count || 0) - (a.ratings_count || 0),
+    az: (a, b) => a.title.localeCompare(b.title),
+  };
+  if (sorters[_grid.sort]) list = list.slice().sort(sorters[_grid.sort]);
+  const ranked = _grid.sort === 'dl' || _grid.sort === 'rating';
+  const page = list.slice(0, _grid.shown);
+  container.innerHTML = page.length
+    ? page.map((w, i) => cardHtml(w, { stats: true, rank: ranked && i < 3 ? i + 1 : 0 })).join('')
+    : `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div class="empty-title">No matches</div><div class="empty-desc">Try another word or level.</div></div>`;
+  const more = document.getElementById('myWsMore');
+  more.hidden = !list.length;
+  document.getElementById('myWsMoreBtn').hidden = page.length >= list.length;
+  _setText('myWsMoreInfo', `Showing ${fmtNum(page.length)} of ${fmtNum(list.length)}`);
+}
 
-  container.innerHTML = ws.map(w => {
-    const color   = LEVEL_COLOR[w.level]  || 'teal';
-    const lvlCls  = LEVEL_CLS[w.level]   || 'a1';
-    const accent  = THUMB_ACCENT[color]   || 't';
-    const date    = w.created_at ? new Date(w.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—';
-    return `<div class="ws-row">
-      <div class="ws-mini-thumb ${color}"><div class="wl a ${accent}"></div><div class="wl s"></div><div class="wb"></div><div class="wb"></div></div>
-      <div class="ws-info">
-        <div class="ws-title">${esc(w.title)}</div>
-        <div class="ws-meta-row"><span class="ws-level ${lvlCls}">${w.level}</span><span class="ws-status">Published · ${date}</span></div>
-      </div>
-      <div class="ws-stats-mini"><div class="ws-stat">↓ <strong>${(w.downloads||0).toLocaleString()}</strong></div></div>
-      <div class="ws-actions"><a href="${w.slug ? `/worksheet/${w.slug}/` : `workshido-worksheet.html?id=${w.id}`}" class="btn-sm edit">View</a></div>
-    </div>`;
-  }).join('');
+// --- Subscriber KPI tiles --------------------------------------------------
+function paintSubscriberStats(saved, dl, profile) {
+  const byLevel = {};
+  (dl?.ws || []).forEach(w => { byLevel[w.level] = (byLevel[w.level] || 0) + 1; });
+  _setText('stat1', fmtNum(dl?.ws?.length || 0));
+  _setText('stat2', fmtNum(saved?.length || 0));
+  _setText('stat3', _topKey(byLevel));
+  _setText('stat4', profile?.is_premium ? 'Premium' : 'Free');
 }
 
 // --- Profile customization -------------------------------------------------
@@ -309,6 +461,7 @@ function setupProfileCustomization(user, profile) {
     const ini = _toInitials(dn);
     _paintAvatar(bigEl, profile?.avatar, googlePic, ini);
     _paintAvatar(navEl, profile?.avatar, googlePic, ini);
+    paintHero(user, profile);
   };
   applied();
 
@@ -439,77 +592,81 @@ function setupProfileCustomization(user, profile) {
     profile.bio = p_bio; profile.teaches = p_teaches;
     applied();
     if (savedMsg) { savedMsg.style.display = 'inline'; setTimeout(() => { savedMsg.style.display = 'none'; }, 2000); }
+    closeEditorSoon();
   };
 }
 
 // --- Saved worksheets + download history ----------------------------------
-function _wsRowHtml(w, opts) {
-  const lvlCls = LEVEL_CLS[w.level] || 'a1';
-  const cat = w.category || 'Worksheet';
-  const rm = opts && opts.removeId
-    ? `<button class="btn-sm delete" type="button" onclick="unsaveWs('${w.id}')">Remove</button>` : '';
-  return `<div class="ws-row" data-id="${w.id}">
-    <div class="ws-info">
-      <div class="ws-title">${esc(w.title)}</div>
-      <div class="ws-meta-row"><span class="ws-level ${lvlCls}">${esc(w.level || '')}</span><span class="ws-status">${esc(cat)}</span></div>
-    </div>
-    <div class="ws-actions">
-      <a href="${w.slug ? `/worksheet/${w.slug}/` : `workshido-worksheet.html?id=${w.id}`}" class="btn-sm edit">Open</a>${rm}
-    </div>
-  </div>`;
-}
-
 async function _fetchWorksheetsByIds(ids) {
   if (!ids.length) return [];
-  const { data } = await sb2.from('worksheets')
-    .select('id,slug,title,level,category')
-    .in('id', ids);
   const byId = {};
-  (data || []).forEach(w => { byId[w.id] = w; });
+  // Chunked so the .in() filter never builds an oversized request URL.
+  for (let i = 0; i < ids.length; i += 100) {
+    const { data } = await sb2.from('worksheets').select(WS_COLS).in('id', ids.slice(i, i + 100));
+    (data || []).forEach(w => { byId[w.id] = w; });
+  }
   return ids.map(id => byId[id]).filter(Boolean); // keep caller's order
 }
 
+// Renders the first GRID_PREVIEW cards; the "Show all" button reveals the rest.
+function _renderPreviewGrid(rowsEl, moreEl, btnEl, cards) {
+  rowsEl.innerHTML = cards.slice(0, GRID_PREVIEW).join('');
+  if (!moreEl) return;
+  moreEl.hidden = cards.length <= GRID_PREVIEW;
+  btnEl.onclick = () => { rowsEl.innerHTML = cards.join(''); moreEl.hidden = true; };
+}
+
+function _savedEmpty() {
+  return emptyHtml('♡', 'No saved worksheets yet', 'Tap <strong>♡ Save</strong> on any worksheet to build a shortlist for your next lesson.', 'Browse worksheets', 'workshido-index.html');
+}
+
 async function loadSavedWorksheets() {
-  const section = document.getElementById('savedSection');
   const rowsEl = document.getElementById('savedRows');
-  const countEl = document.getElementById('savedCount');
-  if (!section || !rowsEl) return;
+  if (!rowsEl) return [];
   const { data: saved, error } = await sb2.from('saved_worksheets')
     .select('worksheet_id, created_at')
     .order('created_at', { ascending: false });
-  if (error || !saved || !saved.length) return;   // hidden when empty
-  const ws = await _fetchWorksheetsByIds(saved.map(s => s.worksheet_id));
-  if (!ws.length) return;
-  rowsEl.innerHTML = ws.map(w => _wsRowHtml(w, { removeId: true })).join('');
-  if (countEl) countEl.textContent = `${ws.length} saved`;
-  section.style.display = '';
+  const ws = error || !saved ? [] : await _fetchWorksheetsByIds(saved.map(s => s.worksheet_id));
+  if (!ws.length) { rowsEl.innerHTML = _savedEmpty(); _setText('tabSavedCount', ''); return []; }
+  _renderPreviewGrid(rowsEl, document.getElementById('savedMore'), document.getElementById('savedMoreBtn'),
+    ws.map(w => cardHtml(w, { removable: true })));
+  _setText('savedCount', `${ws.length} saved · your shortlist for upcoming lessons`);
+  _setText('tabSavedCount', ws.length);
+  return ws;
 }
 
 async function unsaveWs(id) {
   const { error } = await sb2.from('saved_worksheets').delete().eq('worksheet_id', id);
   if (error) { console.error(error); return; }
-  const row = document.querySelector(`#savedRows .ws-row[data-id="${id}"]`);
-  if (row) row.remove();
+  const card = document.querySelector(`#savedRows .pcard[data-id="${id}"]`);
+  if (card) card.remove();
   const rowsEl = document.getElementById('savedRows');
-  const countEl = document.getElementById('savedCount');
-  const n = rowsEl ? rowsEl.querySelectorAll('.ws-row').length : 0;
-  if (countEl) countEl.textContent = n ? `${n} saved` : '';
-  if (!n) { const s = document.getElementById('savedSection'); if (s) s.style.display = 'none'; }
+  const n = rowsEl ? rowsEl.querySelectorAll('.pcard').length : 0;
+  _setText('savedCount', n ? `${n} saved · your shortlist for upcoming lessons` : 'Your shortlist for upcoming lessons');
+  _setText('tabSavedCount', n || '');
+  if (!_isJuan) _setText('stat2', fmtNum(n));
+  if (!n && rowsEl) rowsEl.innerHTML = _savedEmpty();
 }
 
 async function loadDownloadHistory() {
-  const section = document.getElementById('dlHistorySection');
   const rowsEl = document.getElementById('dlHistoryRows');
-  if (!section || !rowsEl) return;
+  if (!rowsEl) return { ws: [] };
   const { data: dls, error } = await sb2.from('user_downloads')
-    .select('worksheet_id, last_at')
+    .select('worksheet_id, last_at, times')
     .order('last_at', { ascending: false })
-    .limit(12);
-  if (error || !dls || !dls.length) return;
-  const ws = await _fetchWorksheetsByIds(dls.map(d => d.worksheet_id));
-  if (!ws.length) return;
-  rowsEl.innerHTML = ws.map(w => _wsRowHtml(w, {})).join('');
-  section.style.display = '';
+    .limit(300);
+  const ws = error || !dls ? [] : await _fetchWorksheetsByIds(dls.map(d => d.worksheet_id));
+  if (!ws.length) {
+    rowsEl.innerHTML = emptyHtml('📥', 'Nothing downloaded yet', 'Every worksheet you download shows up here, so you can grab it again in one click.', 'Find your first worksheet', 'workshido-index.html');
+    return { ws: [] };
+  }
+  const lastAt = {};
+  (dls || []).forEach(d => { lastAt[d.worksheet_id] = d.last_at; });
+  _renderPreviewGrid(rowsEl, document.getElementById('dlMore'), document.getElementById('dlMoreBtn'),
+    ws.map(w => cardHtml(w, { date: lastAt[w.id] ? 'Downloaded ' + new Date(lastAt[w.id]).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '' })));
+  _setText('dlCount', `${ws.length} worksheet${ws.length === 1 ? '' : 's'} · grab them again in one click`);
+  _setText('tabDlCount', ws.length);
+  return { ws };
 }
 
 document.addEventListener('DOMContentLoaded', loadProfile);

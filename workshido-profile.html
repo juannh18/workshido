@@ -25,22 +25,28 @@
     --amber-400: #BA7517; --amber-50: #FAEEDA; --green-600: #3B6D11;
     --green-50: #EAF3DE; --gray-900: #2C2C2A; --gray-600: #5F5E5A;
     --gray-300: #B4B2A9; --gray-100: #D3D1C7; --gray-50: #F1EFE8;
+    --purple-600: #534AB7; --purple-50: #EEEDFE; --coral-600: #993C1D; --coral-50: #FAECE7;
     --white: #ffffff; --red-600: #C0392B; --red-50: #FDEDEC;
     --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px;
     --font-display: 'Sora', sans-serif; --font-body: 'Inter', sans-serif;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.04), 0 2px 8px rgba(0,0,0,.04);
   }
-  body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; scroll-padding-top: 116px; }
+  body { font-family: var(--font-body); background: var(--gray-50); color: var(--gray-900); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  [hidden] { display: none !important; }
 
   /* --- PROFILE CUSTOMIZATION (avatar + display name) --- */
   .avatar-big img, .nav-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-  .avatar-big.has-emoji { font-size: 38px; }
+  .avatar-big.has-emoji { font-size: 46px; }
   .nav-avatar.has-emoji { font-size: 18px; }
-  .profile-edit { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
+  .profile-edit { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; position: relative; box-shadow: var(--shadow-sm); }
   .profile-edit h2 { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
   .profile-edit .pe-sub { font-size: 13px; color: var(--gray-600); margin-bottom: 18px; line-height: 1.5; }
+  .pe-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--gray-50); color: var(--gray-600); font-size: 18px; cursor: pointer; }
+  .pe-close:hover { background: var(--gray-100); }
   .pe-row { display: flex; gap: 22px; align-items: flex-start; flex-wrap: wrap; }
   .pe-preview { width: 88px; height: 88px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 44px; line-height: 1; flex-shrink: 0; border: 3px solid var(--gray-100); background: #DCEBFB; font-family: var(--font-display); font-weight: 700; color: var(--blue-800); }
-  .pe-fields { flex: 1; min-width: 250px; }
+  .pe-fields { flex: 1; min-width: 0; }
   .pe-label { font-size: 12px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
   .pe-name-input { width: 100%; max-width: 340px; padding: 10px 12px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 14px; color: var(--gray-900); margin-bottom: 18px; background: var(--white); }
   .pe-name-input:focus { outline: none; border-color: var(--blue-400); }
@@ -73,119 +79,193 @@
   .pe-sw { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid var(--white); box-shadow: 0 0 0 1.5px var(--gray-100); padding: 0; }
   .pe-sw.sel { box-shadow: 0 0 0 2px var(--blue-600); }
 
+  /* NAV */
   nav { background: var(--blue-900); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; position: sticky; top: 0; z-index: 100; }
   .nav-logo { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--white); text-decoration: none; }
   .nav-logo span { color: var(--blue-200); }
   .nav-links { display: flex; gap: 28px; list-style: none; }
   .nav-links a { font-size: 13px; color: var(--blue-100); text-decoration: none; font-weight: 500; }
+  .nav-links a:hover { color: var(--white); }
   .nav-right { display: flex; align-items: center; gap: 12px; }
-  .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; border: 2px solid var(--blue-200); }
+  .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; border: 2px solid var(--blue-200); overflow: hidden; }
 
-  .page-layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 60px); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
-  /* SIDEBAR */
-  .sidebar { background: var(--white); border-right: 1px solid var(--gray-100); padding: 28px 16px; }
-  .profile-card { text-align: center; padding: 20px 12px 24px; border-bottom: 1px solid var(--gray-100); margin-bottom: 20px; }
-  .avatar-big { width: 72px; height: 72px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 24px; font-weight: 700; margin: 0 auto 12px; border: 3px solid var(--blue-100); }
-  .profile-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
-  .profile-email { font-size: 12px; color: var(--gray-300); margin-bottom: 12px; }
-  .plan-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--amber-50); color: var(--amber-600); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+  /* HERO */
+  .hero { background: var(--white); border-bottom: 1px solid var(--gray-100); }
+  .hero-cover { height: 132px; background:
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.16) 1px, transparent 0) 0 0 / 18px 18px,
+      linear-gradient(120deg, var(--blue-900) 0%, var(--blue-600) 62%, var(--blue-400) 100%); }
+  .hero-inner { display: flex; align-items: flex-start; gap: 22px; padding: 16px 0 22px; flex-wrap: wrap; }
+  .avatar-big { width: 112px; height: 112px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 36px; font-weight: 700; border: 5px solid var(--white); box-shadow: 0 6px 20px rgba(0,0,0,.12); flex-shrink: 0; overflow: hidden; margin-top: -64px; }
+  .hero-id { flex: 1 1 300px; min-width: 0; }
+  .hero-hello { font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 2px; }
+  .profile-name { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--gray-900); line-height: 1.2; overflow-wrap: anywhere; }
+  .hero-teaches { font-size: 14px; color: var(--blue-600); font-weight: 600; margin-top: 4px; }
+  .hero-bio { font-size: 13.5px; color: var(--gray-600); margin-top: 6px; line-height: 1.5; max-width: 560px; }
+  .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; align-items: center; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; color: var(--gray-600); background: var(--gray-50); border: 1px solid var(--gray-100); padding: 4px 11px; border-radius: 20px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .plan-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--amber-50); color: var(--amber-600); font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
   .plan-badge.premium { background: var(--teal-50); color: var(--teal-600); }
+  .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; padding-top: 4px; }
 
-  .nav-menu { display: flex; flex-direction: column; gap: 2px; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); font-size: 13px; color: var(--gray-600); cursor: pointer; text-decoration: none; font-weight: 500; transition: all 0.12s; }
-  .nav-item:hover { background: var(--gray-50); color: var(--gray-900); }
-  .nav-item.active { background: var(--blue-50); color: var(--blue-600); }
-  .nav-item svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-  .nav-section-label { font-size: 10px; font-weight: 600; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.8px; padding: 12px 12px 6px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-body); font-size: 13px; font-weight: 700; border-radius: var(--radius-sm); padding: 10px 18px; cursor: pointer; text-decoration: none; border: 1.5px solid transparent; transition: background .15s, border-color .15s, color .15s; white-space: nowrap; }
+  .btn-primary { background: var(--blue-600); color: var(--white); }
+  .btn-primary:hover { background: var(--blue-800); }
+  .btn-ghost { background: var(--white); color: var(--gray-900); border-color: var(--gray-100); }
+  .btn-ghost:hover { border-color: var(--blue-200); color: var(--blue-600); }
+  .btn-link { background: none; border: none; color: var(--blue-600); font-weight: 700; font-size: 13px; cursor: pointer; padding: 0; font-family: var(--font-body); text-decoration: none; }
+  .btn-link:hover { text-decoration: underline; }
 
-  /* MAIN */
-  .main { padding: 28px 32px; }
+  /* PROFILE COMPLETION */
+  .completion { display: flex; align-items: center; gap: 18px; background: var(--blue-50); border: 1px solid var(--blue-100); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 22px; flex-wrap: wrap; }
+  .completion-text { flex: 1; min-width: 200px; }
+  .completion-title { font-size: 13.5px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+  .completion-bar { height: 7px; background: var(--white); border-radius: 6px; overflow: hidden; }
+  .completion-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--blue-400), var(--blue-600)); border-radius: 6px; transition: width .4s; }
+  .completion-missing { font-size: 12px; color: var(--gray-600); margin-top: 6px; }
 
-  /* UPLOAD ZONE */
-  .upload-section { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; }
-  .upload-section h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
-  .upload-section p { font-size: 13px; color: var(--gray-600); margin-bottom: 20px; }
+  /* TAB BAR */
+  .tabbar { position: sticky; top: 60px; z-index: 90; background: rgba(255,255,255,.96); backdrop-filter: blur(6px); border-bottom: 1px solid var(--gray-100); }
+  .tabbar .wrap { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .tabbar .wrap::-webkit-scrollbar { display: none; }
+  .tab { flex-shrink: 0; font-size: 13px; font-weight: 600; color: var(--gray-600); text-decoration: none; padding: 14px 12px 12px; border-bottom: 2.5px solid transparent; white-space: nowrap; }
+  .tab:hover { color: var(--gray-900); }
+  .tab.active { color: var(--blue-600); border-bottom-color: var(--blue-600); }
+  .tab .tab-count { font-size: 11px; font-weight: 700; background: var(--gray-50); color: var(--gray-600); border-radius: 10px; padding: 1px 7px; margin-left: 4px; }
+  .tab.active .tab-count { background: var(--blue-50); color: var(--blue-600); }
 
-  .upload-zone { border: 2px dashed var(--gray-100); border-radius: var(--radius-lg); padding: 40px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--gray-50); }
-  .upload-zone:hover, .upload-zone.dragover { border-color: var(--blue-400); background: var(--blue-50); }
-  .upload-icon { font-size: 36px; margin-bottom: 12px; }
-  .upload-zone h3 { font-size: 15px; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; }
-  .upload-zone p { font-size: 13px; color: var(--gray-600); margin-bottom: 14px; }
-  .upload-zone input { display: none; }
+  main.wrap { padding-top: 26px; padding-bottom: 64px; }
 
-  .btn-upload { background: var(--blue-600); color: var(--white); border: none; border-radius: var(--radius-sm); padding: 9px 20px; font-family: var(--font-body); font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
-  .btn-upload:hover { background: var(--blue-800); }
+  /* SECTIONS */
+  .section { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 22px; box-shadow: var(--shadow-sm); }
+  .section-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .section-header h2 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--gray-900); }
+  .section-sub { font-size: 12.5px; color: var(--gray-600); margin-top: 3px; }
 
-  .allowed-types { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
-  .type-badge { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 8px; }
-  .type-badge.pdf { background: #FCEBEB; color: #C0392B; }
-  .type-badge.docx { background: var(--blue-50); color: var(--blue-600); }
-  .type-badge.png { background: var(--green-50); color: var(--green-600); }
-  .type-badge.jpg { background: var(--teal-50); color: var(--teal-600); }
-
-  /* UPLOAD ERROR */
-  .upload-error { background: var(--red-50); border: 1px solid #F5C6C2; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--red-600); display: none; margin-top: 12px; }
-
-  /* MY WORKSHEETS */
-  .my-ws-section { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-  .section-header h2 { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); }
-  .ws-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
-  .ws-row:last-child { border-bottom: none; }
-  .ws-mini-thumb { width: 44px; height: 56px; border-radius: 4px; padding: 6px; display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
-  .ws-mini-thumb.teal { background: var(--teal-50); }
-  .ws-mini-thumb.blue { background: var(--blue-50); }
-  .ws-mini-thumb.amber { background: var(--amber-50); }
-  .wl { height: 3px; border-radius: 2px; background: rgba(0,0,0,0.1); }
-  .wl.a { width: 60%; }
-  .wl.a.t { background: var(--teal-400); }
-  .wl.a.b { background: var(--blue-400); }
-  .wl.a.am { background: var(--amber-400); }
-  .wl.s { width: 35%; }
-  .wb { height: 12px; border-radius: 2px; background: rgba(0,0,0,0.07); }
-  .ws-info { flex: 1; }
-  .ws-title { font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 3px; }
-  .ws-meta-row { display: flex; gap: 8px; align-items: center; }
-  .ws-level { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 8px; }
-  .ws-level.a1 { background: var(--teal-50); color: var(--teal-600); }
-  .ws-level.a2 { background: var(--blue-50); color: var(--blue-600); }
-  .ws-level.b1 { background: var(--amber-50); color: var(--amber-600); }
-  .ws-status { font-size: 11px; color: var(--gray-300); }
-  .ws-actions { display: flex; gap: 6px; }
-  .btn-sm { font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: var(--font-body); }
-  .btn-sm.edit { background: var(--blue-50); color: var(--blue-600); }
-  .btn-sm.delete { background: var(--red-50); color: var(--red-600); }
-  .ws-stats-mini { display: flex; gap: 12px; align-items: center; }
-  .ws-stat { font-size: 11px; color: var(--gray-300); display: flex; align-items: center; gap: 3px; }
-  .ws-stat strong { color: var(--gray-900); font-weight: 600; }
-
-  /* STATS OVERVIEW */
-  .stats-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-  .stat-box { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 18px 20px; }
-  .stat-box-num { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--blue-600); margin-bottom: 4px; }
+  /* STATS */
+  .stats-overview { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+  .stat-box { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); padding: 18px 20px; box-shadow: var(--shadow-sm); min-width: 0; }
+  .stat-box-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 12px; background: var(--blue-50); }
+  .stat-box-num { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--gray-900); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .stat-box-label { font-size: 12px; color: var(--gray-600); }
-  .stat-box-change { font-size: 11px; color: var(--teal-400); font-weight: 600; margin-top: 4px; }
 
-  /* ACCOUNT OVERVIEW (non-uploader / regular subscriber view) */
-  .account-plan-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-  .account-plan-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
-  .account-plan-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; max-width: 440px; }
-  .account-plan-row .btn-upload { text-decoration: none; display: inline-block; flex-shrink: 0; }
+  .level-mix { margin-top: 4px; }
+  .level-bar { display: flex; height: 12px; border-radius: 8px; overflow: hidden; background: var(--gray-50); }
+  .level-bar span { display: block; height: 100%; }
+  .level-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 12px; color: var(--gray-600); }
+  .level-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: 0; }
+  .lv-A1 { background: var(--teal-400); } .lv-A2 { background: var(--blue-400); } .lv-B1 { background: var(--amber-400); }
+  .lv-B2 { background: var(--purple-600); } .lv-C1 { background: var(--coral-600); }
 
-  .quick-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+  /* PLAN CARD (subscribers) */
+  .plan-card { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .plan-card-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .plan-card-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; max-width: 480px; }
+  .plan-perks { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; }
+  .plan-perks li { font-size: 12.5px; color: var(--gray-900); font-weight: 500; }
+  .plan-perks li::before { content: '✓'; color: var(--teal-400); font-weight: 800; margin-right: 6px; }
+  .plan-card.free { background: linear-gradient(120deg, var(--blue-50), var(--white) 70%); margin: -24px; padding: 24px; border-radius: var(--radius-lg); }
+
+  .quick-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   .quick-link-card { display: block; text-decoration: none; border: 1px solid var(--gray-100); border-radius: var(--radius-md); padding: 16px; transition: all 0.15s; }
   .quick-link-card:hover { border-color: var(--blue-200); background: var(--blue-50); }
   .quick-link-icon { font-size: 20px; margin-bottom: 8px; }
   .quick-link-title { font-size: 13px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
   .quick-link-desc { font-size: 12px; color: var(--gray-600); line-height: 1.4; }
 
+  /* TOOLBAR */
+  .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 18px; }
+  .search-box { flex: 1; min-width: 200px; position: relative; }
+  .search-box input { width: 100%; padding: 10px 12px 10px 36px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 13.5px; color: var(--gray-900); background: var(--white); }
+  .search-box input:focus { outline: none; border-color: var(--blue-400); }
+  .search-box svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--gray-300); fill: none; stroke-width: 2; }
+  .lvl-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .lvl-chip { font-family: var(--font-body); font-size: 12px; font-weight: 700; color: var(--gray-600); background: var(--white); border: 1.5px solid var(--gray-100); border-radius: 16px; padding: 6px 12px; cursor: pointer; }
+  .lvl-chip:hover { border-color: var(--blue-200); }
+  .lvl-chip.sel { background: var(--gray-900); border-color: var(--gray-900); color: var(--white); }
+  .sort-select { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--gray-900); padding: 9px 10px; border: 1.5px solid var(--gray-100); border-radius: var(--radius-sm); background: var(--white); cursor: pointer; }
+
+  /* WORKSHEET CARDS (real thumbnails) */
+  .ws-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 16px; }
+  .pcard { position: relative; background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-md); overflow: hidden; transition: transform .15s, box-shadow .15s, border-color .15s; display: flex; flex-direction: column; min-width: 0; }
+  .pcard:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,0,0,.09); border-color: var(--blue-200); }
+  .pcard-link { text-decoration: none; color: inherit; display: flex; flex-direction: column; flex: 1; }
+  .pcard-thumb { aspect-ratio: 4 / 5; overflow: hidden; border-bottom: 1px solid var(--gray-100); position: relative; }
+  .pcard-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+  .pcard-thumb.teal { background: var(--teal-50); } .pcard-thumb.blue { background: var(--blue-50); }
+  .pcard-thumb.amber { background: var(--amber-50); } .pcard-thumb.purple { background: var(--purple-50); }
+  .pcard-thumb.coral { background: var(--coral-50); }
+  .pcard-rank { position: absolute; top: 8px; left: 8px; font-size: 10.5px; font-weight: 800; color: var(--white); background: rgba(20,20,20,.72); border-radius: 10px; padding: 3px 8px; }
+  .pcard-body { padding: 11px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .pcard-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .pcard-cat { font-size: 10.5px; font-weight: 600; color: var(--gray-600); }
+  .pcard-title { font-size: 13px; font-weight: 700; color: var(--gray-900); line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pcard-foot { display: flex; gap: 10px; align-items: center; font-size: 11.5px; color: var(--gray-600); margin-top: auto; flex-wrap: wrap; }
+  .pcard-foot strong { color: var(--gray-900); }
+  .pcard-foot .star { color: var(--amber-400); }
+  .pcard-remove { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%; border: none; background: rgba(255,255,255,.95); box-shadow: 0 2px 8px rgba(0,0,0,.15); color: var(--red-600); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .pcard-remove:hover { background: var(--red-50); }
+  .ws-level { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px; }
+  .ws-level.a1 { background: var(--teal-50); color: var(--teal-600); }
+  .ws-level.a2 { background: var(--blue-50); color: var(--blue-600); }
+  .ws-level.b1 { background: var(--amber-50); color: var(--amber-600); }
+  .ws-level.b2 { background: var(--purple-50); color: var(--purple-600); }
+  .ws-level.c1 { background: var(--coral-50); color: var(--coral-600); }
+  .ws-free { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 8px; background: var(--green-50); color: var(--green-600); }
+
+  .grid-more { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 20px; flex-wrap: wrap; }
+  .grid-more-info { font-size: 12px; color: var(--gray-300); }
+
+  .skeleton { border-radius: var(--radius-md); background: linear-gradient(90deg, var(--gray-50), #fafaf7, var(--gray-50)); background-size: 200% 100%; animation: sk 1.2s infinite; aspect-ratio: 4 / 6.2; }
+  @keyframes sk { to { background-position: -200% 0; } }
+
+  /* EMPTY STATES */
+  .empty { text-align: center; padding: 34px 20px; border: 1.5px dashed var(--gray-100); border-radius: var(--radius-md); }
+  .empty-icon { font-size: 30px; margin-bottom: 10px; }
+  .empty-title { font-size: 14px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
+  .empty-desc { font-size: 13px; color: var(--gray-600); line-height: 1.5; max-width: 420px; margin: 0 auto 16px; }
+
+  /* SETTINGS */
+  .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--gray-100); flex-wrap: wrap; }
+  .setting-row:first-of-type { padding-top: 0; }
+  .setting-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .setting-title { font-size: 13.5px; font-weight: 700; color: var(--gray-900); margin-bottom: 3px; }
+  .setting-desc { font-size: 12.5px; color: var(--gray-600); line-height: 1.5; max-width: 560px; }
+  .setting-text { flex: 1; min-width: 200px; }
+  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .knob { position: absolute; inset: 0; background: var(--gray-100); border-radius: 24px; cursor: pointer; transition: background .2s; }
+  .switch .knob::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .switch input:checked + .knob { background: var(--teal-400); }
+  .switch input:checked + .knob::before { transform: translateX(20px); }
+  .switch input:focus-visible + .knob { box-shadow: 0 0 0 3px var(--blue-100); }
+  .saved-note { font-size: 12px; color: var(--teal-400); font-weight: 700; display: none; }
+  .btn-danger { background: var(--white); color: var(--red-600); border-color: #F5C6C2; }
+  .btn-danger:hover { background: var(--red-50); }
+
   @media (max-width: 900px) {
-    .quick-links-grid { grid-template-columns: 1fr; }
-    .page-layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
     .stats-overview { grid-template-columns: 1fr 1fr; }
+    .quick-links-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
+    .search-box { flex-basis: 100%; }
+  }
+  @media (max-width: 640px) {
+    nav { padding: 0 16px; }
+    .wrap { padding: 0 16px; }
+    .hero-cover { height: 96px; }
+    .hero-inner { gap: 12px; padding-top: 12px; }
+    .avatar-big { width: 92px; height: 92px; font-size: 30px; margin-top: -56px; }
+    .hero-id { min-width: 100%; }
+    .profile-name { font-size: 22px; }
+    .hero-actions { width: 100%; }
+    .hero-actions .btn { flex: 1; }
+    .section { padding: 18px 16px; }
+    .plan-card.free { margin: -18px -16px; padding: 18px 16px; }
+    .stat-box { padding: 14px; }
+    .stat-box-num { font-size: 21px; }
+    .ws-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .toolbar .sort-select { flex: 1; }
   }
 </style>
 <style>/* iOS zooms into any focused field under 16px and leaves the page zoomed and
@@ -196,199 +276,236 @@
 <nav>
   <a href="workshido-index.html" class="nav-logo">Work<span>shido</span></a>
   <ul class="nav-links">
-    <li><a href="workshido-index.html">Browse Worksheets</a></li>
-    <li id="navMyWsLink"><a href="#my-worksheets">My worksheets</a></li>
+    <li><a href="workshido-index.html">Browse worksheets</a></li>
+    <li><a href="workshido-forteachers.html">For teachers</a></li>
+    <li><a href="workshido-how-quiz-works.html">How the Quiz works</a></li>
   </ul>
   <div class="nav-right">
-    <div class="nav-avatar">JD</div>
+    <div class="nav-avatar"></div>
   </div>
 </nav>
 
-<div class="page-layout">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="profile-card">
-      <div class="avatar-big">JD</div>
-      <div class="profile-name">Juan David</div>
-      <div class="profile-email">juandavid@email.com</div>
-      <div class="plan-badge">✓ Free</div>
-    </div>
-    <div class="nav-menu">
-      <div class="nav-section-label">My account</div>
-      <a href="workshido-profile.html" class="nav-item active">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Dashboard
-      </a>
-      <a href="#my-worksheets" class="nav-item" id="sidebarMyWsLink">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        My worksheets
-      </a>
-      <div class="nav-section-label">Settings</div>
-      <a href="workshido-pricing.html" class="nav-item" id="billingLink">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        <span id="billingLinkLabel">Billing & plan</span>
-      </a>
-      <a href="#" onclick="logOut()" class="nav-item" style="margin-top:12px;color:var(--red-600)">
-        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Log out
-      </a>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- PROFILE CUSTOMIZATION -->
-    <div class="profile-edit" id="profileEdit">
-      <h2>Make it yours</h2>
-      <p class="pe-sub">Build your character and set the name other teachers see. Change it whenever you like.</p>
-      <div class="pe-row">
-        <div class="pe-preview-col">
-          <div class="pe-preview" id="pePreview">🙂</div>
-          <button class="pe-shuffle" id="peShuffle" type="button">🎲 Shuffle</button>
-          <button class="pe-quick-toggle" id="peQuickToggle" type="button">Use a simple icon instead</button>
-        </div>
-        <div class="pe-fields">
-          <div class="pe-label">Display name</div>
-          <input type="text" class="pe-name-input" id="peName" maxlength="40" placeholder="Your name" autocomplete="off">
-          <div class="pe-label">I teach <span class="pe-opt">(optional)</span></div>
-          <input type="text" class="pe-name-input" id="peTeaches" maxlength="80" placeholder="e.g. A1–B1, teens & adults" autocomplete="off">
-          <div class="pe-label">About me <span class="pe-opt">(optional)</span></div>
-          <input type="text" class="pe-name-input" id="peBio" maxlength="160" placeholder="One line about you" autocomplete="off">
-
-          <div id="peStudio">
-            <div class="pe-label">Avatar</div>
-            <div class="pe-studio" id="peStudioRows"></div>
-          </div>
-          <div id="peQuick" hidden>
-            <div class="pe-label">Icon</div>
-            <div class="pe-emoji-grid" id="peEmojiGrid"></div>
-            <div class="pe-colors" id="peColors"></div>
-          </div>
-
-          <div class="pe-actions">
-            <button class="pe-save" id="peSave" type="button">Save</button>
-            <span class="pe-saved" id="peSaved">Saved ✓</span>
-          </div>
+<!-- HERO: who you are, at a glance -->
+<header class="hero">
+  <div class="hero-cover"></div>
+  <div class="wrap">
+    <div class="hero-inner">
+      <div class="avatar-big"></div>
+      <div class="hero-id">
+        <div class="hero-hello" id="heroHello">Welcome back</div>
+        <h1 class="profile-name">&nbsp;</h1>
+        <div class="hero-teaches" id="heroTeaches" hidden></div>
+        <p class="hero-bio" id="heroBio" hidden></p>
+        <div class="hero-chips">
+          <span class="plan-badge">✓ Free</span>
+          <span class="chip" id="heroSince" hidden></span>
+          <span class="chip profile-email"></span>
         </div>
       </div>
-    </div>
-
-    <!-- ACCOUNT OVERVIEW (regular subscribers — replaces the uploader stats, which are only meaningful for Juan) -->
-    <div class="my-ws-section" id="subscriberOverview" style="display:none;">
-      <div class="section-header">
-        <h2>Your account</h2>
-      </div>
-      <div class="account-plan-row">
-        <div>
-          <div class="account-plan-title" id="acctPlanTitle">Free plan</div>
-          <div class="account-plan-desc" id="acctPlanDesc">Upgrade to Premium to unlock the Teacher Edition and the full Quiz for every worksheet.</div>
-        </div>
-        <a href="workshido-pricing.html" class="btn-upload" id="acctPlanCta">Upgrade to Premium</a>
-      </div>
-      <div class="quick-links-grid">
-        <a href="workshido-index.html" class="quick-link-card">
-          <div class="quick-link-icon">📚</div>
-          <div class="quick-link-title">Browse worksheets</div>
-          <div class="quick-link-desc">Explore the full catalog by level and category</div>
-        </a>
-        <a href="workshido-how-quiz-works.html" class="quick-link-card">
-          <div class="quick-link-icon">📝</div>
-          <div class="quick-link-title">How the Quiz works</div>
-          <div class="quick-link-desc">Grammar → Reading → Writing, then test your students</div>
-        </a>
-        <a href="workshido-forteachers.html" class="quick-link-card">
-          <div class="quick-link-icon">🍎</div>
-          <div class="quick-link-title">For teachers</div>
-          <div class="quick-link-desc">Tips, guides and lesson ideas</div>
-        </a>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="editProfileBtn" type="button">✏️ Edit profile</button>
+        <a href="workshido-index.html" class="btn btn-ghost">Browse worksheets</a>
       </div>
     </div>
+  </div>
+</header>
 
-    <!-- STATS (Juan only — the uploader dashboard) -->
-    <div class="stats-overview" id="statsOverview" style="display:none;">
-      <div class="stat-box">
-        <div class="stat-box-num" id="statUploaded">—</div>
-        <div class="stat-box-label">Worksheets uploaded</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-num" id="statDownloads">—</div>
-        <div class="stat-box-label">Total downloads</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-num" id="statLevel">—</div>
-        <div class="stat-box-label">Most uploaded level</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-num" id="statCategory">—</div>
-        <div class="stat-box-label">Top category</div>
-      </div>
-    </div>
-
-    <!-- UPLOAD -->
-    <div class="upload-section" id="uploadSection">
-      <h2>Upload a new worksheet</h2>
-      <p>Share your materials with teachers worldwide. Only high-quality, original content is accepted.</p>
-
-      <div class="upload-zone" id="uploadZone" onclick="window.location.href='workshido-upload.html'" style="cursor:pointer;">
-        <div class="upload-icon">📄</div>
-        <h3>Click to upload a worksheet</h3>
-        <p>PDF, DOCX, PNG or JPG · Max 10 MB</p>
-        <a href="workshido-upload.html" class="btn-upload" onclick="event.stopPropagation()">Go to upload page</a>
-        <div class="allowed-types">
-          <span class="type-badge pdf">📕 PDF</span>
-          <span class="type-badge docx">📘 DOCX</span>
-          <span class="type-badge png">🖼️ PNG</span>
-          <span class="type-badge jpg">🖼️ JPG</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- SAVED WORKSHEETS -->
-    <div class="my-ws-section" id="savedSection" style="display:none;">
-      <div class="section-header">
-        <h2>Saved worksheets</h2>
-        <span id="savedCount" style="font-size:12px;color:var(--gray-300)"></span>
-      </div>
-      <div id="savedRows"></div>
-    </div>
-
-    <!-- RECENTLY DOWNLOADED -->
-    <div class="my-ws-section" id="dlHistorySection" style="display:none;">
-      <div class="section-header">
-        <h2>Recently downloaded</h2>
-      </div>
-      <div id="dlHistoryRows"></div>
-    </div>
-
-    <!-- EMAIL PREFERENCES -->
-    <div class="my-ws-section">
-      <div class="section-header">
-        <h2>Email preferences</h2>
-      </div>
-      <label style="display:flex;align-items:center;gap:12px;cursor:pointer;">
-        <input type="checkbox" id="marketingToggle" style="width:18px;height:18px;accent-color:var(--blue-600);cursor:pointer;" />
-        <span style="font-size:13px;color:var(--gray-600);">I want to receive new worksheets, teacher resources and offers from Workshido by email. Unsubscribe anytime.</span>
-      </label>
-      <span id="marketingSaved" style="font-size:12px;color:var(--teal-400);font-weight:600;display:none;margin-left:30px;">Saved ✓</span>
-    </div>
-
-    <!-- MY WORKSHEETS -->
-    <div class="my-ws-section" id="my-worksheets" style="display:none;">
-      <div class="section-header">
-        <h2>My worksheets</h2>
-        <span id="wsCount" style="font-size:12px;color:var(--gray-300)">Loading...</span>
-      </div>
-      <div id="myWsRows">
-        <div style="padding:40px;text-align:center;color:var(--gray-300);font-size:14px;">Loading your worksheets...</div>
-      </div>
-    </div>
-
-  </main>
+<div class="tabbar">
+  <div class="wrap" id="tabbar">
+    <a class="tab active" href="#overview">Overview</a>
+    <a class="tab" href="#my-worksheets" id="tabMyWs" hidden>My worksheets <span class="tab-count" id="tabMyWsCount"></span></a>
+    <a class="tab" href="#saved">Saved <span class="tab-count" id="tabSavedCount"></span></a>
+    <a class="tab" href="#downloads">Downloads <span class="tab-count" id="tabDlCount"></span></a>
+    <a class="tab" href="#settings">Settings</a>
+  </div>
 </div>
 
+<main class="wrap">
+
+  <!-- PROFILE COMPLETION (only while something is missing) -->
+  <div class="completion" id="completion" hidden>
+    <div class="completion-text">
+      <div class="completion-title" id="completionTitle">Your profile is 50% complete</div>
+      <div class="completion-bar"><span id="completionBar" style="width:50%"></span></div>
+      <div class="completion-missing" id="completionMissing"></div>
+    </div>
+    <button class="btn btn-primary" id="completionBtn" type="button">Complete profile</button>
+  </div>
+
+  <!-- PROFILE CUSTOMIZATION (opens from "Edit profile") -->
+  <div class="profile-edit" id="profileEdit" hidden>
+    <button class="pe-close" id="peClose" type="button" aria-label="Close">×</button>
+    <h2>Make it yours</h2>
+    <p class="pe-sub">Build your character and set the name other teachers see. Change it whenever you like.</p>
+    <div class="pe-row">
+      <div class="pe-preview-col">
+        <div class="pe-preview" id="pePreview">🙂</div>
+        <button class="pe-shuffle" id="peShuffle" type="button">🎲 Shuffle</button>
+        <button class="pe-quick-toggle" id="peQuickToggle" type="button">Use a simple icon instead</button>
+      </div>
+      <div class="pe-fields">
+        <div class="pe-label">Display name</div>
+        <input type="text" class="pe-name-input" id="peName" maxlength="40" placeholder="Your name" autocomplete="off">
+        <div class="pe-label">I teach <span class="pe-opt">(optional)</span></div>
+        <input type="text" class="pe-name-input" id="peTeaches" maxlength="80" placeholder="e.g. A1–B1, teens & adults" autocomplete="off">
+        <div class="pe-label">About me <span class="pe-opt">(optional)</span></div>
+        <input type="text" class="pe-name-input" id="peBio" maxlength="160" placeholder="One line about you" autocomplete="off">
+
+        <div id="peStudio">
+          <div class="pe-label">Avatar</div>
+          <div class="pe-studio" id="peStudioRows"></div>
+        </div>
+        <div id="peQuick" hidden>
+          <div class="pe-label">Icon</div>
+          <div class="pe-emoji-grid" id="peEmojiGrid"></div>
+          <div class="pe-colors" id="peColors"></div>
+        </div>
+
+        <div class="pe-actions">
+          <button class="pe-save" id="peSave" type="button">Save</button>
+          <span class="pe-saved" id="peSaved">Saved ✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <!-- KPI tiles: catalog stats for Juan, personal activity for everyone else -->
+    <div class="stats-overview" id="statsOverview">
+      <div class="stat-box"><div class="stat-box-icon" id="stat1Icon">📥</div><div class="stat-box-num" id="stat1">—</div><div class="stat-box-label" id="stat1Label">Worksheets downloaded</div></div>
+      <div class="stat-box"><div class="stat-box-icon" id="stat2Icon">♡</div><div class="stat-box-num" id="stat2">—</div><div class="stat-box-label" id="stat2Label">Saved for later</div></div>
+      <div class="stat-box"><div class="stat-box-icon" id="stat3Icon">🎯</div><div class="stat-box-num" id="stat3">—</div><div class="stat-box-label" id="stat3Label">Your favourite level</div></div>
+      <div class="stat-box"><div class="stat-box-icon" id="stat4Icon">⭐</div><div class="stat-box-num" id="stat4">—</div><div class="stat-box-label" id="stat4Label">Current plan</div></div>
+    </div>
+
+    <!-- Level mix (Juan) -->
+    <div class="section" id="levelMixSection" hidden>
+      <div class="section-header">
+        <div><h2>Catalog by level</h2><div class="section-sub" id="levelMixSub"></div></div>
+        <a href="workshido-upload.html" class="btn btn-primary">＋ Upload worksheet</a>
+      </div>
+      <div class="level-mix">
+        <div class="level-bar" id="levelBar"></div>
+        <div class="level-legend" id="levelLegend"></div>
+      </div>
+    </div>
+
+    <!-- Plan card (subscribers) -->
+    <div class="section" id="subscriberOverview" hidden>
+      <div class="plan-card" id="planCard">
+        <div>
+          <div class="plan-card-title" id="acctPlanTitle">Free plan</div>
+          <div class="plan-card-desc" id="acctPlanDesc">Upgrade to Premium to unlock the Teacher Edition and the full Quiz for every worksheet.</div>
+          <ul class="plan-perks" id="planPerks">
+            <li>Teacher Edition with answer keys</li>
+            <li>Graded Quiz for every worksheet</li>
+            <li>New worksheets every week</li>
+          </ul>
+        </div>
+        <a href="workshido-pricing.html" class="btn btn-primary" id="acctPlanCta">Upgrade to Premium</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY WORKSHEETS (Juan only — the uploader dashboard) -->
+  <section class="section" id="my-worksheets" hidden>
+    <div class="section-header">
+      <div><h2>My worksheets</h2><div class="section-sub" id="wsCount">Loading…</div></div>
+      <a href="workshido-upload.html" class="btn btn-ghost">＋ Upload</a>
+    </div>
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <input type="search" id="wsSearch" placeholder="Search by title or category…" autocomplete="off">
+      </div>
+      <div class="lvl-filters" id="wsLevelFilters"></div>
+      <select class="sort-select" id="wsSort" aria-label="Sort worksheets">
+        <option value="new">Newest first</option>
+        <option value="dl">Most downloaded</option>
+        <option value="rating">Top rated</option>
+        <option value="az">A–Z</option>
+      </select>
+    </div>
+    <div class="ws-grid" id="myWsRows">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+    <div class="grid-more" id="myWsMore" hidden>
+      <button class="btn btn-ghost" id="myWsMoreBtn" type="button">Show more</button>
+      <span class="grid-more-info" id="myWsMoreInfo"></span>
+    </div>
+  </section>
+
+  <!-- SAVED WORKSHEETS -->
+  <section class="section" id="saved">
+    <div class="section-header">
+      <div><h2>Saved worksheets</h2><div class="section-sub" id="savedCount">Your shortlist for upcoming lessons</div></div>
+    </div>
+    <div class="ws-grid" id="savedRows"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+    <div class="grid-more" id="savedMore" hidden><button class="btn btn-ghost" id="savedMoreBtn" type="button">Show all saved</button></div>
+  </section>
+
+  <!-- RECENTLY DOWNLOADED -->
+  <section class="section" id="downloads">
+    <div class="section-header">
+      <div><h2>Recently downloaded</h2><div class="section-sub" id="dlCount">Grab them again in one click</div></div>
+    </div>
+    <div class="ws-grid" id="dlHistoryRows"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+    <div class="grid-more" id="dlMore" hidden><button class="btn btn-ghost" id="dlMoreBtn" type="button">Show all downloads</button></div>
+  </section>
+
+  <!-- EXPLORE (subscribers) -->
+  <section class="section" id="exploreSection" hidden>
+    <div class="section-header"><h2>Keep exploring</h2></div>
+    <div class="quick-links-grid">
+      <a href="workshido-index.html" class="quick-link-card">
+        <div class="quick-link-icon">📚</div>
+        <div class="quick-link-title">Browse worksheets</div>
+        <div class="quick-link-desc">Explore the full catalog by level and category</div>
+      </a>
+      <a href="workshido-how-quiz-works.html" class="quick-link-card">
+        <div class="quick-link-icon">📝</div>
+        <div class="quick-link-title">How the Quiz works</div>
+        <div class="quick-link-desc">Grammar → Reading → Writing, then test your students</div>
+      </a>
+      <a href="workshido-forteachers.html" class="quick-link-card">
+        <div class="quick-link-icon">🍎</div>
+        <div class="quick-link-title">For teachers</div>
+        <div class="quick-link-desc">Tips, guides and lesson ideas</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="section" id="settings">
+    <div class="section-header"><h2>Settings</h2></div>
+    <div class="setting-row">
+      <div class="setting-text">
+        <div class="setting-title">Email updates <span class="saved-note" id="marketingSaved">Saved ✓</span></div>
+        <div class="setting-desc">I want to receive new worksheets, teacher resources and offers from Workshido by email. Unsubscribe anytime.</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="marketingToggle" aria-label="Email updates"><span class="knob"></span></label>
+    </div>
+    <div class="setting-row">
+      <div class="setting-text">
+        <div class="setting-title">Plan & billing</div>
+        <div class="setting-desc" id="billingDesc">See plans and upgrade any time.</div>
+      </div>
+      <a href="workshido-pricing.html" class="btn btn-ghost" id="billingLink"><span id="billingLinkLabel">Billing & plan</span></a>
+    </div>
+    <div class="setting-row">
+      <div class="setting-text">
+        <div class="setting-title">Sign out</div>
+        <div class="setting-desc">You'll need to log in again to download worksheets.</div>
+      </div>
+      <button class="btn btn-danger" type="button" onclick="logOut()">Log out</button>
+    </div>
+  </section>
+
+</main>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
-<script src="js/workshido-profile.js?v=20260908c" defer></script>
+<script src="js/workshido-profile.js?v=20261022" defer></script>
 <script src="js/analytics.js?v=20260908" defer></script>
 </body>
 </html>
