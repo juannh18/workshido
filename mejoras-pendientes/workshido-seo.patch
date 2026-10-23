@@ -1,0 +1,114 @@
+diff --git a/netlify/functions/category-page.js b/netlify/functions/category-page.js
+index c4b6ce3..ec2ddbd 100644
+--- a/netlify/functions/category-page.js
++++ b/netlify/functions/category-page.js
+@@ -1,6 +1,6 @@
+-// Server-side internal-linking injection for the 6 category/level landing
++// Server-side internal-linking injection for the category/level landing
+ // pages (/worksheets/grammar/, /worksheets/vocabulary/, /worksheets/reading/,
+-// /worksheets/writing/, /worksheets/levels/a1/, /worksheets/levels/a2/).
++// /worksheets/writing/ and the /worksheets/levels/ pages).
+ //
+ // Why this exists: these pages render their worksheet cards entirely via
+ // client-side JS (loadWorksheets() -> Supabase -> innerHTML). The raw HTML
+@@ -11,6 +11,7 @@
+ // static HTML before the JS-driven grid ever loads, using the same
+ // self-fetch + string-replace pattern as worksheet-page.js.
+ const { createClient } = require('@supabase/supabase-js');
++const { fetchAllRows } = require('../lib/fetch-all');
+ 
+ const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+ const SITE = 'https://spanishido.com';
+@@ -21,10 +22,30 @@ const PAGES = {
+   '/worksheets/vocabulary/': { template: 'vocabulary/index-app.html', col: 'category', val: 'Vocabulary', label: 'Vocabulary' },
+   '/worksheets/reading/':    { template: 'reading/index-app.html',    col: 'category', val: 'Reading',    label: 'Reading' },
+   '/worksheets/writing/':    { template: 'writing/index-app.html',    col: 'category', val: 'Writing',    label: 'Writing' },
+   '/worksheets/levels/a1/':  { template: 'levels/a1/index-app.html',  col: 'level',    val: 'A1',         label: 'A1' },
+   '/worksheets/levels/a2/':  { template: 'levels/a2/index-app.html',  col: 'level',    val: 'A2',         label: 'A2' },
+ };
+ 
++const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1'];
++const CATEGORY_ORDER = ['Grammar', 'Vocabulary', 'Reading', 'Writing', 'Practice'];
++
++// Category pages group their list by level, level pages by category, so the
++// full list stays scannable once it runs into the hundreds.
++function groupRows(rows, page) {
++  const key = page.col === 'category' ? 'level' : 'category';
++  const order = key === 'level' ? LEVEL_ORDER : CATEGORY_ORDER;
++  const groups = new Map();
++  for (const ws of rows) {
++    const k = ws[key] || 'Other';
++    if (!groups.has(k)) groups.set(k, []);
++    groups.get(k).push(ws);
++  }
++  const rank = (k) => { const i = order.indexOf(k); return i < 0 ? 99 : i; };
++  return [...groups.entries()]
++    .sort((a, b) => rank(a[0]) - rank(b[0]))
++    .map(([name, items]) => ({ name, items: items.sort((a, b) => String(a.title).localeCompare(String(b.title))) }));
++}
++
+ // Origin comes from the REQUEST host, not the hardcoded SITE: otherwise a
+ // draft deploy fetches PRODUCTION's template and silently validates the live
+ // site instead of the change under test (and 404s entirely while prod still
+@@ -69,21 +92,27 @@ exports.handler = async (event) => {
+   try {
+     const [template, { data, error }] = await Promise.all([
+       getTemplate(page.template, event),
+-      sb.from('worksheets').select('id, slug, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).limit(60),
++      // Every worksheet, not just the newest 60: one that drops off this list
++      // loses its only crawlable link from an indexed page, which is what left
++      // most of the catalog "Discovered – currently not indexed".
++      fetchAllRows(() => sb.from('worksheets').select('id, slug, title, level, category').eq(page.col, page.val).order('created_at', { ascending: false }).order('id')),
+     ]);
+ 
+     if (error || !data || !data.length) {
+       return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
+     }
+ 
+-    const links = data
+-      .map((ws) => `<li><a href="${ws.slug ? `${SITE}/worksheet/${esc(ws.slug)}/` : `${SITE}/workshido-worksheet.html?id=${esc(ws.id)}`}">${esc(withLevel(ws))}</a></li>`)
+-      .join('');
++    const href = (ws) => (ws.slug ? `${SITE}/worksheet/${esc(ws.slug)}/` : `${SITE}/workshido-worksheet.html?id=${esc(ws.id)}`);
++    const groupLabel = (name) => (page.col === 'category' ? `${name} level` : name);
++    const lists = groupRows(data, page)
++      .map((g) => `<h3 style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#2C2C2A;margin:18px 0 6px;">${esc(groupLabel(g.name))} (${g.items.length})</h3>
++  <ul class="ws-seo-links" style="columns:3;column-gap:24px;list-style:none;padding:0;margin:0 0 8px;font-size:13px;line-height:1.9;">${g.items.map((ws) => `<li><a href="${href(ws)}">${esc(withLevel(ws))}</a></li>`).join('')}</ul>`)
++      .join('\n  ');
+ 
+     const block = `
+ <section class="ws-seo-sec" aria-label="All ${esc(page.label)} worksheets" style="max-width:1100px;margin:0 auto;padding:24px 32px 8px;">
+   <h2 style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#5F5E5A;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;">All ${esc(page.label)} worksheets (${data.length})</h2>
+-  <ul class="ws-seo-links" style="columns:3;column-gap:24px;list-style:none;padding:0;margin:0 0 8px;font-size:13px;line-height:1.9;">${links}</ul>
++  ${lists}
+   <style>.ws-seo-links a{overflow-wrap:anywhere}@media (max-width:768px){.ws-seo-links{columns:1!important}.ws-seo-sec{padding-left:16px!important;padding-right:16px!important}}</style>
+ </section>`;
+ 
+diff --git a/netlify/functions/worksheet-page.js b/netlify/functions/worksheet-page.js
+index 405a360..bc02aed 100644
+--- a/netlify/functions/worksheet-page.js
++++ b/netlify/functions/worksheet-page.js
+@@ -174,6 +174,11 @@ exports.handler = async (event) => {
+       : sb.from('worksheets').select('*').eq('id', id).single();
+     const [template, { data, error }] = await Promise.all([getTemplate(event), query]);
+ 
++    // .single() reports "no row" as PGRST116; any other error is Supabase
++    // being unreachable, which must not tell Google a live worksheet is gone.
++    if (error && error.code !== 'PGRST116') {
++      return { statusCode: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Retry-After': '60', 'Cache-Control': 'no-store' }, body: template };
++    }
+     if (error || !data) {
+       // A real, since-deleted/renamed worksheet id — this is the exact
+       // shape of a "soft 404" (200 OK, no real content) that Search Console
+@@ -367,8 +372,10 @@ exports.handler = async (event) => {
+     };
+   } catch (err) {
+     // Never let a Supabase hiccup take the page down — fall back to the
+-    // plain template, same as before this function existed.
++    // plain template, same as before this function existed. 503, not 200: the
++    // bare template is titled just "Workshido" with a generic canonical, and a
++    // crawler that caught it as a 200 would index that instead of the worksheet.
+     const template = await getTemplate(event);
+-    return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
++    return { statusCode: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Retry-After': '60', 'Cache-Control': 'no-store' }, body: template };
+   }
+ };

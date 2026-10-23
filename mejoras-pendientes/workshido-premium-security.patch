@@ -1,0 +1,92 @@
+diff --git a/js/workshido-worksheet.js b/js/workshido-worksheet.js
+index 1850552..1e6789d 100644
+--- a/js/workshido-worksheet.js
++++ b/js/workshido-worksheet.js
+@@ -111,7 +111,11 @@ function relevanceScores(data, rows) {
+ const SOCIAL_MIN_DOWNLOADS = 20;
+ const SOCIAL_MIN_RATINGS = 3;
+ let _wsFileUrl = null;
+-let _answerKeyUrl = null;
++let _hasTeacherEdition = false;
++// Public columns only. The Teacher Edition / quiz PDF URLs are paid content:
++// they are not readable from the browser and only come from the
++// get-teacher-edition-url / get-quiz-url functions after the premium check.
++const WS_PUBLIC_COLS = 'id,slug,title,level,category,tags,description,file_url,file_type,is_free,downloads,uploaded_by,uploader_name,thumbnail_url,created_at,rating,ratings_count,topic_key,piece_type,description_long,has_teacher_edition';
+ let _isPremium = false;
+ let _wsId = null;
+ let _wsTitle = 'worksheet';
+@@ -196,8 +200,8 @@ async function loadWorksheet() {
+   const rowPromise = seeded
+     ? Promise.resolve({ data: seeded, error: null })
+     : slug
+-      ? sb.from('worksheets').select('*').eq('slug', slug).single()
+-      : sb.from('worksheets').select('*').eq('id', id).single();
++      ? sb.from('worksheets').select(WS_PUBLIC_COLS).eq('slug', slug).single()
++      : sb.from('worksheets').select(WS_PUBLIC_COLS).eq('id', id).single();
+   const [{ data, error }, { data: { user: currentUser } }] = await Promise.all([rowPromise, authPromise]);
+   if (error || !data) { renderError('Worksheet not found.'); return; }
+ 
+@@ -221,7 +225,7 @@ async function loadWorksheet() {
+   let quiz = null;
+   let related = [];
+   const quizPromise = data.topic_key
+-    ? sb.from('quizzes').select('*').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle()
++    ? sb.from('quizzes').select('id,topic_key,level,title,skills').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle()
+     : Promise.resolve({ data: null });
+   quiz = (await quizPromise).data || null;
+ 
+@@ -296,7 +300,7 @@ async function loadWorksheet() {
+       </div>`;
+ 
+   _wsFileUrl = data.file_url || null;
+-  _answerKeyUrl = data.teacher_edition_url || null;
++  _hasTeacherEdition = !!(data.has_teacher_edition ?? data.teacher_edition_url);
+   _wsId = data.id;
+   _wsTitle = data.title || 'worksheet';
+   const _rating = data.rating || 0;
+@@ -342,7 +346,7 @@ async function loadWorksheet() {
+       </button>`
+     : `<button class="btn-download-big locked" onclick="openPremiumModal('worksheet_download')">🔒 Premium — Unlock to download</button>`;
+ 
+-  const answerKeyBtn = _answerKeyUrl
++  const answerKeyBtn = _hasTeacherEdition
+     ? (_isPremium
+         ? `<button class="btn-answer-key unlocked" onclick="downloadAnswerKey()">
+             <span class="ak-left">
+@@ -857,7 +861,7 @@ async function printWS() {
+ function closeDlModal() { _closeModal(document.getElementById('dlModal')); }
+ 
+ async function downloadAnswerKey() {
+-  if (!_answerKeyUrl || !_wsId) return;
++  if (!_hasTeacherEdition || !_wsId) return;
+   // Premium is verified server-side here (not just the button being hidden) —
+   // the signed URL for the paid Teacher Edition is only ever issued after that check.
+   try {
+diff --git a/netlify/functions/worksheet-page.js b/netlify/functions/worksheet-page.js
+index bc02aed..51a2686 100644
+--- a/netlify/functions/worksheet-page.js
++++ b/netlify/functions/worksheet-page.js
+@@ -146,6 +146,14 @@ function setHtml(set) {
+     + `<ol class="ws-set-list">${items}</ol></div>`;
+ }
+ 
++// The inlined row is public page source: drop the paid Teacher Edition URL
++// (only get-teacher-edition-url hands it out, after the premium check) and keep
++// just the yes/no the page needs to show the button.
++function publicRow(data) {
++  const { teacher_edition_url, ...row } = data;
++  return { ...row, has_teacher_edition: !!(data.has_teacher_edition ?? teacher_edition_url) };
++}
++
+ exports.handler = async (event) => {
+   const path = event.path || '';
+   const slugMatch = path.match(SLUG_ROUTE);
+@@ -327,7 +335,7 @@ exports.handler = async (event) => {
+       // immediately instead of waiting on its own round-trip for the same data.
+       .replace(
+         '<script type="application/json" id="wsData"></script>',
+-        `<script type="application/json" id="wsData">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`
++        `<script type="application/json" id="wsData">${JSON.stringify(publicRow(data)).replace(/</g, '\\u003c')}</script>`
+       )
+       .replace(
+         '<link rel="canonical" href="https://spanishido.com/spanishido-worksheet.html">',
