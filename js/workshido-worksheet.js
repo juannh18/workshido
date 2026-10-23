@@ -587,11 +587,6 @@ function catClass(name) { return CAT_CLASS[name] || 'cat-other'; }
 function renderRelated(related, lvlCls, currentCategory, currentLevel, isFunctional) {
   const section = document.getElementById('relatedSection');
   const grid = document.getElementById('relatedGrid');
-  // The "Complete the set" panel next to the download button already links the
-  // set; repeating the same sheets here as cards was the only thing many pages
-  // showed. Cards are for everything else on the topic.
-  const inSetPanel = new Set([...document.querySelectorAll('.ws-set-list li[data-id]')].map(li => li.dataset.id));
-  if (inSetPanel.size) related = related.filter(r => !inSetPanel.has(String(r.id)));
   if (!section || !grid || !related.length) return;
 
   // "These worksheets form a set" is a real claim — it links to the guide on
