@@ -548,7 +548,7 @@ async function updateNav(user) {
 }
 
 async function logOutUp() {
-  await sbUp.auth.signOut();
+  await sbUp.auth.signOut({ scope: 'local' });
   window.location.href = 'workshido-index.html';
 }
 

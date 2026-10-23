@@ -27,7 +27,7 @@ sb2.auth.onAuthStateChange((_event, session) => {
 });
 
 async function checkAuth2(){ /* nav now handled by onAuthStateChange */ }
-async function logOut2(){await sb2.auth.signOut();window.location.reload();}
+async function logOut2(){await sb2.auth.signOut({ scope: 'local' });window.location.reload();}
 
 // ── Catalog ───────────────────────────────────────
 const LEVEL_COLORS = { A1:'teal', A2:'blue', B1:'amber', B2:'purple', C1:'coral' };

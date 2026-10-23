@@ -33,7 +33,7 @@ sb2.auth.onAuthStateChange((_event, session) => {
 });
 
 async function checkAuth2(){ /* nav now handled by onAuthStateChange */ }
-async function logOut2(){await sb2.auth.signOut();window.location.reload();}
+async function logOut2(){await sb2.auth.signOut({ scope: 'local' });window.location.reload();}
 
 const LEVEL_CLASS = { A1:'a1', A2:'a2', B1:'b1', B2:'b2', C1:'c1' };
 

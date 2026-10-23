@@ -103,7 +103,7 @@ async function handleCheckoutReturn(user) {
   }
   banner.textContent = "🎉 Payment received! It's taking a little longer than usual to activate — refresh this page in a minute.";
 }
-async function logOut2(){await sb2.auth.signOut();window.location.reload();}
+async function logOut2(){await sb2.auth.signOut({ scope: 'local' });window.location.reload();}
 
 // Reflect the CEFR range actually in the catalog (same source of truth as
 // workshido-index.html's live stats) instead of a hand-typed range that can

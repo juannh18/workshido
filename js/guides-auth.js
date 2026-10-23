@@ -33,5 +33,5 @@ async function checkAuthGuides() {
     + _gbEsc(name.split(/\s+/)[0]) + '</a>'
     + '<button onclick="logOutGuides()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>';
 }
-async function logOutGuides() { await sbGuides.auth.signOut(); window.location.reload(); }
+async function logOutGuides() { await sbGuides.auth.signOut({ scope: 'local' }); window.location.reload(); }
 document.addEventListener('DOMContentLoaded', checkAuthGuides);

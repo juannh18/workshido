@@ -6,7 +6,7 @@ const WS_COLS = 'id,slug,title,level,category,thumbnail_url,downloads,rating,rat
 const GRID_PAGE = 24;   // "My worksheets" cards per "Show more"
 const GRID_PREVIEW = 8; // saved / downloads cards before "Show all"
 
-async function logOut(){ await sb2.auth.signOut(); window.location.href='workshido-index.html'; }
+async function logOut(){ await sb2.auth.signOut({ scope: 'local' }); window.location.href='workshido-index.html'; }
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 // Same ~440px _sm thumbnail derivative the catalog cards use.

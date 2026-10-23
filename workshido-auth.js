@@ -41,7 +41,7 @@ async function logInWithGoogle() {
 
 // Logout
 async function logOut() {
-  const { error } = await sb.auth.signOut();
+  const { error } = await sb.auth.signOut({ scope: 'local' });
   if (!error) window.location.href = 'workshido-index.html';
 }
 

@@ -15,7 +15,7 @@ async function checkAuth() {
     nav.innerHTML = '<a href="workshido-profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:#B5D4F4;font-size:13px;font-weight:500;"><div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:#E6F1FB;color:#185FA5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2px solid #85B7EB;flex-shrink:0;">' + inner + '</div>' + escNav(name.split(/\s+/)[0]) + '</a><button onclick="logOut()" style="background:transparent;border:1px solid rgba(255,255,255,0.2);border-radius:6px;padding:7px 14px;color:#B5D4F4;font-size:13px;cursor:pointer;font-family:inherit;">Log out</button>';
   }
 }
-async function logOut() { await sb.auth.signOut(); window.location.reload(); }
+async function logOut() { await sb.auth.signOut({ scope: 'local' }); window.location.reload(); }
 
 // Honest, live numbers from the real catalog
 // Supabase/PostgREST returns at most 1000 rows per request (API "max rows"),
