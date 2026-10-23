@@ -102,6 +102,27 @@ function showError(msg) {
   document.getElementById('password').setAttribute('aria-invalid', 'true');
 }
 
+// An unconfirmed account had no way to get a new confirmation link, so the
+// signup was simply lost. One button under the error re-sends it.
+function offerResendConfirmation(email) {
+  const banner = document.getElementById('errorBanner');
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'resend-confirm';
+  btn.textContent = 'Send me a new confirmation email';
+  btn.style.cssText = 'display:block;margin-top:8px;background:none;border:none;padding:0;color:inherit;font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;';
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const { error } = await sb.auth.resend({ type: 'signup', email, options: { emailRedirectTo: window.location.origin + '/workshido-login.html' } });
+    window.wsTrack?.('confirmation_resent', { ok: !error });
+    btn.replaceWith(Object.assign(document.createElement('span'), {
+      style: 'display:block;margin-top:8px;font-weight:600;',
+      textContent: error ? 'We couldn’t send it right now — please try again in a few minutes.' : 'Done — check your inbox (and spam) for the new link.',
+    }));
+  });
+  banner.appendChild(btn);
+}
+
 // ?redirect= must stay same-site — otherwise a crafted link (workshido.com
 // itself, so it looks trustworthy) could send a user who just logged in for
 // real straight to an external phishing/malware page, or even run a
@@ -127,13 +148,16 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
   btn.textContent = 'Logging in...';
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
-    window.wsTrack?.('login_failure', { method: 'password' });
     // "Incorrect password" for an unconfirmed email sends people hunting for a
     // password problem that doesn't exist — tell them what's actually missing.
     const notConfirmed = error.code === 'email_not_confirmed' || /not confirmed/i.test(error.message || '');
+    // reason: lets the analytics tell wrong passwords from unconfirmed accounts
+    // (on Workshido 29% of email signups never confirmed).
+    window.wsTrack?.('login_failure', { method: 'password', reason: notConfirmed ? 'email_not_confirmed' : (error.code || 'invalid_credentials') });
     showError(notConfirmed
       ? 'Please confirm your email first — open the link we sent you (check spam too), then log in.'
       : 'Incorrect email or password. If you signed up with Google, use "Continue with Google" above.');
+    if (notConfirmed) offerResendConfirmation(email);
     btn.disabled = false;
     btn.textContent = 'Log in';
   } else {

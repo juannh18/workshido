@@ -156,6 +156,14 @@ function setHtml(set, ws) {
     + `<ol class="ws-set-list">${items}</ol></div>`;
 }
 
+// The inlined row is public page source: drop the paid Teacher Edition URL
+// (only get-teacher-edition-url hands it out, after the premium check) and keep
+// just the yes/no the page needs to show the button.
+function publicRow(data) {
+  const { teacher_edition_url, ...row } = data;
+  return { ...row, has_teacher_edition: !!(data.has_teacher_edition ?? teacher_edition_url) };
+}
+
 exports.handler = async (event) => {
   const path = event.path || '';
   const slugMatch = path.match(SLUG_ROUTE);
@@ -184,6 +192,11 @@ exports.handler = async (event) => {
       : sb.from('worksheets').select('*').eq('id', id).single();
     const [template, { data, error }] = await Promise.all([getTemplate(event), query]);
 
+    // .single() reports "no row" as PGRST116; any other error is Supabase
+    // being unreachable, which must not tell Google a live worksheet is gone.
+    if (error && error.code !== 'PGRST116') {
+      return { statusCode: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Retry-After': '60', 'Cache-Control': 'no-store' }, body: template };
+    }
     if (error || !data) {
       // A real, since-deleted/renamed worksheet id — this is the exact
       // shape of a "soft 404" (200 OK, no real content) that Search Console
@@ -332,7 +345,7 @@ exports.handler = async (event) => {
       // immediately instead of waiting on its own round-trip for the same data.
       .replace(
         '<script type="application/json" id="wsData"></script>',
-        `<script type="application/json" id="wsData">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`
+        `<script type="application/json" id="wsData">${JSON.stringify(publicRow(data)).replace(/</g, '\\u003c')}</script>`
       )
       .replace(
         '<link rel="canonical" href="https://workshido.com/workshido-worksheet.html">',
@@ -377,8 +390,10 @@ exports.handler = async (event) => {
     };
   } catch (err) {
     // Never let a Supabase hiccup take the page down — fall back to the
-    // plain template, same as before this function existed.
+    // plain template, same as before this function existed. 503, not 200: the
+    // bare template is titled just "Workshido" with a generic canonical, and a
+    // crawler that caught it as a 200 would index that instead of the worksheet.
     const template = await getTemplate(event);
-    return { statusCode: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' }, body: template };
+    return { statusCode: 503, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Retry-After': '60', 'Cache-Control': 'no-store' }, body: template };
   }
 };

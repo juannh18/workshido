@@ -209,12 +209,12 @@ function paintPlan(profile) {
   if (perks) perks.hidden = premium;
   if (premium) {
     _setText('acctPlanTitle', '⭐ Premium plan — active');
-    _setText('acctPlanDesc', 'You have full access to the Teacher Edition and the graded Quiz for every worksheet.');
+    _setText('acctPlanDesc', 'You have full access to every Teacher Edition (860+ worksheets) and every graded Quiz.');
     setLink(cta);
     if (cta) cta.textContent = portal ? 'Manage subscription' : 'Billing & plan';
   } else {
     _setText('acctPlanTitle', 'Unlock everything with Premium');
-    _setText('acctPlanDesc', 'Save hours of prep: every worksheet comes with a ready-to-teach Teacher Edition and a graded Quiz.');
+    _setText('acctPlanDesc', 'Save hours of prep: 860+ worksheets come with a ready-to-teach Teacher Edition, plus graded Quizzes.');
     setLink(cta);
     if (cta) { cta.className = 'btn btn-primary'; cta.textContent = 'Upgrade to Premium →'; }
   }

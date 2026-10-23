@@ -518,7 +518,7 @@ FOOTER = '''<footer>
       <h4>Levels</h4>
       <a href="/worksheets/levels/a1/">A1 Beginner</a>
       <a href="/worksheets/levels/a2/">A2 Elementary</a>
-      <span class="footer-link-soon" title="B1 worksheets are coming soon">B1 Intermediate <small>(coming soon)</small></span>
+      <a href="/worksheets/levels/b1/">B1 Intermediate</a>
       <span class="footer-link-soon" title="B2 worksheets are coming soon">B2 Upper-intermediate <small>(coming soon)</small></span>
       <span class="footer-link-soon" title="C1 worksheets are coming soon">C1 Advanced <small>(coming soon)</small></span>
     </div>
@@ -528,7 +528,7 @@ FOOTER = '''<footer>
       <a href="/guides/">Teaching guides</a>
       <a href="/about/">About</a>
       <a href="/spanishido-pricing.html">Premium</a>
-      <a href="mailto:hello@spanishido.com">Contact</a>
+      <a href="mailto:hola@spanishido.com">Contact</a>
       <a href="/spanishido-privacy.html">Privacy</a>
       <a href="/spanishido-terms.html">Terms</a>
     </div>

@@ -45,7 +45,18 @@ SITES = {
         'pricing': '/spanishido-pricing.html',
         'sequence_guide': '/guides/how-to-sequence-spanish-lessons/',
         'cefr_guide': None,
-        'contact': 'hello@spanishido.com',
+        # El temario de Spanishido (A1 35 temas + A2 38 temas) se armó con el PCIC (memoria 21/09).
+        'standard_title': 'Levelled with the CEFR, using the Instituto Cervantes PCIC as a reference',
+        'standard_text': (
+            '<p>We plan our topics and place them at {levels} using the Common European Framework of '
+            'Reference (CEFR) descriptors, with the <strong>Plan curricular del Instituto Cervantes (PCIC)</strong> '
+            '— <em>Niveles de referencia para el español</em> — as one of our main references for what '
+            'students are expected to learn at each level. We combine it with the way ELE course books and '
+            'real classes sequence content. Every worksheet is tagged by level, skill and language focus, so '
+            'the catalog filters match what you actually need for your class.</p>\n'
+            '<p>{brand} is an independent publisher and is not affiliated with or endorsed by the Instituto '
+            'Cervantes. The worksheets, exercises and answer keys are our own.</p>'),
+        'contact': 'hola@spanishido.com',
         'language_note': (
             '<p>Student pages are written entirely in Spanish, following the conventions of '
             'well-known ELE course books. Teacher Editions and answer-key notes are written in '
@@ -57,6 +68,8 @@ SITES = {
 def body(c):
     cefr = (f' Our <a href="{c["cefr_guide"]}">CEFR levels guide</a> explains what each level means in class.'
             if c['cefr_guide'] else '')
+    standard = (c['standard_text'].format(levels=c['levels'], brand=c['brand']) if 'standard_text' in c else
+                f'<p>Every topic is placed at {c["levels"]} using the Common European Framework of Reference (CEFR) descriptors, and every worksheet is tagged by level, skill and language focus, so the catalog filters match what you actually need for your class.{cefr}</p>')
     return f'''<div class="article-hero">
   <div class="article-meta">About {c["brand"]} · Editorial standards</div>
   <h1>How {c["brand"]} Worksheets Are Made</h1>
@@ -70,8 +83,8 @@ def body(c):
 <h2>1. Every topic is a set, not a single sheet</h2>
 <p>Most free worksheet sites give you one isolated page. We build each topic as a <strong>set</strong> you can teach in order: a <strong>Grammar</strong> sheet that presents the form, a <strong>Reading</strong> that shows it in context, a <strong>Writing</strong> task where students produce it, and a <strong>Practice</strong> sheet for extra controlled work — closed by a graded <strong>Quiz</strong>. The <a href="{c["sequence_guide"]}">sequencing guide</a> explains why that order works.</p>
 {c["language_note"]}
-<h2>2. Levelled against the CEFR</h2>
-<p>Every topic is placed at {c["levels"]} using the Common European Framework of Reference (CEFR) descriptors, and every worksheet is tagged by level, skill and language focus, so the catalog filters match what you actually need for your class.{cefr}</p>
+<h2>2. {c.get("standard_title", "Levelled against the CEFR")}</h2>
+{standard}
 
 <h2>3. What we check before a worksheet goes live</h2>
 <p>Each worksheet is read in full, line by line, before publishing. A sheet that fails any of these checks is corrected or discarded — never published as it is:</p>
@@ -106,7 +119,8 @@ def build(key):
     s = open(os.path.join(c['root'], c['shell']), encoding='utf-8').read()
     url = f'{c["domain"]}/about/'
     title = f'How {c["brand"]} Worksheets Are Made — Editorial Standards'
-    desc = (f'Who makes {c["brand"]} worksheets and how: CEFR-levelled topic sets, line-by-line answer '
+    lvl = 'CEFR- and PCIC-levelled' if 'standard_text' in c else 'CEFR-levelled'
+    desc = (f'Who makes {c["brand"]} worksheets and how: {lvl} topic sets, line-by-line answer '
             f'checks, Teacher Editions, and how we fix errors teachers report.')
 
     def sub(pattern, repl, count=1):

@@ -65,6 +65,13 @@
   .correct { color: #1e8449; }
   .activity-title { font-weight: 700; font-size: 10.5px; margin-bottom: 5px; color: #1a3a5c; }
 
+  /* ---------- Quick Reference (pág. 1, llena el espacio; html_to_pdf_cdp.py recorta/estira filas) ---------- */
+  .p1-ref { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 2px; }
+  .p1-ref th { background: #eef3f8; color: #1a3a5c; font-size: 9px; text-transform: uppercase; letter-spacing: 0.4px; text-align: left; padding: 4px 9px; border: 1px solid #d0d8e4; }
+  .p1-ref td { border: 1px solid #d0d8e4; padding: 3px 9px; line-height: 1.35; color: #33415c; vertical-align: top; }
+  .p1-ref tbody tr:nth-child(even) td { background: #f7f9fc; }
+  .p1-ref td:first-child { font-weight: 700; color: #1a3a5c; }
+
   /* ---------- Footer ---------- */
   .footer { text-align: center; margin-top: 3px; padding-top: 3px; border-top: 1px solid #d0d8e4; font-size: 10px; color: #9aa5b4; letter-spacing: 0.6px; }
 
@@ -161,6 +168,18 @@
     </div>
   </div>
 </div>
+
+<!--P1REF_START-->
+<div class="p1-ref-block">
+  <div class="section-title teal" style="margin-top:12px;">{{P1REF_TITLE}}</div>
+  <table class="p1-ref">
+    <thead><tr>{{P1REF_HEAD}}</tr></thead>
+    <tbody>
+{{P1REF_ROWS}}
+    </tbody>
+  </table>
+</div>
+<!--P1REF_END-->
 
 <div class="footer">workshido.com &nbsp;&bull;&nbsp; Teacher Edition</div>
 

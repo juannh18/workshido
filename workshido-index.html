@@ -215,6 +215,13 @@
     font-style: normal;
     color: var(--blue-200);
   }
+  /* Catalog: a compact search header so worksheets start on the first screen
+     (the full hero, stats and "why" cards pushed them far down — they
+     repeated the homepage). */
+  .hero.hero-catalog { padding: 34px 32px 30px; }
+  .hero.hero-catalog .hero-eyebrow { margin-bottom: 14px; }
+  .hero.hero-catalog h1 { font-size: clamp(26px, 3.4vw, 38px); margin-bottom: 10px; letter-spacing: -0.5px; }
+  .hero.hero-catalog .hero-sub { margin-bottom: 18px; }
 
   .hero-sub {
     font-size: 16px;
@@ -910,9 +917,18 @@
     nav { padding: 0 16px; min-width: 0; }
     .nav-actions { display: none; }
     .hero { padding: 56px 16px 48px; }
+    .hero.hero-catalog { padding: 24px 16px 22px; }
     .hero-search { min-width: 0; }
     .search-wrap { max-width: 100%; }
     .chip { min-height: 44px; padding-inline: 14px; display: inline-flex; align-items: center; }
+    /* Same as the homepage: icon-only search button, or "Search" is cut off. */
+    .search-box button { padding: 14px 18px; }
+    .search-btn-text { display: none; }
+    /* Catalog: filters in one swipeable row instead of several wrapped rows. */
+    .hero-catalog .hero-sub { display: none; }
+    .hero-catalog .hero-chips { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; margin-inline: -16px; padding-inline: 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .hero-catalog .hero-chips::-webkit-scrollbar { display: none; }
+    .hero-catalog .chip { flex-shrink: 0; }
   }
 
 html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,html.ws-authed #navActions .btn-primary-nav,html.ws-authed #navActions .btn-white{display:none!important}
@@ -969,7 +985,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 </div>
 
 <!-- HERO -->
-<section class="hero">
+<section class="hero hero-catalog">
   <div class="season-deco" aria-hidden="true">
     <svg class="hw-web" viewBox="0 0 130 130" fill="none" stroke="currentColor" stroke-width="1"><path d="M0 0L130.0 0.0M0 0L126.1 31.4M0 0L101.0 81.8M0 0L61.0 114.8M0 0L22.6 128.0M0 0L0.0 130.0M28.0 0.0Q23.7 2.9 27.2 6.8Q21.0 10.5 21.8 17.6Q15.0 18.2 13.1 24.7Q7.7 22.5 4.9 27.6Q2.1 23.9 0.0 28.0M54.0 0.0Q45.8 5.6 52.4 13.1Q40.6 20.2 42.0 34.0Q28.9 35.1 25.4 47.7Q14.9 43.4 9.4 53.2Q4.0 46.1 0.0 54.0M82.0 0.0Q69.5 8.5 79.6 19.8Q61.6 30.7 63.7 51.6Q44.0 53.3 38.5 72.4Q22.7 65.9 14.2 80.8Q6.1 70.0 0.0 82.0M110.0 0.0Q93.2 11.4 106.7 26.6Q82.7 41.2 85.5 69.2Q59.0 71.5 51.6 97.1Q30.4 88.3 19.1 108.3Q8.2 93.9 0.0 110.0"/></svg>
     <div class="hw-moon"></div>
@@ -979,15 +995,15 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
     <span id="heroEyebrowText">800+ free worksheets · Print-ready PDFs · New resources every week</span>
   </div>
   <div class="season-pill-wrap"><a class="season-pill" href="workshido-index.html?q=halloween">🎃 New: Halloween worksheets<span class="pill-long"> for your October classes</span> →</a></div>
-  <h1>English worksheets that make<br>teaching <em>effortless</em></h1>
-  <p class="hero-sub">Download, print, and teach. Clean, print-ready PDFs designed for real English classes — with answer keys and Teacher Editions available.</p>
+  <h1>Browse free <em>English worksheets</em></h1>
+  <p class="hero-sub">Search by topic or filter by CEFR level and skill. Print-ready PDFs, 860+ with a Teacher Edition.</p>
 
   <div class="search-wrap">
     <div class="search-box">
       <input type="text" placeholder="Try 'present simple', 'food vocabulary', 'B1 reading'..." />
       <button>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:6px"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        Search
+        <span class="search-btn-text">Search</span>
       </button>
     </div>
   </div>
@@ -1004,43 +1020,6 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
     <button class="chip" data-cat="Reading">Reading</button>
     <button class="chip" data-cat="Writing">Writing</button>
     <button class="chip" data-cat="Speaking">Speaking</button>
-  </div>
-</section>
-
-<!-- STATS -->
-<div class="stats-bar">
-  <div class="stat"><span class="stat-num" id="statWorksheets">800+</span><span class="stat-label">Free worksheets</span></div>
-  <div class="stat"><span class="stat-num" id="statLevels">A1–B2</span><span class="stat-label">CEFR levels · growing</span></div>
-  <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free downloads</span></div>
-  <div class="stat"><span class="stat-num">Weekly</span><span class="stat-label">New worksheets added</span></div>
-</div>
-
-<!-- WHY WORKSHIDO -->
-<section class="why-section">
-  <div class="why-inner">
-    <h2 class="why-title">What makes Workshido worksheets different?</h2>
-    <div class="why-grid">
-      <div class="why-card">
-        <div class="why-icon">🗝️</div>
-        <div class="why-card-title">Answer keys included</div>
-        <p>Some worksheets include a quick answer key for free. For the complete answer key on almost every worksheet, unlock the premium Teacher Edition.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🖨️</div>
-        <div class="why-card-title">Print-ready design</div>
-        <p>Clean A4 PDFs designed for the classroom: clear instructions, readable fonts, and no wasted ink.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">📊</div>
-        <div class="why-card-title">CEFR-levelled</div>
-        <p>Every worksheet is tagged by CEFR level and skill, so you find material that actually fits your class.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🎓</div>
-        <div class="why-card-title">Teacher Editions</div>
-        <p>Most new worksheets include a Teacher Edition: full answer key, complete lesson plan, common mistakes, and extra activities.</p>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1090,6 +1069,35 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
     <nav class="pagination" id="pagination" style="display:none;" aria-label="Worksheet results pages"></nav>
   </main>
 </div>
+
+<!-- WHY WORKSHIDO (below the catalog: worksheets come first) -->
+<section class="why-section">
+  <div class="why-inner">
+    <h2 class="why-title">What makes Workshido worksheets different?</h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🗝️</div>
+        <div class="why-card-title">Answer keys included</div>
+        <p>Some worksheets include a quick answer key for free. For the complete answer key on 860+ worksheets, unlock the premium Teacher Edition.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🖨️</div>
+        <div class="why-card-title">Print-ready design</div>
+        <p>Clean A4 PDFs designed for the classroom: clear instructions, readable fonts, and no wasted ink.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📊</div>
+        <div class="why-card-title">CEFR-levelled</div>
+        <p>Every worksheet is tagged by CEFR level and skill, so you find material that actually fits your class.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🎓</div>
+        <div class="why-card-title">Teacher Editions</div>
+        <p>860+ worksheets — and every new one — come with a Teacher Edition: full answer key, complete lesson plan, common mistakes, and extra activities.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- EMAIL CAPTURE -->
 <section class="email-capture">
@@ -1165,7 +1173,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/avatar-render.js" defer></script>
-<script src="js/workshido-index.js?v=20261010" defer></script>
+<script src="js/workshido-index.js?v=20261015" defer></script>
 
 <script src="/seasonal.js?v=20261015d" defer></script>
 <script src="mascot.js" defer></script>

@@ -51,6 +51,15 @@ const REL_WORD2FAM = new Map();
 for (const [f, ws] of Object.entries(REL_FAMILIES)) for (const w of ws.split(' ')) REL_WORD2FAM.set(w, [...(REL_WORD2FAM.get(w) || []), f]);
 const REL_MIN = 5;    // below this, two worksheets only share incidental words
 const REL_MAX = 16;   // cap on non-set matches, keeps the section scannable
+// A Vocabulary worksheet and any worksheet of the SAME level where at least one
+// of the two is Vocabulary get a small head start, so on a vocabulary page the
+// other vocabulary sheets of the same theme pass REL_MIN with one shared cluster.
+// Below REL_MIN on its own: no thematic affinity, nothing is added (10/10/2026).
+const VOCAB_AFFINITY_BONUS = 3;
+const VOCAB_STRONG_TOPIC = 15; // score from which a match counts as 'the same topic' and stays above the vocabulary neighbours
+const VOCAB_MAX = 8;            // vocabulary neighbours shown on a Vocabulary page
+const VOCAB_MIN_AFFINITY = 3.5; // real thematic overlap on top of the flat bonus
+const VOCAB_LEAD_SET_MIN = 12;   // on a Vocabulary page, the best-matching set leads from this score (10/10/2026: Seasons -> Weather & Seasons scored 14.6, under VOCAB_STRONG_TOPIC; ~10 is incidental wording)
 function relWords(s) {
   return ((s || '').toLowerCase().match(/[a-zà-ÿ']+/g) || []).filter(w => w.length > 2 && !REL_STOP.has(w));
 }
@@ -78,6 +87,7 @@ function relevanceScores(data, rows) {
     const d = termsById.get(r.id);
     let s = 0;
     for (const [x, w] of q) if (d.has(x)) s += w * Math.log(n / df.get(x));
+    if (s > 0 && r.level === data.level && (r.category === 'Vocabulary' || data.category === 'Vocabulary')) s += VOCAB_AFFINITY_BONUS;
     scores.set(r.id, s);
   }
   return scores;
@@ -102,7 +112,11 @@ function formatFamily(title) {
 const SOCIAL_MIN_DOWNLOADS = 20;
 const SOCIAL_MIN_RATINGS = 3;
 let _wsFileUrl = null;
-let _answerKeyUrl = null;
+let _hasTeacherEdition = false;
+// Public columns only. The Teacher Edition / quiz PDF URLs are paid content:
+// they are not readable from the browser and only come from the
+// get-teacher-edition-url / get-quiz-url functions after the premium check.
+const WS_PUBLIC_COLS = 'id,slug,title,level,category,tags,description,file_url,file_type,is_free,downloads,uploaded_by,uploader_name,thumbnail_url,created_at,rating,ratings_count,topic_key,piece_type,description_long,has_teacher_edition';
 let _isPremium = false;
 let _wsId = null;
 let _wsTitle = 'worksheet';
@@ -188,8 +202,8 @@ async function loadWorksheet() {
   const rowPromise = seeded
     ? Promise.resolve({ data: seeded, error: null })
     : slug
-      ? sb.from('worksheets').select('*').eq('slug', slug).single()
-      : sb.from('worksheets').select('*').eq('id', id).single();
+      ? sb.from('worksheets').select(WS_PUBLIC_COLS).eq('slug', slug).single()
+      : sb.from('worksheets').select(WS_PUBLIC_COLS).eq('id', id).single();
   const [{ data, error }, { data: { user: currentUser } }] = await Promise.all([rowPromise, authPromise]);
   if (error || !data) { renderError('Worksheet not found.'); return; }
 
@@ -213,7 +227,7 @@ async function loadWorksheet() {
   let quiz = null;
   let related = [];
   const quizPromise = data.topic_key
-    ? sb.from('quizzes').select('*').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle()
+    ? sb.from('quizzes').select('id,topic_key,level,title,skills').eq('topic_key', data.topic_key).eq('level', data.level).maybeSingle()
     : Promise.resolve({ data: null });
   quiz = (await quizPromise).data || null;
 
@@ -293,7 +307,7 @@ async function loadWorksheet() {
       </div>`;
 
   _wsFileUrl = data.file_url || null;
-  _answerKeyUrl = data.teacher_edition_url || null;
+  _hasTeacherEdition = !!(data.has_teacher_edition ?? data.teacher_edition_url);
   _wsId = data.id;
   _wsTitle = data.title || 'worksheet';
   const _rating = data.rating || 0;
@@ -339,7 +353,7 @@ async function loadWorksheet() {
       </button>`
     : `<button class="btn-download-big locked" onclick="openPremiumModal('worksheet_download')">🔒 Premium — Unlock to download</button>`;
 
-  const answerKeyBtn = _answerKeyUrl
+  const answerKeyBtn = _hasTeacherEdition
     ? (_isPremium
         ? `<button class="btn-answer-key unlocked" onclick="downloadAnswerKey()">
             <span class="ak-left">
@@ -407,10 +421,12 @@ async function loadWorksheet() {
           ${(data.downloads || 0) >= SOCIAL_MIN_DOWNLOADS ? `<div class="ws-meta-row"><span class="ws-meta-label">Downloads</span><span class="ws-meta-value" id="dlCount">${data.downloads}</span></div>` : ''}
         </div>
         ${downloadBtn}
-        <button class="btn-print" onclick="printWS()">🖨️ Print / Open PDF — Free</button>
-        <button class="btn-save" id="saveWsBtn" onclick="toggleSaveWS()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Save to my library
-        </button>
+        <div class="ws-secondary-actions">
+          <button class="btn-print" onclick="printWS()">🖨️ Print</button>
+          <button class="btn-save" id="saveWsBtn" onclick="toggleSaveWS()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Save
+          </button>
+        </div>
         ${ssrSetHtml}
         ${answerKeyBtn}
         ${quizBtn}
@@ -420,6 +436,7 @@ async function loadWorksheet() {
 
   refreshSaveBtn();
   markSetDone();
+  mountStickyDownload(data, downloadBtn);
 
   // Now (after the worksheet itself is on screen) resolve the ~700-row query
   // and build the "More on this topic" list — same topic_key, the "Topic – Type"
@@ -448,14 +465,61 @@ async function loadWorksheet() {
   const fam = formatFamily(data.title);
   const byFormat = fam ? rows.filter(r => fam.test(r.title)) : [];
 
+  // On a Vocabulary page, the other vocabulary sheets of the same level and
+  // theme are recommended on purpose (single sheets, not sets, so nothing else
+  // links them). Only those with real thematic affinity qualify.
+  const vocabIds = data.category === 'Vocabulary'
+    ? new Set(rows.filter(r => r.category === 'Vocabulary' && r.level === data.level && !isEasyWordSearch(r.title) && scores.get(r.id) > VOCAB_AFFINITY_BONUS + VOCAB_MIN_AFFINITY)
+        .sort((a, b) => scores.get(b.id) - scores.get(a.id)).slice(0, VOCAB_MAX).map(r => r.id))
+    : new Set();
+  const byVocab = rows.filter(r => vocabIds.has(r.id));
+  // On a Vocabulary page the set that matches the theme best leads, whole and
+  // together: every sheet of a same-level topic group carries the group's best
+  // score, so one strong title match lifts its Grammar/Reading/Writing/Practice
+  // siblings too (Days of the Week: Telling Time Practice scored 31, its Grammar
+  // only 6.5 and ended up split). Other groups lead only from VOCAB_STRONG_TOPIC.
+  const groupKey = r => r.level + '|' + (r.topic_key || titleBase(r.title));
+  const groupBest = new Map();
+  if (data.category === 'Vocabulary') for (const r of rows) {
+    if (r.category === 'Vocabulary' || r.level !== data.level) continue;
+    const k = groupKey(r);
+    groupBest.set(k, Math.max(groupBest.get(k) || 0, scores.get(r.id) || 0));
+  }
+  const topGroup = [...groupBest].sort((a, b) => b[1] - a[1])[0];
+  const leadKeys = new Set([...groupBest].filter(([k, v]) => v >= VOCAB_STRONG_TOPIC || (topGroup && k === topGroup[0] && v >= VOCAB_LEAD_SET_MIN)).map(([k]) => k));
+  const byLead = rows.filter(r => r.category !== 'Vocabulary' && leadKeys.has(groupKey(r)));
+
+  // Seasonal worksheets (Halloween): every other Halloween sheet, at every level,
+  // is recommended — a teacher looking for Halloween material wants the whole
+  // seasonal collection, not only this level's set. They lead each level group.
+  const isSeasonal = r => /halloween/i.test((r.title || '') + ' ' + (r.tags || ''));
+  const bySeason = isSeasonal(data) ? rows.filter(isSeasonal) : [];
+  const seasonIds = new Set(bySeason.map(r => r.id));
+
   const seen = new Set();
-  const topicIds = new Set([...byTopicKey, ...byTitle, ...byRelevance].map(r => r.id));
-  related = [...byTopicKey, ...byTitle, ...byRelevance, ...byFormat]
+  const topicIds = new Set([...byTopicKey, ...byTitle, ...bySeason, ...byLead, ...byVocab, ...byRelevance].map(r => r.id));
+  related = [...byTopicKey, ...byTitle, ...bySeason, ...byLead, ...byVocab, ...byRelevance, ...byFormat]
     .filter(r => seen.has(r.id) ? false : (seen.add(r.id), true))
-    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id), _formatOnly: !topicIds.has(r.id), _score: scores.get(r.id) || 0 }));
+    .map(r => ({ ...r, _setMatch: setMatchIds.has(r.id), _season: seasonIds.has(r.id), _vocab: vocabIds.has(r.id), _lead: leadKeys.has(groupKey(r)) && r.category !== 'Vocabulary' ? groupBest.get(groupKey(r)) : 0, _group: groupKey(r), _formatOnly: !topicIds.has(r.id), _score: scores.get(r.id) || 0 }));
 
   renderRelated(related, lvlCls, data.category, data.level, /functional english/i.test(data.tags || ''));
   renderSetProgress(data, related);
+}
+
+// Phones: pin "Download free" to the bottom while the sidebar's own button is
+// off screen (the preview alone fills the first screen). Same onclick, so the
+// sign-in gate and tracking behave exactly like the main button.
+function mountStickyDownload(data, downloadBtn) {
+  document.getElementById('dlSticky')?.remove();
+  const main = document.querySelector('.detail-card .btn-download-big');
+  if (!main || !('IntersectionObserver' in window)) return;
+  const bar = document.createElement('div');
+  bar.id = 'dlSticky';
+  bar.className = 'dl-sticky';
+  bar.innerHTML = `<span class="dl-sticky-title">${esc(data.title)}</span>${downloadBtn}`;
+  document.body.appendChild(bar);
+  new IntersectionObserver(([e]) => bar.classList.toggle('show', !e.isIntersecting && e.boundingClientRect.top > 0))
+    .observe(main);
 }
 
 // Signed-in teachers see which set worksheets they already downloaded: only the
@@ -523,6 +587,11 @@ function catClass(name) { return CAT_CLASS[name] || 'cat-other'; }
 function renderRelated(related, lvlCls, currentCategory, currentLevel, isFunctional) {
   const section = document.getElementById('relatedSection');
   const grid = document.getElementById('relatedGrid');
+  // The "Complete the set" panel next to the download button already links the
+  // set; repeating the same sheets here as cards was the only thing many pages
+  // showed. Cards are for everything else on the topic.
+  const inSetPanel = new Set([...document.querySelectorAll('.ws-set-list li[data-id]')].map(li => li.dataset.id));
+  if (inSetPanel.size) related = related.filter(r => !inSetPanel.has(String(r.id)));
   if (!section || !grid || !related.length) return;
 
   // "These worksheets form a set" is a real claim — it links to the guide on
@@ -594,9 +663,19 @@ function renderRelated(related, lvlCls, currentCategory, currentLevel, isFunctio
   // category trails last, and other levels use the plain topic order.
   const sortForLevel = (items, biasCurrentCategory) => [...items].sort((a, b) => {
     if (a._setMatch !== b._setMatch) return a._setMatch ? -1 : 1;
+    // seasonal sheets next, each set together (Reading, Writing, Vocabulary)
+    if (a._season !== b._season) return a._season ? -1 : 1;
+    if (a._season && a._group !== b._group) return a._group < b._group ? -1 : 1;
     // same-format-only siblings trail every real topic match
     if (a._formatOnly !== b._formatOnly) return a._formatOnly ? 1 : -1;
-    if ((b._score || 0) !== (a._score || 0)) return (b._score || 0) - (a._score || 0);
+    // Strongest same-topic matches first (e.g. the grammar/reading/writing/
+    // practice sheets of the same theme), then the related vocabulary, then the rest.
+    // A leading set (_lead, Vocabulary pages) sorts as one block by its group score.
+    const tier = r => (r._lead || (r._score || 0) >= VOCAB_STRONG_TOPIC) ? 0 : (r._vocab ? 1 : 2);
+    if (tier(a) !== tier(b)) return tier(a) - tier(b);
+    const ka = a._lead || a._score || 0, kb = b._lead || b._score || 0;
+    if (kb !== ka) return kb - ka;
+    if (a._lead && a._group !== b._group) return a._group < b._group ? -1 : 1;
     const ca = displayCategory(a), cb = displayCategory(b);
     if (biasCurrentCategory) {
       if (ca === currentCategory && cb !== currentCategory) return 1;
@@ -634,6 +713,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 function openDlModal(action) {
+  window.wsTrack?.('download_gate_shown', { worksheet_id: _wsId, action: action || 'download' });
   document.getElementById('dlModalTitle').textContent =
     action === 'print' ? 'Sign in to print for free' :
     action === 'rate'  ? 'Sign in to rate this worksheet' :
@@ -660,8 +740,8 @@ function paintSaveBtn() {
   if (!btn) return;
   btn.classList.toggle('saved', _isSaved);
   btn.innerHTML = _isSaved
-    ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Saved to your library'
-    : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Save to my library';
+    ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Saved'
+    : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Save';
 }
 async function toggleSaveWS() {
   const btn = document.getElementById('saveWsBtn');
@@ -834,7 +914,7 @@ async function printWS() {
 function closeDlModal() { _closeModal(document.getElementById('dlModal')); }
 
 async function downloadAnswerKey() {
-  if (!_answerKeyUrl || !_wsId) return;
+  if (!_hasTeacherEdition || !_wsId) return;
   // Premium is verified server-side here (not just the button being hidden) —
   // the signed URL for the paid Teacher Edition is only ever issued after that check.
   try {

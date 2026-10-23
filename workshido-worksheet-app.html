@@ -185,6 +185,26 @@
   .btn-save.saved { border-style: solid; border-color: var(--teal-100, #9FE1CB); color: var(--teal-600); background: var(--teal-50); }
   .btn-save svg { flex-shrink: 0; }
   .btn-save:disabled { opacity: .6; cursor: default; }
+  /* Print + Save share one row so "Download free" is the only full-width action */
+  .ws-secondary-actions { display: flex; gap: 8px; }
+  .ws-secondary-actions .btn-print, .ws-secondary-actions .btn-save { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  /* Locked Premium buttons are an upsell, not the page's main action: outlined,
+     so they no longer out-shout "Download free". Unlocked (Premium) keep the fill. */
+  .btn-answer-key:not(.unlocked) { background: #FFF8EB; color: #92400E; border: 1.5px solid #F2C47A; box-shadow: none; }
+  .btn-answer-key:not(.unlocked):hover { background: #FEF0D2; box-shadow: none; }
+  .btn-answer-key:not(.unlocked) .ak-sub { color: #B45309; }
+  .btn-quiz:not(.unlocked) { background: #FDF2F8; color: #9D174D; border: 1.5px solid #F5B5D3; box-shadow: none; }
+  .btn-quiz:not(.unlocked):hover { background: #FCE7F3; box-shadow: none; }
+  .btn-quiz:not(.unlocked) .ak-sub { color: #BE185D; }
+  /* Phones: the preview pushes "Download free" below the fold, so a bar with
+     the same action stays pinned to the bottom until the real button scrolls in. */
+  .dl-sticky { display: none; }
+  @media (max-width: 768px) {
+    .dl-sticky { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; gap: 10px; align-items: center; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.97); border-top: 1px solid var(--gray-100); box-shadow: 0 -4px 16px rgba(0,0,0,0.06); transform: translateY(110%); transition: transform 0.2s ease; }
+    .dl-sticky.show { transform: translateY(0); }
+    .dl-sticky .dl-sticky-title { flex: 1; min-width: 0; font-size: 12px; font-weight: 600; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dl-sticky .btn-download-big { width: auto; padding: 11px 18px; font-size: 14px; flex-shrink: 0; }
+  }
 
   /* STAR RATING */
   .star-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--gray-100); }
@@ -400,7 +420,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.7" defer></script>
 <script src="/js/avatar-render.js" defer></script>
-<script src="/js/workshido-worksheet.js?v=20261005" defer></script>
+<script src="/js/workshido-worksheet.js?v=20261015" defer></script>
 
 <!-- Login modal -->
 <div class="modal-overlay" id="dlModal" onclick="if(event.target===this)closeDlModal()">
@@ -422,7 +442,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
     <button class="modal-close" onclick="closePremiumModal()" aria-label="Close dialog">✕</button>
     <div class="modal-icon" aria-hidden="true">⭐</div>
     <p class="modal-title" id="premiumModalTitle">Teacher Edition</p>
-    <p class="modal-desc">Unlock the Teacher Edition PDF for almost every worksheet — complete answer key, ready-to-use lesson plan, teacher tips, common student mistakes &amp; extra activity — plus full topic assessments (Full Quiz) to test what you taught, wherever available.</p>
+    <p class="modal-desc">Unlock the Teacher Edition PDF for 860+ worksheets — complete answer key, ready-to-use lesson plan, teacher tips, common student mistakes &amp; extra activity — plus full topic assessments (Full Quiz) to test what you taught, wherever available.</p>
     <div class="modal-price">$2.99<span>/month</span></div>
     <div class="modal-price-sub">or $24.99/year · cancel anytime</div>
     <div style="display:flex;gap:10px;margin-top:18px;">

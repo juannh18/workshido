@@ -853,7 +853,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <h1 style="max-width:720px;margin-left:auto;margin-right:auto;">Free English Reading Worksheets</h1>
   <div class="intro">
     <p>Reading worksheets here pair a short, level-appropriate story or text with a set of comprehension tasks — multiple choice, true/false with correction, vocabulary-in-context, and short-answer questions — so a single text does double duty as both a reading and a grammar or vocabulary review.</p>
-<p>Texts are written specifically for each CEFR level rather than adapted from adult content, so the language stays natural without outrunning what an A1 or A2 student can handle. Every worksheet is a free, print-ready PDF, and most include a full answer key.</p>
+<p>Texts are written specifically for each CEFR level rather than adapted from adult content, so the language stays natural without outrunning what an A1 or A2 student can handle. Every worksheet is a free, print-ready PDF, and every one has a full answer key.</p>
     <a href="/workshido-index.html?category=Reading" class="browse-all">Browse and filter the full catalog →</a>
   </div>
 </section>
@@ -1080,7 +1080,7 @@ async function fetchAllRows(build) {
   }
 }
 async function loadWorksheets() {
-  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('*').eq('category', 'Reading').order('created_at', { ascending: false, nullsFirst: false }).order('id'));
+  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('id,slug,title,level,category,tags,description,file_url,file_type,is_free,downloads,uploaded_by,uploader_name,thumbnail_url,created_at,rating,ratings_count,topic_key,piece_type,description_long,has_teacher_edition').eq('category', 'Reading').order('created_at', { ascending: false, nullsFirst: false }).order('id'));
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;

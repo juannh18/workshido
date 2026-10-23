@@ -1,6 +1,6 @@
-// Server-side internal-linking injection for the 6 category/level landing
+// Server-side internal-linking injection for the category/level landing
 // pages (/worksheets/grammar/, /worksheets/vocabulary/, /worksheets/reading/,
-// /worksheets/writing/, /worksheets/levels/a1/, /worksheets/levels/a2/).
+// /worksheets/writing/ and the /worksheets/levels/ pages).
 //
 // Why this exists: these pages render their worksheet cards entirely via
 // client-side JS (loadWorksheets() -> Supabase -> innerHTML). The raw HTML
@@ -27,6 +27,26 @@ const PAGES = {
   '/worksheets/levels/b1/':  { template: 'levels/b1/index-app.html',  col: 'level',    val: 'B1',         label: 'B1' },
   '/worksheets/levels/b2/':  { template: 'levels/b2/index-app.html',  col: 'level',    val: 'B2',         label: 'B2' },
 };
+
+const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1'];
+const CATEGORY_ORDER = ['Grammar', 'Vocabulary', 'Reading', 'Writing', 'Practice'];
+
+// Category pages group their list by level, level pages by category, so the
+// full list stays scannable once it runs into the hundreds.
+function groupRows(rows, page) {
+  const key = page.col === 'category' ? 'level' : 'category';
+  const order = key === 'level' ? LEVEL_ORDER : CATEGORY_ORDER;
+  const groups = new Map();
+  for (const ws of rows) {
+    const k = ws[key] || 'Other';
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(ws);
+  }
+  const rank = (k) => { const i = order.indexOf(k); return i < 0 ? 99 : i; };
+  return [...groups.entries()]
+    .sort((a, b) => rank(a[0]) - rank(b[0]))
+    .map(([name, items]) => ({ name, items: items.sort((a, b) => String(a.title).localeCompare(String(b.title))) }));
+}
 
 // Origin taken from the incoming request, not hardcoded to SITE: on a draft
 // deploy this must fetch THAT deploy's landing template, or pre-production
@@ -89,14 +109,16 @@ exports.handler = async (event) => {
     // broken "/worksheet/undefined/" link.
     const wsUrl = (ws) => (ws.slug ? `${SITE}/worksheet/${esc(ws.slug)}/` : `${SITE}/workshido-worksheet.html?id=${esc(ws.id)}`);
 
-    const links = data
-      .map((ws) => `<li><a href="${wsUrl(ws)}">${esc(withLevel(ws))}</a></li>`)
-      .join('');
+    const groupLabel = (name) => (page.col === 'category' ? `${name} level` : name);
+    const lists = groupRows(data, page)
+      .map((g) => `<h3 style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;color:#2C2C2A;margin:18px 0 6px;">${esc(groupLabel(g.name))} (${g.items.length})</h3>
+  <ul class="ws-seo-links" style="columns:3;column-gap:24px;list-style:none;padding:0;margin:0 0 8px;font-size:13px;line-height:1.9;">${g.items.map((ws) => `<li><a href="${wsUrl(ws)}">${esc(withLevel(ws))}</a></li>`).join('')}</ul>`)
+      .join('\n  ');
 
     const block = `
 <section class="ws-seo-sec" aria-label="All ${esc(page.label)} worksheets" style="max-width:1100px;margin:0 auto;padding:0 32px 8px;">
   <h2 style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#5F5E5A;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;">All ${esc(page.label)} worksheets (${data.length})</h2>
-  <ul class="ws-seo-links" style="columns:3;column-gap:24px;list-style:none;padding:0;margin:0 0 8px;font-size:13px;line-height:1.9;">${links}</ul>
+  ${lists}
   <style>.ws-seo-links a{overflow-wrap:anywhere}@media (max-width:768px){.ws-seo-links{columns:1!important}.ws-seo-sec{padding-left:16px!important;padding-right:16px!important}}</style>
 </section>`;
 

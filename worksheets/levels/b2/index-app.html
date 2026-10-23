@@ -1081,7 +1081,7 @@ async function fetchAllRows(build) {
   }
 }
 async function loadWorksheets() {
-  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('*').eq('level', 'B2').order('created_at', { ascending: false, nullsFirst: false }).order('id'));
+  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('id,slug,title,level,category,tags,description,file_url,file_type,is_free,downloads,uploaded_by,uploader_name,thumbnail_url,created_at,rating,ratings_count,topic_key,piece_type,description_long,has_teacher_edition').eq('level', 'B2').order('created_at', { ascending: false, nullsFirst: false }).order('id'));
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;

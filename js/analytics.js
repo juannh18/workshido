@@ -7,8 +7,10 @@
   // Known crawlers/bots/uptime monitors — without this, Googlebot rendering
   // JS pages (and similar) inflates session/page-view counts. wsTrack still
   // exists as a no-op so callers elsewhere on the site don't need a guard.
+  // navigator.webdriver catches headless/automated browsers (Puppeteer,
+  // Playwright, Selenium) that send a normal-looking Chrome user agent.
   const UA = navigator.userAgent || '';
-  if (/bot|crawl|spider|slurp|facebookexternalhit|whatsapp|telegrambot|slackbot|discordbot|skypeuripreview|applebot|google-inspectiontool|adsbot|mediapartners|headlesschrome|phantomjs|pingdom|uptimerobot|gtmetrix|lighthouse|ahrefsbot|semrushbot|mj12bot|dotbot|petalbot|bingpreview/i.test(UA)) {
+  if (navigator.webdriver || /bot|crawl|spider|slurp|facebookexternalhit|whatsapp|telegrambot|slackbot|discordbot|skypeuripreview|applebot|google-inspectiontool|adsbot|mediapartners|headlesschrome|phantomjs|pingdom|uptimerobot|gtmetrix|lighthouse|ahrefsbot|semrushbot|mj12bot|dotbot|petalbot|bingpreview/i.test(UA)) {
     window.wsTrack = function () {};
     return;
   }
@@ -37,18 +39,33 @@
 
   // Country from Netlify's edge geo (netlify/edge-functions/geo.js) —
   // fetched once per session and cached, same lifetime as the session id.
-  // Best-effort: if the fetch fails or is still pending, events just go
-  // out with country: null rather than waiting on it.
+  // Events are held until the lookup settles (at most GEO_WAIT_MS) so the
+  // session's first page view carries a country too — without this, every
+  // one-page visit landed with country: null and was indistinguishable from
+  // bot traffic. If the fetch fails or times out, events go out without it.
+  const GEO_WAIT_MS = 1500;
   let country = null;
   try {
     const cached = sessionStorage.getItem('ws_country');
     if (cached) country = JSON.parse(cached);
   } catch (e) { /* private mode, etc. — fall through to fetching fresh */ }
-  if (!country) {
-    fetch('/api/geo').then((r) => r.json()).then((geo) => {
-      country = geo;
-      try { sessionStorage.setItem('ws_country', JSON.stringify(geo)); } catch (e) {}
-    }).catch(() => {});
+  let geoSettled = !!country;
+  const pending = [];
+  function flushPending() {
+    geoSettled = true;
+    pending.splice(0).forEach(send);
+  }
+  if (!geoSettled) {
+    Promise.race([
+      fetch('/api/geo').then((r) => r.json()).then((geo) => {
+        country = geo;
+        try { sessionStorage.setItem('ws_country', JSON.stringify(geo)); } catch (e) {}
+      }),
+      new Promise((resolve) => setTimeout(resolve, GEO_WAIT_MS)),
+    ]).catch(() => {}).then(flushPending);
+    // Leaving the page before the lookup settles — send what we have rather
+    // than lose it.
+    addEventListener('pagehide', flushPending);
   }
 
   // Coarse channel bucket for traffic that arrives with no UTM tag at all —
@@ -113,13 +130,20 @@
   }
 
   function track(eventName, properties) {
+    const evt = { eventName, properties, path: location.pathname + location.search };
+    // A hidden page may be on its way out — don't hold the event back.
+    if (!geoSettled && document.visibilityState === 'hidden') flushPending();
+    if (geoSettled) send(evt); else pending.push(evt);
+  }
+
+  function send({ eventName, properties, path }) {
     try {
       const body = JSON.stringify({
         event_name: eventName,
         properties: { ...(properties || {}), country_code: country?.code || null, country_name: country?.name || null, is_internal: isInternal || undefined },
         session_id: sessionId(),
         visitor_id: visitorId(),
-        path: location.pathname + location.search,
+        path,
         referrer: document.referrer || null,
       });
       const url = `${ENDPOINT}`;
@@ -135,8 +159,20 @@
 
   window.wsTrack = track;
 
-  // Auto page view on load
-  track('page_view', { title: document.title });
+  // Auto page view on load — but only once the page is actually shown.
+  // Prerendered pages and background loads that nobody ever looks at (a
+  // common crawler pattern) never count; a tab opened in the background
+  // counts when the user switches to it.
+  if (document.visibilityState === 'visible') {
+    track('page_view', { title: document.title });
+  } else {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      document.removeEventListener('visibilitychange', onVisible);
+      track('page_view', { title: document.title });
+    };
+    document.addEventListener('visibilitychange', onVisible);
+  }
 
   // Web Vitals — LCP and CLS captured directly via PerformanceObserver
   // instead of pulling in the ~2KB web-vitals library, since we only need
@@ -178,9 +214,15 @@
     };
     // Fire once the page is hidden (tab switch/close/navigate away) — that's
     // when LCP/CLS have their final values, not on load.
+    // Not { once: true }: for a tab opened in the background the first change
+    // is to 'visible', which would remove the listener before it ever fires.
+    let vitalsSent = false;
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') sendVitals();
-    }, { once: true });
+      if (document.visibilityState === 'hidden' && !vitalsSent) {
+        vitalsSent = true;
+        sendVitals();
+      }
+    });
   } catch (e) {
     // PerformanceObserver entry types not supported in this browser — skip vitals, page views still work
   }

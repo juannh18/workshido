@@ -52,7 +52,17 @@ Formato del JSON de contenido:
   //     desaparece). Ajustar la cantidad para que la TE quede en 2 páginas exactas. ---
   "extension": ["idea 1 para quienes terminan rápido", "idea 2", ...],  // bullets (2 columnas)
   "key_language": "<b>Grammar/Vocab:</b> ... <br><b>Skills:</b> Reading, Writing... <br><b>Board:</b> ...",  // sección "Language Focus & Board Notes"
-  "exit_ticket": "<ul class='ans'><li>...</li>...</ul>"                  // 2-3 preguntas de cierre
+  "exit_ticket": "<ul class='ans'><li>...</li>...</ul>",                 // 2-3 preguntas de cierre
+
+  // --- Quick Reference de PÁGINA 1 (OBLIGATORIO en TEs nuevas: son PREMIUM, un hueco
+  //     en la pág. 1 les quita autoridad). Tabla de ancho completo al pie de la pág. 1.
+  //     Escribir DE MÁS (10-14 filas): html_to_pdf_cdp.py quita filas del final hasta
+  //     que la pág. 1 quepa y estira las que quedan para llenarla. Contenido útil de
+  //     verdad: vocabulario de la ficha (palabra | significado | ejemplo), reglas
+  //     (forma | uso | ejemplo), conjugaciones, pronunciación... nunca relleno. ---
+  "p1_reference": {"title": "Vocabulary at a Glance",
+                   "cols": ["Word", "Meaning", "Example"],
+                   "rows": [["mucho", "a lot of (uncountable)", "Hay mucha agua."], ...]}
 }
 
 Clases CSS útiles dentro de answer_key_html: .ex-title, .ans-grid-2 + .ans-item,
@@ -148,6 +158,16 @@ def build(content, site='workshido'):
         repl['{{EXIT_TICKET}}'] = content['exit_ticket']
     else:
         tpl = _strip_block(tpl, 'EXITTICKET')
+
+    ref = content.get('p1_reference')
+    if ref and ref.get('rows'):
+        repl['{{P1REF_TITLE}}'] = ref.get('title', 'Quick Reference')
+        repl['{{P1REF_HEAD}}'] = ''.join(f'<th>{c}</th>' for c in ref.get('cols', []))
+        repl['{{P1REF_ROWS}}'] = '\n'.join(
+            '      <tr>' + ''.join(f'<td>{c}</td>' for c in r) + '</tr>' for r in ref['rows'])
+    else:
+        tpl = _strip_block(tpl, 'P1REF')
+        print('⚠ sin p1_reference: la pág. 1 de esta TE premium puede quedar con hueco', file=sys.stderr)
 
     for k, v in repl.items():
         tpl = tpl.replace(k, v)

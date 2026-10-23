@@ -38,3 +38,11 @@ R2_ACCESS_KEY_ID = _require('R2_ACCESS_KEY_ID')
 R2_SECRET_ACCESS_KEY = _require('R2_SECRET_ACCESS_KEY')
 R2_BUCKET = _require('R2_BUCKET')
 R2_PUBLIC_BASE = _require('R2_PUBLIC_BASE')
+
+
+def supabase_creds(lang):
+    """(url, service_key) of the Supabase project for a site: 'en' = Workshido,
+    'es' = Spanishido (its own project since 23/09/2026, no longer the `es` schema)."""
+    if lang == 'es':
+        return _require('ES_SUPABASE_URL'), _require('ES_SUPABASE_SERVICE_KEY')
+    return SUPABASE_URL, SERVICE_KEY

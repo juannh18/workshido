@@ -64,6 +64,23 @@ let searchBroadenedFromLevel = '';
 //    newest-first list mixing every level/category together. A row with 0
 //    matches (e.g. C1 today) is simply skipped — it appears on its own once
 //    that group has worksheets.
+// "Label & Learn" sheets are Vocabulary, not a category of their own. Inside the Vocabulary lists
+// (landing row, level rows, "See all") the room/object sheets lead: "Parts of the House – Label and
+// Learn" first, then every "What's in the … – Label and Learn" sheet (bedroom, kitchen, backpack…),
+// then the rest. Within each group the chosen sort (newest / most downloaded) still decides.
+// While the Halloween theme is on (15 Oct – 1 Nov, set in <head>), Halloween sheets lead every
+// Vocabulary list, ahead of Label & Learn.
+const SEASON_HALLOWEEN = document.documentElement.classList.contains('theme-halloween');
+const vocabRank = w => {
+  const t = (w.title || '').toLowerCase().replace(/[’`]/g, "'");
+  if (SEASON_HALLOWEEN && t.includes('halloween')) return -1;
+  if (!t.includes('label and learn')) return 2;
+  if (t.startsWith('parts of the house')) return 0;
+  if (t.startsWith("what's in")) return 1;
+  return 2;
+};
+const byVocabRank = (a, b) => vocabRank(a) - vocabRank(b);   // Array.sort is stable: keeps the chosen sort inside each group
+
 const LATEST_ROWS_DEF = [
   { label: 'Vocabulary', type: 'category', value: 'Vocabulary' },
   { label: 'A1', type: 'level', value: 'A1' },
@@ -109,6 +126,7 @@ function renderLatestRows() {
         ? w.level === row.value && (w.category || '').toLowerCase() !== 'vocabulary'
         : cardCategory(w) === row.value);
     if (sort === 'downloads') items = [...items].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+    if (row.value === 'Vocabulary') items = [...items].sort(byVocabRank);
     maxPages = Math.max(maxPages, Math.ceil(items.length / ROW_SIZE));
     items = sliceRow(items);
     if (!items.length) return '';
@@ -157,6 +175,7 @@ function renderLevelRows(level) {
   const rowsHtml = LEVEL_ROW_LABELS.map(label => {
     let items = allWorksheets.filter(w => w.level === level && levelRowMatches(w, label));
     if (sort === 'downloads') items = [...items].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+    if (label === 'Vocabulary') items = [...items].sort(byVocabRank);
     maxPages = Math.max(maxPages, Math.ceil(items.length / ROW_SIZE));
     items = sliceRow(items);
     if (!items.length) return '';
@@ -799,7 +818,11 @@ function levenshtein(a, b) {
 function wsWordMatches(word, token) {
   if (!word || !token) return false;
   if (word === token) return true;
-  if (token.length >= 3 && (word.startsWith(token) || token.startsWith(word))) return true;
+  if (token.length >= 3 && word.startsWith(token)) return true;
+  // The other direction (a catalog word that is the root of the search word)
+  // needs a real root: the "ELE" tag on every worksheet is a prefix of
+  // "elementary", which made that search return the whole catalog.
+  if (word.length >= 4 && word.length >= token.length * 0.6 && token.startsWith(word)) return true;
   if (token.length >= 4) {
     const maxDist = token.length >= 8 ? 2 : 1;
     if (levenshtein(word, token) <= maxDist) return true;
@@ -853,9 +876,22 @@ function wsEditDistance(a, b, max) {
   return d[a.length][b.length];
 }
 
+// "vs", "and", "or" join two topics ("present perfect vs past simple") and
+// carry no topic themselves: as search words they matched every "… vs …" sheet.
+const WS_STOPWORDS = new Set(['vs', 'versus', 'y', 'o', 'and', 'or']);
+// Level words match the worksheet's CEFR level (see the hay in
+// applyNonLevelFilters): "beginner" returned 0 results.
+const WS_LEVEL_WORDS = {
+  beginner: 'a1', beginners: 'a1',
+  elementary: 'a2', 'pre-intermediate': 'a2', preintermediate: 'a2',
+  intermediate: 'b1',
+  'upper-intermediate': 'b2', upperintermediate: 'b2',
+};
+
 function wsCorrectWord(token) {
   const vocab = wsVocab();
   if (token.length < 3 || vocab.has(token)) return token;
+  if (WS_STOPWORDS.has(token) || WS_LEVEL_WORDS[token]) return token;
   // A word still being typed ("freq", "adver") is a prefix of a real one —
   // the root match already handles it; don't "correct" it into something else.
   for (const word of vocab.keys()) if (word.startsWith(token)) return token;
@@ -908,7 +944,13 @@ function applyNonLevelFilters(base) {
     // simple tense" used to require that exact 3-word string verbatim, so it
     // only matched a worksheet literally titled "Past Simple Tense" and
     // dropped "Past Simple Grammar", "Past Simple Vocabulary", etc.
-    const tokens = searchQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    const words = searchQuery.toLowerCase()
+      .replace(/\b(pre|upper)\s+intermediate\b/g, '$1-intermediate')
+      .split(/\s+/).filter(Boolean);
+    const kept = words.filter(t => !WS_STOPWORDS.has(t));
+    // Each token is a group of alternatives: a level word also matches its level.
+    const groups = (kept.length ? kept : words).map(t => (WS_LEVEL_WORDS[t] ? [t, WS_LEVEL_WORDS[t]] : [t]));
+    const groupHit = (hay, alts) => alts.some(t => wsFuzzyIncludes(hay, t));
     // For short queries (1-2 words — the common case for a specific grammar
     // term) require EVERY word to fuzzy-match (root or small typo) somewhere
     // in title/tags/category, not the free-text description. Matching tokens
@@ -919,16 +961,16 @@ function applyNonLevelFilters(base) {
     // "if + present simple" in passing. Longer queries keep the looser
     // per-token majority match below, since an extra descriptive word (like
     // "tense") shouldn't silently exclude the whole topic.
-    if (tokens.length <= 2) {
+    if (groups.length <= 2) {
       filtered = filtered.filter(w => {
-        const hay = [w.title, w.tags, w.category].filter(Boolean).join(' ').toLowerCase();
-        return tokens.every(t => wsFuzzyIncludes(hay, t));
+        const hay = [w.title, w.tags, w.category, w.level].filter(Boolean).join(' ').toLowerCase();
+        return groups.every(alts => groupHit(hay, alts));
       });
     } else {
-      const threshold = Math.floor(tokens.length / 2) + 1;
+      const threshold = Math.floor(groups.length / 2) + 1;
       filtered = filtered.filter(w => {
-        const hay = [w.title, w.tags, w.category, w.description].filter(Boolean).join(' ').toLowerCase();
-        return tokens.filter(t => wsFuzzyIncludes(hay, t)).length >= threshold;
+        const hay = [w.title, w.tags, w.category, w.level, w.description].filter(Boolean).join(' ').toLowerCase();
+        return groups.filter(alts => groupHit(hay, alts)).length >= threshold;
       });
     }
   }
@@ -1009,6 +1051,7 @@ function filterAndRender() {
     });
   } else {
     filtered = [...filtered].sort(sortSecondary);
+    if (activeCategory === 'Vocabulary') filtered = filtered.sort(byVocabRank);   // plain Vocabulary list: room/object sheets first
   }
   if (sidebarBuiltFor !== activeLevel) { buildSidebar(); markActiveSidebarItem(); }
   composeTitle();
@@ -1080,7 +1123,7 @@ function wsCoreTopic(title) {
 //   4  tags/description only
 // Before, any title that merely STARTED with the query tied with tier 0, so on
 // "past simple" a newer "Past Simple vs. Past Continuous" came out first.
-const TIER_GENERIC_TAGS = new Set(['worksheet', 'language focus', 'esl', 'ele', 'spanish', 'spanish practice', 'grammar', 'reading', 'writing', 'practice', 'speaking', 'vocabulary', 'a1', 'a2', 'b1', 'b2', 'c1']);
+const TIER_GENERIC_TAGS = new Set(['worksheet', 'language focus', 'esl', 'ele', 'spanish', 'spanish practice', 'spanish vocabulary', 'spanish grammar', 'spanish reading', 'spanish writing', 'grammar', 'reading', 'writing', 'practice', 'speaking', 'vocabulary', 'a1', 'a2', 'b1', 'b2', 'c1']);
 const wsIsGenericTag = t => TIER_GENERIC_TAGS.has(t) || /^(a1|a2|b1|b2|c1) spanish$/.test(t);
 // Multi-topic queries ("ser y estar", "some and any"): every content word
 // present counts as on-topic, whatever the connector the title uses (", " / &).
@@ -1126,6 +1169,15 @@ function wsTopicTierRaw(w, rawQ) {
   // "the" / "the verb" ("The Verb GUSTAR (Me Gusta…)" → "gustar").
   const main0 = wsTopicNorm(beforeDash.split(':')[0].replace(/\([^)]*\)/g, ' '));
   const mains = [main0, main0.replace(/^the /, ''), main0.replace(/^(the )?verb /, '')];
+  // The Spanish name in parentheses is the same topic ("The Four Seasons
+  // (Las Estaciones)", "Telling the Time (Las Horas)"), with or without its
+  // article — before, "estaciones"/"horas" only reached tier 3 on the very
+  // vocabulary sheet about it (10/10/2026). Level markers like "(A2)" skipped.
+  for (const p of (beforeDash.match(/\(([^)]*)\)/g) || []).map(x => wsTopicNorm(x))) {
+    if (p && !/^(a1|a2|b1|b2|c1)$/.test(p)) mains.push(p, p.replace(/^(el|la|los|las|the) /, ''));
+  }
+  // A trailing range is not part of the topic: "Cardinal Numbers 0–100" → "cardinal numbers".
+  for (const m of [...mains]) { const t = m.replace(/(\s\S*\d\S*)+$/, ''); if (t && t !== m) mains.push(t); }
   const full = wsTopicNorm(beforeDash);
   const topical = wsTierFold(w.tags).split(',').map(t => t.trim())
     .filter(t => t && !wsIsGenericTag(t)).map(wsTopicNorm);
@@ -1144,6 +1196,12 @@ function wsTopicTierRaw(w, rawQ) {
     // "can and can t" pairs the query with its own negative/variant, not another topic.
     return wsIsComparison(rest) && !other.startsWith(q) ? 2 : 1;
   }
+  // On a Vocabulary sheet the query as the head noun of the topic ("Cardinal
+  // Numbers", "Everyday Verbs", "Parts of the House") is that topic with a
+  // qualifier, not a mention. Not on grammar/reading titles: there it is
+  // usually another topic ("The Passive Voice with Modal Verbs").
+  const headed = w.category === 'Vocabulary' && mains.find(m => m.endsWith(' ' + q));
+  if (headed) return wsIsComparison(headed.slice(0, -q.length)) ? 2 : 1;
   const inPhrase = wsHasPhrase(full, `in the ${q}`) || wsHasPhrase(full, `in ${q}`);
   if (inPhrase && topical.slice(0, 2).includes(q)) return 1;
   if (afterDash === q || afterDash.startsWith(q + ' ')) return 1;
@@ -1355,7 +1413,20 @@ function runSearch(value, source) {
   }
   syncUrl();
   filterAndRender();
-  if (searchQuery) window.wsTrack?.('search_submitted', { query: searchQuery, results: _lastFiltered.length });
+  trackSearch();
+}
+
+// The box searches as you type (400 ms debounce), and every pause used to be
+// logged: "p", "pa", "past si"… were most of search_submitted and hid the real
+// zero-result queries. Log only once the query has settled for 1.5 s.
+let searchTrackTimer;
+function trackSearch() {
+  clearTimeout(searchTrackTimer);
+  const q = searchQuery;
+  if (!q || q.length < 3) return;
+  searchTrackTimer = setTimeout(() => {
+    if (q === searchQuery) window.wsTrack?.('search_submitted', { query: q, results: _lastFiltered.length });
+  }, 1500);
 }
 
 searchInput.addEventListener('input', () => {

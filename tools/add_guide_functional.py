@@ -38,7 +38,7 @@ TOPIC_NAMES = {
 LABEL_OVERRIDE = {
     'asking-about-sizes-and-prices-functional-english-speaking': 'Speaking',
 }
-LABEL_ORDER = {'Reading': 0, 'Practice': 1, 'Speaking': 2, 'Writing': 3}
+LABEL_ORDER = {'Reading': 0, 'Practice': 1, 'Vocabulary': 1, 'Speaking': 2, 'Writing': 3}
 
 
 def fetch_functional():
@@ -55,8 +55,12 @@ def fetch_functional():
 def label_of(row):
     if row['slug'] in LABEL_OVERRIDE:
         return LABEL_OVERRIDE[row['slug']]
-    t = row['title'].lower()
-    return 'Reading' if 'reading' in t else 'Writing' if 'writing' in t else 'Practice'
+    # la pieza es el sufijo tras '–' ("Writing Reviews – Practice" es Practice, no Writing)
+    t = row['title'].split(' – ')[-1].lower()
+    for k in ('Reading', 'Writing', 'Vocabulary', 'Speaking'):
+        if k.lower() in t:
+            return k
+    return 'Practice'
 
 
 def sets_html(rows):
@@ -147,9 +151,9 @@ def guide(rows):
 </ul>
 
 <h2>Functional English sets on Workshido</h2>
-<p>Each set below has the same structure — Reading, Practice and Writing at the same level — so you can teach it as a ready-made mini-unit:</p>
+<p>Each set below has the same structure — Reading, Practice and Writing at the same level — so you can teach it as a ready-made mini-unit. The seasonal Halloween sets work the same way, with a Vocabulary sheet in place of Practice: Reading → Vocabulary → Writing.</p>
 {lists}
-<p>More functional topics are on the way, following the same structure. B1 continues with travel problems, formal and informal emails, reviews and presentations, and B2 moves on to negotiating, speculating, managing a discussion and writing reports. Every worksheet is free to download and print — browse the full {level_links} collections.</p>
+<p>More functional topics are on the way, following the same structure. B1 continues with presentations, and B2 moves on to negotiating, speculating, managing a discussion and writing reports. Every worksheet is free to download and print — browse the full {level_links} collections.</p>
 ''',
     }
 

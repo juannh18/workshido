@@ -854,7 +854,7 @@ html.ws-authed #navActions .btn-ghost,html.ws-authed #navActions .btn-primary,ht
   <h1 style="max-width:720px;margin-left:auto;margin-right:auto;">Free A1 English Worksheets</h1>
   <div class="intro">
     <p>A1 is the true beginner level — simple present and past tenses, basic vocabulary sets (family, food, numbers, colors), and short, highly-scaffolded reading and writing tasks. Every worksheet on this page is written and levelled specifically for A1 learners, not simplified from higher-level material, so the language stays within reach without feeling babyish.</p>
-<p>The collection spans grammar, vocabulary, reading and writing, so you can build a full lesson — or a full unit — around a single topic at the same level. All worksheets are free, print-ready PDFs, and most include a complete answer key.</p>
+<p>The collection spans grammar, vocabulary, reading and writing, so you can build a full lesson — or a full unit — around a single topic at the same level. All worksheets are free, print-ready PDFs, and every new worksheet includes a complete answer key.</p>
     <a href="/workshido-index.html?level=A1" class="browse-all">Browse and filter the full catalog →</a>
   </div>
 </section>
@@ -1081,7 +1081,7 @@ async function fetchAllRows(build) {
   }
 }
 async function loadWorksheets() {
-  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('*').eq('level', 'A1').order('created_at', { ascending: false, nullsFirst: false }).order('id'));
+  const { data, error } = await fetchAllRows(() => sb2.from('worksheets').select('id,slug,title,level,category,tags,description,file_url,file_type,is_free,downloads,uploaded_by,uploader_name,thumbnail_url,created_at,rating,ratings_count,topic_key,piece_type,description_long,has_teacher_edition').eq('level', 'A1').order('created_at', { ascending: false, nullsFirst: false }).order('id'));
   if (error) {
     document.getElementById('cardGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--gray-300);font-size:14px;">Could not load worksheets.</div>';
     return;
