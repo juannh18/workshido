@@ -1,19 +1,42 @@
-"""Verifica los últimos N worksheets subidos re-descargándolos desde las URLs públicas.
+"""Verifica los últimos N worksheets subidos re-descargándolos.
 
 Uso:
   python tools/verify_uploads.py [N] [--es]     # default N=6; --es = proyecto Spanishido
 
 Chequea por cada fila: status 200 de PDF/thumb/TE, tag 'worksheet' primero,
 páginas del PDF (imagen presente) y del TE (2 páginas, marca WORKSHIDO/SPANISHIDO).
+PDF y miniatura se bajan por su URL pública; la TE con get_object en el bucket privado
+workshido-premium (su URL de files.workshido.com ya no es pública).
 Correr con PYTHONIOENCODING=utf-8 si la consola es cp1252.
 """
 import sys, io
 import pip_system_certs.wrapt_requests  # noqa: usa el almacén de certificados de Windows en vez de desactivar la verificación TLS
 import requests, fitz
+from botocore.exceptions import ClientError
 
 import sys as _sys, os as _os
 _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
 from env_secrets import supabase_creds
+from upload_batch import s3, R2_BUCKET, R2_PUBLIC_BASE, bucket_for_key
+
+
+class _Fetched:
+    def __init__(self, status_code, content):
+        self.status_code, self.content = status_code, content
+
+
+def fetch(url):
+    """Premium keys (the TE) come from the private bucket; everything else by URL."""
+    if url.startswith(R2_PUBLIC_BASE + '/'):
+        key = url[len(R2_PUBLIC_BASE) + 1:]
+        bucket = bucket_for_key(key)
+        if bucket != R2_BUCKET:
+            try:
+                return _Fetched(200, s3.get_object(Bucket=bucket, Key=key)['Body'].read())
+            except ClientError as e:
+                return _Fetched(int(e.response['ResponseMetadata'].get('HTTPStatusCode', 404)), b'')
+    return requests.get(url)
 
 def main(n, es=False):
     url, key = supabase_creds('es' if es else 'en')
@@ -35,7 +58,7 @@ def main(n, es=False):
             if not url:
                 print(f'   {label}: (sin url)')
                 continue
-            d = requests.get(url)
+            d = fetch(url)
             info = f'{d.status_code} {len(d.content)}b'
             ok = d.status_code == 200
             if label in ('pdf', 'te') and ok:

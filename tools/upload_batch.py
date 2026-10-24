@@ -74,6 +74,15 @@ PIECE_TYPES = {'grammar', 'reading', 'writing', 'practice',
 
 R2_BUCKET = 'workshido-files'
 R2_PUBLIC_BASE = 'https://files.workshido.com'
+# Paid PDFs (Teacher Editions, quizzes and their keys) live in a private bucket with
+# no public domain; get-teacher-edition-url / get-quiz-url hand them out as 5-minute
+# signed links. Their stored URL is still R2_PUBLIC_BASE/<key>: the functions take
+# the key from it and sign it against this bucket.
+R2_PREMIUM_BUCKET = 'workshido-premium'
+PREMIUM_KEY_RE = re.compile(r'^(es/)?(teacher-editions|quizzes)/')
+
+def bucket_for_key(key):
+    return R2_PREMIUM_BUCKET if PREMIUM_KEY_RE.match(key) else R2_BUCKET
 
 s3 = boto3.client(
     's3',
@@ -102,10 +111,13 @@ def check_r2_domain():
         )
 
 def upload_pdf(local_path, storage_path):
+    # teacher-editions/ and quizzes/ keys go to the private bucket (bucket_for_key).
+    bucket = bucket_for_key(storage_path)
     try:
-        s3.upload_file(local_path, R2_BUCKET, storage_path, ExtraArgs={
+        s3.upload_file(local_path, bucket, storage_path, ExtraArgs={
             'ContentType': 'application/pdf',
-            'CacheControl': 'public, max-age=31536000, immutable',
+            'CacheControl': 'private, max-age=0' if bucket == R2_PREMIUM_BUCKET
+                            else 'public, max-age=31536000, immutable',
         })
     except Exception as e:
         print(f'  ERROR PDF upload: {e}')

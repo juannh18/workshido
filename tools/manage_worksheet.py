@@ -14,7 +14,7 @@ import requests
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(__file__))
-from upload_batch import SUPABASE_URL, HEADERS_AUTH, resolve, upload_pdf, upload_thumb, check_r2_domain, s3, R2_BUCKET, R2_PUBLIC_BASE
+from upload_batch import SUPABASE_URL, HEADERS_AUTH, resolve, upload_pdf, upload_thumb, check_r2_domain, s3, R2_PUBLIC_BASE, bucket_for_key
 
 
 def find(title_substr):
@@ -48,8 +48,9 @@ def delete_storage_object(loc):
         return
     backend, path = loc
     if backend == 'r2':
-        s3.delete_object(Bucket=R2_BUCKET, Key=path)
-        print(f'  R2 delete {path}: done')
+        bucket = bucket_for_key(path)  # Teacher Editions live in the private bucket
+        s3.delete_object(Bucket=bucket, Key=path)
+        print(f'  R2 delete {bucket}/{path}: done')
     else:
         res = requests.delete(
             f'{SUPABASE_URL}/storage/v1/object/worksheets/{path}',

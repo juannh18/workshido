@@ -33,8 +33,11 @@ from env_secrets import SUPABASE_URL, SERVICE_KEY, R2_ACCOUNT_ID, R2_ACCESS_KEY_
 
 HEADERS_AUTH = {'apikey': SERVICE_KEY, 'Authorization': f'Bearer {SERVICE_KEY}'}
 
-R2_BUCKET = 'workshido-files'
 R2_PUBLIC_BASE = 'https://files.workshido.com'
+# The quiz and its key are paid content: private bucket, no public domain. The URL
+# stored in Supabase is still R2_PUBLIC_BASE/<key>; get-quiz-url takes the key from
+# it and hands out a 5-minute signed link against this bucket.
+R2_PREMIUM_BUCKET = 'workshido-premium'
 
 s3 = boto3.client(
     's3',
@@ -63,9 +66,9 @@ def check_r2_domain():
 
 def upload_pdf(local_path, storage_path):
     try:
-        s3.upload_file(local_path, R2_BUCKET, storage_path, ExtraArgs={
+        s3.upload_file(local_path, R2_PREMIUM_BUCKET, storage_path, ExtraArgs={
             'ContentType': 'application/pdf',
-            'CacheControl': 'public, max-age=31536000, immutable',
+            'CacheControl': 'private, max-age=0',
         })
     except Exception as e:
         sys.exit(f'ERROR subiendo {storage_path}: {e}')
