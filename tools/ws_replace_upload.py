@@ -11,8 +11,8 @@ from botocore.config import Config
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from env_secrets import R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+from upload_batch import bucket_for_key  # TEs (te_key) live in the private bucket
 
-R2_BUCKET = 'workshido-files'
 s3 = boto3.client(
     's3', endpoint_url=f'https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com',
     aws_access_key_id=R2_ACCESS_KEY_ID, aws_secret_access_key=R2_SECRET_ACCESS_KEY,
@@ -23,7 +23,7 @@ def rp(p): return p if os.path.isabs(p) else os.path.join(REPO, p)
 
 def head(key):
     try:
-        return s3.head_object(Bucket=R2_BUCKET, Key=key)['ContentLength']
+        return s3.head_object(Bucket=bucket_for_key(key), Key=key)['ContentLength']
     except Exception:
         return None
 
@@ -31,7 +31,7 @@ def put(local, key, ctype):
     before = head(key)
     with open(rp(local), 'rb') as f:
         data = f.read()
-    s3.put_object(Bucket=R2_BUCKET, Key=key, Body=data, ContentType=ctype,
+    s3.put_object(Bucket=bucket_for_key(key), Key=key, Body=data, ContentType=ctype,
                   CacheControl='public, max-age=31536000, immutable')
     after = head(key)
     ok = after == len(data)
